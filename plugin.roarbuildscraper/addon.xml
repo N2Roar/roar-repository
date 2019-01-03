@@ -9,6 +9,8 @@
 		<!-- 3rd Party Covenant Fork -->
 		<import addon="plugin.video.exodusredux"/>
 		<!-- 3rd Party Universal Scrapers -->
+		<import addon="plugin.video.neptune"/>
+		<import addon="plugin.video.uranus"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
