@@ -374,6 +374,18 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
+<addon id="script.module.exodusredux" name="Exodus Redux Module" version="1.0.9.01" provider-name="I-A-C">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+		<import addon="script.module.beautifulsoup4"/>
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Exodus Redux</summary>
+	</extension>
+</addon>
+
 <addon id="script.module.lambdascrapers" name="Lambdascrapers Module" version="1.8.0.01" provider-name="I-A-C">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
