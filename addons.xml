@@ -405,7 +405,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 		</extension>
 </addon>
 
-<addon id="script.module.schism.common" name="Elysium Common Libraries" version="2017.06.08" provider-name="Elysium">
+<addon id="script.module.schism.common" name="Schism Common Libraries" version="2018.03.10" provider-name="common">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="script.module.six" />
@@ -415,8 +415,8 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary lang="en">Collection of modules used by Elysium</summary>
-		<description lang="en">Collection of modules used by Elysium</description>
+		<summary lang="en">Collection of modules used by common</summary>
+		<description lang="en">Collection of modules used by common</description>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	</extension>
 </addon>
@@ -438,7 +438,7 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="script.neptune.metadata" version="1.0.4" name="Neptune Rising Metadata" provider-name="Mr.Blamo">
+<addon id="script.neptune.metadata" version="1.0.5" name="Neptune Rising Metadata" provider-name="Mr.Blamo">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 	</requires>
