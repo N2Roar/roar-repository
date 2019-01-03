@@ -3,11 +3,11 @@
   author="N2Roar"
   id="plugin.roarbuildscraper"
   name="ROAR Build Scraper"
-  version="0.0.2">
+  version="0.0.3">
 	<requires>
 		<!-- 3rd Party Scraper -->
-		<!-- 3rd Party SALTS -->
 		<!-- 3rd Party Covenant Fork -->
+		<import addon="plugin.video.exodusredux"/>
 		<!-- 3rd Party Universal Scrapers -->
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
