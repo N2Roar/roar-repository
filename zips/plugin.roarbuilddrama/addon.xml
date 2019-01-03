@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<addon
+  author="N2Roar"
+  id="plugin.roarbuilddrama"
+  name="ROAR Build Drama"
+  version="0.0.2">
+	<requires>
+		<!-- 3rd Party Drama -->
+	</requires>
+    <extension library="addon.py" point="xbmc.python.pluginsource">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">Drama Addons</summary>
+        <description lang="en">DRAMAFEVER[CR]Icdrama[CR]</description>
+        <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
+        <language>en</language>
+        <platform>all</platform>
+    </extension>
+</addon>
