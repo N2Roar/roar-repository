@@ -7,9 +7,11 @@
 	<requires>
 		<!-- Official Addons -->
 		<import addon="plugin.video.aswim"/>
-		<!-- 3rd Party Anime -->
+		<!-- 3rd Party Anime (repository.magicality) -->
 		<import addon="plugin.video.dubbedanime"/>
 		<import addon="plugin.video.masteraniredux"/>
+		<!-- 3rd Party Anime (doko.repository) -->
+		<import addon="plugin.video.toonmania2"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>

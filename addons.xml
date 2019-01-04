@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
+<addon id="doko.repository" name="Doko Repository" version="0.1.48" provider-name="doko">
+    <extension point="xbmc.addon.repository" name="Doko Repository">
+        <info compressed="false">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Doko Kodi Add-ons</summary>
+        <description>Add-ons for Kodi</description>
+        <disclaimer></disclaimer>
+        <platform>all</platform>
+    </extension>
+</addon>
+
 <addon id="plugin.program.autocompletion" name="AutoCompletion for virtual keyboard" version="1.0.1" provider-name="Philipp Temminghoff (phil65)">
     <requires>
         <import addon="xbmc.python" version="2.24.0" />
@@ -53,9 +67,11 @@
 	<requires>
 		<!-- Official Addons -->
 		<import addon="plugin.video.aswim"/>
-		<!-- 3rd Party Anime -->
+		<!-- 3rd Party Anime (repository.magicality) -->
 		<import addon="plugin.video.dubbedanime"/>
 		<import addon="plugin.video.masteraniredux"/>
+		<!-- 3rd Party Anime (doko.repository) -->
+		<import addon="plugin.video.toonmania2"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
@@ -75,8 +91,10 @@
   name="ROAR Build Drama"
   version="0.0.3">
 	<requires>
-		<!-- 3rd Party Drama -->
+		<!-- 3rd Party Drama (repository.magicality) -->
 		<import addon="plugin.video.dramatic"/>
+		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
+		<import addon="plugin.video.icdrama"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
@@ -192,6 +210,26 @@
 		</assets>
 		<news></news>
 	</extension>
+</addon>
+
+<addon id="plugin.video.icdrama" version="1.9.4" name="Icdrama" provider-name="aznhusband, dumbo0001, boleanly, mugol, General-Meow, cthlo">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.html5lib" version="0.999.0"/>
+    <import addon="script.module.beautifulsoup4" version="4.3.2"/>
+    <import addon="script.module.requests" version="2.9.1"/>
+    <import addon="script.module.urlresolver" version="3.0.34"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Dramas, shows, and movies from icdrama.se</summary>
+    <description>Provides contents from icdrama.se. "Happy wife, happy life"</description>
+    <disclaimer>This addon is not affiliated with icdrama.se</disclaimer>
+    <platform>all</platform>
+    <license>MIT License</license>
+  </extension>
 </addon>
 
 <addon id="plugin.video.masteraniredux" name="Masterani Redux" version="1.2.2" provider-name="Wilson Magic">
@@ -323,6 +361,26 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
+<addon id="plugin.video.toonmania2" name="Toonmania2" version="0.5.3" provider-name="doko, MetalKettle">
+	<requires>
+		<import addon="xbmc.python" version="2.19.0"/>
+		<import addon="script.module.requests" />
+		<import addon="script.module.beautifulsoup4"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="Default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Toonmania2</summary>
+		<description lang="en">Watch cartoons and anime from [COLOR khaki][B]Animetoon[/B][/COLOR] (www.animetoon.org) and [COLOR khaki][B]Animeplus[/B][/COLOR] (www.animeplus.tv).[CR]Go pay them a visit![CR]Add-on by doko.
+		</description>
+		<news>[COLOR khaki][B]Toonmania2[/B][/COLOR] - Cartoons &amp; Anime[CR][B]0.5.3:[/B][CR]- Fixed a script bug.[CR][B]0.5.2:[/B][CR]- Added parsed query route.[CR][B]0.5.1:[/B][CR]- New setting: Show Search Results Group.[CR]Lets you choose if you want to see a parent group item after a name search.[CR][B]0.5.0:[/B][CR]- New search mode: your Trakt lists.[CR]- Kodi 18 support.</news>
+		<disclaimer lang="en"></disclaimer>
+		<platform>all</platform>
+		<disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers or the websites that it scrapes information from.</disclaimer>
+	</extension>
+</addon>
+
 <addon id="plugin.video.uranus" version="2018.02.22a" name="Uranus" provider-name="Uranus">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
@@ -349,6 +407,19 @@ This is a Non-profit resource, organized solely for educational purposes which i
             <fanart>fanart.jpg</fanart>
         </assets>
     </extension>
+</addon>
+
+<addon id="repository.aznhusband-kodi-repo" version="1.0.1" name="aznhusband-kodi-repo" provider-name="aznhusband">
+	<extension point="xbmc.addon.repository" name="aznhusband-kodi-repo">
+    <info compressed="false">https://aznhusband.github.io/addons.xml</info>
+    <checksum>https://aznhusband.github.io/addons.xml.md5</checksum>
+    <datadir zip="true">https://aznhusband.github.io/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">aznhusband-kodi-repo</summary>
+		<description lang="en">aznhusband-kodi-repo</description>
+		<platform>all</platform>
+	</extension>
 </addon>
 
 <addon id="repository.exodusredux" name="Exodus Redux Repo" version="0.0.7" provider-name="I-A-C">

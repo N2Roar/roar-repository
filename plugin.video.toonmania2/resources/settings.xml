@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="Interface">
+        <setting id="autoplay" label="Autoplay Any Provider" type="bool"  default="true"/>
+        <setting id="show_search_parent" label="Show Search Results Group" type="bool"  default="true"/>
+        <setting type="sep"/>
+        <setting type="lsep" label="Thumbnail Images"/>
+        <setting id="show_thumbnails" label="Enabled" type="bool"  default="true"/>
+        <setting id="page_size" label="Items per Page" type="slider" option="int" subsetting="true" enable="eq(-1,true)" default="30" range="10,10,100"/>
+        <setting type="sep"/>
+        <setting type="lsep" label="Custom Catalog Menu Layout"/>
+        <setting id="layout_use_catalog" label="Enabled" type="bool"  default="true"/>
+        <setting id="layout_type_catalog" label="Layout Type" type="labelenum" subsetting="true" enable="eq(-1,true)" default="InfoWall" values="WideList|List|InfoWall|Wall|Poster|Banner|Shift"/>
+        <setting type="sep"/>
+        <setting type="lsep" label="Custom Show\Movie List Layout"/>
+        <setting id="layout_use_shows" label="Enabled" type="bool"  default="true"/>
+        <setting id="layout_type_shows" label="Layout Type" type="labelenum" subsetting="true" enable="eq(-1,true)" default="InfoWall" values="WideList|List|InfoWall|Wall|Poster|Banner|Shift"/>
+        <setting type="sep"/>
+        <setting type="lsep" label="Custom Episode List Layout"/>
+        <setting id="layout_use_episodes" label="Enabled" type="bool"  default="false"/>
+        <setting id="layout_type_episodes" label="Layout Type" type="labelenum" subsetting="true" enable="eq(-1,true)" default="WideList" values="WideList|Wall|InfoWall"/>
+	</category>
+    <category label="Cache">
+        <setting id="clear_cache" label="Clear Cache Files" type="action" action="RunPlugin(plugin://plugin.video.toonmania2/?view=CLEAR_CACHE)"/>
+    </category>
+    <category label="Trakt">
+        <setting id="clear_trakt" label="Clear Trakt Tokens" type="action" action="RunPlugin(plugin://plugin.video.toonmania2/?view=CLEAR_TRAKT)"/>
+    </category>
+</settings>
