@@ -1,4 +1,12 @@
 Lambdascrapers Module Changelog:
+1.8.2.3
+-added torrent work around, thx Host505
+-removed notworking torrents scrappers
+-removed (1).pyo file...whoops!!!
+1.8.2.3
+-typo
+1.8.2.2
+- Scraper updates Invictus
 1.8.0
 - Scraper updates
 1.7.0

@@ -77,11 +77,15 @@ if mode == "toggleAllForeign":
     'filmwebbooster','iitv','movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
+if mode == "toggleAllTorrent":
+    sourcelist = ['bitlord','1337x','magnetdl','torrentapi']
+    toggleAll(params['setting'], params['open_id'], sourcelist)
+
 if mode == "Defaults":
     sourcelist = ['4kmovieto','1080P','bobmovies','bnwmovies',
     'cartoonhd','coolmoviezone','darewatch','divxcrawler',
     'fmovies','freefmovies','freeputlockers','furk','gostream',
-    'gowatchseries','Hdmto','hdpopcorns','kattv','library',
+    'gowatchseries','Hdmto','hdpopcorns','kattv', 'invictus', 'library',
     'moviesplanet','myprojectfreetv','odb','openloadmovie','ororo',
     'plocker','primewire','putlocker','reddit','seehd','series9','seriesfree',
     'seriesonline','streamlord','tvbox','videoscraper','vidics',

@@ -568,7 +568,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 	</extension>
 </addon>
 
-<addon id="script.module.lambdascrapers" name="Lambdascrapers Module" version="1.8.0.01" provider-name="I-A-C">
+<addon id="script.module.lambdascrapers" name="Lambdascrapers Module" version="1.8.2.4.01" provider-name="13Clowns">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="script.module.beautifulsoup4"/>
@@ -577,7 +577,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 	<extension point="xbmc.python.pluginsource" library="lib/default.py">
 		<provides>executable</provides>
 	</extension>
-	<extension point="xbmc.service" library="CleanupService.py" start="startup" />
+	<!--<extension point="xbmc.service" library="CleanupService.py" start="startup" />-->
 		<extension point="xbmc.addon.metadata">
 			<platform>all</platform>
 			<summary lang="en">Lambdascrapers Module</summary>
