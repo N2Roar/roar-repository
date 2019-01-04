@@ -49,10 +49,13 @@
   author="N2Roar"
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.3">
+  version="0.0.4">
 	<requires>
-		<!-- 3rd Party Anime -->
 		<!-- Official Addons -->
+		<import addon="plugin.video.aswim"/>
+		<!-- 3rd Party Anime -->
+		<import addon="plugin.video.dubbedanime"/>
+		<import addon="plugin.video.masteraniredux"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
@@ -70,9 +73,10 @@
   author="N2Roar"
   id="plugin.roarbuilddrama"
   name="ROAR Build Drama"
-  version="0.0.2">
+  version="0.0.3">
 	<requires>
 		<!-- 3rd Party Drama -->
+		<import addon="plugin.video.dramatic"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
@@ -111,6 +115,55 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.dramatic" name="Dramatic" version="1.0.3" provider-name="Wilson Magic">
+	<requires>
+		<import addon="xbmc.python" version="2.19.0"/>
+		<import addon="script.module.requests"/>
+	    <import addon="script.module.beautifulsoup4"/>
+        <import addon="script.module.resolveurl" version="5.0.13"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Dramatic</summary>
+		<description lang="en">Because Asian drama is magical.</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum>https://www.reddit.com/r/Addons4Kodi/</forum>
+		<website>https://www3.watchasian.co/</website>
+		<source>https://www3.watchasian.co/</source>
+		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+            <screenshot>resources/screenshots/screenshot-01.jpg</screenshot>
+            <screenshot>resources/screenshots/screenshot-02.jpg</screenshot>
+            <screenshot>resources/screenshots/screenshot-03.jpg</screenshot>
+    	</assets>
+	</extension>
+</addon>
+
+<addon id="plugin.video.dubbedanime" version="1.0.5" name="Dubbed Anime" provider-name="Wilson Magic">
+	<requires>
+		<import addon="xbmc.python" version="2.19.0" />
+		<import addon="script.module.beautifulsoup4"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en"></summary>
+		<description lang="en"></description>
+		<platform>all</platform>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en"></disclaimer>
+		<news></news>
+	</extension>
+</addon>
+
 <addon id="plugin.video.exodusredux" version="1.0.7" name="Exodus Redux" provider-name="I-A-C">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -139,6 +192,37 @@
 		</assets>
 		<news></news>
 	</extension>
+</addon>
+
+<addon id="plugin.video.masteraniredux" name="Masterani Redux" version="1.2.2" provider-name="Wilson Magic">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.metahandler" version="1.0.0" />
+		<import addon="script.module.resolveurl" version="5.0.13" />
+        <import addon="script.module.pyxbmct" />
+		<import addon="script.module.requests"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">Masterani Redux</summary>
+        <description lang="en">Play Anime from Masterani.me. Please note that this addon is not developed by the authors of Masterani.[CR][CR]This content does not support the original creators of the anime you can view, if you wish to support the original creators, then please use Crunchyroll, Funimation or other similar services.[CR][CR]アニメは凄いです!</description>
+        <disclaimer>Addon by Alleidun, SirTakoyaki and Wilson Magic. The author does not host or distribute any of the content displayed by this addon.</disclaimer>
+        <platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum>https://www.reddit.com/r/Addons4Kodi/</forum>
+		<website>https://www.masterani.me/</website>
+		<source>https://www.masterani.me/</source>
+		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+            <screenshot>resources/screenshots/screenshot-01.jpg</screenshot>
+            <screenshot>resources/screenshots/screenshot-02.jpg</screenshot>
+            <screenshot>resources/screenshots/screenshot-03.jpg</screenshot>
+    	</assets>
+    </extension>
 </addon>
 
 <addon id="plugin.video.metalliq" name="MetalliQ" version="2.0.16krypton" provider-name="OpenELEQ, Midraal">
@@ -283,6 +367,33 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">Exodus Redux is a educational add-on. We do not host any of the contents streamed.</summary>
 		<description lang="en"></description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.jsergio" name="jsergio repo" version="1.0.4" provider-name="jsergio">
+	<extension point="xbmc.addon.repository" name="jsergio repo">
+        <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Repo for jsergio Add-ons</summary>
+		<description>Repo for jsergio Add-ons</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.magicality" name="Magicality Repo" version="0.0.4" provider-name="Wilson Magic">
+	<extension point="xbmc.addon.repository" name="Magicality Repo">
+		<info compressed="false">https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Magicality</summary>
+		<description>Magicality - Home of Masterani Redux</description>
+		<disclaimer></disclaimer>
 		<platform>all</platform>
 	</extension>
 </addon>

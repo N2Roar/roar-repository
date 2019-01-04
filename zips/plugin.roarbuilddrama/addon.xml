@@ -3,9 +3,10 @@
   author="N2Roar"
   id="plugin.roarbuilddrama"
   name="ROAR Build Drama"
-  version="0.0.2">
+  version="0.0.3">
 	<requires>
 		<!-- 3rd Party Drama -->
+		<import addon="plugin.video.dramatic"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
