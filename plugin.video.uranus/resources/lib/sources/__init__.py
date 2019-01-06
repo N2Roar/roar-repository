@@ -1076,7 +1076,7 @@ class sources:
                 # provider = [i[0] for i in sourceDict if i[1] == False and i[0].startswith(provider + '_')][0]
 
             #source = __import__(provider, globals(), locals(), [], -1).source()
-            u = url = item["url"]
+            u = url = universalscrapers.resolve(provider, item["url"])
 
             if url == None: raise Exception()
             if any(value in url for value in _shst_regex): u = unshorten._unshorten_shst(url)
@@ -1086,9 +1086,9 @@ class sources:
 
             if not direct == True:
 
-                                if not debridstatus == 'true': hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=False)
-                                else: hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=True)
-                                if hmf.valid_url() == True: url = hmf.resolve()
+                if not debridstatus == 'true': hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=False)
+                else: hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=True)
+                if hmf.valid_url() == True: url = hmf.resolve()
 
             if url == False or url == None: raise Exception()
 
@@ -1394,16 +1394,18 @@ class sources:
         else:
             quality = item[1][0]["path"]["quality"]
 
-        if quality.startswith("1080"):
+        if quality.startswith("2160") or quality.startswith("4K"):
             quality = "HDa"
-        elif quality.startswith("720"):
+        elif quality.startswith("1080"):
             quality = "HDb"
-        elif quality.startswith("560"):
+        elif quality.startswith("720"):
             quality = "HDc"
-        elif quality == "DVD":
+        elif quality.startswith("560"):
             quality = "HDd"
-        elif quality == "HD":
+        elif quality == "DVD":
             quality = "HDe"
+        elif quality == "HD":
+            quality = "HDf"
         elif quality.startswith("480"):
             quality = "SDa"
         elif quality.startswith("360"):

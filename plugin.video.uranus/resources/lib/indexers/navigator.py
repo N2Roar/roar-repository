@@ -93,7 +93,7 @@ tvlist30         = control.setting('tmdb.tvlist_name30')
 
 class navigator:
         def root(self):
-                # self.addDirectoryItem('Merry Christmas!', 'movies&url=tmdbxmas',  'xmas.png',          'DefaultMovies.png')
+                self.addDirectoryItem('Merry Christmas', 'movies&url=tmdbxmas',  'holidaycollections.png',          'DefaultMovies.png')
                 self.addDirectoryItem(32001,              'movieNavigator',       'movies.png',        'DefaultMovies.png')
                 self.addDirectoryItem(32002,              'tvNavigator',          'tvshows.png',      'DefaultTVShows.png')
                 if not control.setting('movie.widget') == '0':
@@ -103,7 +103,7 @@ class navigator:
                 self.addDirectoryItem(32026,              'tvshows&url=premiere', 'years.png',         'DefaultTVShows.png')
                 self.addDirectoryItem('My Uranus',       'lists_navigator',      'mymovies.png',      'DefaultRecentlyAddedMovies.png')
                 self.addDirectoryItem(32027,              'calendars',            'networks.png',      'DefaultRecentlyAddedEpisodes.png')
-                self.addDirectoryItem(32007,              'channels',             'sly.png',      'DefaultMovies.png')
+                # self.addDirectoryItem(32007,              'channels',             'sly.png',      'DefaultMovies.png')
                 self.addDirectoryItem(32008,              'toolNavigator',        'tools.png',         'DefaultAddonProgram.png')
                 downloads = True if control.setting('downloads') == 'true' and (len(control.listDir(control.setting('movie.download.path'))[0]) > 0) else False
                 if downloads == True:
@@ -399,7 +399,7 @@ class navigator:
                 self.addDirectoryItem('Christmas', 'movies&url=tmdbchristmas', 'christmas.png', 'DefaultRecentlyAddedMovies.png')
                 self.addDirectoryItem('Easter', 'movies&url=tmdbeaster', 'easter.png', 'DefaultRecentlyAddedMovies.png')
                 self.addDirectoryItem('Halloween', 'movies&url=tmdbhalloween', 'halloween.png', 'DefaultRecentlyAddedMovies.png')
-                self.addDirectoryItem('Independence Day', 'movies&url=tmdbfourth', 'fourth.png', 'DefaultRecentlyAddedMovies.png')
+                self.addDirectoryItem('Independence Day', 'movies&url=tmdbfourth', 'thanks.png', 'DefaultRecentlyAddedMovies.png')
                 self.addDirectoryItem('Thanksgiving', 'movies&url=tmdbthanks', 'thanks.png', 'DefaultRecentlyAddedMovies.png')
                 self.addDirectoryItem('Valentines', 'movies&url=tmdbvalentines', 'valentines.png', 'DefaultRecentlyAddedMovies.png')
                 self.endDirectory()

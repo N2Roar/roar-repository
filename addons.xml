@@ -381,7 +381,7 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="plugin.video.uranus" version="2018.02.22a" name="Uranus" provider-name="Uranus">
+<addon id="plugin.video.uranus" version="2018.11.28" name="Uranus" provider-name="Uranus">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.uranus.artwork" version="2018.02.20"/>
@@ -401,7 +401,7 @@ This is a Non-profit resource, organized solely for educational purposes which i
         <description lang="en">Watch movies and TV shows in high quality! Please note that this addon is not an official part of the Kodi media player and is therefore not to be mentioned within Kodi's official support channels. This addon has nothing to do with the media player itself, nor its intended use, it is simply a third party plugin which has been added to your system.</description>
         <disclaimer lang="en">The author does not host any content, nor is he affiliated with any of the content providers.</disclaimer>
         <platform>all</platform>
-        <news>Fork of Elysium credit to original Devs / Replaced more lists / Fixed channels / Added resolution to scraper dialog (thanks to Mr Blamo)</news>
+        <news>Fork of Elysium credit to original Devs / Replaced more lists / Added Christmas Collection</news>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
