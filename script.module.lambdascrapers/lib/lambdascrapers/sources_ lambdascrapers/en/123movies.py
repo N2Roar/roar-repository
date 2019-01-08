@@ -1,19 +1,19 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 11-20-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 12-03-2018 by JewBMX in Scrubs.
 
-import re,traceback,urllib,urlparse,json,base64,time
-from resources.lib.modules import cleantitle,dom_parser2,client,debrid
+import re,urllib,urlparse,json,base64,time
+from resources.lib.modules import cleantitle,dom_parser2,client
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['gostream.sc']
-        self.base_link = 'https://www3.gostream.sc'
-        self.search_link = '/watch/%s-%s-gostream.html'
-
-
+        self.domains = ['123moviess.to']
+        self.base_link = 'https://123moviess.to'
+        self.search_link = '/watch/%s-%s-123moviess.html'
+        
+        
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             clean_title = cleantitle.geturl(title)
@@ -77,15 +77,15 @@ class source:
             urldata = urlparse.parse_qs(url)
             urldata = dict((i, urldata[i][0]) for i in urldata)
             post = {'ipplugins': 1,'ip_film': urldata['data-film'], 'ip_server': urldata['data-server'], 'ip_name': urldata['data-name'],'fix': "0"}
-            p1 = client.request('https://gostream.sc/ip.file/swf/plugins/ipplugins.php', post=post, referer=urldata['url'], XHR=True)
+            p1 = client.request('https://123moviess.to/ip.file/swf/plugins/ipplugins.php', post=post, referer=urldata['url'], XHR=True)
             p1 = json.loads(p1)
-            p2 = client.request('https://gostream.sc/ip.file/swf/ipplayer/ipplayer.php?u=%s&s=%s&n=0' %(p1['s'],urldata['data-server']))
+            p2 = client.request('https://123moviess.to/ip.file/swf/ipplayer/ipplayer.php?u=%s&s=%s&n=0' %(p1['s'],urldata['data-server']))
             p2 = json.loads(p2)
-            p3 = client.request('https://gostream.sc/ip.file/swf/ipplayer/api.php?hash=%s' %(p2['hash']))
+            p3 = client.request('https://123moviess.to/ip.file/swf/ipplayer/api.php?hash=%s' %(p2['hash']))
             p3 = json.loads(p3)
             n = p3['status']
             if n == False:
-                p2 = client.request('https://gostream.sc/ip.file/swf/ipplayer/ipplayer.php?u=%s&s=%s&n=1' %(p1['s'],urldata['data-server']))
+                p2 = client.request('https://123moviess.to/ip.file/swf/ipplayer/ipplayer.php?u=%s&s=%s&n=1' %(p1['s'],urldata['data-server']))
                 p2 = json.loads(p2)
             url =  "https:%s" %p2["data"].replace("\/","/")
             return url

@@ -49,9 +49,7 @@ if mode == "toggleAll":
     toggleAll(params['setting'], open_id, sourceList=sourcelist)
 
 if mode == "toggleAllDebrid":
-    sourcelist = ['2ddl','300mbfilms','bestmoviez','ddls','ddlvalley','directdl','gomovies','hevcfilm',
-    'myvideolink','phazeddl','power','releasebb','RLSB','rlsbb','rlsmovies','rlsscn',
-    'scenerls','sceper','seriescr','tvbmoviez','tvrelease','ultrahd','ultrahdindir','wrzcraft']
+    sourcelist = ['300mbfilms','bestmoviez','ddls','ddlvalley','directdl','gomovies','hevcfilm','myvideolink','phazeddl','playmovies','power','releasebb','RLSB','rlsbb','rlsmovies','rlsscn','scenerls','sceper','seriescr','tvbmoviez','tvrelease','ultrahd','ultrahdindir','wrzcraft']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllGerman":
@@ -78,16 +76,9 @@ if mode == "toggleAllForeign":
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllTorrent":
-    sourcelist = ['bitlord','1337x','magnetdl','torrentapi']
+    sourcelist = ['bitlord','torrentapi']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "Defaults":
-    sourcelist = ['4kmovieto','1080P','bobmovies','bnwmovies',
-    'cartoonhd','coolmoviezone','darewatch','divxcrawler',
-    'fmovies','freefmovies','freeputlockers','furk','gostream',
-    'gowatchseries','Hdmto','hdpopcorns','kattv', 'invictus', 'library',
-    'moviesplanet','myprojectfreetv','odb','openloadmovie','ororo',
-    'plocker','primewire','putlocker','reddit','seehd','series9','seriesfree',
-    'seriesonline','streamlord','tvbox','videoscraper','vidics',
-    'watchonline','watchseries','xmovies','xwatchseries','ymovies']
+    sourcelist = ['animetoon','0123putlocker','123fox','123hbo','123moviehd','123movies','123movies4u','123moviesex','123moviesfree','123moviesfreenow','123movieshubvip','123moviesonline','300mbdownload','4kmovieto','1080P','bobmovies','bnwmovies','cartoonhd','coolmoviezone','darewatch','divxcrawler','fmovies','freefmovies','freeputlockers','furk','gostream','gowatchseries','Hdmto','hdpopcorns','kattv','library','moviesplanet','myprojectfreetv','odb','openloadmovie','ororo','plocker','primewire','putlocker','reddit','seehd','series9','seriesfree','seriesonline','streamlord','tvbox','videoscraper','vidics','watchonline','watchseries','xmovies','xwatchseries','ymovies']
     toggleAll(params['setting'], params['open_id'], sourcelist)

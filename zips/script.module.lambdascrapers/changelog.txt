@@ -1,5 +1,31 @@
 Lambdascrapers Module Changelog:
-1.8.2.3
+1.8.2.8
+-reverted back to address linux isssue. hope its fixed
+-added:
+animetoon
+0123putlocker
+123fox
+123hbo
+123moviehd
+123movies
+123movies4u
+123moviesex
+123moviesfree
+123moviesfreenow
+123movieshubvip
+123moviesonline
+300mbdownload
+1.8.2.7
+-removed duplicates, more to do!!!
+1.8.2.6
+-change line endings
+1.8.2.5
+-updated scenerls
+-updated seriesonline
+-updated playmovies
+-updated wrzcraft
+-deleted 2DDL
+1.8.2.4
 -added torrent work around, thx Host505
 -removed notworking torrents scrappers
 -removed (1).pyo file...whoops!!!

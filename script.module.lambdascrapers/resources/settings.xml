@@ -20,13 +20,23 @@
         <setting type="sep" />
         <setting id="provider.1movie" type="bool" label="$NUMBER[1]MOVIE" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.4kmovieto" type="bool" label="$NUMBER[4]KMOVIETO" default="true" /> <!--Lambdascrapers-->
+        <setting id="provider.animetoon" type="bool" label="ANIMETOON" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.0123putlocker" type="bool" label="$NUMBER[0123]PUTLOCKER" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.123fox" type="bool" label="$NUMBER[123]FOX" default="false" /> <!--Placenta-->
         <setting id="provider.123hbo" type="bool" label="$NUMBER[123]HBO" default="false" /> <!--Placenta-->
         <setting id="provider.123hulu" type="bool" label="$NUMBER[123]HULU" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.123movies" type="bool" label="$NUMBER[123MOVIES]" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
+        <setting id="provider.123movieshd" type="bool" label="$NUMBER[123]MOVIESHD" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.123movieser" type="bool" label="$NUMBER[123]MOVIESER" default="false" /> <!--Placenta-->
         <setting id="provider.123moviesgold" type="bool" label="$NUMBER[123]MOVIESGOLD" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.123netflix" type="bool" label="$NUMBER[123]NETFLIX" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
+        <setting id="provider.123movies4u" type="bool" label="$NUMBER[123]MOVIES$NUMBER[4]U" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.123moviesex" type="bool" label="$NUMBER[123]MOVIESEX" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.123moviefree" type="bool" label="$NUMBER[123]MOVIEFREE" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.123moviefreenow" type="bool" label="$NUMBER[123]MOVIEFREENOW" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.123movieshubvip" type="bool" label="$NUMBER[123]MOVIESHUBVIP" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.123moviesonline" type="bool" label="$NUMBER[123]MOVIESONLINE" default="false" /> <!--Lambdascrapers-->
+        <setting id="provider.300mbdownload" type="bool" label="$NUMBER[300]MBDOWNLOAD" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.321movies" type="bool" label="$NUMBER[321]MOVIES" default="false" /> <!--Placenta-->
         <setting id="provider.1080P" type="bool" label="$NUMBER[1080]P" default="true" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.1123movies" type="bool" label="$NUMBER[1123]MOVIES" default="false" /> <!--Placenta-->
@@ -68,7 +78,6 @@
         <setting id="provider.hdpopcorns" type="bool" label="HDPOPCORNS" default="true" /> <!--Lambdascrapers-->
         <setting id="provider.huluvip" type="bool" label="HULUVIP" default="false" /> <!--Placenta-->
         <setting id="provider.icefilms" type="bool" label="ICEFILMS" default="false" /> <!--Lambdascrapers-->
-        <setting id="provider.invictus" type="bool" label="Invictus" default="true" />
         <setting id="provider.icouchtuner" type="bool" label="ICOUCHTUNER" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.iwatchflixxyz" type="bool" label="IWATCHFLIXXYZ" default="false" /><!--Lambdascrapers-->
 <!--        <setting id="provider.imdark" type="bool" label="IMDARK" default="false" />--> <!--Incursion-->
@@ -197,9 +206,10 @@
         <setting id="provider.directdl" type="bool" label="DIRECTDL" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.gomovies" type="bool" label="GOMOVIES" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
 <!--        <setting id="provider.hevcfilm" type="bool" label="HEVCFILM" default="false" />--> <!--Incursion--> <!--Placenta-->
-        <setting id="provider.invictus" type="bool" label="Invictus" default="true" />
+        <setting id="provider.invictus" type="bool" label="INVICTUS" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.myvideolink" type="bool" label="MYVIDEOLINK" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.phazeddl" type="bool" label="PHAZEDLL" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
+        <setting id="provider.playmovies" type="bool" label="PLAYMOVIES" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.power" type="bool" label="POWER" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.rlsbb" type="bool" label="RLSBB" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.rlsscn" type="bool" label="RLSSCN" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
