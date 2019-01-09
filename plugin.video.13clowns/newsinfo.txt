@@ -1,0 +1,68 @@
+======[B][COLOR green]SUPPORTED[/COLOR][/B]========
+
+[B][COLOR red]13Clowns[/COLOR][/B] now gives you the option of Lambda Scrapers or Global Srapers!!! Welcome to the swiss army knife of addons, lol. 
+
+For Lambda if you are having trouble with "NO STREAMS" messages you need to ensure that you have providers selected in Lambda Scarpers. Read Below for more information. If they are setup and you are still getting the message it is very possible there is no content availble. 
+
+=======[B]LAMBDA SETUP[/B]========
+1. In the settings "Providers" section of addon, Select provider choice to "Lambda Scrapers", then below click on "Open Lambda Scraper Settings"
+2. Under "Providers" set "Choose Provider Source" to "Lambda Scrapers" (should be default already)
+3. Then below click on "Lambda Scrapers Default Providers"
+4. Then on the left click on "Foreign", then click "Enable all Foreign Providers" *optional*
+5. If you have a PAID Subscription to Real-Dedrid go to "Derid Only"
+5. Then click "Enable All Debrid Providers" 
+6. Once all you have selected everything, click "OK". 
+7. You have setup Lambda Scrappers. Try it out and "NO STREAMS" should be fixed.
+
+=======[B]SUPPORT[/B]========
+www.13clowns.com (live support on telegram)
+Twitter: @1clowns
+
+=======[B]CHANGE LOG[/B]=======
+[B]1.2.9[/B]
+- Rearrange menus for my liking (template), thanks Frankenstien Bc
+- added artwork, Thanks @Wolfgir08604753 and @mr000iconz
+- Fixed Fitness/Kids Corner/Etc., Thanks @tantrumdev
+- updated wizard in preperation of Kodi 18, Thanks to the Dr.(u/drinfernoo)
+- added 50, 60, 70s movies links
+- added Car Movies to Box Collections
+- added Superheros to Box Collections
+- Monthly Spotlight Actor/Actress/Movie/etc
+- added 13Clowns Favorites list....lol
+- added choice of Lambda or Global Scrapers!!!
+- Added Youtube sections with many areas. (PLEASE CONTRIBUTE, LEARN and GIVE BACK to the COMMUNITY)see below
+----You can start slowly and build upon the knowledge you gain. Github, fork the XML folder, make changes/additions and submit a pull request and see how it works!!!
+----Learn scraper testing, fixing, etc. more videos coming soon. Under Kodi section. (if you ahve any you want to add add them)
+- thank you to all of you for support, contributions and giving me hell. I enjoy this hobby and all of you!
+
+=======Lost Track=====
+   1.2.5 - 1.2.8
+=======Lost Track=====
+
+[B]1.2.5[/B]
+- Rearrange menus for my liking
+- setup defaults
+[B]1.2.2[/B]
+- Added Channels
+- Added Boxsets
+- fixed pre-emptive termination
+[B]1.2.1[/B]
+- show unaired season/episode option for S00
+[B]1.2[/B]
+- default autoplay on source
+- default to 1080
+- default 13clowns theme
+- kodi 18 fixes
+
+=======[B]CREDITS[/B]========
+I-A-C for Lambda Scrapers
+Dr know for Global Scrapers
+Jsergio for ResolveURL
+Frankenstien Bc for answering random newbie questions and driving him crazy
+@Wolfgir08604753 and @mr000iconz Amazing Artwork
+@tantrumdev for giving BOZO constructive crap!
+u/drinfernoo for wizard and support
+@slamious for support
+
+Fans, Supporters, and all the ones that hate!!! Yes you, you know who you are….lol
+
