@@ -116,8 +116,8 @@
 	<requires>
 		<!-- 3rd Party Scraper -->
 		<!-- 3rd Party Covenant Fork -->
-		<import addon="plugin.video.13clowns"/>
-		<import addon="plugin.video.exodusredux"/>
+		<import addon="plugin.video.13clowns" optional="true"/>
+		<import addon="plugin.video.exodusredux" optional="true"/>
 		<!-- 3rd Party Universal Scrapers -->
 		<import addon="plugin.video.neptune"/>
 		<import addon="plugin.video.uranus"/>
@@ -357,7 +357,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.neptune" version="1.4.8" name=" Neptune Rising" provider-name="Mr. Blamo">
+<addon id="plugin.video.neptune" version="1.4.8" name="Neptune Rising" provider-name="Mr. Blamo">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.neptune.artwork" />
