@@ -9,7 +9,7 @@
         <import addon="script.module.requests" />
         <import addon="script.module.metahandler" />
         <import addon="script.module.lambdascrapers" />
-        <import addon="script.module.globalscrapers" />
+        <import addon="script.module.globalscrapers" optional="true" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>

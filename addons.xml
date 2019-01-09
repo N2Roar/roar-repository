@@ -144,7 +144,7 @@
         <import addon="script.module.requests" />
         <import addon="script.module.metahandler" />
         <import addon="script.module.lambdascrapers" />
-        <import addon="script.module.globalscrapers" />
+        <import addon="script.module.globalscrapers" optional="true" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -560,7 +560,7 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 	<extension point="xbmc.addon.metadata">
 	  <summary>Roar Repo.</summary>
-	  <description>Just Raor.</description>
+	  <description>Just Raor... raor? ROAR</description>
 	  <platform>all</platform>
 	</extension>
 </addon>
