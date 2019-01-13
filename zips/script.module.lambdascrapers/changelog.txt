@@ -1,4 +1,7 @@
 Lambdascrapers Module Changelog:
+1.8.2.9
+-Rlsbb fixed
+- final update. time to start fresh. you will know when the community scraper package comes out
 1.8.2.8
 -reverted back to address linux isssue. hope its fixed
 -added:

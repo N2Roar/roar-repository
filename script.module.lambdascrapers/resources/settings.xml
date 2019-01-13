@@ -112,6 +112,7 @@
         <setting id="provider.rajahoki88" type="bool" label="RAJAHOKI88" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.rarbg" type="bool" label="RARBG" default="false" /> <!--Placenta-->
         <setting id="provider.reddit" type="bool" label="REDDIT" default="true" /> <!--Lambdascrapers-->
+        <setting id="provider.rlsbb" type="bool" label="RLSBB" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.seehd" type="bool" label="SEEHD" default="true" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.series9" type="bool" label="SERIES9" default="true" /> <!--Lambdascrapers-->
         <setting id="provider.seriesfree" type="bool" label="SERIESFREE" default="true" /> <!--Incursion--> <!--Lambdascrapers-->
@@ -211,7 +212,6 @@
         <setting id="provider.phazeddl" type="bool" label="PHAZEDLL" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.playmovies" type="bool" label="PLAYMOVIES" default="false" /> <!--Lambdascrapers-->
         <setting id="provider.power" type="bool" label="POWER" default="false" /> <!--Lambdascrapers-->
-        <setting id="provider.rlsbb" type="bool" label="RLSBB" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.rlsscn" type="bool" label="RLSSCN" default="false" /> <!--Incursion--> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.scenerls" type="bool" label="SCENERLS" default="false" /> <!--Placenta--> <!--Lambdascrapers-->
         <setting id="provider.sceper" type="bool" label="SCEPER" default="false" /> <!--Lambdascrapers-->
