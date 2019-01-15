@@ -1,27 +1,101 @@
-# -*- coding: utf-8 -*-
 
-'''
-#:::'##::::'#######:::'######::'##::::::::'#######::'##:::::'##:'##::: ##::'######::
-#:'####:::'##.... ##:'##... ##: ##:::::::'##.... ##: ##:'##: ##: ###:: ##:'##... ##:
-#:.. ##:::..::::: ##: ##:::..:: ##::::::: ##:::: ##: ##: ##: ##: ####: ##: ##:::..::
-#::: ##::::'#######:: ##::::::: ##::::::: ##:::: ##: ##: ##: ##: ## ## ##:. ######::
-#::: ##::::...... ##: ##::::::: ##::::::: ##:::: ##: ##: ##: ##: ##. ####::..... ##:
-#::: ##:::'##:::: ##: ##::: ##: ##::::::: ##:::: ##: ##: ##: ##: ##:. ###:'##::: ##:
-#:'######:. #######::. ######:: ########:. #######::. ###. ###:: ##::. ##:. ######::
-#:......:::.......::::......:::........:::.......::::...::...:::..::::..:::......:::
+from resources.lib.modules import log_utils
+from resources.lib.modules import control
+from resources.lib.modules import youtube
+from resources.lib.modules import youtube_menu
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+import os,sys,re,datetime,urlparse
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+thishandle = int(sys.argv[1])
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+# initializes as Kids Corner, functions can override based on action and subid.
+class yt_index:
+    def __init__(self):
+        self.action = 'kidscorner'
+        self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tLzEzQ2xvd25zL3Jlc291cmNlcy9tYXN0ZXIveG1scy9raWRzbmF0aW9uLw=='.decode('base64')
+        self.mainmenu = 'JXNrbm1haW4udHh0'.decode('base64') % (self.base_url)
+        self.submenu  = 'JXMvJXMudHh0'.decode('base64')
+        self.default_icon   = 'JXMvaWNvbnMvaWNvbi5wbmc='.decode('base64')
+        self.default_fanart = 'JXMvaWNvbnMvZmFuYXJ0LmpwZw=='.decode('base64')
 
-import base64;exec base64.b64decode('CmZyb20gcmVzb3VyY2VzLmxpYi5tb2R1bGVzIGltcG9ydCBsb2dfdXRpbHMKZnJvbSByZXNvdXJjZXMubGliLm1vZHVsZXMgaW1wb3J0IGNvbnRyb2wKZnJvbSByZXNvdXJjZXMubGliLm1vZHVsZXMgaW1wb3J0IHlvdXR1YmUKZnJvbSByZXNvdXJjZXMubGliLm1vZHVsZXMgaW1wb3J0IHlvdXR1YmVfbWVudQoKaW1wb3J0IG9zLHN5cyxyZSxkYXRldGltZSx1cmxwYXJzZQoKdGhpc2hhbmRsZSA9IGludChzeXMuYXJndlsxXSkKCiMgaW5pdGlhbGl6ZXMgYXMgS2lkcyBDb3JuZXIsIGZ1bmN0aW9ucyBjYW4gb3ZlcnJpZGUgYmFzZWQgb24gYWN0aW9uIGFuZCBzdWJpZC4KY2xhc3MgeXRfaW5kZXg6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc2VsZi5hY3Rpb24gPSAna2lkc2Nvcm5lcicKICAgICAgICBzZWxmLmJhc2VfdXJsID0gJ2FIUjBjSE02THk5eVlYY3VaMmwwYUhWaWRYTmxjbU52Ym5SbGJuUXVZMjl0THpFelEyeHZkMjV6TDNKbGMyOTFjbU5sY3k5dFlYTjBaWEl2ZUcxc2N5OXJhV1J6Ym1GMGFXOXVMdz09Jy5kZWNvZGUoJ2Jhc2U2NCcpCiAgICAgICAgc2VsZi5tYWlubWVudSA9ICdKWE5yYm0xaGFXNHVkSGgwJy5kZWNvZGUoJ2Jhc2U2NCcpICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgc2VsZi5zdWJtZW51ICA9ICdKWE12SlhNdWRIaDAnLmRlY29kZSgnYmFzZTY0JykKICAgICAgICBzZWxmLmRlZmF1bHRfaWNvbiAgID0gJ0pYTXZhV052Ym5NdmFXTnZiaTV3Ym1jPScuZGVjb2RlKCdiYXNlNjQnKQogICAgICAgIHNlbGYuZGVmYXVsdF9mYW5hcnQgPSAnSlhNdmFXTnZibk12Wm1GdVlYSjBMbXB3Wnc9PScuZGVjb2RlKCdiYXNlNjQnKQoKICAgIGRlZiBpbml0X3ZhcnMoc2VsZiwgYWN0aW9uKToKICAgICAgICB0cnk6CiAgICAgICAgICAgIGlmIGFjdGlvbiA9PSAnZml0bmVzcyc6CiAgICAgICAgICAgICAgICBzZWxmLmFjdGlvbiAgID0gJ2ZpdG5lc3MnCiAgICAgICAgICAgICAgICBzZWxmLmJhc2VfdXJsID0gJ2FIUjBjSE02THk5eVlYY3VaMmwwYUhWaWRYTmxjbU52Ym5SbGJuUXVZMjl0THpFelEyeHZkMjV6TDNKbGMyOTFjbU5sY3k5dFlYTjBaWEl2ZUcxc2N5OW1hWFJ1WlhOemVtOXVaUzg9Jy5kZWNvZGUoJ2Jhc2U2NCcpCiAgICAgICAgICAgICAgICBzZWxmLm1haW5tZW51ID0gJ0pYTm1lbTFoYVc0dWRIaDAnLmRlY29kZSgnYmFzZTY0JykgJSAoc2VsZi5iYXNlX3VybCkKICAgICAgICAgICAgZWxpZiBhY3Rpb24gPT0gJ3lvdXR1YmUnOgogICAgICAgICAgICAgICAgc2VsZi5hY3Rpb24gICA9ICd5b3V0dWJlJwogICAgICAgICAgICAgICAgc2VsZi5iYXNlX3VybCA9ICdhSFIwY0hNNkx5OXlZWGN1WjJsMGFIVmlkWE5sY21OdmJuUmxiblF1WTI5dEx6RXpRMnh2ZDI1ekwzSmxjMjkxY21ObGN5OXRZWE4wWlhJdmVHMXNjeTk1YjNWMGRXSmxMdz09Jy5kZWNvZGUoJ2Jhc2U2NCcpCiAgICAgICAgICAgICAgICBzZWxmLm1haW5tZW51ID0gJ0pYTjVkRzFoYVc0dWRIaDAnLmRlY29kZSgnYmFzZTY0JykgJSAoc2VsZi5iYXNlX3VybCkKICAgICAgICAgICAgZWxpZiBhY3Rpb24gPT0gJ2t1bmdmdSc6CiAgICAgICAgICAgICAgICBzZWxmLmFjdGlvbiAgID0gJ2t1bmdmdScKICAgICAgICAgICAgICAgIHNlbGYuYmFzZV91cmwgPSAnYUhSMGNEb3ZMMjB6ZFM1NGVYb3ZiWFJpTDNsMGJXOTJhV1Z6THc9PScuZGVjb2RlKCdiYXNlNjQnKQogICAgICAgICAgICAgICAgc2VsZi5tYWlubWVudSA9ICdKWE5yZFc1blpuVXVjR2h3Jy5kZWNvZGUoJ2Jhc2U2NCcpICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgICAgIGVsaWYgYWN0aW9uID09ICd1cmJhbic6CiAgICAgICAgICAgICAgICBzZWxmLmFjdGlvbiAgID0gJ3VyYmFuJwogICAgICAgICAgICAgICAgc2VsZi5iYXNlX3VybCA9ICdhSFIwY0RvdkwyMHpkUzU0ZVhvdmJYUmlMM2wwYlc5MmFXVnpMdz09Jy5kZWNvZGUoJ2Jhc2U2NCcpCiAgICAgICAgICAgICAgICBzZWxmLm1haW5tZW51ID0gJ0pYTjFjbUpoYmk1d2FIQT0nLmRlY29kZSgnYmFzZTY0JykgJSAoc2VsZi5iYXNlX3VybCkKICAgICAgICAgICAgZWxpZiBhY3Rpb24gPT0gJ3NjaWZpJzoKICAgICAgICAgICAgICAgIHNlbGYuYWN0aW9uICAgPSAnc2NpZmknCiAgICAgICAgICAgICAgICBzZWxmLmJhc2VfdXJsID0gJ2FIUjBjRG92TDIwemRTNTRlWG92YlhSaUwzbDBiVzkyYVdWekx3PT0nLmRlY29kZSgnYmFzZTY0JykKICAgICAgICAgICAgICAgIHNlbGYubWFpbm1lbnUgPSAnSlhOelkybG1hUzUwZUhRPScuZGVjb2RlKCdiYXNlNjQnKSAlIChzZWxmLmJhc2VfdXJsKQogICAgICAgICAgICBlbGlmIGFjdGlvbiA9PSAndHZSZXZpZXdzJzoKICAgICAgICAgICAgICAgIHNlbGYuYWN0aW9uICAgPSAndHZSZXZpZXdzJwogICAgICAgICAgICAgICAgc2VsZi5iYXNlX3VybCA9ICdhSFIwY0hNNkx5OXlZWGN1WjJsMGFIVmlkWE5sY21OdmJuUmxiblF1WTI5dEwyMTFZV1JrYVdKMGRIWXZkR2hsWTNKcGRHbGpjeTl0WVhOMFpYSXYnLmRlY29kZSgnYmFzZTY0JykKICAgICAgICAgICAgICAgIHNlbGYubWFpbm1lbnUgPSAnSlhOMFpXeGxkbWx6YVc5dUxuUjRkQT09Jy5kZWNvZGUoJ2Jhc2U2NCcpICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgICAgIGVsaWYgYWN0aW9uID09ICdtb3ZpZVJldmlld3MnOgogICAgICAgICAgICAgICAgc2VsZi5hY3Rpb24gICA9ICdtb3ZpZVJldmlld3MnCiAgICAgICAgICAgICAgICBzZWxmLmJhc2VfdXJsID0gJ2FIUjBjSE02THk5eVlYY3VaMmwwYUhWaWRYTmxjbU52Ym5SbGJuUXVZMjl0TDIxMVlXUmthV0owZEhZdmRHaGxZM0pwZEdsamN5OXRZWE4wWlhJdicuZGVjb2RlKCdiYXNlNjQnKQogICAgICAgICAgICAgICAgc2VsZi5tYWlubWVudSA9ICdKWE50YjNacFpYTXVkSGgwJy5kZWNvZGUoJ2Jhc2U2NCcpICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgICAgIHNlbGYuc3VibWVudSA9IHNlbGYuc3VibWVudSAlIChzZWxmLmJhc2VfdXJsLCAnJXMnKQogICAgICAgICAgICBzZWxmLmRlZmF1bHRfaWNvbiA9IHNlbGYuZGVmYXVsdF9pY29uICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgICAgIHNlbGYuZGVmYXVsdF9mYW5hcnQgPSBzZWxmLmRlZmF1bHRfZmFuYXJ0ICUgKHNlbGYuYmFzZV91cmwpCiAgICAgICAgZXhjZXB0OgogICAgICAgICAgICBwYXNzCgogICAgZGVmIHJvb3Qoc2VsZiwgYWN0aW9uKToKICAgICAgICB0cnk6CiAgICAgICAgICAgIHNlbGYuaW5pdF92YXJzKGFjdGlvbikKICAgICAgICAgICAgbWVudUl0ZW1zID0geW91dHViZV9tZW51LnlvdXR1YmVfbWVudSgpLnByb2Nlc3NNZW51RmlsZShzZWxmLm1haW5tZW51KQogICAgICAgICAgICBmb3IgbmFtZSxzZWN0aW9uLHNlYXJjaGlkLHN1YmlkLHBsYXlsaXN0aWQsY2hhbm5lbGlkLHZpZGVvaWQsaWNvbmltYWdlLGZhbmFydCxkZXNjcmlwdGlvbiBpbiBtZW51SXRlbXM6CiAgICAgICAgICAgICAgICBpZiBub3Qgc3ViaWQgPT0gJ2ZhbHNlJzogIyBNZWFucyB0aGlzIGl0ZW0gcG9pbnRzIHRvIGEgc3VibWVudQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRNZW51SXRlbShuYW1lLCBzZWxmLmFjdGlvbiwgc3ViaWQsIGljb25pbWFnZSwgZmFuYXJ0LCBkZXNjcmlwdGlvbiwgVHJ1ZSkKICAgICAgICAgICAgICAgIGVsaWYgbm90IHNlYXJjaGlkID09ICdmYWxzZSc6ICMgTWVhbnMgdGhpcyBpcyBhIHNlYXJjaCB0ZXJtCiAgICAgICAgICAgICAgICAgICAgeW91dHViZV9tZW51LnlvdXR1YmVfbWVudSgpLmFkZFNlYXJjaEl0ZW0obmFtZSwgc2VhcmNoaWQsIGljb25pbWFnZSwgZmFuYXJ0KQogICAgICAgICAgICAgICAgZWxpZiBub3QgdmlkZW9pZCA9PSAnZmFsc2UnOiAjIE1lYW5zIHRoaXMgaXMgYSB2aWRlbyBpZCBlbnRyeQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRWaWRlb0l0ZW0obmFtZSwgdmlkZW9pZCwgaWNvbmltYWdlLCBmYW5hcnQpCiAgICAgICAgICAgICAgICBlbGlmIG5vdCBjaGFubmVsaWQgPT0gJ2ZhbHNlJzogIyBNZWFucyB0aGlzIGlzIGEgY2hhbm5lbCBpZCBlbnRyeQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRDaGFubmVsSXRlbShuYW1lLCBjaGFubmVsaWQsIGljb25pbWFnZSwgZmFuYXJ0KQogICAgICAgICAgICAgICAgZWxpZiBub3QgcGxheWxpc3RpZCA9PSAnZmFsc2UnOiAjIE1lYW5zIHRoaXMgaXMgYSBwbGF5bGlzdCBpZCBlbnRyeQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRQbGF5bGlzdEl0ZW0obmFtZSwgcGxheWxpc3RpZCwgaWNvbmltYWdlLCBmYW5hcnQpCiAgICAgICAgICAgICAgICBlbGlmIG5vdCBzZWN0aW9uID09ICdmYWxzZSc6ICMgTWVhbnMgdGhpcyBpcyBhIHNlY3Rpb24gcGxhY2Vob2xkZXIvaW5mbyBsaW5lCiAgICAgICAgICAgICAgICAgICAgeW91dHViZV9tZW51LnlvdXR1YmVfbWVudSgpLmFkZFNlY3Rpb25JdGVtKG5hbWUsIHNlbGYuZGVmYXVsdF9pY29uLCBzZWxmLmRlZmF1bHRfZmFuYXJ0KQogICAgICAgICAgICBzZWxmLmVuZERpcmVjdG9yeSgpCiAgICAgICAgZXhjZXB0OgogICAgICAgICAgICBwYXNzCgogICAgZGVmIGdldChzZWxmLCBhY3Rpb24sIHN1YmlkKToKICAgICAgICB0cnk6CiAgICAgICAgICAgIHNlbGYuaW5pdF92YXJzKGFjdGlvbikKICAgICAgICAgICAgdGhpc01lbnVGaWxlID0gc2VsZi5zdWJtZW51ICUgKHN1YmlkKQogICAgICAgICAgICBtZW51SXRlbXMgPSB5b3V0dWJlX21lbnUueW91dHViZV9tZW51KCkucHJvY2Vzc01lbnVGaWxlKHRoaXNNZW51RmlsZSkKICAgICAgICAgICAgZm9yIG5hbWUsc2VjdGlvbixzZWFyY2hpZCxzdWJpZCxwbGF5bGlzdGlkLGNoYW5uZWxpZCx2aWRlb2lkLGljb25pbWFnZSxmYW5hcnQsZGVzY3JpcHRpb24gaW4gbWVudUl0ZW1zOgogICAgICAgICAgICAgICAgaWYgbm90IHN1YmlkID09ICdmYWxzZSc6ICMgTWVhbnMgdGhpcyBpdGVtIHBvaW50cyB0byBhIHN1Ym1lbnUKICAgICAgICAgICAgICAgICAgICB5b3V0dWJlX21lbnUueW91dHViZV9tZW51KCkuYWRkTWVudUl0ZW0obmFtZSwgc2VsZi5hY3Rpb24sIHN1YmlkLCBpY29uaW1hZ2UsIGZhbmFydCwgZGVzY3JpcHRpb24sIFRydWUpCiAgICAgICAgICAgICAgICBlbGlmIG5vdCBzZWFyY2hpZCA9PSAnZmFsc2UnOiAjIE1lYW5zIHRoaXMgaXMgYSBzZWFyY2ggdGVybQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRTZWFyY2hJdGVtKG5hbWUsIHNlYXJjaGlkLCBpY29uaW1hZ2UsIGZhbmFydCkKICAgICAgICAgICAgICAgIGVsaWYgbm90IHZpZGVvaWQgPT0gJ2ZhbHNlJzogIyBNZWFucyB0aGlzIGlzIGEgdmlkZW8gaWQgZW50cnkKICAgICAgICAgICAgICAgICAgICB5b3V0dWJlX21lbnUueW91dHViZV9tZW51KCkuYWRkVmlkZW9JdGVtKG5hbWUsIHZpZGVvaWQsIGljb25pbWFnZSwgZmFuYXJ0KQogICAgICAgICAgICAgICAgZWxpZiBub3QgY2hhbm5lbGlkID09ICdmYWxzZSc6ICMgTWVhbnMgdGhpcyBpcyBhIGNoYW5uZWwgaWQgZW50cnkKICAgICAgICAgICAgICAgICAgICB5b3V0dWJlX21lbnUueW91dHViZV9tZW51KCkuYWRkQ2hhbm5lbEl0ZW0obmFtZSwgY2hhbm5lbGlkLCBpY29uaW1hZ2UsIGZhbmFydCkKICAgICAgICAgICAgICAgIGVsaWYgbm90IHBsYXlsaXN0aWQgPT0gJ2ZhbHNlJzogIyBNZWFucyB0aGlzIGlzIGEgcGxheWxpc3QgaWQgZW50cnkKICAgICAgICAgICAgICAgICAgICB5b3V0dWJlX21lbnUueW91dHViZV9tZW51KCkuYWRkUGxheWxpc3RJdGVtKG5hbWUsIHBsYXlsaXN0aWQsIGljb25pbWFnZSwgZmFuYXJ0KQogICAgICAgICAgICAgICAgZWxpZiBub3Qgc2VjdGlvbiA9PSAnZmFsc2UnOiAjIE1lYW5zIHRoaXMgaXMgYSBzZWN0aW9uIHBsYWNlaG9sZGVyL2luZm8gbGluZQogICAgICAgICAgICAgICAgICAgIHlvdXR1YmVfbWVudS55b3V0dWJlX21lbnUoKS5hZGRTZWN0aW9uSXRlbShuYW1lLCBzZWxmLmRlZmF1bHRfaWNvbiwgc2VsZi5kZWZhdWx0X2ZhbmFydCkKICAgICAgICAgICAgc2VsZi5lbmREaXJlY3RvcnkoKQogICAgICAgIGV4Y2VwdDoKICAgICAgICAgICAgcGFzcwoKICAgIGRlZiBlbmREaXJlY3Rvcnkoc2VsZik6CiAgICAgICAgY29udHJvbC5kaXJlY3RvcnkodGhpc2hhbmRsZSwgY2FjaGVUb0Rpc2M9VHJ1ZSkK')
+    def init_vars(self, action):
+        try:
+            if action == 'fitness':
+                self.action   = 'fitness'
+                self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tLzEzQ2xvd25zL3Jlc291cmNlcy9tYXN0ZXIveG1scy9maXRuZXNzem9uZS8='.decode('base64')
+                self.mainmenu = 'JXNmem1haW4udHh0'.decode('base64') % (self.base_url)
+            elif action == 'youtube':
+                self.action   = 'youtube'
+                self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tLzEzQ2xvd25zL3Jlc291cmNlcy9tYXN0ZXIveG1scy95b3V0dWJlLw=='.decode('base64')
+                self.mainmenu = 'JXN5dG1haW4udHh0'.decode('base64') % (self.base_url)
+            elif action == 'kungfu':
+                self.action   = 'kungfu'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')
+                self.mainmenu = 'JXNrdW5nZnUucGhw'.decode('base64') % (self.base_url)
+            elif action == 'urban':
+                self.action   = 'urban'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')
+                self.mainmenu = 'JXN1cmJhbi5waHA='.decode('base64') % (self.base_url)
+            elif action == 'scifi':
+                self.action   = 'scifi'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')
+                self.mainmenu = 'JXNzY2lmaS50eHQ='.decode('base64') % (self.base_url)
+            elif action == 'tvReviews':
+                self.action   = 'tvReviews'
+                self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL211YWRkaWJ0dHYvdGhlY3JpdGljcy9tYXN0ZXIv'.decode('base64')
+                self.mainmenu = 'JXN0ZWxldmlzaW9uLnR4dA=='.decode('base64') % (self.base_url)
+            elif action == 'movieReviews':
+                self.action   = 'movieReviews'
+                self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL211YWRkaWJ0dHYvdGhlY3JpdGljcy9tYXN0ZXIv'.decode('base64')
+                self.mainmenu = 'JXNtb3ZpZXMudHh0'.decode('base64') % (self.base_url)
+            self.submenu = self.submenu % (self.base_url, '%s')
+            self.default_icon = self.default_icon % (self.base_url)
+            self.default_fanart = self.default_fanart % (self.base_url)
+        except:
+            pass
+
+    def root(self, action):
+        try:
+            self.init_vars(action)
+            menuItems = youtube_menu.youtube_menu().processMenuFile(self.mainmenu)
+            for name,section,searchid,subid,playlistid,channelid,videoid,iconimage,fanart,description in menuItems:
+                if not subid == 'false': # Means this item points to a submenu
+                    youtube_menu.youtube_menu().addMenuItem(name, self.action, subid, iconimage, fanart, description, True)
+                elif not searchid == 'false': # Means this is a search term
+                    youtube_menu.youtube_menu().addSearchItem(name, searchid, iconimage, fanart)
+                elif not videoid == 'false': # Means this is a video id entry
+                    youtube_menu.youtube_menu().addVideoItem(name, videoid, iconimage, fanart)
+                elif not channelid == 'false': # Means this is a channel id entry
+                    youtube_menu.youtube_menu().addChannelItem(name, channelid, iconimage, fanart)
+                elif not playlistid == 'false': # Means this is a playlist id entry
+                    youtube_menu.youtube_menu().addPlaylistItem(name, playlistid, iconimage, fanart)
+                elif not section == 'false': # Means this is a section placeholder/info line
+                    youtube_menu.youtube_menu().addSectionItem(name, self.default_icon, self.default_fanart)
+            self.endDirectory()
+        except:
+            pass
+
+    def get(self, action, subid):
+        try:
+            self.init_vars(action)
+            thisMenuFile = self.submenu % (subid)
+            menuItems = youtube_menu.youtube_menu().processMenuFile(thisMenuFile)
+            for name,section,searchid,subid,playlistid,channelid,videoid,iconimage,fanart,description in menuItems:
+                if not subid == 'false': # Means this item points to a submenu
+                    youtube_menu.youtube_menu().addMenuItem(name, self.action, subid, iconimage, fanart, description, True)
+                elif not searchid == 'false': # Means this is a search term
+                    youtube_menu.youtube_menu().addSearchItem(name, searchid, iconimage, fanart)
+                elif not videoid == 'false': # Means this is a video id entry
+                    youtube_menu.youtube_menu().addVideoItem(name, videoid, iconimage, fanart)
+                elif not channelid == 'false': # Means this is a channel id entry
+                    youtube_menu.youtube_menu().addChannelItem(name, channelid, iconimage, fanart)
+                elif not playlistid == 'false': # Means this is a playlist id entry
+                    youtube_menu.youtube_menu().addPlaylistItem(name, playlistid, iconimage, fanart)
+                elif not section == 'false': # Means this is a section placeholder/info line
+                    youtube_menu.youtube_menu().addSectionItem(name, self.default_icon, self.default_fanart)
+            self.endDirectory()
+        except:
+            pass
+
+    def endDirectory(self):
+        control.directory(thishandle, cacheToDisc=True)

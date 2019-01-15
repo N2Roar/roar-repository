@@ -391,7 +391,7 @@ class sources:
 
         for i in range(0, 4 * timeout):
             if str(pre_emp) == 'true':
-                if quality in ['1','0']:
+                if quality in ['0','1']:
                     if (source_1080 + d_source_1080) >= int(pre_emp_limit): break
                 elif quality in ['2']:
                     if (source_720 + d_source_720) >= int(pre_emp_limit): break
@@ -1178,11 +1178,11 @@ class sources:
         scraperSetting = control.setting('module.provider')
 
         try:
-            if xbmc.getCondVisibility('System.HasAddon(%s)' % 'script.module.lambdascrapers') and not scraperSetting == 'Global Scrapers':
-                from lambdascrapers import sources
+            if xbmc.getCondVisibility('System.HasAddon(%s)' % 'script.module.civitasscrapers') and not scraperSetting == 'Global Scrapers':
+                from civitasscrapers import sources
                 self.sourceDict = sources()
-                self.module_name = control.addon('script.module.lambdascrapers').getSetting('module.provider')
-            elif xbmc.getCondVisibility('System.HasAddon(%s)' % 'script.module.globalscrapers') and not scraperSetting == 'Lambda Scrapers':
+                self.module_name = 'Civitas Scrapers'
+            elif xbmc.getCondVisibility('System.HasAddon(%s)' % 'script.module.globalscrapers') and not scraperSetting == 'Civitas Scrapers':
                 from globalscrapers import sources
                 self.sourceDict = sources()
                 self.module_name = 'Global Scrapers'

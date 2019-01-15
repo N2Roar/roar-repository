@@ -1,3 +1,12 @@
+[B]1.3.0.1[/B]
+- fixed double genere in settings
+[B]1.3.0[/B]
+- Lambda Scrappers are removed. Let him RIP
+- Civitas Srapers added - COMMUNITY BASED
+- Navigation changes, hide almost anything, customize it.
+- fixed episode displaying
+- monthly / favorites changed so that monthly addon updates not needed, done remotely.
+- added cartoon collections
 [B]1.2.9[/B]
 - Rearrange menus for my liking (template), thanks Frankenstien Bc
 - added artwork, Thanks @Wolfgir08604753 and @mr000iconz

@@ -39,7 +39,7 @@ from resources.lib.modules import control
 from resources.lib.modules import log_utils
 from resources.lib.modules import utils
 
-BASE_URL = 'http://api.trakt.tv'
+BASE_URL = 'https://api.trakt.tv'
 #BASE_URL = 'https://api-v2launch.trakt.tv'
 V2_API_KEY = '63fe87cccaeb593c552681ded0477b57c72591ec2f0c6d07d6b95530a39bbe68'
 CLIENT_SECRET = '425c71be41c7cc2aaeb75a3936cf59a045954f53e8d48c6b4ec9b172c1fc4b3c'

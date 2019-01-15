@@ -28,7 +28,19 @@
         <setting id="navi.monthlyspotlight" type="bool" label="Monthly Spotlight" default="true" />
         <setting id="navi.docu" type="bool" label="32631" default="true" />
         <setting id="navi.yt" type="bool" label="You Tube Videos" default="true" />
+        <setting id="navi.cartoons" type="bool" label="Cartoons" default="true" />
         <setting type="lsep" label="32001" />
+        <setting id="navi.actor" type="bool" label="Actor Collections" default="true" />
+        <setting id="navi.boxset" type="bool" label="Boxset Collections" default="true" />
+        <setting id="navi.xmas" type="bool" label="Christmans Collections" default="true" />
+        <setting id="navi.kids" type="bool" label="Kids Collections" default="true" />
+        <setting id="navi.superhero" type="bool" label="Superhero Collections" default="true" />
+        <setting id="navi.car" type="bool" label="Car Movie Collections" default="true" />
+        <setting id="navi.fiftys" type="bool" label="$NUMBER[50]'s" default="true" />
+        <setting id="navi.sixtys" type="bool" label="$NUMBER[60]'s" default="true" />
+        <setting id="navi.seventys" type="bool" label="$NUMBER[70]'s" default="true" />
+        <setting id="navi.eightys" type="bool" label="$NUMBER[80]'s" default="true" />
+        <setting id="navi.ninetys" type="bool" label="$NUMBER[90]'s" default="true" />
         <setting id="navi.moviegenre" type="bool" label="32011" default="true" />
         <setting id="navi.moviepersons" type="bool" label="32013" default="true" />
         <setting id="navi.movielanguages" type="bool" label="32014" default="true" />
@@ -58,7 +70,7 @@
     <category label="32330">
         <setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="1" />
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="6" />
-        <setting id="prem.identify" type="enum" label="32588" lvalues="32590|32589|32591|32592|32593|32594|32595|32596|32597|32598" default="9" />
+        <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="9" />
         <setting id="preemptive.termination" type="bool" label="Pre-emptive Termination" default="true" />
         <setting id="preemptive.limit" type="slider" label="Pre-emptive Limit" default="5" range="1,50" option="int" />
         <setting type="lsep" label="32338" />
@@ -79,21 +91,23 @@
     </category>
     <category label="32345">
         <setting type="lsep" label="Scraper Provider  Choice" />       
-        <setting id="module.provider" type="labelenum" label="Scraper Provider" default="Lambda Scrapers" visible="true" enable="true" values="Lambda Scrapers|Global Scrapers" />
-        <setting id="open.settings" type="action" label="Open Lambda Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.lambdascrapers/?mode=LambdaSettings)" />
+        <setting id="module.provider" type="labelenum" label="Scraper Provider" default="Civitas Scrapers" visible="true" enable="true" values="Civitas Scrapers|Global Scrapers" />
+        <setting id="open.settings" type="action" label="Open Civitas Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.civitasscrapers/?mode=CivitasSettings)" />
         <setting type="lsep" label="Clear Providers Cache After Changing Scraper Provider" />
         <setting id="open.Settings" type="action" label="Clear Providers Cache" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=clearSources)" />
         <setting type="sep" />
         <setting id="provider.trailers" type="bool" label="Show Trailers" default="false" />
     </category>
     <category label="32346">
-        <setting type="lsep" label="FANART.TV" />
         <setting type="lsep" label="32582" default="" />
-        <setting type="lsep" label="32583" default="" />
+        <setting type="lsep" label="FANART.TV" />
         <setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
         <setting type="sep" />
         <setting type="lsep" label="TMDb" />
-        <setting id="tm.user" type="text" option="hidden" label="TMDb API" default="0049795edb57568b95240bc9e61a9dfc" />
+        <setting id="tm.user" type="text" option="hidden" label="TMDb API" default="" />
+        <setting type="sep" />
+        <setting type="lsep" label="TVDB" />
+        <setting id="tv.user" type="text" option="hidden" label="TVDb API" default="" />
         <setting type="sep" />
         <setting type="lsep" label="Trakt" />
         <setting id="trakt.auth" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=authTrakt)" />
