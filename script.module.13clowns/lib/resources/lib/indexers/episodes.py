@@ -1424,7 +1424,7 @@ class episodes:
                 if i['label'] == '0':
                     label = '%sx%02d . %s %s' % (i['season'], int(i['episode']), 'Episode', i['episode'])
                 else:
-                    label = '%02d . %s' % (int(i['episode']), i['label'])
+                    label = '%sx%02d . %s' % (i['season'], int(i['episode']), i['label'])
                 if multi == True:
                     label = '%s - %s' % (i['tvshowtitle'], label)
                 

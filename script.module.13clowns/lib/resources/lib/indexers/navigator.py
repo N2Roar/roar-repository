@@ -52,17 +52,33 @@ class navigator:
     def root(self):
         self.addDirectoryItem('Help / Information / Credits', 'newsNavigator', 'help.png', 'DefaultAddonProgram.png')
         if self.getMenuEnabled('navi.monthlyclown') == True:
-            self.addDirectoryItem('[B][COLORred]13Clowns[/COLOR] Favorites[/B]', 'movies&url=clowns', 'spotlight.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('[B][COLORred]13Clowns[/COLOR] Favorites[/B]', 'movies&url=clowns', 'icon.png', 'DefaultRecentlyAddedMovies.png')
+        
         if self.getMenuEnabled('navi.monthlyspotlight') == True:
-            self.addDirectoryItem('[B][COLOR yellow]Monthly Spotlight[/COLOR][/B]', 'movies&url=spotlight', 'movies.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('[B][COLOR yellow]Monthly Spotlight[/COLOR][/B]', 'movies&url=spotlight', 'spotlight.png', 'DefaultRecentlyAddedMovies.png')
+        
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
+        
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.cartoons') == True:
-            self.addDirectoryItem('Cartoons', 'tvshows&url=cartoons', 'boxsets.png', 'DefaultTVShows.png')
+            self.addDirectoryItem('Cartoons', 'tvshows&url=cartoons', 'cartoons.png', 'DefaultTVShows.png')
+        
         if self.getMenuEnabled('navi.docu') == True:
             self.addDirectoryItem(32631, 'docuHeaven', 'documentaries.png', 'DefaultMovies.png')
+        
         if self.getMenuEnabled('navi.yt') == True:
             self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
+        
+        if not control.setting('lists.widget') == '0':
+            self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png', 'DefaultVideoPlaylists.png')
+            self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
+
+        if not control.setting('movie.widget') == '0':
+            self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
+
+        if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (traktIndicators == False and not control.setting('tv.widget') == '0'):
+            self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
+
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem('Choose Scraper Package', 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
         
@@ -124,7 +140,7 @@ class navigator:
         if self.getMenuEnabled('navi.seventys') == True:
             self.addDirectoryItem('70s Movies 1970 - 1979', 'movies&url=seventys', 'years.png', 'DefaultRecentlyAddedMovies.png')
         if self.getMenuEnabled('navi.eightys') == True:
-            self.addDirectoryItem('80s Movies 1980 - 1989', 'movies&url=eights', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('80s Movies 1980 - 1989', 'movies&url=eightys', 'years.png', 'DefaultRecentlyAddedMovies.png')
         if self.getMenuEnabled('navi.ninetys') == True:
             self.addDirectoryItem('90s Movies 1990 - 1999', 'movies&url=ninetys', 'years.png', 'DefaultRecentlyAddedMovies.png')
         if self.getMenuEnabled('navi.moviegenre') == True:
@@ -758,45 +774,5 @@ class navigator:
 '''
 ##########################################################
 ################NOTES###############################
-#if not control.setting('lists.widget') == '0':
-            #self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png', 'DefaultVideoPlaylists.png')
-            #self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
-
-        #if not control.setting('movie.widget') == '0':
-            #self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
-
-        #if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (traktIndicators == False and not control.setting('tv.widget') == '0'):
-            #self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
-        #if not control.setting('furk.api') == '':
-        #self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png', 'movies.png')
-
-        #self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
-
-###############################################################
-############Navigation YouTube Stuff###########################
-###
-
-    def yt(self, lite=False):
-        channels = True if control.setting('navi.widget') == 'true' else False
-        if channels == True:
-            if self.getMenuEnabled('navi.kidscorner') == True:
-                self.addDirectoryItem(32610, 'kidscorner', 'kidscorner.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.kidscorner') == True:
-                self.addDirectoryItem(32610, 'kidscorner', 'kidscorner.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.fitness') == True:
-                self.addDirectoryItem(32611, 'fitness', 'fitness.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.legends') == True:
-                self.addDirectoryItem(32612, 'legends', 'legends.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.kings') == True:
-                self.addDirectoryItem(80000, 'kings', 'kings.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.kungfu') == True:
-                self.addDirectoryItem(80001, 'kungfu', 'kungfu.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.urban') == True:
-                self.addDirectoryItem(80002, 'urban', 'urban.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.scifi') == True:
-                self.addDirectoryItem(80003, 'scifi', 'scifi.png', 'DefaultMovies.png')
-            if self.getMenuEnabled('navi.podcasts') == True:
-                self.addDirectoryItem(32620, 'podcastNavigator', 'podcast.png', 'DefaultVideoPlaylists.png')
-
-        self.endDirectory()
+#self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
 '''

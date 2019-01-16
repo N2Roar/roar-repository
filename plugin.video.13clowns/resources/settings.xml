@@ -14,9 +14,10 @@
         <setting id="hidecinema" type="bool" label="32571" default="false" />
         <setting type="lsep" label="32319" />
         <setting id="movie.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="1" />
-        <setting id="tv.widget.alt" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="2" />  
+        <setting id="tv.widget" type="enum" label="32325" lvalues="32302|32326" default="0" visible="eq(-12,)" />  
+        <setting id="tv.widget.alt" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="0" />
         <setting id="prgr.sortorder" type="enum" label="32584" lvalues="32585|32586" default="1" />
-        <setting id="lists.widget" type="enum" label="32329" lvalues="32302|32301" default="1" />
+        <setting id="lists.widget" type="enum" label="32329" lvalues="32302|32301" default="0" />
         <setting type="lsep" label="Auto Trakt Collections Syncing" />
         <setting id="autoTraktOnStart" type="bool" label="Sync on Kodi Start" default="False" />
         <setting id="schedTraktTime" type="slider" label="Schedule Updates Every - Hour/s" default="0" range="0,24" option="int" />
@@ -72,7 +73,7 @@
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="6" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="9" />
         <setting id="preemptive.termination" type="bool" label="Pre-emptive Termination" default="true" />
-        <setting id="preemptive.limit" type="slider" label="Pre-emptive Limit" default="5" range="1,50" option="int" />
+        <setting id="preemptive.limit" type="slider" label="Pre-emptive Limit" default="4" range="1,50" option="int" />
         <setting type="lsep" label="32338" />
         <setting type="sep" />
         <setting id="debrid.only" type="bool" label="Debrid Sources Only" default="" />
@@ -106,7 +107,7 @@
         <setting type="lsep" label="TMDb" />
         <setting id="tm.user" type="text" option="hidden" label="TMDb API" default="" />
         <setting type="sep" />
-        <setting type="lsep" label="TVDB" />
+        <setting type="lsep" label="TVDb" />
         <setting id="tv.user" type="text" option="hidden" label="TVDb API" default="" />
         <setting type="sep" />
         <setting type="lsep" label="Trakt" />
