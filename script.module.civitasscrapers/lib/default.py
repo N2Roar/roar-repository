@@ -81,5 +81,5 @@ if mode == "toggleAllTorrent":
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "Defaults":
-    sourcelist = ['0123putlocker','123fox','123hbo','123hulu','123movieshubz','300mbdownload','animetoon','azmovies','bnwmovies','cartoonhd','cmovies','cmovieshdbz','coolmoviezone','extramovies','fmovies','freefmovies','freeputlockers','furk','gostream','gowatchseries','Hdmto','hdpopcorns','kattv','l23movies','library','moviesonline','movietoken','myprojectfreetv','openloadmovie','ororo','plocker','primewire','putlocker','reddit','rlsbb','scenerls','seehd','series9','seriesfree','seriesonline','solarmovies','tvbox','videoscraper','vidics','watchseries','xwatchseries']
+    sourcelist = ['0123putlocker','123fox','123hbo','123hulu','123movieshubz','300mbdownload','animetoon','azmovies','bnwmovies','cartoonhd','cmovies','cmovieshdbz','coolmoviezone','extramovies','fmovies','freefmovies','freeputlockers','furk','gostream','gowatchseries','Hdmto','hdpopcorns','kattv','l23movies','library','moviesonline','movietoken','myprojectfreetv','openloadmovie','ororo','plocker','primewire','putlocker','reddit','rlsbb','scenerls','seehd','series9','seriesfree','seriesonline','solarmoviez','tvbox','videoscraper','vidics','watchseries','xwatchseries']
     toggleAll(params['setting'], params['open_id'], sourcelist)

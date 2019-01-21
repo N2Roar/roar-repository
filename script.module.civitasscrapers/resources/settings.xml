@@ -22,7 +22,6 @@
         <setting id="provider.cmovieshd" type="bool" label="CMOVIESHD" default="true" /> 
         <setting id="provider.cmovieshdbz" type="bool" label="CMOVIESHDBZ" default="true" /> 
         <setting id="provider.coolmoviezone" type="bool" label="COOLMOVIEZONE" default="true" />  
-        <setting id="provider.darewatch" type="bool" label="DAREWATCH" default="true" /> 
         <setting id="provider.extramovies" type="bool" label="EXTRAMOVIES" default="true" /> 
         <setting id="provider.fmovies" type="bool" label="FMOVIES" default="true" />  
         <setting id="provider.freefmovies" type="bool" label="FREEFMOVIES" default="true" />  
@@ -30,7 +29,7 @@
         <setting id="provider.furk" type="bool" label="FURK" default="true" /> 
         <setting id="provider.gostream" type="bool" label="GOSTREAM" default="true" />
         <setting id="provider.gowatchseries" type="bool" label="GOWATCHSERIES" default="true" />  
-        <setting id="provider.hdmto" type="bool" label="HDMTO" default="true" /> 
+        <setting id="provider.Hdmto" type="bool" label="HDMTO" default="true" /> 
         <setting id="provider.hdpopcorns" type="bool" label="HDPOPCORNS" default="true" /> 
         <setting id="provider.kattv" type="bool" label="KATTV" default="true" /> 
         <setting id="provider.l23movies" type="bool" label="L23MOVIES" default="true" />
@@ -54,7 +53,6 @@
         <setting id="provider.solarmovie" type="bool" label="SOLARMOVIE" default="true" />  
         <setting id="provider.solarmoviez" type="bool" label="SOLARMOVIEZ" default="true" /> 
         <setting id="provider.tvbox" type="bool" label="TVBOX" default="true" /> 
-        <setting id="provider.uhd" type="bool" label="UHD" default="true" /> 
         <setting id="provider.videoscraper" type="bool" label="VIDEOSCRAPER" default="true" /> 
         <setting id="provider.vidics" type="bool" label="VIDICS" default="true" />
         <setting id="provider.watchseries" type="bool" label="WATCHSERIES" default="true" />  

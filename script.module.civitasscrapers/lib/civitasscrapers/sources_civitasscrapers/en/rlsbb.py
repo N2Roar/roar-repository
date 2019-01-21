@@ -168,6 +168,8 @@ class source:
                         quality = 'HD'
                     elif '1080p' in host2:
                         quality = '1080p'
+                    elif '2160p' in host2:
+                        quality = '4K'
                     else:
                         quality = 'SD'
 
