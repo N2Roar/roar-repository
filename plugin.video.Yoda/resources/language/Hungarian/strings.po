@@ -576,7 +576,7 @@ msgstr "Nincs elérhető adatfolyam"
 
 msgctxt "#32402"
 msgid "Playback outside Yoda is not allowed"
-msgstr "legacyon kívüli lejátszás nem engedélyezett"
+msgstr "Yodaon kívüli lejátszás nem engedélyezett"
 
 msgctxt "#32403"
 msgid "Download"
@@ -695,12 +695,12 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID SZOLGÁLTATÁS"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Debrid szolgáltatások konfigurálása az ResolveUrl beállíásokban"
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Debrid szolgáltatások konfigurálása az URLResolver beállíásokban"
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "ResolveUrl beállítások"
+msgid "URLResolver Settings"
+msgstr "URLResolver beállítások"
 
 msgctxt "#32541"
 msgid "Library"

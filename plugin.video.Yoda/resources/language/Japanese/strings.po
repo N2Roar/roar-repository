@@ -292,11 +292,11 @@ msgstr "キューに入れる"
 
 msgctxt "#32066"
 msgid "Watched in Yoda"
-msgstr "legacyで視聴済"
+msgstr "Yodaで視聴済"
 
 msgctxt "#32067"
 msgid "Unwatched in Yoda"
-msgstr "legacyで未視聴"
+msgstr "Yodaで未視聴"
 
 msgctxt "#32068"
 msgid "Watched in Trakt"
@@ -572,7 +572,7 @@ msgstr "ストリームが存在しません"
 
 msgctxt "#32402"
 msgid "Playback outside Yoda is not allowed"
-msgstr "legacyでの再生は許可されていません"
+msgstr "Yodaでの再生は許可されていません"
 
 msgctxt "#32403"
 msgid "Download"

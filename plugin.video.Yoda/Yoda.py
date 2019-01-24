@@ -17,9 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
 import urlparse,sys,urllib
-from resources.lib.modules import log_utils														
+from resources.lib.modules import log_utils
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
 
@@ -30,6 +29,14 @@ subid = params.get('subid')
 docu_category = params.get('docuCat')
 
 docu_watch = params.get('docuPlay')
+
+podcast_show = params.get('podcastshow')
+
+podcast_cat = params.get('podcastlist')
+
+podcast_cats = params.get('podcastcategories')
+
+podcast_episode = params.get('podcastepisode')
 
 name = params.get('name')
 
@@ -68,132 +75,16 @@ content = params.get('content')
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 
-
 if action == None:
     from resources.lib.indexers import navigator
     from resources.lib.modules import cache
     cache.cache_version_check()
     navigator.navigator().root()
 
-if action == 'boxsetsNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().root()
-    
-elif action == 'actionNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().action()
-    
-elif action == 'actionliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().action(lite=True)
+elif action == 'newsNavigator':
+    from resources.lib.indexers import navigator
+    navigator.navigator().news()
 
-elif action == 'adventureNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().adventure()
-    
-elif action == 'adventureliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().adventure(lite=True)
-    
-elif action == 'animationNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().animation()
-    
-elif action == 'animationliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().animation(lite=True)
-    
-elif action == 'comedyNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().comedy()
-    
-elif action == 'comedyliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().comedy(lite=True)
-    
-elif action == 'crimeNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().crime()
-    
-elif action == 'crimeliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().crime(lite=True)
-    
-elif action == 'dramaNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().drama()
-    
-elif action == 'dramaliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().drama(lite=True)
-    
-elif action == 'familyNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().family()
-    
-elif action == 'familyliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().family(lite=True)
-    
-elif action == 'fantasyNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().fantasy()
-    
-elif action == 'fantasyliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().fantasy(lite=True)
-
-elif action == 'horrorNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().horror()
-    
-elif action == 'horrorliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().horror(lite=True)
-    
-elif action == 'mysteryNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().mystery()
-    
-elif action == 'mysteryliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().mystery(lite=True)
-    
-elif action == 'romanceNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().romance()
-    
-elif action == 'romanceliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().romance(lite=True)
-    
-elif action == 'scifiNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().scifi()
-    
-elif action == 'scifiliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().scifi(lite=True)
-    
-elif action == 'thrillerNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().thriller()
-    
-elif action == 'thrillerliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().thriller(lite=True)
-    
-elif action == 'westernNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().western()
-    
-elif action == 'westernliteNavigator':
-    from resources.lib.indexers import bxsets
-    bxsets.navigator().western(lite=True)
-
-elif action == 'movies2':
-    from resources.lib.indexers import movies2
-    movies2.movies().get(url)
 elif action == 'movieNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().movies()
@@ -250,6 +141,10 @@ elif action == 'clearCache':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCache()
 
+elif action == 'clearCacheSearch':
+    from resources.lib.indexers import navigator
+    navigator.navigator().clearCacheSearch()
+
 elif action == 'clearAllCache':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCacheAll()
@@ -257,11 +152,7 @@ elif action == 'clearAllCache':
 elif action == 'clearMetaCache':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCacheMeta()
-	
-elif action == 'clearCacheSearch':
-    from resources.lib.indexers import navigator
-    navigator.navigator().clearCacheSearch()
-
+    
 elif action == 'infoCheck':
     from resources.lib.indexers import navigator
     navigator.navigator().infoCheck('')
@@ -341,7 +232,7 @@ elif action == 'tvSearchnew':
 elif action == 'tvSearchterm':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().search_term(name)
-
+    
 elif action == 'tvPerson':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().person()
@@ -349,6 +240,20 @@ elif action == 'tvPerson':
 elif action == 'tvGenres':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().genres()
+
+elif action == 'tvReviews':
+    from resources.lib.indexers import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
+
+elif action == 'movieReviews':
+    from resources.lib.indexers import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
 
 elif action == 'tvNetworks':
     from resources.lib.indexers import tvshows
@@ -438,23 +343,18 @@ elif action == 'authTrakt':
     from resources.lib.modules import trakt
     trakt.authTrakt()
 
-elif action == 'smuSettings':
-    try: import resolveurl
-    except: pass
-    resolveurl.display_settings()
-
 elif action == 'urlResolver':
     try: import resolveurl
     except: pass
     resolveurl.display_settings()
-	
+
 elif action == 'download':
     import json
     from resources.lib.modules import sources
     from resources.lib.modules import downloader
     try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], True))
     except: pass
-	
+
 elif action == 'docuHeaven':
     from resources.lib.indexers import docu
     if not docu_category == None:
@@ -462,7 +362,8 @@ elif action == 'docuHeaven':
     elif not docu_watch == None:
         docu.documentary().docu_play(docu_watch)
     else:
-        docu.documentary().root()	
+        docu.documentary().root()
+
 
 elif action == 'play':
     from resources.lib.modules import sources
@@ -533,9 +434,6 @@ elif action == 'movieToLibrary':
 elif action == 'moviesToLibrary':
     from resources.lib.modules import libtools
     libtools.libmovies().range(url)
-elif action == 'moviesToLibrarySilent':
-    from resources.lib.modules import libtools
-    libtools.libmovies().silent(url)
 
 elif action == 'tvshowToLibrary':
     from resources.lib.modules import libtools
@@ -544,9 +442,6 @@ elif action == 'tvshowToLibrary':
 elif action == 'tvshowsToLibrary':
     from resources.lib.modules import libtools
     libtools.libtvshows().range(url)
-elif action == 'tvshowsToLibrarySilent':
-    from resources.lib.modules import libtools
-    libtools.libtvshows().silent(url)
 
 elif action == 'updateLibrary':
     from resources.lib.modules import libtools

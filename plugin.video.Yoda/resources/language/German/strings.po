@@ -1,6 +1,6 @@
-# Translators:
+# Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: Yoda
+# Addon Provider: MuadDib
 # Translators:
 # Translators:
 # Translators:
@@ -584,6 +584,10 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr "Verzeichnis neu laden"
 
+msgctxt "#32374"
+msgid "Enable Debug"
+msgstr ""
+
 msgctxt "#32401"
 msgid "No stream available"
 msgstr "Keine Streams verfügbar"
@@ -709,12 +713,12 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-DIENSTE"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Konfiguriere Debrid-Dienste in den ResolveUrl-Einstellungen."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Konfiguriere Debrid-Dienste in den URLResolver-Einstellungen."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "ResolveUrl-Einstellungen"
+msgid "URLResolver Settings"
+msgstr "URLResolver-Einstellungen"
 
 msgctxt "#32541"
 msgid "Library"
@@ -909,5 +913,5 @@ msgid "Getting genre information from Trakt"
 msgstr "Hole Genre-Info von Trakt"
 
 msgctxt "#32600"
-msgid "Preparing sources"
+msgid "Preparing the speculum"
 msgstr "Quellen werden vorbereitet"

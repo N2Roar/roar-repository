@@ -10,7 +10,7 @@
 
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: Yoda
+# Addon Provider: Supremacy
 
 import requests,os,sys,re,datetime,urlparse,json,xbmcgui,xbmcplugin
 

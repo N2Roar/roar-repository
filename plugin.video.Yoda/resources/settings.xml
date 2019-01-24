@@ -3,17 +3,17 @@
     <category label="32310">
         <setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.Yoda/?action=artwork)" visible="!System.HasAddon(script.Yoda.artwork)" />
         <setting id="appearance.1" type="select" label="32311" values="Exuary|Yoda|Yoda Pic" default="Yoda" visible="System.HasAddon(script.Yoda.artwork)" />
-        <setting id="scrapers.timeout.1" type="slider" label="32312" default="60" range="10,60" option="int" />
+        <setting id="scrapers.timeout.1" type="slider" label="32312" default="25" range="10,60" option="int" />
         <setting id="trakt.user" type="text" default="" visible="false" />
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
         <setting id="api.language" type="select" label="32316" values="AUTO|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|English|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="AUTO" />
         <setting id="providers.lang" type="select" label="32360" values="English|German|German+English|French|French+English|Polish|Polish+English|Korean|Korean+English|Russian|Russian+English|Spanish|Spanish+English|Italian|Italian+English|Greek|Greek+English" default="English" />
         <setting id="flatten.tvshows" type="bool" label="32317" default="false" />
-		<setting id="show_season0" type="bool" label="32630" default="false"/>
+        <setting id="show_season0" type="bool" label="32630" default="false"/>
         <setting id="fanart" type="bool" label="32318" default="false" />
         <setting id="showunaired" type="bool" label="32570" default="true" />
-		<setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="1" />
+        <setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="1" />
         <setting id="hidecinema" type="bool" label="32571" default="false" />
         <setting type="lsep" label="32319" />
         <setting id="movie.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="1" />
@@ -24,7 +24,11 @@
     </category>
     <category label="32621">
         <setting type="lsep" label="32622" />
-        <setting id="navi.docu" type="bool" label="32628" default="true" />
+        <setting id="navi.docu" type="bool" label="32631" default="true" />
+        <setting id="navi.kidscorner" type="bool" label="32610" default="true" />
+        <setting id="navi.fitness" type="bool" label="32611" default="true" />
+        <setting id="navi.legends" type="bool" label="32612" default="true" />
+        <setting id="navi.podcasts" type="bool" label="32620" default="true" />
         <setting id="navi.channels" type="bool" label="32007" default="true" />
         <setting type="lsep" label="32001" />
         <setting id="navi.moviereview" type="bool" label="32623" default="true" />
@@ -280,6 +284,18 @@
         <setting id="provider.xrysoi" type="bool" label="XRYSOI" default="true" />
         <setting id="provider.liomenoi" type="bool" label="LIOMENOI" default="true" />
     </category>
+    <category label="[COLORyellow]Torrents[/COLOR]">
+        <setting id="install.real debrid.mod" label="Install Real Debrid module" type="action" action="InstallAddon(script.realdebrid.mod)" visible="!System.HasAddon(script.realdebrid.mod)" />
+        <setting id="private.rd.enable" type="bool" label="Private API Token (http://real-debrid.com/apitoken)" default="false" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting id="private.rd.api" type="text" label="API Token" default="" enable="eq(-1,true)" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting label="Please Log In To The Real Debrid Mod Plugin." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting label="The Scrapers Will Not Work Unless U Do So." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting label="[COLOR red] Torrents [/COLOR]" type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting id="provider.1337x-to" type="bool" label="1337X-TO" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting id="provider.limetorrents-cc" type="bool" label="LIMETORRENTS-CC" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting id="provider.extratorrent-si" type="bool" label="EXTRATORRENT-SI" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+        <setting id="provider.yify-torrent-org" type="bool" label="YIFY-TORRENT-ORG" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+    </category>
     <category label="32346">
         <setting type="lsep" label="FANART.TV" />
         <setting type="lsep" label="32582" default="" />
@@ -287,7 +303,7 @@
         <setting id="fanart.tv.user" type="text" label="32309" default="" />
         <setting type="sep" />
         <setting type="lsep" label="TMDb" />
-        <setting id="tm.user" type="text" option="hidden" label="32309" default="YjlkYWM3M2YzNGRmNTcyZDVlNTUxYThhNjZjZmViODc=" />
+        <setting id="tm.user" type="text" option="hidden" label="32309" default="5f4ba6df4db23739632640be569fc3fa" />
         <setting type="sep" />
         <setting type="lsep" label="Trakt" />
         <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.Yoda/?action=authTrakt)" />
@@ -296,10 +312,6 @@
         <setting type="sep" />
         <setting type="lsep" label="IMDb" />
         <setting id="imdb.user" type="text" label="32303" default="" />
-        <setting type="sep" />
-        <setting type="lsep" label="32538" />
-        <setting type="lsep" label="32539" />
-        <setting id="open_smu_settings" type="action" label="32540" enable="true" option="close" action="RunPlugin(plugin://plugin.video.Yoda/?action=smuSettings)" />
         <setting type="sep" />
         <setting type="lsep" label="Moviesplanet.is" />
         <setting id="moviesplanet.user" type="text" label="32303" default="" />
@@ -313,10 +325,6 @@
         <setting id="ororo.user" type="text" label="32304" default="" />
         <setting id="ororo.pass" type="text" option="hidden" label="32307" default="" />
         <setting type="sep" />
-		<setting type="lsep" label="Gostream" />
-        <setting id="gostream.user" type="text" label="32303" default="" />
-        <setting id="gostream.pass" type="text" label="32307" default="" />
-        <setting type="sep" />
         <setting type="lsep" label="SerienStream.to" />
         <setting id="serienstream.user" type="text" label="32304" default="" />
         <setting id="serienstream.pass" type="text" label="32307" default="" />
@@ -325,22 +333,10 @@
         <setting id="seriesever.user" type="text" label="32303" default="" />
         <setting id="seriesever.pass" type="text" option="hidden" label="32307" default="" />
         <setting type="sep" />
-        <setting type="lsep" label="PRON" />
-        <setting id="pron.api" type="text" label="32309" default="" />
-        <setting id="pron.limit" type="labelenum" label="32581" default="10" values="10|20|30|40|50|60|70|80|90|100|150|200" />
-        <setting id="pron.download" type="bool" label="32009" default="false" />
-		<setting type="sep" />
-        <setting type="lsep" label="Chillax.ws" />
-        <setting type="lsep" label="Security Warning: Chillax does not use SSL" />
-        <setting type="lsep" label="Your login details are not protected" />
-        <setting id="chillax.username" type="text" label="32303" default="" />
-        <setting id="chillax.password" type="text" option="hidden" label="32307" default="" />
-        <setting type="sep" />
-        <setting type="lsep" label="Furk.net" />
-        <setting id="furk.user_name" type="text" label="Furk Username" default="" />
-        <setting id="furk.user_pass" type="text" label="Furk Password" option="hidden" default="" />
-        <setting id="furk.api" type="text" label="Furk API Key" default="" />
-        <setting id="furk.limit" label="Limit results" type="slider" default="25" range="5,5,200" option="int" />
+        <setting type="lsep" label="ALLUC" />
+        <setting id="alluc.api" type="text" label="32309" default="" />
+        <setting id="alluc.limit" type="labelenum" label="32581" default="10" values="10|20|30|40|50|60|70|80|90|100|150|200" />
+        <setting id="alluc.download" type="bool" label="32009" default="false" />        
     </category>
     <category label="32541">
         <setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.Yoda/Movies" />
@@ -377,7 +373,7 @@
         <setting type="lsep" label="32358" />
         <setting type="lsep" label="32359" />
     </category>
-  <category label="32616">
+    <category label="32616">
         <setting id="addon_debug" type="bool" label="Enable Debug" default="false" />
         <setting id="debug.location" type="enum" label="32617" lvalues="32618|32619" default="0" />
     </category>

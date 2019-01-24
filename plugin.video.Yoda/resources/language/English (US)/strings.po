@@ -1,6 +1,6 @@
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: Yoda
+# Addon Provider: MuadDib
 # Translators:
 # Translators:
 # Translators:
@@ -579,6 +579,14 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr ""
 
+msgctxt "#32374"
+msgid "Enable Debug"
+msgstr ""
+
+msgctxt "#32375"
+msgid "News and Updates"
+msgstr ""
+
 msgctxt "#32401"
 msgid "No stream available"
 msgstr ""
@@ -704,11 +712,11 @@ msgid "DEBRID-SERVICE"
 msgstr ""
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
+msgid "Configure Debrid Services in URLResolver Settings."
 msgstr ""
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
+msgid "URLResolver Settings"
 msgstr ""
 
 msgctxt "#32541"
@@ -827,7 +835,18 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr ""
 
+msgctxt "#32374"
+msgid "Enable Debug"
+msgstr ""
+
 msgctxt "#32580"
 msgid "Films/TV Movies"
 msgstr ""
 
+msgctxt "#32608"
+msgid "Unaired Season/Episode Color"
+msgstr ""
+
+msgctxt "#32609"
+msgid "URL Resolver Settings"
+msgstr ""

@@ -694,12 +694,12 @@ msgid "DEBRID-SERVICE"
 msgstr "Дебрид услуга"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Подесите Дебрид услуге у подешавањима додатка ResolveUrl."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Подесите Дебрид услуге у подешавањима додатка URLResolver."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "Подешавања додатка ResolveUrl."
+msgid "URLResolver Settings"
+msgstr "Подешавања додатка URLResolver."
 
 msgctxt "#32541"
 msgid "Library"

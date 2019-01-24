@@ -284,11 +284,11 @@ msgstr "Dodaj u red čekanja"
 
 msgctxt "#32066"
 msgid "Watched in Yoda"
-msgstr "Gledano u legacyu"
+msgstr "Gledano u Yodau"
 
 msgctxt "#32067"
 msgid "Unwatched in Yoda"
-msgstr "Neodgledano u legacyu"
+msgstr "Neodgledano u Yodau"
 
 msgctxt "#32068"
 msgid "Watched in Trakt"
@@ -570,13 +570,17 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr "Prisili osvježavanje spremnika"
 
+msgctxt "#32374"
+msgid "Enable Debug"
+msgstr ""
+
 msgctxt "#32401"
 msgid "No stream available"
 msgstr "Nema dostupnih strujanja"
 
 msgctxt "#32402"
 msgid "Playback outside Yoda is not allowed"
-msgstr "Reprodukcija izvan legacya nije dopuštena"
+msgstr "Reprodukcija izvan Yodaa nije dopuštena"
 
 msgctxt "#32403"
 msgid "Download"
@@ -695,11 +699,11 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-USLUGA"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
+msgid "Configure Debrid Services in URLResolver Settings."
 msgstr "Podesi Debrid usluge u postavkama URL razrješitelja."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
+msgid "URLResolver Settings"
 msgstr "Postavke URL razrješitelja"
 
 msgctxt "#32541"
@@ -895,7 +899,7 @@ msgid "Getting genre information from Trakt"
 msgstr "Dobivanje informacija žanra sa trakta"
 
 msgctxt "#32600"
-msgid "Preparing sources"
+msgid "Preparing the speculum"
 msgstr "Pripremanje izvora"
 
 msgctxt "#32601"
@@ -919,9 +923,9 @@ msgid "Click to clear search history"
 msgstr "Klikni za brisanje povijesti pretrage"
 
 msgctxt "#32606"
-msgid "Prem"
-msgstr "Prem"
+msgid "[COLOR=orange]Paid[/COLOR]"
+msgstr "[COLOR=orange]Paid[/COLOR]"
 
 msgctxt "#32607"
-msgid "Normal"
-msgstr "Normalno"
+msgid "[COLOR=orange]Free[/COLOR]"
+msgstr "[COLOR=orange]Free[/COLOR]"

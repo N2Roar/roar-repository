@@ -692,12 +692,12 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-PALVELU"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Määritä Debrid-palvelut ResolveUrl-asetuksissa."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Määritä Debrid-palvelut URLResolver-asetuksissa."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "ResolveUrl-asetukset"
+msgid "URLResolver Settings"
+msgstr "URLResolver-asetukset"
 
 msgctxt "#32541"
 msgid "Library"
@@ -705,7 +705,7 @@ msgstr "Kirjasto"
 
 msgctxt "#32542"
 msgid ""
-"Copyright (C) 2017 Yoda folders will be imported to library if they are added to media "
+"Yoda folders will be imported to library if they are added to media "
 "sources."
 msgstr "Lisää ylläolevat Exoduksen kansiot medialähteisiin"
 

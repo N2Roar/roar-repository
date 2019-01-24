@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
     Yoda Add-on
 
     This program is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 
-import xbmc,sys,re,json,urllib,urlparse,random,datetime,time
+import sys,re,json,urllib,urlparse,random,datetime,time
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -41,7 +41,6 @@ except: pass
 try: import xbmc
 except: pass
 
-
 class sources:
     def __init__(self):
         self.getConstants()
@@ -49,7 +48,7 @@ class sources:
 
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
-              
+        
             url = None
             
             control.moderator()
@@ -344,7 +343,8 @@ class sources:
             tvshowtitle = self.getTitle(tvshowtitle)
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
-            season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
+            #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
+            #season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
             for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
 
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
@@ -543,54 +543,12 @@ class sources:
             except:
                 pass
 
-        if control.addonInfo('id') == 'plugin.video.bennu':
-            try:
-                if progressDialog: progressDialog.update(100, control.lang(30726).encode('utf-8'), control.lang(30731).encode('utf-8'))
+        try: progressDialog.close()
+        except: pass
 
-                items = self.sourcesFilter()
-                
-                if quality == 'RD': items = [i for i in items if i['debrid'] != '']
-                elif quality == 'SD': items = [i for i in items if i['quality'] == 'SD' and i['debrid'] == '']
-                elif quality == 'HD': items = [i for i in items if i['quality'] != 'SD']
+        self.sourcesFilter()
 
-                if control.setting('bennu.dev.log') == 'true':
-                    log_utils.log('Sources Returned: %s' % str(items), log_utils.LOGNOTICE)
-
-                try: progressDialog.close()
-                except: pass
-
-                if quality == 'AUTO': 
-                    u = self.sourcesDirect(items)
-                    return u
-                else:
-                    meta = '{"title": "%s", "year": "%s", "imdb": "%s"}' % (title, year, imdb)
-                    '''control.window.clearProperty("plugin.video.bennu.container.items")
-                    control.window.setProperty("plugin.video.bennu.container.items", json.dumps(items))
-                    
-                    control.window.clearProperty("plugin.video.bennu.container.meta")
-                    control.window.setProperty("plugin.video.bennu.container.meta", meta)'''
-                    control.window.clearProperty(self.itemProperty)
-                    control.window.setProperty(self.itemProperty, json.dumps(items))
-                    
-                    control.window.clearProperty(self.metaProperty)
-                    control.window.setProperty(self.metaProperty, meta)
-
-                    control.sleep(200)
-                    control.execute('Container.Update(%s?action=addItem&title=%s)' % (sys.argv[0], urllib.quote_plus(title)))
-
-                    return "DIR"
-
-            except:
-                try: progressDialog.close()
-                except: pass
-                return
-        else: 
-            try: progressDialog.close()
-            except: pass
-
-            self.sourcesFilter()
-
-            return self.sources
+        return self.sources
 
     def prepareSources(self):
         try:
@@ -614,7 +572,7 @@ class sources:
         except:
             pass
 
-        ''' Fix to stop items passed with a 0 IMDB id pulling old unrelated sources from the database. '''
+        
         if imdb == '0':
             try:
                 dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
@@ -622,7 +580,7 @@ class sources:
                 dbcon.commit()
             except:
                 pass
-        ''' END '''
+        
         
         try:
             sources = []

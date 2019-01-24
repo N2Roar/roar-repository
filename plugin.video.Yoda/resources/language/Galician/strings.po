@@ -692,10 +692,10 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-SERVICE"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Configura \"Debrid Services\" nos Axustes do ResolveUrl"
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Configura \"Debrid Services\" nos Axustes do URLResolver"
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "Axustes do ResolveUrl"
+msgid "URLResolver Settings"
+msgstr "Axustes do URLResolver"
 

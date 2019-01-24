@@ -213,7 +213,6 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
     elif icon == 'ERROR': icon = xbmcgui.NOTIFICATION_ERROR
     dialog.notification(heading, message, icon, time, sound=sound)
 
-
 def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yeslabel=''):
     return dialog.yesno(heading, line1, line2, line3, nolabel, yeslabel)
 
@@ -221,17 +220,15 @@ def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yesl
 def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
 
-
 def moderator():
-    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '', 'plugin.video.live.streamspro', 'plugin.video.phstreams', 'plugin.video.cpstreams', 'plugin.video.tinklepad', 'script.tvguide.fullscreen', 'script.tvguide.assassins', 'plugin.video.metalliq', 'script.extendedinfo', 'plugin.program.super.favourites']
+    # netloc = [urlparse.urlparse(sys.argv[0]).netloc, '', 'plugin.video.live.streamspro', 'plugin.video.phstreams', 'plugin.video.cpstreams', 'script.tvguide.fullscreen', 'script.tvguide.assassins']
 
-    if not infoLabel('Container.PluginName') in netloc: sys.exit()
-
+    # if not infoLabel('Container.PluginName') in netloc: sys.exit()
+    pass
 
 def metaFile():
     if condVisibility('System.HasAddon(script.Yoda.metadata)'):
         return os.path.join(xbmcaddon.Addon('script.Yoda.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
-
 
 def apiLanguage(ret_name=None):
     langDict = {'Bulgarian': 'bg', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl', 'English': 'en', 'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el', 'Hebrew': 'he', 'Hungarian': 'hu', 'Italian': 'it', 'Japanese': 'ja', 'Korean': 'ko', 'Norwegian': 'no', 'Polish': 'pl', 'Portuguese': 'pt', 'Romanian': 'ro', 'Russian': 'ru', 'Serbian': 'sr', 'Slovak': 'sk', 'Slovenian': 'sl', 'Spanish': 'es', 'Swedish': 'sv', 'Thai': 'th', 'Turkish': 'tr', 'Ukrainian': 'uk'}

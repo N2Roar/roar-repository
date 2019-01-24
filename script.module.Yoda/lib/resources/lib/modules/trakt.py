@@ -32,8 +32,8 @@ from resources.lib.modules import log_utils
 from resources.lib.modules import utils
 
 BASE_URL = 'http://api.trakt.tv'
-V2_API_KEY = 'acc97918ace2b0a211957d574e7cd7c7bc7a59b9c949df625077f1d5fb107082'
-CLIENT_SECRET = '0f3e0b9096477ee0d373d1d354700449bf0fa648bef33c191db5845b346f16ef'
+V2_API_KEY = '42740047aba33b1f04c1ba3893ce805a9ecfebd05de544a30fe0c99fabec972e'
+CLIENT_SECRET = 'c7a3e7fdf5c3863872c8f45e1d3f33797b492ed574a00a01a3fadcb3d270f926'
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 def __getTrakt(url, post=None):
@@ -57,9 +57,9 @@ def __getTrakt(url, post=None):
         elif resp_code in ['404']:
             log_utils.log('Object Not Found : %s' % resp_code, log_utils.LOGWARNING)
             return
-        elif resp_code in ['429']:
-            log_utils.log('Trakt Rate Limit Reached: %s' % resp_code, log_utils.LOGWARNING)
-            return
+#        elif resp_code in ['429']:
+#            log_utils.log('Trakt Rate Limit Reached: %s' % resp_code, log_utils.LOGWARNING)
+#            return
 
         if resp_code not in ['401', '405']:
             return result, resp_header

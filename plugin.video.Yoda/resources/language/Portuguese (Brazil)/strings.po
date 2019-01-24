@@ -691,10 +691,10 @@ msgid "DEBRID-SERVICE"
 msgstr "SERVIÇO DE DESBRIDAMENTO"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Ajuste os Serviços de Desbridamento nas Configurações do ResolveUrl."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Ajuste os Serviços de Desbridamento nas Configurações do URLResolver."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "Configurações do ResolveUrl"
+msgid "URLResolver Settings"
+msgstr "Configurações do URLResolver"
 

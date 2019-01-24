@@ -1,6 +1,6 @@
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: Yoda
+# Addon Provider: Supremacy
 # Translators:
 # Translators:
 # Translators:
@@ -712,11 +712,11 @@ msgid "DEBRID-SERVICE"
 msgstr ""
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
+msgid "Configure Debrid Services in URLResolver Settings."
 msgstr ""
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
+msgid "URLResolver Settings"
 msgstr ""
 
 msgctxt "#32541"
@@ -912,7 +912,7 @@ msgid "Getting genre information from Trakt"
 msgstr ""
 
 msgctxt "#32600"
-msgid "[COLOR yellow]Yoda Is Finding Your Link[/COLOR]"
+msgid "Yoda Shall Find Your Link"
 msgstr ""
 
 msgctxt "#32601"
@@ -993,6 +993,10 @@ msgstr ""
 
 msgctxt "#32623"
 msgid "Reviews and Trailers"
+msgstr ""
+
+msgctxt "#32624"
+msgid "P[COLOR red]o[/COLOR]dcast[COLOR red]One[/COLOR]"
 msgstr ""
 
 msgctxt "#32625"

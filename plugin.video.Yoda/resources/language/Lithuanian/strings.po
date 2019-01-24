@@ -569,6 +569,10 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr "Priverstinai atnaujinti"
 
+msgctxt "#32374"
+msgid "Enable Debug"
+msgstr ""
+
 msgctxt "#32401"
 msgid "No stream available"
 msgstr "Neprieinamas joks srautas"
@@ -694,12 +698,12 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-PASLAUGA"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Debrid paslaugų nustatymus konfigūruokit ResolveUrl nustatymuose."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Debrid paslaugų nustatymus konfigūruokit URLResolver nustatymuose."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "ResolveUrl nustatymai"
+msgid "URLResolver Settings"
+msgstr "URLResolver nustatymai"
 
 msgctxt "#32541"
 msgid "Library"

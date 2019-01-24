@@ -578,7 +578,7 @@ msgstr "Brak dostępnych źródeł"
 
 msgctxt "#32402"
 msgid "Playback outside Yoda is not allowed"
-msgstr "Odtwarzanie poza legacyem zabronione"
+msgstr "Odtwarzanie poza Yodaem zabronione"
 
 msgctxt "#32403"
 msgid "Download"
@@ -697,12 +697,12 @@ msgid "DEBRID-SERVICE"
 msgstr "SERWIS-DEBRID"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveUrl Settings."
-msgstr "Skonfiguruj usługi Debrid w Ustawieniach ResolveUrl."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Skonfiguruj usługi Debrid w Ustawieniach URLResolver."
 
 msgctxt "#32540"
-msgid "ResolveUrl Settings"
-msgstr "Ustawienia ResolveUrl"
+msgid "URLResolver Settings"
+msgstr "Ustawienia URLResolver"
 
 msgctxt "#32541"
 msgid "Library"
@@ -897,7 +897,7 @@ msgid "Getting genre information from Trakt"
 msgstr "Uzyskiwanie informacji o gatunkach z Trakt"
 
 msgctxt "#32600"
-msgid "Preparing sources"
+msgid "Preparing the speculum"
 msgstr "Przygotowywanie źródeł"
 
 msgctxt "#32601"
@@ -921,9 +921,9 @@ msgid "Click to clear search history"
 msgstr "Naciśnij aby wyczyścić historię"
 
 msgctxt "#32606"
-msgid "Prem"
-msgstr "Prem"
+msgid "[COLOR=orange]Paid[/COLOR]"
+msgstr "[COLOR=orange]Paid[/COLOR]"
 
 msgctxt "#32607"
-msgid "Normal"
-msgstr "Normalny"
+msgid "[COLOR=orange]Free[/COLOR]"
+msgstr "[COLOR=orange]Free[/COLOR]"
