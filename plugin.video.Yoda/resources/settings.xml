@@ -25,9 +25,6 @@
     <category label="32621">
         <setting type="lsep" label="32622" />
         <setting id="navi.docu" type="bool" label="32631" default="true" />
-        <setting id="navi.kidscorner" type="bool" label="32610" default="true" />
-        <setting id="navi.fitness" type="bool" label="32611" default="true" />
-        <setting id="navi.legends" type="bool" label="32612" default="true" />
         <setting id="navi.podcasts" type="bool" label="32620" default="true" />
         <setting id="navi.channels" type="bool" label="32007" default="true" />
         <setting type="lsep" label="32001" />
@@ -65,7 +62,7 @@
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="0" />
         <setting type="lsep" label="32338" />
-        <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
+        <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="3" />
         <setting id="autoplay.sd" type="bool" label="32340" default="false" />
         <setting id="sources.extrainfo" type="bool" label="32587" default="true" />
         <setting id="HEVC" type="bool" label="32363" default="true" />
@@ -113,7 +110,7 @@
 		<setting id="provider.darewatch" type="bool" label="DAREWATCH" default="false" />
         <setting id="provider.directdl" type="bool" label="DIRECTDL" default="true" />
         <setting id="provider.divxcrawler" type="bool" label="DIVXCRAWLER" default="true" />
-        <setting id="provider.filepursuit" type="bool" label="FILEPUSUIT" default="true" />
+		<setting id="provider.ddlvalley" type="bool" label="ddlvalley" default="true" />
         <setting id="provider.flixanity" type="bool" label="FLIXANITY" default="true" />
         <setting id="provider.fmovies" type="bool" label="FMOVIES" default="true" />
 		<setting id="provider.freeputlocker" type="bool" label="FREEPUTLOCKER" default="true" />

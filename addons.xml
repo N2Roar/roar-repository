@@ -444,7 +444,7 @@ This is a Non-profit resource, organized solely for educational purposes which i
     </extension>
 </addon>
 
-<addon id="plugin.video.Yoda" version="1.1.8.01" name="[COLORgreen]Yoda[/COLOR]" provider-name="S">
+<addon id="plugin.video.Yoda" version="1.1.9.01" name="[COLORgreen]Yoda[/COLOR]" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.module.Yoda" />
@@ -829,7 +829,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 	</extension>
 </addon>
 
-<addon id="script.module.Yoda" name="[COLORgreen]Yoda Module[/COLOR]" version="1.00.047.01" provider-name="S">
+<addon id="script.module.Yoda" name="[COLORgreen]Yoda Module[/COLOR]" version="1.00.048.01" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
