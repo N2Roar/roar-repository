@@ -1,3 +1,26 @@
+[B]2.0.3.3.1[/B]
+- added German
+[B]2.0.3.3[/B]
+- added default TMDB back in settings
+[B]2.0.3.2[/B]
+- Trakt Fix in Settings
+- Add Debrid Only again
+- ResolveURL
+- Fix premetive
+- misc fixes
+[B]2.0.3.1[/B]
+- sorting
+[B]2.0.3[/B]
+- misc fixes
+[B]2.0[/B]
+- Kodi 18 fixes
+- a mess of code fixes
+- auto resume should be fixed, please let me know
+- added 50,60,70,80,90,Y2K Movies/Shows
+- changed defaults for users not wanting to look!!
+- fixed apis
+- repo fixed
+- didnt finish 24/7, coming soon.
 [B]1.3.1[/B]
 - adjust episode viewing SxExx
 - add New Episodes/My Shows/My Movies back in main menu (Toggle in Settings, default off)

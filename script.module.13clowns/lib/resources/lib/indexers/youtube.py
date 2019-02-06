@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+
+'''
+#:::'##::::'#######:::'######::'##::::::::'#######::'##:::::'##:'##::: ##::'######::
+#:'####:::'##.... ##:'##... ##: ##:::::::'##.... ##: ##:'##: ##: ###:: ##:'##... ##:
+#:.. ##:::..::::: ##: ##:::..:: ##::::::: ##:::: ##: ##: ##: ##: ####: ##: ##:::..::
+#::: ##::::'#######:: ##::::::: ##::::::: ##:::: ##: ##: ##: ##: ## ## ##:. ######::
+#::: ##::::...... ##: ##::::::: ##::::::: ##:::: ##: ##: ##: ##: ##. ####::..... ##:
+#::: ##:::'##:::: ##: ##::: ##: ##::::::: ##:::: ##: ##: ##: ##: ##:. ###:'##::: ##:
+#:'######:. #######::. ######:: ########:. #######::. ###. ###:: ##::. ##:. ######::
+#:......:::.......::::......:::........:::.......::::...::...:::..::::..:::......:::
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 
 from resources.lib.modules import log_utils
 from resources.lib.modules import control
@@ -28,6 +53,18 @@ class yt_index:
                 self.action   = 'youtube'
                 self.base_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tLzEzQ2xvd25zL3Jlc291cmNlcy9tYXN0ZXIveG1scy95b3V0dWJlLw=='.decode('base64')
                 self.mainmenu = 'JXN5dG1haW4udHh0'.decode('base64') % (self.base_url)
+            elif action == 'legends':
+                self.action   = 'legends'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL2xlZ2VuZHNhZGRvbi9tYXN0ZXIvbWVudS8='.decode('base64')
+                self.mainmenu = 'JXNpaG1haW4udHh0'.decode('base64') % (self.base_url)
+            elif action == 'moviesyt':
+                self.action   = 'moviesyt'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')
+                self.mainmenu = 'JXNtb3ZpZXMucGhw'.decode('base64') % (self.base_url)
+            elif action == 'kings':
+                self.action   = 'kings'
+                self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')
+                self.mainmenu = 'JXNraW5ncy5waHA='.decode('base64') % (self.base_url)
             elif action == 'kungfu':
                 self.action   = 'kungfu'
                 self.base_url = 'aHR0cDovL20zdS54eXovbXRiL3l0bW92aWVzLw=='.decode('base64')

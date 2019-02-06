@@ -1,4 +1,4 @@
-[B]1.0.2[/B]
-- minor nothing
-[B]1.0.1[/B]
+[B]2.0.1[/B]
+- misc fix
+[B]1.0.0[/B]
 - Initial version

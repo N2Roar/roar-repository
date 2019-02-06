@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 '''
 #:'######::'####:'##::::'##:'####:'########::::'###:::::'######::
 #'##... ##:. ##:: ##:::: ##:. ##::... ##..::::'## ##:::'##... ##:
@@ -8,6 +9,19 @@
 # ##::: ##:: ##:::. ## ##:::: ##::::: ##:::: ##.... ##:'##::: ##:
 #. ######::'####:::. ###::::'####:::: ##:::: ##:::: ##:. ######::
 #:......:::....:::::...:::::....:::::..:::::..:::::..:::......:::
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import urlparse
@@ -61,11 +75,14 @@ if mode == "toggleAll":
     toggleAll(params['setting'], open_id, sourceList=sourcelist)
 
 if mode == "toggleAllDebrid":
-    sourcelist = ['300mbfilms','bestmoviez','directdl','ddlvalley','invictus','myvideolink','playmovies','scenerls','ultrahd','wrzcraft']
+    sourcelist = ['300mbfilms','bestmoviez','ddlvalley','directdl','invictus','myvideolink',
+    'playmovies','scenerls','ultrahdindir','wrzcraft']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllGerman":
-    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs','kinoking','kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream','seriesever','stream-to','streamdream','streamflix','streamit','tata','video4k','view4u']
+    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs',
+    'kinoking','kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream',
+    'seriesever','stream-to','streamdream','streamflix','streamit','tata','video4k','view4u']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllPolish":
@@ -73,13 +90,19 @@ if mode == "toggleAllPolish":
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllForeign":
-    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs','kinoking','kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream','seriesever','stream-to','streamdream','streamflix','streamit','tata','video4k','view4u','alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser','filmwebbooster','iitv','movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
+    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs','kinoking',
+    'kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream','seriesever',
+    'stream-to','streamdream','streamflix','streamit','tata','video4k','view4u','alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser','filmwebbooster','iitv',
+    'movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllTorrent":
-    sourcelist = ['bitlord','torrentapi']
+    sourcelist = ['bitlord','torrentapi','yify','vdonip','piratebay']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "Defaults":
-    sourcelist = ['0123putlocker','123fox','123hbo','123hulu','123movieshubz','300mbdownload','animetoon','azmovies','bnwmovies','cartoonhd','cmovies','cmovieshdbz','coolmoviezone','extramovies','fmovies','freefmovies','freeputlockers','furk','gostream','gowatchseries','Hdmto','hdpopcorns','kattv','l23movies','library','moviesonline','movietoken','myprojectfreetv','openloadmovie','ororo','plocker','primewire','putlocker','reddit','rlsbb','scenerls','seehd','series9','seriesfree','seriesonline','solarmoviez','tvbox','videoscraper','vidics','watchseries','xwatchseries']
+    sourcelist = ['123fox','123hbo','123movieshubz','animetoon','azmovies','bnwmovies','cartoonhd',
+    'extramovies','fmovies','freefmovies','freeputlockers','gostream','Hdmto','hdpopcorns',
+    'kattv','l23movies','iwaatch','openloadmovie','primewire','putlocker','reddit','rlsbb','scenerls',
+    'seehd','series9','seriesfree','seriesonline','solarmoviez','tvbox','vidics','watchseries','xwatchseries','vdonip']
     toggleAll(params['setting'], params['open_id'], sourcelist)

@@ -139,10 +139,6 @@ key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 
 iv = "p2s5v8y/B?E(H+Mb"
 
-def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
-    from . import libtools
-    libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
-
 def addonIcon():
     theme = appearance() ; art = artPath()
     if not (art == None and theme in ['-', '']): return os.path.join(art, 'icon.png')
@@ -232,6 +228,7 @@ def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yesl
 def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
 
+
 def metaFile():
     if condVisibility('System.HasAddon(script.13clowns.metadata)'):
         return os.path.join(xbmcaddon.Addon('script.13clowns.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
@@ -305,9 +302,11 @@ def openSettings(query=None, id=addonInfo('id')):
     except:
         return
 
+
 def getCurrentViewId():
     win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
     return str(win.getFocusId())
+
 
 def refresh():
     return execute('Container.Refresh')
@@ -317,6 +316,7 @@ def busy():
 
 def idle():
     return execute('Dialog.Close(busydialog)')
+
 
 def queueItem():
     return execute('Action(Queue)')

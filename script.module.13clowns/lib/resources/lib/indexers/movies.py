@@ -21,7 +21,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from resources.lib.modules import trakt
@@ -37,7 +37,7 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,json,urllib,urlparse,datetime,xbmc,base64
+import os,sys,re,json,urllib,urlparse,datetime,xbmc
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -79,6 +79,7 @@ class movies:
         self.seventys_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=1970-01-01,1979-12-31&user_rating=5.0,10.0'
         self.eightys_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=1980-01-01,1989-12-31&user_rating=5.0,10.0'
         self.ninetys_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=1990-01-01,1999-12-31&user_rating=5.0,10.0'
+        self.twothousand_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=2000-01-01,2010-12-31&user_rating=5.0'
         self.spotlight_link = 'https://www.imdb.com/list/ls041160568/?sort=user_rating,desc&st_dt=&mode=detail&page=1'
         self.clowns_link = 'https://www.imdb.com/list/ls041160300/?sort=user_rating,desc&st_dt=&mode=detail&page=1'
 
@@ -177,31 +178,61 @@ class movies:
             self.get(self.featured_link)
 
     def search(self):
+
         navigator.navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultMovies.png')
-        search_history = control.setting('moviesearch')
-        if search_history:
-            for term in search_history.split('\n'):
-                if term:
-                    navigator.navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultMovies.png')
+        try:
+            from sqlite3 import dbapi2 as database
+        except Exception:
+            from pysqlite2 import dbapi2 as database
+
+        dbcon = database.connect(control.searchFile)
+        dbcur = dbcon.cursor()
+
+        try:
+            dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
+        except Exception:
+            pass
+
+        dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
+        lst = []
+
+        delete_option = False
+        for (id, term) in dbcur.fetchall():
+            if term not in str(lst):
+                delete_option = True
+                navigator.navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultMovies.png')
+                lst += [(term)]
+        dbcur.close()
+
+        if delete_option:
             navigator.navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
-        navigator.navigator().endDirectory()        
-        
+
+        navigator.navigator().endDirectory()
+
         
     def search_new(self):
         t = control.lang(32010).encode('utf-8')
-        k = control.keyboard('', t) ; k.doModal()
-        q = k.getText().strip() if k.isConfirmed() else None
-        if not q: return
+        k = control.keyboard('', t)
+        k.doModal()
+        q = k.getText() if k.isConfirmed() else None
+                        
 
+        if (q is None or q == ''):
+            return
 
-        search_history = control.setting('moviesearch')
-        if q not in search_history.split('\n'):
-            control.setSetting('moviesearch', q + '\n' + search_history)
+        try:
+            from sqlite3 import dbapi2 as database
+        except:
+            from pysqlite2 import dbapi2 as database
 
-
+        dbcon = database.connect(control.searchFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
+        dbcon.commit()
+        dbcur.close()
         url = self.search_link + urllib.quote_plus(q)
         self.get(url)
-            
+
             
     def search_term(self, name):
         url = self.search_link + urllib.quote_plus(name)
@@ -676,7 +707,7 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'ZDY5NTRkYTk2Yzg4ODFlMzdjY2RkMmQyNTlmYjk1MzQ='.decode('base64')}
+        self.fanart_tv_headers = {'api-key': '695993598de1efe690dfdf83461872b9'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
@@ -954,7 +985,7 @@ class movies:
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 
-                cm.append(('13Clowns Settings', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('13C Settings', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
                 
                 item = control.item(label=label)
 

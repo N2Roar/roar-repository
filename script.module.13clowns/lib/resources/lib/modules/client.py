@@ -24,7 +24,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
 import re,sys,cookielib,urllib,urllib2,urlparse,gzip,StringIO,HTMLParser,time,random,base64,xbmc
 
 from resources.lib.modules import cache
@@ -53,14 +52,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
             opener = urllib2.build_opener(*handlers)
             opener = urllib2.install_opener(opener)
 
-        try:
-            import platform
-            node = platform.node().lower()
-        except:
-            node = ''
-
-
-        if (2, 7, 8) < sys.version_info < (2, 7, 12) or node == 'xboxone':
+        if (2, 7, 8) < sys.version_info < (2, 7, 12):
             try:
                 import ssl; ssl_context = ssl.create_default_context()
                 ssl_context.check_hostname = False
@@ -331,6 +323,9 @@ def replaceHTMLCodes(txt):
     txt = txt.strip()
     return txt
 
+def replaceEscapeCodes(txt):
+    txt = HTMLParser.HTMLParser().unescape(txt)
+    return txt	   
 
 def randomagent():
     BR_VERS = [
@@ -519,7 +514,7 @@ class sucuri:
         except:
             pass
 
-"""Bennu Specific"""
+
 
 def _get_keyboard( default="", heading="", hidden=False ):
     """ shows a keyboard and returns a value """
@@ -529,5 +524,5 @@ def _get_keyboard( default="", heading="", hidden=False ):
         return unicode( keyboard.getText(), "utf-8" )
     return default
 
-def removeNonAscii(s):
+def removeNonAscii(s): 
     return "".join(i for i in s if ord(i)<128)

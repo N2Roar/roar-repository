@@ -24,6 +24,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 

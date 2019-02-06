@@ -24,7 +24,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import os, sys, urllib2, urlparse
+import os, base64, sys, urllib2, urlparse
 import xbmc, xbmcaddon, xbmcgui
 
 from resources.lib.modules import control
@@ -41,25 +41,28 @@ traktIndicators = trakt.getTraktIndicatorsInfo()
 
 queueMenu = control.lang(32065).encode('utf-8')
 
+
 class navigator:
     ADDON_ID      = xbmcaddon.Addon().getAddonInfo('id')
     HOMEPATH      = xbmc.translatePath('special://home/')
     ADDONSPATH    = os.path.join(HOMEPATH, 'addons')
     THISADDONPATH = os.path.join(ADDONSPATH, ADDON_ID)
-    NEWSFILE      = ''
-    LOCALNEWS     = os.path.join(THISADDONPATH, 'newsinfo.txt')
-
+    NEWSFILE      = base64.b64decode(b'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tLzEzQ2xvd25zL3Jlc291cmNlcy9tYXN0ZXIveG1scy93aGF0c25ldy54bWw=')
+    LOCALNEWS     = os.path.join(THISADDONPATH, 'whatsnew.txt')
+    
     def root(self):
-        self.addDirectoryItem('Help / Information / Credits', 'newsNavigator', 'help.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('Help / Support', 'newsNavigator', 'help.png', 'DefaultAddonProgram.png')
         if self.getMenuEnabled('navi.monthlyclown') == True:
-            self.addDirectoryItem('[B][COLORred]13Clowns[/COLOR] Favorites[/B]', 'movies&url=clowns', 'icon.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('[B][COLORred]13Clowns Favorites[/COLOR][/B]', 'movies&url=clowns', 'featured.png', 'DefaultRecentlyAddedMovies.png')
         
         if self.getMenuEnabled('navi.monthlyspotlight') == True:
             self.addDirectoryItem('[B][COLOR yellow]Monthly Spotlight[/COLOR][/B]', 'movies&url=spotlight', 'spotlight.png', 'DefaultRecentlyAddedMovies.png')
-        
+
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
-        
+        self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'DefaultMovies.png')
+
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
+
         if self.getMenuEnabled('navi.cartoons') == True:
             self.addDirectoryItem('Cartoons', 'tvshows&url=cartoons', 'cartoons.png', 'DefaultTVShows.png')
         
@@ -68,7 +71,7 @@ class navigator:
         
         if self.getMenuEnabled('navi.yt') == True:
             self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
-        
+
         if not control.setting('lists.widget') == '0':
             self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png', 'DefaultVideoPlaylists.png')
             self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
@@ -79,30 +82,55 @@ class navigator:
         if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (traktIndicators == False and not control.setting('tv.widget') == '0'):
             self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
 
+        if not control.setting('furk.api') == '':
+            self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png', 'movies.png')
+
+        self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem('Choose Scraper Package', 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
-        
+        self.addDirectoryItem('Scraper Settings', 'civitasSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png')
+
         downloads = True if control.setting('downloads') == 'true' and (len(control.listDir(control.setting('movie.download.path'))[0]) > 0 or len(control.listDir(control.setting('tv.download.path'))[0]) > 0) else False
         if downloads == True:
-            self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
-               
-        self.endDirectory()
+            self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultAddonProgram.png')
 
+        self.endDirectory()
+    
     def furk(self):
-        self.addDirectoryItem('User Files', 'furkUserFiles', 'mytvnavigator.png', 'mytvnavigator.png')
+        self.addDirectoryItem('User Files', 'furkUserFiles', 'DefaultTVShows.png', 'DefaultTVShows.png')
         self.addDirectoryItem('Search', 'furkSearch', 'search.png', 'search.png')
         self.endDirectory()
-   
+    
     def getMenuEnabled(self, menu_title):
         is_enabled = control.setting(menu_title).strip()
         if (is_enabled == '' or is_enabled == 'false'): return False
         return True
 
-# News and Info
-    def news_local(self):
+    def lists(self, lite=False):
+        self.addDirectoryItem('lists', 'lists', 'genres.png', 'DefaultTVShows.png')
+        self.endDirectory()
+#######################################################################
+# News and Update Code
+    def news(self):
+            message=self.open_news_url(self.NEWSFILE)
             r = open(self.LOCALNEWS)
-            compfile = r.read()
-            self.showText('Help / Information', compfile)
+            compfile = r.read()       
+            if len(message)>1:
+                    if compfile == message:pass
+                    else:
+                            text_file = open(self.LOCALNEWS, "w")
+                            text_file.write(message)
+                            text_file.close()
+                            compfile = message
+            self.showText('Help / Support', compfile)
+        
+    def open_news_url(self, url):
+            req = urllib2.Request(url)
+            req.add_header('User-Agent', 'klopp')
+            response = urllib2.urlopen(req)
+            link=response.read()
+            response.close()
+            print link
+            return link
 
     def showText(self, heading, text):
         id = 10147
@@ -119,34 +147,27 @@ class navigator:
                 quit()
                 return
             except: pass
+#######################################################################
 
     def movies(self, lite=False):
-        if self.getMenuEnabled('navi.actor') == True:
-            self.addDirectoryItem('Actor Collections', 'collectionActors', 'boxsets.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.boxsets') == True:
-            self.addDirectoryItem('Boxset Collections', 'collectionBoxset', 'boxsets.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.xmas') == True:
-            self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.kids') == True:
-            self.addDirectoryItem('Kids Collections', 'collectionKids', 'boxsets.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.superhero') == True:
-            self.addDirectoryItem('Superhero Collections', 'collectionSuperhero', 'boxsets.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.car') == True:
-            self.addDirectoryItem('Car Movie Collections', 'collections&url=carmovies', 'boxsets.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.fiftys') == True:
-            self.addDirectoryItem('50s Movies 1950 - 1959', 'movies&url=fiftys', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('50s Movies 1950 - 1959', 'movies&url=fiftys', 'years.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.sixtys') == True:
-            self.addDirectoryItem('60s Movies 1960 - 1969', 'movies&url=sixtys', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('60s Movies 1960 - 1969', 'movies&url=sixtys', 'years.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.seventys') == True:
-            self.addDirectoryItem('70s Movies 1970 - 1979', 'movies&url=seventys', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('70s Movies 1970 - 1979', 'movies&url=seventys', 'years.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.eightys') == True:
-            self.addDirectoryItem('80s Movies 1980 - 1989', 'movies&url=eightys', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('80s Movies 1980 - 1989', 'movies&url=eightys', 'years.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.ninetys') == True:
-            self.addDirectoryItem('90s Movies 1990 - 1999', 'movies&url=ninetys', 'years.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem('90s Movies 1990 - 1999', 'movies&url=ninetys', 'years.png', 'DefaultMovies.png')
+        if self.getMenuEnabled('navi.twothousand') == True:
+            self.addDirectoryItem('Y2K Movies 2000 - 2010', 'movies&url=twothousand', 'years.png', 'DefaultMovies.png')
+        if self.getMenuEnabled('navi.moviereview') == True:
+            self.addDirectoryItem(32623, 'movieReviews', 'movies.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviegenre') == True:
             self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
-        #if self.getMenuEnabled('navi.movieyears') == True:
-            #self.addDirectoryItem(32012, 'movieYears', 'years.png', 'DefaultMovies.png')
+        if self.getMenuEnabled('navi.movieyears') == True:
+            self.addDirectoryItem(32012, 'movieYears', 'years.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviepersons') == True:
             self.addDirectoryItem(32013, 'moviePersons', 'people.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movielanguages') == True:
@@ -154,7 +175,7 @@ class navigator:
         if self.getMenuEnabled('navi.moviecerts') == True:
             self.addDirectoryItem(32015, 'movieCertificates', 'certificates.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movietrending') == True:
-            self.addDirectoryItem(32017, 'movies&url=trending', 'people-watching.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem(32017, 'movies&url=trending', 'people-watching.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviepopular') == True:
             self.addDirectoryItem(32018, 'movies&url=popular', 'most-popular.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movieviews') == True:
@@ -164,9 +185,9 @@ class navigator:
         if self.getMenuEnabled('navi.movieoscars') == True:
             self.addDirectoryItem(32021, 'movies&url=oscars', 'oscar-winners.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movietheaters') == True:
-            self.addDirectoryItem(32022, 'movies&url=theaters', 'in-theaters.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem(32022, 'movies&url=theaters', 'in-theaters.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviewidget') == True:
-            self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
+            self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultMovies.png')
 
         if lite == False:
             if not control.setting('lists.widget') == '0':
@@ -214,6 +235,20 @@ class navigator:
 
 
     def tvshows(self, lite=False):
+        if self.getMenuEnabled('navi.fiftyss') == True:
+            self.addDirectoryItem('50s TV Shows 1950 - 1959', 'tvshows&url=fiftyst', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.sixtyss') == True:
+            self.addDirectoryItem('60s TV Shows 1960 - 1969', 'tvshows&url=sixtyst', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.seventyss') == True:
+            self.addDirectoryItem('70s TV Shows 1970 - 1979', 'tvshows&url=seventyst', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.eightyss') == True:
+            self.addDirectoryItem('80s TV Shows 1980 - 1989', 'tvshows&url=eightyst', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.ninetyss') == True:
+            self.addDirectoryItem('90s TV Shows 1990 - 1999', 'tvshows&url=ninetyst', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.twothousands') == True:
+            self.addDirectoryItem('Y2K TV Shows 2000 - 2010', 'tvshows&url=twothousandt', 'years.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.tvReviews') == True:
+            self.addDirectoryItem(32623, 'tvReviews', 'tvshows.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tvGenres') == True:
             self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tvNetworks') == True:
@@ -250,50 +285,45 @@ class navigator:
 
         self.endDirectory()
 
+
     def mytvshows(self, lite=False):
-        try:
-            self.accountCheck()
+        self.accountCheck()
 
-            if traktCredentials == True and imdbCredentials == True:
+        if traktCredentials == True and imdbCredentials == True:
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32034, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
 
-                self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-                self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
-                self.addDirectoryItem(32034, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
+        elif traktCredentials == True:
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
 
-            elif traktCredentials == True:
-                self.addDirectoryItem("Trakt On Deck", 'calendar&url=onDeck', 'trakt.png', 'DefaultTVShows.png')
-                self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-                self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+        elif imdbCredentials == True:
+            self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'DefaultTVShows.png')
 
-            elif imdbCredentials == True:
-                self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
-                self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'DefaultTVShows.png')
+        if traktCredentials == True:
+            self.addDirectoryItem(32035, 'tvshows&url=traktfeatured', 'trakt.png', 'DefaultTVShows.png')
 
-            if traktCredentials == True:
-                self.addDirectoryItem(32035, 'tvshows&url=traktfeatured', 'trakt.png', 'DefaultTVShows.png')
+        elif imdbCredentials == True:
+            self.addDirectoryItem(32035, 'tvshows&url=trending', 'imdb.png', 'DefaultMovies.png', queue=True)
 
-            elif imdbCredentials == True:
-                self.addDirectoryItem(32035, 'tvshows&url=trending', 'imdb.png', 'DefaultMovies.png', queue=True)
+        if traktIndicators == True:
+            self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultTVShows.png', queue=True)
+            self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
+            self.addDirectoryItem(32038, 'calendar&url=mycalendar', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
 
-            if traktIndicators == True:
-                self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultTVShows.png', queue=True)
-                self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
-                self.addDirectoryItem(32038, 'calendar&url=mycalendar', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
+        self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultTVShows.png')
 
-            self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultTVShows.png')
+        if traktCredentials == True:
+            self.addDirectoryItem(32041, 'episodeUserlists', 'userlists.png', 'DefaultTVShows.png')
 
-            if traktCredentials == True:
-                self.addDirectoryItem(32041, 'episodeUserlists', 'userlists.png', 'DefaultTVShows.png')
+        if lite == False:
+            self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32028, 'tvPerson', 'people-search.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32010, 'tvSearch', 'search.png', 'DefaultTVShows.png')
 
-            if lite == False:
-                self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'DefaultTVShows.png')
-                self.addDirectoryItem(32028, 'tvPerson', 'people-search.png', 'DefaultTVShows.png')
-                self.addDirectoryItem(32010, 'tvSearch', 'search.png', 'DefaultTVShows.png')
-
-            self.endDirectory()
-        except:
-            print("ERROR")
-
+        self.endDirectory()
 
     def tools(self):
         self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png')
@@ -302,13 +332,12 @@ class navigator:
         self.addDirectoryItem(32045, 'openSettings&query=2.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32046, 'openSettings&query=7.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32047, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32048, 'openSettings&query=6.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32048, 'openSettings&query=6.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem('Cache Functions', 'cfNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32539, 'smuSettings', 'urlresolver.png', 'DefaultAddonProgram.png')
-
+        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
         self.endDirectory()
 
     def cf(self):
@@ -344,6 +373,7 @@ class navigator:
             self.addDirectoryItem(32002, tv_downloads, 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 
         self.endDirectory()
+
 
     def search(self):
         self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultMovies.png')
@@ -426,10 +456,11 @@ class navigator:
 
     def clearCacheSearch(self):
         control.idle()
-        if control.yesnoDialog(control.lang(32056).encode('utf-8'), '', ''):
-            control.setSetting('tvsearch', '')
-            control.setSetting('moviesearch', '')
-            control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        if not yes: return
+        from resources.lib.modules import cache
+        cache.cache_clear_search()
+        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheAll(self):
         control.idle()
@@ -445,7 +476,6 @@ class navigator:
         url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
         thumb = os.path.join(artPath, thumb) if not artPath == None else icon
         cm = []
-        cm.append(('13Clowns Settings', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
         if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
         if not context == None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
         item = control.item(label=name)
@@ -453,53 +483,66 @@ class navigator:
         item.setArt({'icon': thumb, 'thumb': thumb})
         if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
+        
+    def collections(self, lite=False):
+        self.addDirectoryItem('Actor Collection', 'collectionActors', 'boxsets.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Movie Collection', 'collectionBoxset', 'boxsets.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Car Movie Collections', 'collections&url=carmovies', 'boxsets.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Christmas Collection', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultMovies.png')
+        self.addDirectoryItem('DC Comics Collection', 'collections&url=dcmovies', 'boxsets.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Kids Collections', 'collectionKids', 'boxsets.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Marvel Collection', 'collections&url=marvelmovies', 'boxsets.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Superhero Collections', 'collectionSuperhero', 'boxsets.png', 'DefaultMovies.png')
+        
+        self.endDirectory()
 
     def collectionActors(self):
-        self.addDirectoryItem('[COLOR white][B]Adam Sandler[/B][/COLOR]', 'collections&url=adamsandler', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Al Pacino[/B][/COLOR]', 'collections&url=alpacino', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Alan Rickman[/B][/COLOR]', 'collections&url=alanrickman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Anthony Hopkins[/B][/COLOR]', 'collections&url=anthonyhopkins', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Angelina Jolie[/B][/COLOR]', 'collections&url=angelinajolie', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Arnold Schwarzenegger[/B][/COLOR]', 'collections&url=arnoldschwarzenegger', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Charlize Theron[/B][/COLOR]', 'collections&url=charlizetheron', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Clint Eastwood[/B][/COLOR]', 'collections&url=clinteastwood', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Demi Moore[/B][/COLOR]', 'collections&url=demimoore', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Denzel Washington[/B][/COLOR]', 'collections&url=denzelwashington', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Eddie Murphy[/B][/COLOR]', 'collections&url=eddiemurphy', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Elvis Presley[/B][/COLOR]', 'collections&url=elvispresley', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Gene Wilder[/B][/COLOR]', 'collections&url=genewilder', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Gerard Butler[/B][/COLOR]', 'collections&url=gerardbutler', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Goldie Hawn[/B][/COLOR]', 'collections&url=goldiehawn', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Jason Statham[/B][/COLOR]', 'collections&url=jasonstatham', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Jean-Claude Van Damme[/B][/COLOR]', 'collections&url=jeanclaudevandamme', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Jeffrey Dean Morgan[/B][/COLOR]', 'collections&url=jeffreydeanmorgan', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]John Travolta[/B][/COLOR]', 'collections&url=johntravolta', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Johnny Depp[/B][/COLOR]', 'collections&url=johnnydepp', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Julia Roberts[/B][/COLOR]', 'collections&url=juliaroberts', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Kevin Costner[/B][/COLOR]', 'collections&url=kevincostner', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Liam Neeson[/B][/COLOR]', 'collections&url=liamneeson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Mel Gibson[/B][/COLOR]', 'collections&url=melgibson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Melissa McCarthy[/B][/COLOR]', 'collections&url=melissamccarthy', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Meryl Streep[/B][/COLOR]', 'collections&url=merylstreep', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Michelle Pfeiffer[/B][/COLOR]', 'collections&url=michellepfeiffer', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Nicolas Cage[/B][/COLOR]', 'collections&url=nicolascage', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Nicole Kidman[/B][/COLOR]', 'collections&url=nicolekidman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Paul Newman[/B][/COLOR]', 'collections&url=paulnewman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Reese Witherspoon[/B][/COLOR]', 'collections&url=reesewitherspoon', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Robert De Niro[/B][/COLOR]', 'collections&url=robertdeniro', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Samuel L Jackson[/B][/COLOR]', 'collections&url=samueljackson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Sean Connery[/B][/COLOR]', 'collections&url=seanconnery', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Scarlett Johansson[/B][/COLOR]', 'collections&url=scarlettjohansson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Sharon Stone[/B][/COLOR]', 'collections&url=sharonstone', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Sigourney Weaver[/B][/COLOR]', 'collections&url=sigourneyweaver', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Steven Seagal[/B][/COLOR]', 'collections&url=stevenseagal', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Tom Hanks[/B][/COLOR]', 'collections&url=tomhanks', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Vin Diesel[/B][/COLOR]', 'collections&url=vindiesel', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Wesley Snipes[/B][/COLOR]', 'collections&url=wesleysnipes', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Will Smith[/B][/COLOR]', 'collections&url=willsmith', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('[COLOR white][B]Winona Ryder[/B][/COLOR]', 'collections&url=winonaryder', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Adam Sandler', 'collections&url=adamsandler', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Al Pacino', 'collections&url=alpacino', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Alan Rickman', 'collections&url=alanrickman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Anthony Hopkins', 'collections&url=anthonyhopkins', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Angelina Jolie', 'collections&url=angelinajolie', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Arnold Schwarzenegger', 'collections&url=arnoldschwarzenegger', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Charlize Theron', 'collections&url=charlizetheron', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Clint Eastwood', 'collections&url=clinteastwood', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Demi Moore', 'collections&url=demimoore', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Denzel Washington', 'collections&url=denzelwashington', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Eddie Murphy', 'collections&url=eddiemurphy', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Elvis Presley', 'collections&url=elvispresley', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Gene Wilder', 'collections&url=genewilder', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Gerard Butler', 'collections&url=gerardbutler', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Goldie Hawn', 'collections&url=goldiehawn', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Jason Statham', 'collections&url=jasonstatham', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Jean-Claude Van Damme', 'collections&url=jeanclaudevandamme', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Jeffrey Dean Morgan', 'collections&url=jeffreydeanmorgan', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('John Travolta', 'collections&url=johntravolta', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Johnny Depp', 'collections&url=johnnydepp', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Julia Roberts', 'collections&url=juliaroberts', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Kevin Costner', 'collections&url=kevincostner', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Liam Neeson', 'collections&url=liamneeson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Mel Gibson', 'collections&url=melgibson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Melissa McCarthy', 'collections&url=melissamccarthy', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Meryl Streep', 'collections&url=merylstreep', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Michelle Pfeiffer', 'collections&url=michellepfeiffer', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Nicolas Cage', 'collections&url=nicolascage', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Nicole Kidman', 'collections&url=nicolekidman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Paul Newman', 'collections&url=paulnewman', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Reese Witherspoon', 'collections&url=reesewitherspoon', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Robert De Niro', 'collections&url=robertdeniro', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Samuel L Jackson', 'collections&url=samueljackson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Sean Connery', 'collections&url=seanconnery', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Scarlett Johansson', 'collections&url=scarlettjohansson', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Sharon Stone', 'collections&url=sharonstone', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Sigourney Weaver', 'collections&url=sigourneyweaver', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Steven Seagal', 'collections&url=stevenseagal', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Tom Hanks', 'collections&url=tomhanks', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Vin Diesel', 'collections&url=vindiesel', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Wesley Snipes', 'collections&url=wesleysnipes', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Will Smith', 'collections&url=willsmith', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
+        self.addDirectoryItem('Winona Ryder', 'collections&url=winonaryder', 'collectionactors.png', 'DefaultRecentlyAddedMovies.png')
 
-        self.endDirectory()  
+        self.endDirectory()
+    
 
     def collectionBoxset(self):
         self.addDirectoryItem('48 Hrs. (1982-1990)', 'collections&url=fortyeighthours', 'collectionboxset.png', 'DefaultRecentlyAddedMovies.png')
@@ -675,6 +718,7 @@ class navigator:
         self.addDirectoryItem('Kids Movie Collection', 'collections&url=kidsmovies', 'collectionkids.png', 'DefaultRecentlyAddedMovies.png')
 
         self.endDirectory()
+        
 
     def collectionBoxsetKids(self):
         self.addDirectoryItem('101 Dalmations (1961-2003)', 'collections&url=onehundredonedalmations', 'collectionkidsboxset.png', 'DefaultRecentlyAddedMovies.png')
@@ -758,21 +802,12 @@ class navigator:
         self.addDirectoryItem('Spider-Man (2002-2017)', 'collections&url=spiderman', 'collectionsuperhero.png', 'DefaultRecentlyAddedMovies.png')
         self.addDirectoryItem('Superman (1978-2016)', 'collections&url=superman', 'collectionsuperhero.png', 'DefaultRecentlyAddedMovies.png')
         self.addDirectoryItem('X-Men (2000-2016)', 'collections&url=xmen', 'collectionsuperhero.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('DC Comics Collection', 'collections&url=dcmovies', 'collectiondc.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('Marvel Collection', 'collections&url=marvelmovies', 'collectionmarvel.png', 'DefaultRecentlyAddedMovies.png')
-        
-        self.endDirectory()
 
+        self.endDirectory()
+        
 
     def endDirectory(self):
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=True)
 
 
-
-
-'''
-##########################################################
-################NOTES###############################
-#self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
-'''

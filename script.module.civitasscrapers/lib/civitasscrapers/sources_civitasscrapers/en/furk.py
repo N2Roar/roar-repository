@@ -1,14 +1,20 @@
-# -*- coding: UTF-8 -*-
 '''
-    furk scraper for Exodus forks.
-    Nov 9 2018 - Checked
+   Incursion Add-on
+   Copyright (C) 2016 Incursion
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 
-    Updated and refactored by someone.
-    Originally created by others.
-'''
 import requests, json, sys
 from resources.lib.modules import source_utils, cleantitle, control
-
 
 class source:
     def __init__(self):
@@ -24,6 +30,7 @@ class source:
         self.user_pass = control.setting('furk.user_pass')
         self.api_key = control.setting('furk.api')
         self.search_limit = control.setting('furk.limit')
+        self.files = []
 
     def get_api(self):
 
@@ -96,25 +103,17 @@ class source:
                 title = url['title'].replace(':', ' ').replace(' ', '+').replace('&', 'and')
                 title = title.replace("'", "")
                 year = url['year']
-                link = '@name+%s+%s+@files+%s+%s' \
-                        % (title, year, title, year)
+                link = '@name+%s+%s+@files+%s+%s' % (title, year, title, year)
 
             elif content_type == 'episode':
                 title = url['tvshowtitle'].replace(':', ' ').replace(' ', '+').replace('&', 'and')
                 season = int(url['season'])
                 episode = int(url['episode'])
-                season00_ep00_SE = 's%02de%02d' % (season, episode)
-                season0_ep0_SE = 's%de%d' % (season, episode)
-                season00_ep00_X = '%02dx%02d' % (season, episode)
-                season0_ep0_X = '%dx%d' % (season, episode)
-                season0_ep00_X = '%dx%02d' % (season, episode)
-                link = '@name+%s+@files+%s+|+%s+|+%s+|+%s+|+%s' \
-                        % (title, season00_ep00_SE, season0_ep0_SE, season00_ep00_X, season0_ep0_X, season0_ep00_X)
+                link = self.makeQuery(title, season, episode)
 
             s = requests.Session()
-            link = (
-                    self.base_link + self.meta_search_link % (
-            api_key, link, match, moderated, search_in, self.search_limit))
+            link = self.base_link + self.meta_search_link % \
+                   (api_key, link, match, moderated, search_in, self.search_limit)
 
             p = s.get(link)
             p = json.loads(p.text)
@@ -134,9 +133,7 @@ class source:
                         file_id = i['id']
                         file_dl = i['url_dl']
                         if content_type == 'episode':
-                            url = '%s<>%s<>%s<>%s<>%s<>%s' % (
-                                file_id, season00_ep00_SE, season0_ep0_SE, season00_ep00_X, season0_ep0_X,
-                                season0_ep00_X)
+                            url = '%s<>%s<>%s' % (file_id, season, episode)
                             details = self.details(file_name, i['size'], i['video_info'])
                         else:
                             url = '%s<>%s<>%s+%s' % (file_id, 'movie', title, year)
@@ -168,11 +165,13 @@ class source:
     def resolve(self, url):
 
         try:
+
             info = url.split('<>')
             file_id = info[0]
-            content_type = 'movie' if info[1] == 'movie' else 'episode'
 
-            filtering_list = info[1:]
+            self.content_type = 'movie' if info[1] == 'movie' else 'episode'
+
+            if self.content_type == 'episode': self.filtering_list = self.seasEpQueryList(info[1], info[2])
 
             link = (self.base_link + self.tfile_link % (self.api_key, file_id))
             s = requests.Session()
@@ -182,41 +181,15 @@ class source:
             if p['status'] != 'ok' or p['found_files'] != '1':
                 return
 
-            files = p['files']
-            files = (files[0])['t_files']
+            files = p['files'][0]
+            files = files['t_files']
 
             for i in files:
-                name = i['name']
-
-                ct = i['ct']
-
-                if 'video' in i['ct']:
-
-                    if content_type == 'movie':
-                        if name.lower() != 'rarbg.mp4' and name.lower() != 'rarbg.mkv' and 'furk320' not in name.lower() and 'sample' not in name.lower() and not name.lower().endswith(
-                                'sub'):
-                            if int(i['size']) > 150:
-                                mv_title = str(info[2]).split('+')
-                                fail = 0
-                                for word in mv_title:
-                                    if word.lower() not in name.lower():
-                                        if word != 'and':
-                                            fail += 1
-                                            break
-                                if fail == 0:
-                                    url = i['url_dl']
-                            else:
-                                pass
-
-                    else:
-                        if 'furk320' not in name.lower() and 'sample' not in name.lower():
-                            for x in filtering_list:
-                                if x in name.lower():
-                                    url = i['url_dl']
-                                else:
-                                    pass
-                else:
+                if 'video' not in i['ct']:
                     pass
+                else: self.files.append(i)
+
+            url = self.managePack()
 
             return url
 
@@ -225,6 +198,22 @@ class source:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             print(exc_type, exc_tb.tb_lineno)
             pass
+
+    def managePack(self):
+
+        for i in self.files:
+            name = i['name']
+            if self.content_type == 'movie':
+                if 'is_largest' in i:
+                    url = i['url_dl']
+            else:
+                if 'furk320' not in name.lower() and 'sample' not in name.lower():
+                    for x in self.filtering_list:
+                        if x in name.lower():
+                            url = i['url_dl']
+                        else:
+                            pass
+        return url
 
     def details(self, name, size, video_info):
 
@@ -238,18 +227,39 @@ class source:
         fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*)(\.|\)|\]|\s)', '', name)
         fmt = re.split('\.|\(|\)|\[|\]|\s|\-', fmt)
         fmt = [x.lower() for x in fmt]
-        info = video_info.replace('\n', '')
-        v = re.compile('Video: (.+?),').findall(info)[0]
-        a = re.compile('Audio: (.+?), .+?, (.+?),').findall(info)[0]
         if '3d' in fmt:
             q = '  | 3D'
         else:
             q = ''
-        info = '%.2f GB%s | %s | %s | %s' % (size, q, v, a[0], a[1])
-        info = re.sub('\(.+?\)', '', info)
-        info = info.replace('stereo', '2.0')
-        info = info.replace('eac3', 'dd+')
-        info = info.replace('ac3', 'dd')
-        info = ' '.join(info.split())
+        try:
+            info = video_info.replace('\n', '')
+            v = re.compile('Video: (.+?),').findall(info)[0]
+            a = re.compile('Audio: (.+?), .+?, (.+?),').findall(info)[0]
+            info = '%.2f GB%s | %s | %s | %s' % (size, q, v, a[0], a[1])
+            info = re.sub('\(.+?\)', '', info)
+            info = info.replace('stereo', '2.0')
+            info = info.replace('eac3', 'dd+')
+            info = info.replace('ac3', 'dd')
+            info = info.replace('channels', 'ch')
+            info = ' '.join(info.split())
+            return info
+        except: pass
+        try:
+            if any(i in ['hevc', 'h265', 'x265'] for i in fmt): v = 'HEVC'
+            else: v = 'h264'
+            info = '%.2f GB%s | %s' % (size, q, v)
+            return info
+        except: pass
+        try:
+            info = '%.2f GB | [I]%s[/I]' % (size, name.replace('.', ' '))
+            return info
+        except: pass
 
-        return info
+    def makeQuery(self, title, season, episode):
+        seasEpList = self.seasEpQueryList(season, episode)
+        return '@name+%s+@files+%s+|+%s+|+%s' % (title, seasEpList[0], seasEpList[1], seasEpList[2])
+
+    def seasEpQueryList(self, season, episode):
+        return ['s%02de%02d' % (int(season), int(episode)), '%dx%02d' % (int(season), int(episode)),
+                '%02dx%02d' % (int(season), int(episode))]
+

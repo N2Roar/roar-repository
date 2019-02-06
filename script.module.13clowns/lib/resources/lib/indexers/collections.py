@@ -35,15 +35,12 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
-from resources.lib.indexers import navigator
 
 import os,sys,re,json,urllib,urlparse,datetime,base64
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 action = params.get('action')
-
-#control.moderator()
 
 
 class collections:
@@ -55,7 +52,7 @@ class collections:
         self.imdb_link = 'https://www.imdb.com'
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key == None:
-            self.tmdb_key = base64.b64decode('MDA0OTc5NWVkYjU3NTY4Yjk1MjQwYmM5ZTYxYTlkZmM=')
+            self.tmdb_key = '0049795edb57568b95240bc9e61a9dfc'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
         self.trakt_user = control.setting('trakt.user').strip()
@@ -78,7 +75,7 @@ class collections:
         self.search_link = 'https://api.trakt.tv/search/movie?limit=20&page=1&query='
         self.fanart_tv_art_link = 'https://webservice.fanart.tv/v3/movies/%s'
         self.fanart_tv_level_link = 'https://webservice.fanart.tv/v3/level'
-        self.tm_art_link = 'https://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tm_user, self.lang)
+        self.tm_art_link = 'https://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
         self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
@@ -968,7 +965,7 @@ class collections:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'MDA4M2JmZDMyZjNkOTE4NzZkYzYyNTU2YjQ1MTY0MWU='.decode('base64')}
+        self.fanart_tv_headers = {'api-key': '695993598de1efe690dfdf83461872b9'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

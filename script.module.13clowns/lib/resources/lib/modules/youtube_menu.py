@@ -25,8 +25,6 @@
 '''
 
 
-
-
 import xbmcplugin,xbmcgui,sys,os,re,urllib,urllib2
 
 from resources.lib.modules import client

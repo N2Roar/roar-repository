@@ -1,6 +1,14 @@
-# -*- coding: UTF-8 -*-
-"""
-    LambdaScrapers Module
+# -*- coding: utf-8 -*-
+
+'''
+#:'######::'####:'##::::'##:'####:'########::::'###:::::'######::
+#'##... ##:. ##:: ##:::: ##:. ##::... ##..::::'## ##:::'##... ##:
+# ##:::..::: ##:: ##:::: ##:: ##::::: ##:::::'##:. ##:: ##:::..::
+# ##:::::::: ##:: ##:::: ##:: ##::::: ##::::'##:::. ##:. ######::
+# ##:::::::: ##::. ##:: ##::: ##::::: ##:::: #########::..... ##:
+# ##::: ##:: ##:::. ## ##:::: ##::::: ##:::: ##.... ##:'##::: ##:
+#. ######::'####:::. ###::::'####:::: ##:::: ##:::: ##:. ######::
+#:......:::....:::::...:::::....:::::..:::::..:::::..:::......:::
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,11 +22,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-# Addon Name: LambdaScrapers Module
-# Addon id: script.module.lambdascrapers
-
+'''
 from civitasscrapers.modules import log_utils
 
 try:
@@ -36,9 +40,16 @@ except:
     debrid_resolvers = []
 
 
-def status():
-    return debrid_resolvers != []
-
+def status(torrent=False):
+    debrid_check = debrid_resolvers != []
+    if debrid_check is True:
+        if torrent:
+            enabled = control.setting('torrent.enabled')
+            if enabled == '' or enabled.lower() == 'true':
+                return True
+            else:
+                return False
+    return debrid_check
 
 def resolver(url, debrid):
     try:

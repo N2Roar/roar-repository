@@ -1,0 +1,53 @@
+﻿======[B][COLOR green]Status: SUPPORTED[/COLOR][/B]========
+
+
+
+[B][COLOR red]13Clowns[/COLOR][/B] with Civitas Community Scrapers.
+
+Please find Civitas on github and help contribute!
+
+
+
+=======[B]SUPPORT[/B]========
+
+Telegram: https://t.me/Clowns13
+
+Twitter: @1clowns
+
+
+
+=======[B]CHANGE LOG[/B]=======
+[B]2.0.3[/B]
+- misc fixes
+[B]2.0[/B]
+- Kodi 18 fixes
+- a mess of code fixes
+- auto resume should be fixed, please let me know
+- added 50,60,70,80,90,Y2K Movies/Shows
+- changed defaults for users not wanting to look!!
+- fixed apis
+- repo fixed
+- didnt finish 24/7, coming soon.
+
+
+
+=======[B]CREDITS[/B]========
+
+EggMan for support, help and sharing. Big RESPECT to YOU!!!
+
+Bone for answering random newbie questions and driving him crazy. Dont stray away to far..
+
+@A1wolfgirl3 and @mr000iconz Amazing Artwork
+Serpent Drago major tech support for the community.
+drinfernoo(the Doctor) for git support, community support and wizard!!!
+Slamious for bassass builds adn community support!
+Jsergio for ResolveURL
+
+@tantrumdev for giving BOZO constructive crap!
+
+
+
+Fans, Supporters, and all the ones that hate!!! Yes you, you know who you are….lol
+
+
+

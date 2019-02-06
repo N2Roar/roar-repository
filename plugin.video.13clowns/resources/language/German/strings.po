@@ -1,5 +1,5 @@
-# Addon Name: 13Clowns
-# Addon id: plugin.video.13clowns
+# Translators:
+# Addon id: plugin.video.13Clowns
 # Addon Provider: 13Clowns
 # Translators:
 # Translators:
@@ -32,7 +32,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 
@@ -205,8 +205,8 @@ msgid "No Trakt or IMDb account found."
 msgstr "Kein Trakt- oder IMDb-Konto gefunden"
 
 msgctxt "#32043"
-msgid "[B]SETTINGS[/B]
-msgstr "[B]EINSTELLUNGEN[/B]"
+msgid "[B]SETTINGS[/B] : General"
+msgstr "[B]EINSTELLUNGEN[/B] : Allgemein"
 
 msgctxt "#32044"
 msgid "[B]SETTINGS[/B] : Accounts"
@@ -298,11 +298,11 @@ msgstr "Eintrag zur Warteschlange hinzufügen"
 
 msgctxt "#32066"
 msgid "Watched in 13Clowns"
-msgstr "In Placenta Angesehen"
+msgstr "In 13Clowns Angesehen"
 
 msgctxt "#32067"
 msgid "Unwatched in 13Clowns"
-msgstr "In Placenta Ungesehen"
+msgstr "In 13Clowns Ungesehen"
 
 msgctxt "#32068"
 msgid "Watched in Trakt"
@@ -325,8 +325,8 @@ msgid "Refresh"
 msgstr "Aktualisieren"
 
 msgctxt "#32073"
-msgid "[B][COLOR red]Trakt[/COLOR][/B] : Authorize"
-msgstr "[B][COLOR red]Trakt[/COLOR][/B] : Berechtigung"
+msgid "[B]TRAKT[/B] : Authorize"
+msgstr "[B]TRAKT[/B]: Berechtigung"
 
 msgctxt "#32074"
 msgid "[B]HELP[/B]"
@@ -584,17 +584,13 @@ msgctxt "#32373"
 msgid "Force container refresh"
 msgstr "Verzeichnis neu laden"
 
-msgctxt "#32374"
-msgid "Enable Debug"
-msgstr ""
-
 msgctxt "#32401"
 msgid "No stream available"
 msgstr "Keine Streams verfügbar"
 
 msgctxt "#32402"
 msgid "Playback outside 13Clowns is not allowed"
-msgstr "Eine Wiedergabe außerhalb von Placenta ist nicht erlaubt"
+msgstr "Eine Wiedergabe außerhalb von 13Clowns ist nicht erlaubt"
 
 msgctxt "#32403"
 msgid "Download"
@@ -713,12 +709,12 @@ msgid "DEBRID-SERVICE"
 msgstr "DEBRID-DIENSTE"
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in ResolveURL Settings."
-msgstr "Konfiguriere Debrid-Dienste in den ResolveURL-Einstellungen."
+msgid "Configure Debrid Services in URLResolver Settings."
+msgstr "Konfiguriere Debrid-Dienste in den URLResolver-Einstellungen."
 
 msgctxt "#32540"
-msgid "ResolveURL Settings"
-msgstr "ResolveURL-Einstellungen"
+msgid "URLResolver Settings"
+msgstr "URLResolver-Einstellungen"
 
 msgctxt "#32541"
 msgid "Library"
@@ -821,11 +817,11 @@ msgid "Include episodes with unknown air dates"
 msgstr "Episoden mit unbekanntem Ausstrahlungsdatum einbeziehen"
 
 msgctxt "#32570"
-msgid "Show Special Episodes"
+msgid "Show unaired seasons/episodes"
 msgstr "Noch nicht gesendete Staffeln/Episoden anzeigen"
 
 msgctxt "#32571"
-msgid "Hide Movies in Cinema"
+msgid "Hide movies in cinema"
 msgstr "Nur Filme älter als 90 Tage anzeigen"
 
 msgctxt "#32572"
@@ -918,43 +914,83 @@ msgstr "Quellen werden vorbereitet"
 
 msgctxt "#32601"
 msgid "Total"
-msgstr ""
+msgstr "Gesamt"
 
 msgctxt "#32602"
 msgid "Waiting for"
-msgstr ""
+msgstr "Warten auf"
 
 msgctxt "#32603"
 msgid "New search..."
-msgstr ""
+msgstr "Neue Suche..."
 
 msgctxt "#32604"
 msgid "[B]13Clowns[/B] : Clear search history..."
-msgstr ""
+msgstr "[B]13Clowns[/B]: Suchhistorie löschen ..."
 
 msgctxt "#32605"
 msgid "Click to clear search history"
-msgstr ""
+msgstr "Klicken Sie hier, um den Suchverlauf zu löschen"
 
 msgctxt "#32606"
-msgid "Prem"
-msgstr ""
+msgid "[COLOR=green]Paid[/COLOR]"
+msgstr "[COLOR=green]Bezahlt[/COLOR]"
 
 msgctxt "#32607"
-msgid "Normal"
-msgstr ""
+msgid "[COLOR=yellow]Free[/COLOR]"
+msgstr "[COLOR=yellow]Kostenlos[/COLOR]"
 
 msgctxt "#32608"
-msgid "Auto Syncing Trakt Library"
+msgid "Unaired Season/Episode Color"
+msgstr "Unaired Season / Episodenfarbe"
+
+msgctxt "#32609"
+msgid "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
+msgstr "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
+
+msgctxt "#32610"
+msgid "Kids Corner"
+msgstr ""
+
+msgctxt "#32611"
+msgid "Fitness Zone"
+msgstr ""
+
+msgctxt "#32612"
+msgid "Legends of Music"
+msgstr ""
+
+msgctxt "#80000"
+msgid "Kings Of Horror"
+msgstr ""
+
+msgctxt "#80001"
+msgid "Kung Fu"
+msgstr ""
+
+msgctxt "#80002"
+msgid "Urban"
+msgstr ""
+
+msgctxt "#80003"
+msgid "MST3K / Sci-Fi"
+msgstr ""
+
+msgctxt "#80004"
+msgid "Movie Time"
 msgstr ""
 
 msgctxt "#32613"
 msgid "[B]13Clowns[/B] : Clear All Cache..."
-msgstr ""
+msgstr "[B]13Clowns[/B] : Alle Cache löschen ..."
 
 msgctxt "#32614"
 msgid "[B]13Clowns[/B] : Clear Meta Cache..."
-msgstr ""
+msgstr "[B]13Clowns[/B] : Meta-Cache löschen ..."
+
+msgctxt "#32615"
+msgid "Check Host for Valid URL"
+msgstr "Überprüfen Sie den Host auf gültige URL"
 
 msgctxt "#32616"
 msgid "Debugging"
@@ -962,11 +998,11 @@ msgstr ""
 
 msgctxt "#32617"
 msgid "Debug Log"
-msgstr ""
+msgstr "Austestungsprotokoll"
 
 msgctxt "#32618"
 msgid "Kodi Log"
-msgstr ""
+msgstr "Was ist Log"
 
 msgctxt "#32619"
 msgid "Addon Log"
@@ -982,11 +1018,11 @@ msgstr ""
 
 msgctxt "#32622"
 msgid "Main Menu"
-msgstr ""
+msgstr "Hauptmenü"
 
 msgctxt "#32623"
 msgid "Reviews and Trailers"
-msgstr ""
+msgstr "Bewertungen und Anhänger"
 
 msgctxt "#32624"
 msgid "P[COLOR red]o[/COLOR]dcast[COLOR red]One[/COLOR]"
@@ -1002,11 +1038,11 @@ msgstr ""
 
 msgctxt "#32627"
 msgid "Categories"
-msgstr ""
+msgstr "Kategorien"
 
 msgctxt "#32628"
 msgid "[B]SETTINGS[/B] : Navigation"
-msgstr ""
+msgstr "[B]SETTINGS[/B] : Navigation"
 
 msgctxt "#32629"
 msgid "PodBay"
@@ -1014,12 +1050,32 @@ msgstr ""
 
 msgctxt "#32630"
 msgid "Show Season 0 in Browse Seasons"
-msgstr ""
+msgstr "Staffel 0 in Browse Seasons anzeigen"
 
 msgctxt "#32631"
 msgid "Documentaries"
-msgstr ""
+msgstr "Dokumentarfilme"
 
-msgctxt "#90000"
-msgid "[B][COLOR orange]Configure Lambda Settings[/COLOR][/B]"
-msgstr "[B][COLOR orange]Configure Lambda Setting[/COLOR][/B]"
+msgctxt "#32634"
+msgid "Torrent Source Identifier Color"
+msgstr "Torrent Source Identifier Farbe"
+
+msgctxt "#32635"
+msgid "Torrent Support (Requires Real-Debrid or Premiumize)"
+msgstr "Torrent-Support (erfordert echte Rückstände oder Premium-Unterstützung)"
+
+msgctxt "#32636"
+msgid "Enable Torrent Scrapers"
+msgstr "Aktivieren Sie Torrent Scrapers"
+
+msgctxt "#32637"
+msgid "Real-Debrid Torrent Settings"
+msgstr "Real-Debrid Torrent-Einstellungen"
+
+msgctxt "#32638"
+msgid "Minimum Seeders"
+msgstr "Minimale Sämaschine"
+
+msgctxt "#32639"
+msgid "Sort By Torrent/Premium"
+msgstr "Nach Torrent / Premium sortieren"

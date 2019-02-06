@@ -323,8 +323,8 @@ msgid "Refresh"
 msgstr ""
 
 msgctxt "#32073"
-msgid "[B][COLOR red]Trakt[/COLOR][/B] : Authorize"
-msgstr "[B][COLOR red]Trakt[/COLOR][/B] : Authorise"
+msgid "[B][COLOR red]TRAKT[/COLOR][/B] : Authorize"
+msgstr "[B]TRAKT[/B]: Authorise"
 
 msgctxt "#32074"
 msgid "[B]HELP[/B]"
@@ -451,7 +451,7 @@ msgid "Playback"
 msgstr ""
 
 msgctxt "#32331"
-msgid "Default action"
+msgid "Set Auto-Play, Directory or Dialog"
 msgstr ""
 
 msgctxt "#32332"
@@ -467,7 +467,7 @@ msgid "Auto Play"
 msgstr ""
 
 msgctxt "#32335"
-msgid "Progress Dialog"
+msgid "View Providers In-Progress Dialog"
 msgstr ""
 
 msgctxt "#32336"
@@ -483,7 +483,7 @@ msgid "File Hosting Filters"
 msgstr ""
 
 msgctxt "#32339"
-msgid "Max Quality"
+msgid "Set Max Quality With-Out Changing Providers"
 msgstr ""
 
 msgctxt "#32340"
@@ -584,6 +584,10 @@ msgstr ""
 
 msgctxt "#32374"
 msgid "Enable Debug"
+msgstr ""
+
+msgctxt "#32375"
+msgid "News and Updates"
 msgstr ""
 
 msgctxt "#32401"
@@ -711,8 +715,8 @@ msgid "DEBRID-SERVICE"
 msgstr ""
 
 msgctxt "#32539"
-msgid "[B][COLOR red]Configure Debrid Services[/COLOR][/B] : ResolveURL Settings."
-msgstr "[B][COLOR red]Configure Debrid Services[/COLOR][/B] : ResolveURL Settings."
+msgid "Configure Debrid Services in ResolveURL Settings."
+msgstr ""
 
 msgctxt "#32540"
 msgid "ResolveURL Settings"
@@ -819,11 +823,11 @@ msgid "Include episodes with unknown air dates"
 msgstr ""
 
 msgctxt "#32570"
-msgid "Show Special Episodes"
+msgid "Show unaired seasons/episodes"
 msgstr ""
 
 msgctxt "#32571"
-msgid "Hide Movies in Cinema"
+msgid "Hide movies in cinema"
 msgstr ""
 
 msgctxt "#32572"
@@ -935,15 +939,19 @@ msgid "Click to clear search history"
 msgstr ""
 
 msgctxt "#32606"
-msgid "Prem"
+msgid "[COLOR=green]Paid[/COLOR]"
 msgstr ""
 
 msgctxt "#32607"
-msgid "Normal"
+msgid "[COLOR=yellow]Free[/COLOR]"
 msgstr ""
 
 msgctxt "#32608"
-msgid "Auto Syncing Trakt Library"
+msgid "Unaired Season/Episode Color"
+msgstr ""
+
+msgctxt "#32609"
+msgid "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32610"
@@ -971,7 +979,11 @@ msgid "Urban"
 msgstr ""
 
 msgctxt "#80003"
-msgid "Sci-Fi"
+msgid "MST3K / Sci-Fi"
+msgstr ""
+
+msgctxt "#80004"
+msgid "Movie Time"
 msgstr ""
 
 msgctxt "#32613"
@@ -1050,6 +1062,27 @@ msgctxt "#32631"
 msgid "Documentaries"
 msgstr ""
 
-msgctxt "#90000"
-msgid "[COLOR orange]Configure Lambda Settings[/COLOR]"
-msgstr "[COLOR orange]Configure Lambda Setting[/COLOR]"
+
+msgctxt "#32634"
+msgid "Torrent Source Identifier Color"
+msgstr ""
+
+msgctxt "#32635"
+msgid "Torrent Support (Requires Real-Debrid or Premiumize)"
+msgstr ""
+
+msgctxt "#32636"
+msgid "Enable Torrent Scrapers"
+msgstr ""
+
+msgctxt "#32637"
+msgid "Real-Debrid Torrent Settings"
+msgstr ""
+
+msgctxt "#32638"
+msgid "Minimum Seeders"
+msgstr ""
+
+msgctxt "#32639"
+msgid "Sort By Torrent/Premium"
+msgstr ""
