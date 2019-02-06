@@ -61,11 +61,17 @@
         <setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="1" />
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="0" />
+		<setting type="lsep" label="32635" />
+        <setting id="torrent.enabled" type="bool" label="32636" default="false" />
+        <setting id="torrent.identify" type="enum" label="32634"  enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="32595" />
+        <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="10" range="1,100" option="int" />
+        <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
+        <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.overeasy/?action=urlResolverRDTorrent&query=1.36)" />									 
         <setting type="lsep" label="32338" />
-        <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="3" />
+        <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
         <setting id="autoplay.sd" type="bool" label="32340" default="false" />
         <setting id="sources.extrainfo" type="bool" label="32587" default="true" />
-        <setting id="HEVC" type="bool" label="32363" default="true" />
+        <setting id="HEVC" type="bool" label="32363" default="false" />
         <setting id="hosts.captcha" type="bool" label="32341" default="true" />
         <setting id="hosts.sort.provider" type="bool" label="32342" default="false" />
         <setting type="lsep" label="32343" />
@@ -281,18 +287,18 @@
         <setting id="provider.xrysoi" type="bool" label="XRYSOI" default="true" />
         <setting id="provider.liomenoi" type="bool" label="LIOMENOI" default="true" />
     </category>
-    <category label="[COLORyellow]Torrents[/COLOR]">
-        <setting id="install.real debrid.mod" label="Install Real Debrid module" type="action" action="InstallAddon(script.realdebrid.mod)" visible="!System.HasAddon(script.realdebrid.mod)" />
-        <setting id="private.rd.enable" type="bool" label="Private API Token (http://real-debrid.com/apitoken)" default="false" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting id="private.rd.api" type="text" label="API Token" default="" enable="eq(-1,true)" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting label="Please Log In To The Real Debrid Mod Plugin." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting label="The Scrapers Will Not Work Unless U Do So." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting label="[COLOR red] Torrents [/COLOR]" type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting id="provider.1337x-to" type="bool" label="1337X-TO" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting id="provider.limetorrents-cc" type="bool" label="LIMETORRENTS-CC" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting id="provider.extratorrent-si" type="bool" label="EXTRATORRENT-SI" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-        <setting id="provider.yify-torrent-org" type="bool" label="YIFY-TORRENT-ORG" default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-    </category>
+		<category label="[COLORyellow]Torrents[/COLOR]">
+		<setting id="install.real debrid.mod" label="Install Real Debrid module" type="action" action="InstallAddon(script.realdebrid.mod)" visible="!System.HasAddon(script.realdebrid.mod)"/>
+		<setting id="private.rd.enable" type="bool" label="Private API Token (http://real-debrid.com/apitoken)" default="false" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting id="private.rd.api" type="text" label="API Token" default="" enable="eq(-1,true)" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting label="Please Log In To The Real Debrid Mod Plugin." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting label="The Scrapers Will Not Work Unless U Do So." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting label="[COLOR red] Torrents [/COLOR]" type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting id="provider.1337x-to"type="bool" label="1337X-TO"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting id="provider.limetorrents-cc"type="bool" label="LIMETORRENTS-CC"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting id="provider.extratorrent-si"type="bool" label="EXTRATORRENT-SI"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+		<setting id="provider.yify-torrent-org"type="bool" label="YIFY-TORRENT-ORG"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
+	</category>
     <category label="32346">
         <setting type="lsep" label="FANART.TV" />
         <setting type="lsep" label="32582" default="" />

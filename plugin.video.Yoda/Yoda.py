@@ -348,6 +348,9 @@ elif action == 'urlResolver':
     except: pass
     resolveurl.display_settings()
 
+elif action == 'urlResolverRDTorrent':
+    from resources.lib.modules import control
+    control.openSettings(query, "script.module.resolveurl")									  
 elif action == 'download':
     import json
     from resources.lib.modules import sources

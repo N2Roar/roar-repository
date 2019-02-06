@@ -19,7 +19,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import client
 from resources.lib.modules import control
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1]) ; control.moderator()
+sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1]) ; 
 artPath = control.artPath() ; addonFanart = control.addonFanart()
 
 class podcast:
@@ -211,7 +211,7 @@ class podcast:
             pass
 
     def podcast_play(self, action, url):
-        control.moderator()
+        
         try:
             if 'podcastOne' in action:
                 ep_page = client.request(url)
