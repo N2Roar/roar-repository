@@ -1,3 +1,6 @@
+[B]2.0.5[/B]
+- added Polish/German/Spanish
+- reset defaults
 [B]2.0.3.3.1[/B]
 - added German
 [B]2.0.3.3[/B]

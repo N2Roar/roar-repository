@@ -7,8 +7,8 @@
         <setting id="trakt.user" type="text" default="" visible="false" />
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
-        <setting id="api.language" type="select" label="32316" values="English|German" default="English" />
-        <setting id="providers.lang" type="select" label="32360" values="English|German" default="English" />
+        <setting id="api.language" type="select" label="32316" values="English|German|Polish|Spanish|German+English|Polish+English|Spanish+English" default="English" />
+        <setting id="providers.lang" type="select" label="32360" values="English|German|Polish|Spanish|German+English|Polish+English|Spanish+English" default="English" />
         <setting id="flatten.tvshows" type="bool" label="32317" default="false" />
         <setting id="show_season0" type="bool" label="32630" default="false"/>
         <setting id="fanart" type="bool" label="32318" default="false" />
@@ -83,7 +83,7 @@
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="6" />
     <setting type="lsep" label="32635" />
         <setting id="torrent.enabled" type="bool" label="32636" default="false" />
-        <setting id="torrent.identify" type="enum" label="32634" enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
+        <setting id="torrent.identify" type="enum" label="32634"  enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
         <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="1" range="1,100" option="int" />
         <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)" default="false" />
         <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=urlResolverRDTorrent&query=1.36)" />

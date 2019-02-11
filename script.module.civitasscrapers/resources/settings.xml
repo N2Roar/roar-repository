@@ -10,7 +10,7 @@
         <setting type="sep" />
         <setting id="provider.4kmovieto" type="bool" label="$NUMBER[4]KMOVIETO" default="false" /> 
         <setting id="provider.animetoon" type="bool" label="ANIMETOON" default="false" />
-        <setting id="provider.azmovie" type="bool" label="AZMOVIE" default="false" /> 
+        <setting id="provider.azmovie" type="bool" label="AZMOVIE" default="true" /> 
         <setting id="provider.0123putlocker" type="bool" label="$NUMBER[0123]PUTLOCKER" default="false" /> 
         <setting id="provider.123fox" type="bool" label="$NUMBER[123]FOX" default="true" /> 
         <setting id="provider.123hbo" type="bool" label="$NUMBER[123]HBO" default="true" /> 
@@ -22,7 +22,8 @@
         <setting id="provider.cmovieshd" type="bool" label="CMOVIESHD" default="false" /> 
         <setting id="provider.cmovieshdbz" type="bool" label="CMOVIESHDBZ" default="false" /> 
         <setting id="provider.coolmoviezone" type="bool" label="COOLMOVIEZONE" default="false" />  
-        <setting id="provider.extramovies" type="bool" label="EXTRAMOVIES" default="true" /> 
+        <setting id="provider.extramovies" type="bool" label="EXTRAMOVIES" default="true" />
+        <setting id="provider.downflix" type="bool" label="DOWNFLIX" default="true" /> 
         <setting id="provider.fmovies" type="bool" label="FMOVIES" default="true" />  
         <setting id="provider.freefmovies" type="bool" label="FREEFMOVIES" default="true" />  
         <setting id="provider.freeputlockers" type="bool" label="FREEPUTLOCKERS" default="true" />  
@@ -39,7 +40,8 @@
         <setting id="provider.movietoken" type="bool" label="MOVIETOKEN" default="false" />
         <setting id="provider.myprojectfreetv" type="bool" label="MYPROJECTFREETV" default="false" />
         <setting id="provider.openloadmovie" type="bool" label="OPENLOADMOVIE" default="true" /> 
-        <setting id="provider.ororo" type="bool" label="ORORO" default="false" /> 
+        <setting id="provider.ororo" type="bool" label="ORORO" default="false" />
+        <setting id="provider.odb" type="bool" label="ODB" default="true" /> 
         <setting id="provider.plocker" type="bool" label="PLOCKER" default="false" />  
         <setting id="provider.primewire" type="bool" label="PRIMEWIRE" default="true" />  
         <setting id="provider.putlocker" type="bool" label="PUTLOCKER" default="true" />
@@ -58,48 +60,24 @@
         <setting id="provider.watchseries" type="bool" label="WATCHSERIES" default="false" />  
         <setting id="provider.xwatchseries" type="bool" label="XWATCHSERIES" default="true" /> 
         <setting id="provider.vdonip" type="bool" label="VDONIP" default="true" />
+        <setting id="provider.ymovies" type="bool" label="YMOVIES" default="true" />
     </category>
 
     <category label="Foreign">
         <setting label="Disable All Foreign Providers" type="action" option="close" action="RunPlugin(plugin://script.module.civitasscrapers/?mode=toggleAllForeign&amp;setting=false&amp;open_id='1.1')"/>
         <setting label="Enable All Foreign Providers" type="action" option="close" action="RunPlugin(plugin://script.module.civitasscrapers/?mode=toggleAllForeign&amp;setting=true&amp;open_id='1.2')"/>
+        <setting label="Spanish" type="lsep" />
+        <setting id="provider.megapelistv" type="bool" label="MEGAPELISTV" default="false" />
+        <setting id="provider.peliculasdk" type="bool" label="PELICULASDK" default="false" />
+        <setting id="provider.pelisplustv" type="bool" label="PELISPLUSTV" default="false" />
+        <setting id="provider.pepecine" type="bool" label="PEPCINE" default="false" />
+        <setting id="provider.seriespapaya" type="bool" label="SERIESPAPAYA" default="false" />
         <setting label="German" type="lsep" />
-        <setting id="provider.allucde" type="bool" label="ALLUC" default="false" />
-        <setting id="provider.animebase" type="bool" label="ANIMEBASE" default="false" />
-        <setting id="provider.animeloads" type="bool" label="ANIMELOADS" default="false" />
-        <setting id="provider.bs" type="bool" label="BS" default="false" />
-        <setting id="provider.cine" type="bool" label="CINE" default="false" />
-        <setting id="provider.cinenator" type="bool" label="CINENATOR" default="false" />
-        <setting id="provider.ddl" type="bool" label="DDL" default="false" />
-        <setting id="provider.filmpalast" type="bool" label="FILMPALAST" default="false" />
-        <setting id="provider.foxx" type="bool" label="FOXX" default="false" />
-        <setting id="provider.hdfilme" type="bool" label="HDFILME" default="false" />
-        <setting id="provider.hdstreams" type="bool" label="HDSTREAMS" default="false" />
-        <setting id="provider.horrorkino" type="bool" label="HORRORKINO" default="false" />
-        <setting id="provider.iload" type="bool" label="ILOAD" default="false" />
-        <setting id="provider.kinodogs" type="bool" label="KINODOGS" default="false" />
-        <setting id="provider.kinoking" type="bool" label="KINOKING" default="false" />
-        <setting id="provider.kinow" type="bool" label="KINOW" default="false" />
-        <setting id="provider.kinox" type="bool" label="KINOX" default="false" />
-        <setting id="provider.lichtspielhaus" type="bool" label="LICHTSPIELHAUS" default="false" />
-        <setting id="provider.movie2k-ac" type="bool" label="MOVIE$NUMBER[2]K-AC" default="false" />
-        <setting id="provider.movie2k-ag" type="bool" label="MOVIE$NUMBER[2]K-AG" default="false" />
-        <setting id="provider.movie2z" type="bool" label="MOVIE$NUMBER[2]Z" default="false" />
-        <setting id="provider.movie4k" type="bool" label="MOVIE$NUMBER[4]K" default="false" />
-        <setting id="provider.moviesever" type="bool" label="MOVIESEVER" default="false" />
-        <setting id="provider.movietown" type="bool" label="MOVIETOWN" default="false" />
-        <setting id="provider.netzkino" type="bool" label="NETZKINO" default="false" />
-        <setting id="provider.proxer" type="bool" label="PROXER" default="false" />
-        <setting id="provider.pureanime" type="bool" label="PUREANIME" default="false" />
-        <setting id="provider.serienstream" type="bool" label="SERIENSTREAM" default="false" />
-        <setting id="provider.seriesever" type="bool" label="SERIESEVER" default="false" />
-        <setting id="provider.stream-to" type="bool" label="STREAM-TO" default="false" />
-        <setting id="provider.streamdream" type="bool" label="STREAMDREAM" default="false" />
-        <setting id="provider.streamflix" type="bool" label="STREAMFLIX" default="false" />
-        <setting id="provider.streamit" type="bool" label="STREAMIT" default="false" />
-        <setting id="provider.tata" type="bool" label="TATA" default="false" />
-        <setting id="provider.video4k" type="bool" label="VIDEO$NUMBER[4]K" default="false" />
-        <setting id="provider.view4u" type="bool" label="VIEW4U" default="false" />
+        <setting id="provider.gamatotv" type="bool" label="GAMATOTV" default="false" />
+        <setting id="provider.liomenoi" type="bool" label="LIOMENOI" default="false" />
+        <setting id="provider.tainiesonline" type="bool" label="TAINIESONLINE" default="false" />
+        <setting id="provider.tainiomania" type="bool" label="TAINIOMANIA" default="false" />
+        <setting id="provider.xrysoi" type="bool" label="XRYSOI" default="false" />
         <setting label="Polish" type="lsep" />
         <setting id="provider.alltube" type="bool" label="ALLTUBE" default="false" />
         <setting id="provider.boxfilm" type="bool" label="BOXFILM" default="false" />
@@ -139,9 +117,11 @@
         <setting label="Enable All Torrent Providers" type="action" option="close" action="RunPlugin(plugin://script.module.civitasscrapers/?mode=toggleAllTorrent&amp;setting=true&amp;open_id='1.2')"/>
         <setting type="sep" />
         <setting id="provider.bitlord" type="bool" label="BITLORD" default="true" />
-        <setting id="provider.torrentapi" type="bool" label="TORRENTAPI" default="true" />
+        <setting id="provider.eztv" type="bool" label="EZTV" default="true" />
         <setting id="provider.piratebay" type="bool" label="PIRATEBAY" default="true" />
+        <setting id="provider.torrentapi" type="bool" label="TORRENTAPI" default="true" />
         <setting id="provider.yify" type="bool" label="YIFY" default="true" />
+        <setting id="provider.zoogle" type="bool" label="ZOOGLE" default="true" />
     </category>
 <!--    <category label="Debug">\-->
 <!--        <setting id="addon_debug" type="bool" label="Enable Debug" default="false" />-->

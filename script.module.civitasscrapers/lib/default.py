@@ -80,29 +80,33 @@ if mode == "toggleAllDebrid":
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllGerman":
-    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs',
-    'kinoking','kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream',
-    'seriesever','stream-to','streamdream','streamflix','streamit','tata','video4k','view4u']
+    sourcelist = ['gamatotv','liomenoi','tainiesonline','tainiomania','xrysoi']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllPolish":
-    sourcelist = ['alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser','filmwebbooster','iitv','movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
+    sourcelist = ['alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser',
+    'filmwebbooster','iitv','movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
+    toggleAll(params['setting'], params['open_id'], sourcelist)
+
+if mode == "toggleAllSpanish":
+    sourcelist = ['megapelistv','peliculasdk','pelisplustv','pepecine','seriespapaya']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllForeign":
-    sourcelist = ['allucde','animebase','animeloads','bs','cine','cinenator','ddl','filmpalast','foxx','hdfilme','hdstreams','horrorkino','iload','kinodogs','kinoking',
-    'kinow','kinox','lichtspielhaus','movie2k-ac','movie2k-ag','movie2z','movie4k','moviesever','movietown','netzkino','proxer','pureanime','serienstream','seriesever',
-    'stream-to','streamdream','streamflix','streamit','tata','video4k','view4u','alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser','filmwebbooster','iitv',
-    'movieneo','openkatalog','paczamy','segos','szukajkatv','trt']
+    sourcelist = ['gamatotv','liomenoi','tainiesonline','tainiomania','xrysoi',
+    'alltube','boxfilm','cdahd','cdax','ekinomaniak','ekinotv','filiser',
+    'filmwebbooster','iitv','movieneo','openkatalog','paczamy','segos',
+    'szukajkatv','trt','megapelistv','peliculasdk','pelisplustv','pepecine','seriespapaya']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "toggleAllTorrent":
-    sourcelist = ['bitlord','torrentapi','yify','vdonip','piratebay']
+    sourcelist = ['bitlord','torrentapi','yify','piratebay','eztv','zoogle']
     toggleAll(params['setting'], params['open_id'], sourcelist)
 
 if mode == "Defaults":
     sourcelist = ['123fox','123hbo','123movieshubz','animetoon','azmovies','bnwmovies','cartoonhd',
     'extramovies','fmovies','freefmovies','freeputlockers','gostream','Hdmto','hdpopcorns',
     'kattv','l23movies','iwaatch','openloadmovie','primewire','putlocker','reddit','rlsbb','scenerls',
-    'seehd','series9','seriesfree','seriesonline','solarmoviez','tvbox','vidics','watchseries','xwatchseries','vdonip']
+    'seehd','series9','seriesfree','seriesonline','solarmoviez','tvbox','vidics','watchseries',
+    'xwatchseries','vdonip','odb','downflix','ymovies']
     toggleAll(params['setting'], params['open_id'], sourcelist)
