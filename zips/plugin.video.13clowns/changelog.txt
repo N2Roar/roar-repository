@@ -1,3 +1,14 @@
+[B]2.0.6.1[/B]
+- fixed revert from 2.0.6
+- fixed show espisodes 0
+- clean install recommended
+[B]2.0.6[/B]
+- 4k premptive is seperated from 1080
+- fixed RD only setting
+- add to library fixed
+- adjusted defaults
+- fixed clear cache id (thx KB for pointing it out)
+- clean install recommended
 [B]2.0.5[/B]
 - added Polish/German/Spanish
 - reset defaults

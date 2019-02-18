@@ -348,6 +348,10 @@ elif action == 'queueItem':
 elif action == 'openSettings':
     from resources.lib.modules import control
     control.openSettings(query)
+    
+elif action == 'open.Settings.CacheProviders':
+    from resources.lib.modules import control
+    control.openSettings(query)
 
 elif action == 'artwork':
     from resources.lib.modules import control
@@ -613,10 +617,3 @@ elif action == 'civitasSettings':
     from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.civitasscrapers')
 
-if action == 'lists':
-    from resources.lib.indexers import lists
-    lists.indexer().root()
-
-elif action == 'listsNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().lists()   

@@ -162,7 +162,6 @@
 		<setting id="provider.putlockeronl" type="bool" label="PUTLOCKERONL" default="true" />
 		<setting id="provider.putlockerris" type="bool" label="PUTLOCKERRIS" default="true" />
 		<setting id="provider.putlockers" type="bool" label="PUTLOCKERS" default="false" />
-		<setting id="provider.reddit" type="bool" label="REDDIT" default="true" />
         <setting id="provider.rlsbb" type="bool" label="RLSBB" default="true" />
         <setting id="provider.rlsscn" type="bool" label="RLSSCN" default="true" />
         <setting id="provider.seehd" type="bool" label="SEEHD" default="true" />
@@ -287,18 +286,6 @@
         <setting id="provider.xrysoi" type="bool" label="XRYSOI" default="true" />
         <setting id="provider.liomenoi" type="bool" label="LIOMENOI" default="true" />
     </category>
-		<category label="[COLORyellow]Torrents[/COLOR]">
-		<setting id="install.real debrid.mod" label="Install Real Debrid module" type="action" action="InstallAddon(script.realdebrid.mod)" visible="!System.HasAddon(script.realdebrid.mod)"/>
-		<setting id="private.rd.enable" type="bool" label="Private API Token (http://real-debrid.com/apitoken)" default="false" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting id="private.rd.api" type="text" label="API Token" default="" enable="eq(-1,true)" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting label="Please Log In To The Real Debrid Mod Plugin." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting label="The Scrapers Will Not Work Unless U Do So." type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting label="[COLOR red] Torrents [/COLOR]" type="lsep" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting id="provider.1337x-to"type="bool" label="1337X-TO"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting id="provider.limetorrents-cc"type="bool" label="LIMETORRENTS-CC"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting id="provider.extratorrent-si"type="bool" label="EXTRATORRENT-SI"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-		<setting id="provider.yify-torrent-org"type="bool" label="YIFY-TORRENT-ORG"default="true" visible="System.HasAddon(script.realdebrid.mod)" />
-	</category>
     <category label="32346">
         <setting type="lsep" label="FANART.TV" />
         <setting type="lsep" label="32582" default="" />

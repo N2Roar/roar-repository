@@ -1,4 +1,6 @@
 CivitasScrapers Module Changelog:
+0.0.5.8
+- piratebay fixed
 0.0.5.7
 - added foreign scrapers
 0.0.5.6

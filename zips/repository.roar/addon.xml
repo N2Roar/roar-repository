@@ -2,7 +2,7 @@
 <addon
   id="repository.roar"
   name="Roar Repository"
-  version="0.0.3"
+  version="0.0.4"
   provider-name="N2Roar">
     <extension point="xbmc.addon.repository" name="nOneALOne Repository">
 		<dir>
@@ -10,13 +10,18 @@
 			<checksum>https://raw.githubusercontent.com/N2Roar/roar-repository-common/master/addons.xml.md5</checksum>
 			<datadir zip="true">https://raw.githubusercontent.com/N2Roar/roar-repository-common/master/zips/</datadir>
 		</dir>
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/N2Roar/roar-repository-removed/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/N2Roar/roar-repository-removed/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/N2Roar/roar-repository-removed/master/zips/</datadir>
+		</dir>
 		<info compressed="false">https://raw.githubusercontent.com/N2Roar/roar-repository/master/addons.xml</info>
 		<checksum>https://raw.githubusercontent.com/N2Roar/roar-repository/master/addons.xml.md5</checksum>
 		<datadir zip="true">https://raw.githubusercontent.com/N2Roar/roar-repository/master/zips/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 	  <summary>Roar Repo.</summary>
-	  <description>Just Raor... raor? ROAR</description>
+	  <description>Just Raor.</description>
 	  <platform>all</platform>
 	</extension>
 </addon>

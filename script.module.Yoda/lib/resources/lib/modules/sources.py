@@ -1042,15 +1042,13 @@ class sources:
 
         extra_info = control.setting('sources.extrainfo')
 
+        extra_info = control.setting('sources.extrainfo')
         prem_identify = control.setting('prem.identify')
-        if prem_identify == '':
-            prem_identify = 'blue'
-        prem_identify = self.getPremColor(prem_identify)
-
-        torr_identify = control.setting('torrent.identify')
-        if torr_identify == '':
-            torr_identify = 'magenta'
-        torr_identify = self.getPremColor(torr_identify)
+        if prem_identify == '': prem_identify = 'blue'
+        prem_identify = self.getPremColor(prem_identify)        
+        torrent_identify = control.setting('torrent.identify')
+        if torrent_identify == '': torrent_identify = 'blue'
+        torrent_identify = self.getPremColor(torrent_identify)
 
         for i in range(len(self.sources)):
 
@@ -1111,19 +1109,15 @@ class sources:
             label = re.sub('\|\s+\|', '|', label)
             label = re.sub('\|(?:\s+|)$', '', label)
 
-            if d:
-                if 'torrent' in s.lower():
-                    if not torr_identify == 'nocolor':
-                        self.sources[i]['label'] = ('[COLOR %s]' % (torr_identify)) + label.upper() + '[/COLOR]'
-                    else:
-                        self.sources[i]['label'] = label.upper()
-                else:
-                    if not prem_identify == 'nocolor':
-                        self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
-                    else:
-                        self.sources[i]['label'] = label.upper()
-            else:
-                self.sources[i]['label'] = label.upper()
+            if d: 
+                if not prem_identify == 'nocolor':
+                    self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
+                else: self.sources[i]['label'] = label.upper()
+            else: self.sources[i]['label'] = label.upper()
+            if 'Torrent' in label:
+                if not torrent_identify == 'nocolor':
+                    self.sources[i]['label'] = ('[COLOR %s]' % (torrent_identify)) + label.upper() + '[/COLOR]'
+                else: self.sources[i]['label'] = label.upper()
 
         try:
             if not HEVC == 'true':

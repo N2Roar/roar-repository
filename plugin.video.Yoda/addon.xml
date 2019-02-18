@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.Yoda" version="1.2.0.01" name="[COLORgreen]Yoda[/COLOR]" provider-name="S">
+<addon id="plugin.video.Yoda" version="1.2.1.01" name="[COLORgreen]Yoda[/COLOR]" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.module.Yoda" />
@@ -8,7 +8,6 @@
 		<import addon="script.module.resolveurl" />
 		<import addon="script.module.requests" />
 		<import addon="script.module.metahandler" version="1.0.0" />
-		<import addon="script.realdebrid.mod" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="Yoda.py">
 		<provides>video</provides>

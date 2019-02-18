@@ -17,35 +17,28 @@ Twitter: @1clowns
 
 
 =======[B]CHANGE LOG[/B]=======
-[B]2.0.3[/B]
-- misc fixes
-[B]2.0[/B]
-- Kodi 18 fixes
-- a mess of code fixes
-- auto resume should be fixed, please let me know
-- added 50,60,70,80,90,Y2K Movies/Shows
-- changed defaults for users not wanting to look!!
-- fixed apis
-- repo fixed
-- didnt finish 24/7, coming soon.
-
+[B]2.0.6.1[/B]
+- fixed revert from 2.0.6
+- fixed show espisodes 0
+- clean install recommended
+[B]2.0.6[/B]
+- 4k premptive is seperated from 1080
+- fixed RD only setting
+- libary fixed
+- adjusted defaults
+- fixed clear cache id (thx KB for pointing it out)
+- clean install recommended
 
 
 =======[B]CREDITS[/B]========
-
 EggMan for support, help and sharing. Big RESPECT to YOU!!!
-
 Bone for answering random newbie questions and driving him crazy. Dont stray away to far..
-
 @A1wolfgirl3 and @mr000iconz Amazing Artwork
 Serpent Drago major tech support for the community.
 drinfernoo(the Doctor) for git support, community support and wizard!!!
 Slamious for bassass builds adn community support!
 Jsergio for ResolveURL
-
 @tantrumdev for giving BOZO constructive crap!
-
-
 
 Fans, Supporters, and all the ones that hate!!! Yes you, you know who you are….lol
 

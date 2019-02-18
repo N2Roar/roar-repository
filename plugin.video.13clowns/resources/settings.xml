@@ -10,17 +10,16 @@
         <setting id="api.language" type="select" label="32316" values="English|German|Polish|Spanish|German+English|Polish+English|Spanish+English" default="English" />
         <setting id="providers.lang" type="select" label="32360" values="English|German|Polish|Spanish|German+English|Polish+English|Spanish+English" default="English" />
         <setting id="flatten.tvshows" type="bool" label="32317" default="false" />
-        <setting id="show_season0" type="bool" label="32630" default="false"/>
+        <setting id="tv.specials" type="bool" label="32630" default="false"/>
         <setting id="fanart" type="bool" label="32318" default="false" />
         <setting id="showunaired" type="bool" label="32570" default="false" />
         <setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="1" />
         <setting id="hidecinema" type="bool" label="32571" default="false" />
         <setting type="lsep" label="32319" />
-        <setting id="movie.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="1" />
-        <setting id="tv.widget.alt" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="2" visible="!eq(-11,)" />  
-        <setting id="tv.widget" type="enum" label="32325" lvalues="32302|32326" default="1" visible="eq(-12,)" />
+        <setting id="movie.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="0" />
+        <setting id="tv.widget" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="0" visible="!eq(-11,)" />
         <setting id="prgr.sortorder" type="enum" label="32584" lvalues="32585|32586" default="1" visible="!eq(-13,)" />
-        <setting id="lists.widget" type="enum" label="32329" lvalues="32302|32301" default="0" />
+        <setting id="lists.widget" type="enum" label="32329" lvalues="32302|32301" default="1" />
         <setting id="autoTraktOnStart" type="bool" label="Sync on Kodi Start" default="False" />
         <setting id="schedTraktTime" type="slider" label="Schedule Updates Every - Hour/s" default="0" range="0,24" option="int" />
     </category>
@@ -78,16 +77,17 @@
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
         <setting type="lsep" label="32338" />
         <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
+        <setting id="debrid.only" type="bool" label="Debrid Only" default="false" />
         <setting id="preemptive.termination" type="bool" label="Pre-emptive Termination" default="false" />
         <setting id="preemptive.limit" type="slider" label="Pre-emptive Limit" default="10" range="1,50" option="int" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="6" />
-    <setting type="lsep" label="32635" />
+        <setting type="lsep" label="32635" />
         <setting id="torrent.enabled" type="bool" label="32636" default="false" />
         <setting id="torrent.identify" type="enum" label="32634"  enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
-        <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="1" range="1,100" option="int" />
-        <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)" default="false" />
+        <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="10" range="1,100" option="int" />
+        <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
         <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=urlResolverRDTorrent&query=1.36)" />
-    <setting type="lsep" label="32338" />
+        <setting type="lsep" label="32338" />
         <setting id="autoplay.sd" type="bool" label="32340" default="false" />
         <setting id="sources.extrainfo" type="bool" label="32587" default="true" />
         <setting id="HEVC" type="bool" label="32363" default="false" />
@@ -102,7 +102,7 @@
         <setting id="module.provider" type="text" label="Powered by Civitas" default="Civitas Scrapers" visible="true" enable="false" />
         <setting id="open.settings" type="action" label="Open Civitas Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.civitasscrapers/?mode=CivitasSettings)" />
         <setting type="lsep" label="Clear Providers Cache After Changing Scraper Provider" />
-        <setting id="open.Settings" type="action" label="Clear Providers Cache" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=clearAllCache)" />
+        <setting id="open.Settings.CacheProviders" type="action" label="Clear Providers Cache" option="close" action="RunPlugin(plugin://plugin.video.13clowns/?action=clearAllCache)" />
     </category>
     <category label="32346">
         <setting type="lsep" label="FANART.TV" />

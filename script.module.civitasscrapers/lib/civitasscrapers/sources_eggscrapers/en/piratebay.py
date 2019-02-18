@@ -30,7 +30,7 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['tpb.cool', 'thepiratebay.fail', 'openpirate.org', 'piratebay.icu', 'thepiratebay.fyi', 'thepirate.fun', 'thepiratebay.press']
+        self.domains = ['thepiratebay.org', 'm.thepiratebay.org', 'thepiratebay.fun', 'tpb.cool', 'thepiratebay.asia']
         self._base_link = None
         self.search_link = '/s/?q=%s&page=0&&video=on&orderby=99'
         self.min_seeders = int(control.setting('torrent.min.seeders'))
