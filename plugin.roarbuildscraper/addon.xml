@@ -3,12 +3,12 @@
   author="N2Roar"
   id="plugin.roarbuildscraper"
   name="ROAR Build Scraper"
-  version="0.0.6">
+  version="0.0.7">
 	<requires>
 		<!-- 3rd Party Scraper -->
 		<!-- 3rd Party Covenant Fork -->
 		<import addon="plugin.video.13clowns"/>
-		<import addon="plugin.video.Yoda"/>
+		<import addon="plugin.video.yoda"/>
 		<!-- 3rd Party Universal Scrapers -->
 		<import addon="plugin.video.neptune"/>
 		<import addon="plugin.video.uranus"/>

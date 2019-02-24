@@ -1,3 +1,7 @@
+[B]2.0.6.2[/B]
+- fixed trakt at start
+- resume playback fixed. EGGMAN!!!
+- clean install recommended
 [B]2.0.6.1[/B]
 - fixed revert from 2.0.6
 - fixed show espisodes 0

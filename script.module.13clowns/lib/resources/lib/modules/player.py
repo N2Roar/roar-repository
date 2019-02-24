@@ -46,10 +46,13 @@ except Exception:
 
 
 class player(xbmc.Player):
+
     def __init__(self):
+
         xbmc.Player.__init__(self)
 
     def run(self, title, year, season, episode, imdb, tvdb, url, meta):
+
         try:
             control.sleep(200)
 
@@ -190,6 +193,7 @@ class player(xbmc.Player):
         return (poster, thumb, meta)
 
     def keepPlaybackAlive(self):
+
         pname = '%s.player.overlay' % control.addonInfo('id')
         control.window.clearProperty(pname)
 
@@ -264,6 +268,7 @@ class player(xbmc.Player):
         control.window.clearProperty(pname)
 
     def libForPlayback(self):
+
         try:
             if self.DBID is None:
                 raise Exception()
@@ -281,15 +286,17 @@ class player(xbmc.Player):
             pass
 
     def idleForPlayback(self):
-        for i in range(0, 200):
+        for i in range(0, 400):
             if control.condVisibility('Window.IsActive(busydialog)') == 1:
-                control.idle()
+                control.sleep(100)
             else:
+                control.execute('Dialog.Close(all,true)')
                 break
-            control.sleep(100)
+            
 
     def onPlayBackStarted(self):
-        control.execute('Dialog.Close(all,true)')
+        for i in range(0, 500):
+            if not self.isPlayingVideo(): control.sleep(100)
         if not self.offset == '0':
             self.seekTime(float(self.offset))
         subtitles().get(self.name, self.imdb, self.season, self.episode)
@@ -303,7 +310,7 @@ class player(xbmc.Player):
         try:
             if (self.currentTime / self.totalTime) >= .90:
                 self.libForPlayback()
-        except Exception:
+        except:
             pass
 
     def onPlayBackEnded(self):
@@ -312,8 +319,8 @@ class player(xbmc.Player):
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
 
-
 class subtitles:
+
     def get(self, name, imdb, season, episode):
         try:
             if not control.setting('subtitles') == 'true':
@@ -333,6 +340,7 @@ class subtitles:
                 'Russian': 'rus', 'Serbian': 'scc', 'Sinhalese': 'sin', 'Slovak': 'slo', 'Slovenian': 'slv',
                 'Spanish': 'spa', 'Swahili': 'swa', 'Swedish': 'swe', 'Syriac': 'syr', 'Tagalog': 'tgl', 'Tamil': 'tam',
                 'Telugu': 'tel', 'Thai': 'tha', 'Turkish': 'tur', 'Ukrainian': 'ukr', 'Urdu': 'urd'}
+             
 
             codePageDict = {'ara': 'cp1256', 'ar': 'cp1256', 'ell': 'cp1253', 'el': 'cp1253', 'heb': 'cp1255',
                             'he': 'cp1255', 'tur': 'cp1254', 'tr': 'cp1254', 'rus': 'cp1251', 'ru': 'cp1251'}
@@ -340,6 +348,7 @@ class subtitles:
             quality = ['bluray', 'hdrip', 'brrip', 'bdrip', 'dvdrip', 'webrip', 'hdtv']
 
             langs = []
+
             try:
                 try:
                     langs = langDict[control.setting('subtitles.lang.1')].split(',')
@@ -347,6 +356,7 @@ class subtitles:
                     langs.append(langDict[control.setting('subtitles.lang.1')])
             except Exception:
                 pass
+
             try:
                 try:
                     langs = langs + langDict[control.setting('subtitles.lang.2')].split(',')
@@ -419,12 +429,14 @@ class subtitles:
 
             xbmc.sleep(1000)
             xbmc.Player().setSubtitles(subtitle)
+
         except Exception:
             pass
 
 
 class bookmarks:
     def get(self, name, year='0'):
+                    
         try:
             offset = '0'
 
