@@ -8,7 +8,7 @@
 		<!-- 3rd Party Scraper -->
 		<!-- 3rd Party Covenant Fork -->
 		<import addon="plugin.video.13clowns"/>
-		<import addon="plugin.video.yoda"/>
+		<import addon="plugin.video.yoda" optional="true"/>
 		<!-- 3rd Party Universal Scrapers -->
 		<import addon="plugin.video.neptune"/>
 		<import addon="plugin.video.uranus"/>

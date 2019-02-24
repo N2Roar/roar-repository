@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Yoda Add-on
+    yoda Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -243,15 +243,15 @@ def _find_cache_version():
         if not os.path.exists(versionFile): f = open(versionFile, 'w'); f.close()
     except Exception as e:
         import xbmc
-        print 'Yoda Addon Data Path Does not Exist. Creating Folder....'
-        ad_folder = xbmc.translatePath('special://home/userdata/addon_data/plugin.video.Yoda')
+        print 'yoda Addon Data Path Does not Exist. Creating Folder....'
+        ad_folder = xbmc.translatePath('special://home/userdata/addon_data/plugin.video.yoda')
         os.makedirs(ad_folder)
 
     try: 
         with open(versionFile, 'rb') as fh: oldVersion = fh.read()
     except: oldVersion = '0'
     try:
-        curVersion = control.addon('script.module.Yoda').getAddonInfo('version')
+        curVersion = control.addon('script.module.yoda').getAddonInfo('version')
         if oldVersion != curVersion: 
             with open(versionFile, 'wb') as fh: fh.write(curVersion)
             return True

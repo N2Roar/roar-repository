@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 #######################################################################
 
-# Addon Name: AutoExec for Yoda
-# Addon id: script.Yoda.artwork
+# Addon Name: AutoExec for yoda
+# Addon id: script.yoda.artwork
 # Addon Provider: Supremacy
 
 import xbmcvfs,xbmcgui

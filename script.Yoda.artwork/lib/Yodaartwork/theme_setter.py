@@ -8,8 +8,8 @@
  # ----------------------------------------------------------------------------
 #######################################################################
 
-# Addon Name: Yoda
-# Addon id: script.Yoda.artwork
+# Addon Name: yoda
+# Addon id: script.yoda.artwork
 # Addon Provider: Supremacy
 
 #######################################################################
@@ -20,8 +20,8 @@ import os,re
 
 def Apply_Theme(new_theme):
     try:
-        __settings__ = xbmcaddon.Addon(id='plugin.video.Yoda')
+        __settings__ = xbmcaddon.Addon(id='plugin.video.yoda')
         __settings__.setSetting("appearance.1", new_theme)
-        print '[Yoda] #### Theme Setter: Theme Set To ' + str(new_theme)
+        print '[yoda] #### Theme Setter: Theme Set To ' + str(new_theme)
     except:
         pass

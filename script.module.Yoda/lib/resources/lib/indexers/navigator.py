@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Yoda Add-on
+    yoda Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class navigator:
     ADDONSPATH    = os.path.join(HOMEPATH, 'addons')
     THISADDONPATH = os.path.join(ADDONSPATH, ADDON_ID)
     NEWSFILE      = base64.b64decode(b'aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L3JuYnpLeTFB')
-    LOCALNEWS     = os.path.join(THISADDONPATH, 'Yoda Updates.txt')
+    LOCALNEWS     = os.path.join(THISADDONPATH, 'yoda Updates.txt')
     
     def root(self):
         self.addDirectoryItem('[COLOR=gold]Yoda Updates[/COLOR]', 'newsNavigator', 'tools.png', 'DefaultAddonProgram.png')
@@ -92,7 +92,7 @@ class navigator:
                             text_file.write(message)
                             text_file.close()
                             compfile = message
-            self.showText('[B][I][COLOR yellow]Yoda Latest Updates[/COLOR][/B][/I]', compfile)
+            self.showText('[B][I][COLOR yellow]yoda Latest Updates[/COLOR][/B][/I]', compfile)
         
     def open_news_url(self, url):
             req = urllib2.Request(url)

@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 #######################################################################
 
-# Addon Name: Yoda
-# Addon id: plugin.video.Yoda
+# Addon Name: yoda
+# Addon id: plugin.video.yoda
 # Addon Provider: Supremacy
 
 
@@ -181,17 +181,17 @@ def get_plugin_url(queries):
 def artPath():
     theme = appearance()
     if theme in ['-', '']: return
-    elif condVisibility('System.HasAddon(script.Yoda.artwork)'):
-        return os.path.join(xbmcaddon.Addon('script.Yoda.artwork').getAddonInfo('path'), 'resources', 'media', theme)
+    elif condVisibility('System.HasAddon(script.yoda.artwork)'):
+        return os.path.join(xbmcaddon.Addon('script.yoda.artwork').getAddonInfo('path'), 'resources', 'media', theme)
 
 
 def appearance():
-    appearance = setting('appearance.1').lower() if condVisibility('System.HasAddon(script.Yoda.artwork)') else setting('appearance.alt').lower()
+    appearance = setting('appearance.1').lower() if condVisibility('System.HasAddon(script.yoda.artwork)') else setting('appearance.alt').lower()
     return appearance
 
 
 def artwork():
-    execute('RunPlugin(plugin://script.Yoda.artwork)')
+    execute('RunPlugin(plugin://script.yoda.artwork)')
 
 
 def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=False):
@@ -207,11 +207,15 @@ def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yesl
 
 def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
+	
+def moderator():
+    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '', 'script.extendedinfo', 'plugin.video.phstreams', 'plugin.video.cpstreams', 'plugin.video.tinklepad', 'script.tvguide.fullscreen', 'script.tvguide.assassins', 'plugin.video.openmeta']
 
+    if not infoLabel('Container.PluginName') in netloc: pass	
 
 def metaFile():
-    if condVisibility('System.HasAddon(script.Yoda.metadata)'):
-        return os.path.join(xbmcaddon.Addon('script.Yoda.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
+    if condVisibility('System.HasAddon(script.yoda.metadata)'):
+        return os.path.join(xbmcaddon.Addon('script.yoda.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
 
 def apiLanguage(ret_name=None):
     langDict = {'Bulgarian': 'bg', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl', 'English': 'en', 'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el', 'Hebrew': 'he', 'Hungarian': 'hu', 'Italian': 'it', 'Japanese': 'ja', 'Korean': 'ko', 'Norwegian': 'no', 'Polish': 'pl', 'Portuguese': 'pt', 'Romanian': 'ro', 'Russian': 'ru', 'Serbian': 'sr', 'Slovak': 'sk', 'Slovenian': 'sl', 'Spanish': 'es', 'Swedish': 'sv', 'Thai': 'th', 'Turkish': 'tr', 'Ukrainian': 'uk'}

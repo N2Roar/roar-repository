@@ -112,12 +112,12 @@
   author="N2Roar"
   id="plugin.roarbuildscraper"
   name="ROAR Build Scraper"
-  version="0.0.6">
+  version="0.0.7">
 	<requires>
 		<!-- 3rd Party Scraper -->
 		<!-- 3rd Party Covenant Fork -->
 		<import addon="plugin.video.13clowns"/>
-		<import addon="plugin.video.Yoda"/>
+		<import addon="plugin.video.yoda" optional="true"/>
 		<!-- 3rd Party Universal Scrapers -->
 		<import addon="plugin.video.neptune"/>
 		<import addon="plugin.video.uranus"/>
@@ -134,7 +134,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.13clowns" version="2.0.6.1.01" name="[B][COLOR red]13Clowns[/COLOR] Video[/B]" provider-name="13Clowns">
+<addon id="plugin.video.13clowns" version="2.0.6.2.01" name="[B][COLOR red]13Clowns[/COLOR] Video[/B]" provider-name="13Clowns">
    <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.13clowns" />
@@ -431,23 +431,23 @@ This is a Non-profit resource, organized solely for educational purposes which i
   </extension>
 </addon>
 
-<addon id="plugin.video.Yoda" version="1.2.1.01" name="[COLORgreen]Yoda[/COLOR]" provider-name="S">
+<addon id="plugin.video.yoda" version="1.0.0.01" name="[COLORgreen]yoda[/COLOR]" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
-		<import addon="script.module.Yoda" />
-		<import addon="script.Yoda.artwork" version="1.0.0" />
-		<import addon="script.Yoda.metadata" version="1.0.0" />
+		<import addon="script.module.yoda" />
+		<import addon="script.yoda.artwork" version="1.0.0" />
+		<import addon="script.yoda.metadata" version="1.0.0" />
 		<import addon="script.module.resolveurl" />
 		<import addon="script.module.requests" />
 		<import addon="script.module.metahandler" version="1.0.0" />
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="Yoda.py">
+	<extension point="xbmc.python.pluginsource" library="yoda.py">
 		<provides>video</provides>
         <provides>audio</provides>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary lang="en">[COLORlime]Yoda[/COLOR]</summary>
-		<description>[COLOR aqua]Yoda Movies and TV. This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels. The author does not host any of the content in this addon and takes no responsibility for content found[/COLOR]</description>
+		<summary lang="en">[COLORlime]yoda[/COLOR]</summary>
+		<description>[COLOR aqua]yoda Movies and TV. This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels. The author does not host any of the content in this addon and takes no responsibility for content found[/COLOR]</description>
         <disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!
 </disclaimer>
 		<platform>all</platform>
@@ -662,7 +662,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.13clowns" version="2.0.8.7" name="[B][COLOR red]13Clowns[/COLOR] Script.Module[/B]" provider-name="13Clowns">
+<addon id="script.module.13clowns" version="2.0.8.8" name="[B][COLOR red]13Clowns[/COLOR] Script.Module[/B]" provider-name="13Clowns">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.beautifulsoup4"/>
@@ -740,14 +740,14 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 	</extension>
 </addon>
 
-<addon id="script.module.Yoda" name="[COLORgreen]Yoda Module[/COLOR]" version="1.00.055" provider-name="S">
+<addon id="script.module.yoda" name="[COLORgreen]yoda Module[/COLOR]" version="1.0.0" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary lang="en">Yoda</summary>
+		<summary lang="en">yoda</summary>
 		<description></description>
         <disclaimer lang="en"></disclaimer>
 	</extension>
@@ -816,27 +816,27 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="script.Yoda.artwork" version="1.1.1" name="[COLORgreen]Yoda Artwork[/COLOR]" provider-name="S">
+<addon id="script.yoda.artwork" version="1.0.0" name="[COLORgreen]yoda Artwork[/COLOR]" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
-		<summary>Themes For Yoda Addon</summary>
-		<description>Artwork Module For Yoda Addon</description>
+		<summary>Themes For yoda Addon</summary>
+		<description>Artwork Module For yoda Addon</description>
         <disclaimer lang="en"></disclaimer>
 		<platform>all</platform>
 	</extension>
 </addon>
 
-<addon id="script.Yoda.metadata" version="1.0.5" name="[COLORgreen]Yoda Metadata[/COLOR]" provider-name="S">
+<addon id="script.yoda.metadata" version="1.0.0" name="[COLORgreen]yoda Metadata[/COLOR]" provider-name="S">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
-		<summary>Metadata for the Yoda Addon</summary>
-		<description>Metadata for Yoda are maintained separately to make distribution of the the addon itself easier/faster.</description>
+		<summary>Metadata for the yoda Addon</summary>
+		<description>Metadata for yoda are maintained separately to make distribution of the the addon itself easier/faster.</description>
 		<platform>all</platform>
 	</extension>
 </addon>

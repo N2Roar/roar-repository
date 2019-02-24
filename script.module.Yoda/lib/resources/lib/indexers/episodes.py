@@ -8,8 +8,8 @@
  # ----------------------------------------------------------------------------
 #######################################################################
 
-# Addon Name: Yoda
-# Addon id: plugin.video.Yoda
+# Addon Name: yoda
+# Addon id: plugin.video.yoda
 # Addon Provider: Supremacy
 
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="32310">
-        <setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.Yoda/?action=artwork)" visible="!System.HasAddon(script.Yoda.artwork)" />
-        <setting id="appearance.1" type="select" label="32311" values="Exuary|Yoda|Yoda Pic" default="Yoda" visible="System.HasAddon(script.Yoda.artwork)" />
+        <setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.yoda/?action=artwork)" visible="!System.HasAddon(script.yoda.artwork)" />
+        <setting id="appearance.1" type="select" label="32311" values="Exuary|yoda|yoda Pic" default="yoda" visible="System.HasAddon(script.yoda.artwork)" />
         <setting id="scrapers.timeout.1" type="slider" label="32312" default="25" range="10,60" option="int" />
         <setting id="trakt.user" type="text" default="" visible="false" />
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
@@ -66,7 +66,7 @@
         <setting id="torrent.identify" type="enum" label="32634"  enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="32595" />
         <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="10" range="1,100" option="int" />
         <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
-        <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.overeasy/?action=urlResolverRDTorrent&query=1.36)" />									 
+        <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.yoda/?action=urlResolverRDTorrent&query=1.36)" />									 
         <setting type="lsep" label="32338" />
         <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
         <setting id="autoplay.sd" type="bool" label="32340" default="false" />
@@ -296,7 +296,7 @@
         <setting id="tm.user" type="text" option="hidden" label="32309" default="5f4ba6df4db23739632640be569fc3fa" />
         <setting type="sep" />
         <setting type="lsep" label="Trakt" />
-        <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.Yoda/?action=authTrakt)" />
+        <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.yoda/?action=authTrakt)" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
         <setting type="sep" />
@@ -329,8 +329,8 @@
         <setting id="alluc.download" type="bool" label="32009" default="false" />        
     </category>
     <category label="32541">
-        <setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.Yoda/Movies" />
-        <setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.Yoda/TVShows" />
+        <setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.yoda/Movies" />
+        <setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.yoda/TVShows" />
         <setting type="lsep" label="32542" />
         <setting type="sep" />
         <setting id="library.service.update" type="bool" label="32545" default="true" />

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Yoda Add-on
+    yoda Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1422,9 +1422,9 @@ class sources:
         return title
 
     def getConstants(self):
-        self.itemProperty = 'plugin.video.Yoda.container.items'
+        self.itemProperty = 'plugin.video.yoda.container.items'
 
-        self.metaProperty = 'plugin.video.Yoda.container.meta'
+        self.metaProperty = 'plugin.video.yoda.container.meta'
 
 	from resources.lib.sources import sources
 	
