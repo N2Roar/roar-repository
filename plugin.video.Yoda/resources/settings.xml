@@ -61,12 +61,12 @@
         <setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="1" />
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="0" />
-		<setting type="lsep" label="32635" />
+        <setting type="lsep" label="32635" />
         <setting id="torrent.enabled" type="bool" label="32636" default="false" />
         <setting id="torrent.identify" type="enum" label="32634"  enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="32595" />
         <setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="10" range="1,100" option="int" />
         <setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
-        <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.yoda/?action=urlResolverRDTorrent&query=1.36)" />									 
+        <setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.yoda/?action=urlResolverRDTorrent&query=1.36)" />
         <setting type="lsep" label="32338" />
         <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
         <setting id="autoplay.sd" type="bool" label="32340" default="false" />
@@ -285,6 +285,19 @@
         <setting id="provider.tainiesonline" type="bool" label="TAINIESONLINE" default="true" />
         <setting id="provider.xrysoi" type="bool" label="XRYSOI" default="true" />
         <setting id="provider.liomenoi" type="bool" label="LIOMENOI" default="true" />
+    </category>
+	    <category label="32640">
+        <setting label="32640" type="lsep" /> 
+        <setting id="provider.eztv" type="bool" label="EZTV" default="true" /> 
+        <setting id="provider.glodls" type="bool" label="GLODLS" default="true" /> 
+        <setting id="provider.kickass2" type="bool" label="KICKASS2" default="true" /> 
+        <setting id="provider.limetorrents" type="bool" label="LIMETORRENTS" default="true" />
+        <setting id="provider.magnetdl" type="bool" label="MAGNETDL" default="true" /> 
+        <setting id="provider.piratebay" type="bool" label="PIRATEBAY" default="true" /> 
+        <setting id="provider.torrentapi" type="bool" label="TORRENTAPI" default="true" /> 
+        <setting id="provider.torrentdownloads" type="bool" label="TORRENTDOWNLOADS" default="true" /> 
+        <setting id="provider.yify" type="bool" label="YIFY" default="true" /> 
+        <setting id="provider.zoogle" type="bool" label="ZOOGLE" default="true" /> 
     </category>
     <category label="32346">
         <setting type="lsep" label="FANART.TV" />
