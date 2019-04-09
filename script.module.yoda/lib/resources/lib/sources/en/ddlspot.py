@@ -2,6 +2,7 @@
 
 '''
     Eggman Add-on
+    **Created by Tempest**
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,6 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 '''
 
 import re,urllib,urlparse
@@ -28,9 +30,9 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['invictus.ws']
-        self.base_link = 'http://invictus.ws'
-        self.search_link = '/?s=%s'
+        self.domains = ['www.ddlspot.com']
+        self.base_link = 'http://www.ddlspot.com/'
+        self.search_link = 'search/?q=%s&m=1&x=0&y=0'
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
@@ -93,7 +95,7 @@ class source:
 
                     r = client.request(url)
 
-                posts = client.parseDOM(r, "div", attrs={"class": "postpage_movie_download"})
+                posts = client.parseDOM(r, "table", attrs={"class": "download"})
                 hostDict = hostprDict + hostDict
                 items = []
                 for post in posts:
@@ -103,7 +105,6 @@ class source:
                             try:
                                 name = str(i)
                                 items.append(name)
-                                print items
                             except:
                                 pass
                     except:
@@ -116,24 +117,14 @@ class source:
                     info = []
 
                     i = str(item)
+                    i = self.base_link + i
                     r = client.request(i)
-                    u = client.parseDOM(r, "div", attrs={"class": "multilink_lnks"})
+                    u = client.parseDOM(r, "div", attrs={"class": "dl-links"})
                     for t in u:
-                        r = client.parseDOM(t, 'a', ret='href')
+                        r = re.compile('a href=".+?" rel=".+?">(.+?)<').findall(t)
                         for url in r:
-                            if '1080p' in url:
-                                quality = '1080p'
-                            elif '1080' in url:
-                                quality = '1080p'
-                            elif '720p' in url:
-                                quality = '720p'
-                            elif '720' in url:
-                                quality = '720p'
-                            elif 'HD' in url:
-                                quality = '720p'
-                            else:
-                                quality = 'SD'
-                            info = ' | '.join(info)
+                            if any(x in url for x in ['.rar', '.zip', '.iso']): raise Exception()
+                            quality, info = source_utils.get_release_quality(url)
                             valid, host = source_utils.is_host_valid(url, hostDict)
                             sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
 
@@ -144,7 +135,7 @@ class source:
 
             return sources
         except:
-            return sources
+            return
 
     def resolve(self, url):
         return url
