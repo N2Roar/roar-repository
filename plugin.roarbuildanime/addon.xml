@@ -1,23 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addon
-  author="N2Roar"
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.5">
+  version="0.0.6"
+  provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
-		<import addon="plugin.video.aswim"/>
-		<!-- 3rd Party Anime (repository.magicality) -->
-		<import addon="plugin.video.dubbedanime"/>
+		<!-- <import addon="plugin.video.aswim"/> -->
 		<!-- 3rd Party Anime (doko.repository) -->
 		<import addon="plugin.video.toonmania2"/>
+		<import addon="plugin.video.watchnixtoons2"/>
+		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
+		<import addon="plugin.video.wonderfulsubs"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">Dubbed Anime, Toonmania2{CR}Adult Swim</description>
+        <description lang="en">Toonmania2{CR}WatchNixtoons2[CR]WonderfulSubs</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>

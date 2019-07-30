@@ -1,23 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addon
-  author="N2Roar"
   id="plugin.roarbuildscraper"
   name="ROAR Build Scraper"
-  version="0.0.8">
+  version="0.0.9"
+  provider-name="N2Roar">
 	<requires>
 		<!-- 3rd Party Scraper -->
-		<!-- 3rd Party Covenant Fork -->
-		<import addon="plugin.video.yoda"/>
+		<!-- 3rd Party Covenant/Exodus Fork -->
+		<import addon="plugin.video.scrubsv2"/>
+		<!-- 3rd Party OpenScraper -->
+		<import addon="plugin.video.venom"/>
 		<!-- 3rd Party Universal Scrapers -->
-		<import addon="plugin.video.neptune"/>
-		<import addon="plugin.video.uranus"/>
+		<import addon="plugin.video.nitecrawler" optional="true"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Scraper Addons[CR]Yoda[CR]Neptune Rising, Uranus[CR]</summary>
-        <description lang="en">13Clowns Video, Yoda[CR]Neptune Rising, Uranus[CR]</description>
+        <summary lang="en">Scraper Addons</summary>
+        <description lang="en">Scrubs v2[CR]Venom[CR]NiteCrawler</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>

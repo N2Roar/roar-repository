@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="doko.repository" name="Doko Repository" version="0.1.53" provider-name="doko">
+<addon id="doko.repository" name="Doko Repository" version="0.1.0" provider-name="doko">
     <extension point="xbmc.addon.repository" name="Doko Repository">
         <info compressed="false">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml</info>
         <checksum>https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml.md5</checksum>
@@ -35,15 +35,17 @@
 </addon>
 
 <addon
-  author="N2Roar"
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.1">
+  version="0.0.2"
+  provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
+		<import addon="inputstream.adaptive"/>
+		<import addon="inputstream.rtmp"/>
 		<import addon="plugin.program.autocompletion"/>
 		<!-- 3rd Party Useful Addons -->
-		<import addon="plugin.video.metalliq"/>
+		<import addon="plugin.video.openmeta"/>
 		<!-- 3rd Party Useful Modules -->
 		<import addon="service.subtitles.opensubtitles_by_opensubtitles"/>
 	</requires>
@@ -60,24 +62,25 @@
 </addon>
 
 <addon
-  author="N2Roar"
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.5">
+  version="0.0.6"
+  provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
-		<import addon="plugin.video.aswim"/>
-		<!-- 3rd Party Anime (repository.magicality) -->
-		<import addon="plugin.video.dubbedanime"/>
+		<!-- <import addon="plugin.video.aswim"/> -->
 		<!-- 3rd Party Anime (doko.repository) -->
 		<import addon="plugin.video.toonmania2"/>
+		<import addon="plugin.video.watchnixtoons2"/>
+		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
+		<import addon="plugin.video.wonderfulsubs"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">Dubbed Anime, Toonmania2{CR}Adult Swim</description>
+        <description lang="en">Toonmania2{CR}WatchNixtoons2[CR]WonderfulSubs</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -85,13 +88,13 @@
 </addon>
 
 <addon
-  author="N2Roar"
   id="plugin.roarbuilddrama"
   name="ROAR Build Drama"
-  version="0.0.3">
+  version="0.0.4"
+  provider-name="N2Roar">
 	<requires>
 		<!-- 3rd Party Drama (repository.magicality) -->
-		<import addon="plugin.video.dramatic"/>
+		<!-- <import addon="plugin.video.dramatic"/> -->
 		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
 		<import addon="plugin.video.icdrama"/>
 	</requires>
@@ -100,7 +103,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Drama Addons</summary>
-        <description lang="en">DRAMAFEVER[CR]Icdrama[CR]</description>
+        <description lang="en">Icdrama[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -108,31 +111,32 @@
 </addon>
 
 <addon
-  author="N2Roar"
   id="plugin.roarbuildscraper"
   name="ROAR Build Scraper"
-  version="0.0.8">
+  version="0.0.9"
+  provider-name="N2Roar">
 	<requires>
 		<!-- 3rd Party Scraper -->
-		<!-- 3rd Party Covenant Fork -->
-		<import addon="plugin.video.yoda"/>
+		<!-- 3rd Party Covenant/Exodus Fork -->
+		<import addon="plugin.video.scrubsv2"/>
+		<!-- 3rd Party OpenScraper -->
+		<import addon="plugin.video.venom"/>
 		<!-- 3rd Party Universal Scrapers -->
-		<import addon="plugin.video.neptune"/>
-		<import addon="plugin.video.uranus"/>
+		<import addon="plugin.video.nitecrawler" optional="true"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Scraper Addons[CR]Yoda[CR]Neptune Rising, Uranus[CR]</summary>
-        <description lang="en">13Clowns Video, Yoda[CR]Neptune Rising, Uranus[CR]</description>
+        <summary lang="en">Scraper Addons</summary>
+        <description lang="en">Scrubs v2[CR]Venom[CR]NiteCrawler</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
     </extension>
 </addon>
 
-<addon id="plugin.video.dramatic" name="Dramatic" version="1.0.3" provider-name="Wilson Magic">
+<addon id="plugin.video.dramatic" name="Dramatic [COLOR red](Krypton Only)[/COLOR]" version="1.0.3" provider-name="Wilson Magic">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 		<import addon="script.module.requests"/>
@@ -161,26 +165,6 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.dubbedanime" version="1.0.5" name="Dubbed Anime" provider-name="Wilson Magic">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0" />
-		<import addon="script.module.beautifulsoup4"/>
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="default.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en"></summary>
-		<description lang="en"></description>
-		<platform>all</platform>
-		<forum></forum>
-		<website></website>
-		<source></source>
-		<disclaimer lang="en"></disclaimer>
-		<news></news>
-	</extension>
-</addon>
-
 <addon id="plugin.video.icdrama" version="1.9.4" name="Icdrama" provider-name="aznhusband, dumbo0001, boleanly, mugol, General-Meow, cthlo">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -201,102 +185,84 @@
   </extension>
 </addon>
 
-<addon id="plugin.video.metalliq" name="MetalliQ" version="2.0.16krypton" provider-name="OpenELEQ, Midraal">
+<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.5.01" provider-name="A4K">
 	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-		<import addon="script.module.requests" version="2.9.1"/>
+		<import addon="xbmc.python" version="2.25.0"/>
+		<import addon="metadata.tvdb.com" version="3.0.14"/>
 		<import addon="script.module.futures" version="2.2.0"/>
+		<import addon="script.module.requests" version="2.19.1"/>
+		<import addon="script.module.requests-cache" version="0.4.13"/>
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="default.py">
+	<extension point="xbmc.python.pluginsource" library="addon.py">
 		<provides>video</provides>
 	</extension>
-	<extension point="xbmc.service" library="service.py" start="[login|startup]">
-	</extension>
+	<extension point="xbmc.service" library="service.py"/>
 	<extension point="kodi.context.item">
 		<menu id="kodi.core.main">
-			<menu>
-				<label>MetalliQ</label>
-				<item library="context_toggle.py">
-					<label>Preferred toggle</label>
-					<visible>!System.HasAddon(context.metalliq) + !Skin.HasSetting(Toggling)</visible>
-				</item>
-				<item library="context_movie.py">
-					<label>$ADDON[plugin.video.metalliq 30602]</label>
-					<visible>StringCompare(ListItem.dbtype,movie) + SubString(ListItem.Path, plugin.video.metalliq)</visible>
-				</item>
-				<item library="context_tvshow.py">
-					<label>$ADDON[plugin.video.metalliq 30602]</label>
-					<visible>StringCompare(ListItem.dbtype,tvshow) + SubString(ListItem.Path, plugin.video.metalliq)</visible>
-				</item>
-				<item library="context_live.py">
-					<label>$ADDON[plugin.video.metalliq 30602]</label>
-					<visible>[SubString(ListItem.FileNameAndPath, plugin.video.metalliq\\Live) | SubString(ListItem.FileNameAndPath, plugin.video.metalliq\\Live)]</visible>
-				</item>
-				<item library="context_playable.py">
-					<label>$ADDON[plugin.video.metalliq 30622]</label>
-					<visible>!System.HasAddon(context.metalliq) + !Skin.HasSetting(Contexting)</visible>
-				</item>
-			</menu>
+			<item library="context.py">
+				<label>OpenMeta - Default Player</label>
+				<visible>!String.StartsWith(ListItem.path,plugin://plugin.video.openmeta/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,movie)]</visible>
+			</item>
+			<item library="context2.py">
+				<label>OpenMeta - Choose Player</label>
+				<visible>String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,episode)</visible>
+			</item>
 		</menu>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<language></language>
-		<summary lang="en">TMDb, TVDb, Trakt, AudioDb and LastFM browser</summary>
-		<description lang="en">Browse The MovieDb, The TVDb, Trakt, The AudioDb and LastFM and pass info along to library or an addon to try and play it. Needs player-files and the appropriate addon to actually play.</description>
-		<summary lang="nl">Blader door TMDb, TVDb, Trakt, AudioDb en LastFM</summary>
-		<description lang="nl">Blader door The MovieDb, The TVDb, Trakt, The AudioDb en LastFM en geef info door aan de bibliotheek of een addon om te proberen het af te spelen. Vereist player-bestanden en de bijbehorende addon om daadwerkelijk af te kunnen spelen.</description>
-		<supportedcontent>
-			<content>movies</content>
-			<content>tvshows</content>
-			<content>episodes</content>
-			<content>musicvideos</content>
-			<content>music</content>
-			<content>livetv</content>
-		</supportedcontent>
-		<genre>movies,tv,music,livetv</genre>
-		<!--<video_guide>yt-id</video_guide>
-		<video_preview>yt-id</video_preview>-->
-		<news></news>
-	</extension>
-</addon>
-
-<addon id="plugin.video.neptune" version="1.4.8" name="Neptune Rising" provider-name="Mr. Blamo">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0" />
-		<import addon="script.neptune.artwork" />
-		<import addon="script.neptune.metadata" />
-                <import addon="script.module.resolveurl"/>
-                <import addon="script.module.metahandler"/>
-                <import addon="script.module.requests"/>
-                <import addon="script.module.beautifulsoup"/>
-                <import addon="script.module.schism.common"/>
-                <import addon="script.module.futures"/>
-        		<import addon="script.module.universalscrapers" version="1.0.0" />
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="neptune.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.service" library="service.py" start="startup" />
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Neptune Rising</summary>
-		<description lang="en">Movie, TV Show, and Playlist Add-on</description>
-        <disclaimer lang="en">The author is not responsible for the use of this addon. The author is not responsible for the content found using this addon. The author does not host or own any content found within this addon.
-The author is in no way affiliated with Kodi, Team Kodi, or the XBMC Foundation.
-This is a Non-profit resource, organized solely for educational purposes which is protected under the Fair-Use doctrine of the Copyright Act, Specifically section 107, which does promote freedom of expression, by permitting the unlicensed use of copyright-protected works.
-</disclaimer>
-		<platform>all</platform>
-		<license>Beerware rev. 42</license>
-		<platform>all</platform>
+		<summary lang="en">TMDb, TVDb and Trakt browser</summary>
+		<description lang="en">Browse The MovieDb, The TVDb, Trakt and pass info along to library or an addon. Needs player-files and the appropriate addon to play the files.</description>
+		<assets>
+			<icon>resources/icon.png</icon>
+			<fanart>resources/fanart.jpg</fanart>
+			<screenshot>resources/screenshot000.jpg</screenshot>
+			<screenshot>resources/screenshot001.jpg</screenshot>
+			<screenshot>resources/screenshot002.jpg</screenshot>
+		</assets>
+		<license></license>
 		<forum></forum>
 		<website></website>
 		<source></source>
-		<assets>
-			<icon>icon.png</icon>
-			<fanart>fanart.jpg</fanart>
-		</assets>
-		<news></news>
+		<news>
+		1.4.5 - Added default play action, options for movies are; Play/OpenInfo and options for episodes are; Play/OpenInfo(TV Show info)/OpenInfo(Episode info).
+		1.4.4 - Fix clearlogo for movies
+		1.4.3 - Fix typo in season fanart request.
+		1.4.2 - Add fanart caching
+		1.4.1 - Fix season artwork
+		1.4.0 - Add unwatched counts for shows/seasons.
+		1.3.2 - Fix "Upcoming Episodes" and "Next Episodes".
+		1.3.1 - Fixed "Next Page" bug with widgets.</news>
 	</extension>
+</addon>
+
+<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.5.3">
+    <requires>
+        <import addon="xbmc.python" version="2.19.0" />
+        <import addon="script.module.scrubsv2" />
+        <import addon="script.scrubsv2.artwork" />
+        <import addon="script.scrubsv2.metadata" />
+        <import addon="script.module.resolveurl" />
+        <import addon="script.module.metahandler" />
+        <import addon="script.module.requests" />
+    </requires>
+    <extension library="main.py" point="xbmc.python.pluginsource">
+        <provides>video</provides>
+    </extension>
+    <extension library="service.py" point="xbmc.service" start="[startup|login]" />
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_US">A Clean Source To Dirty Things...</summary>
+        <description lang="en_US">Movies, Tv Shows, Anime, and What Not. [CR]See Settings for the Help/About tab. [CR]See bottom of Main Menu for Show Changelog Option. [CR]Providers are now sorted different in the settings and all the best normal ones are enabled. [CR]Disabled by Default: Debrid/Prem/Torr and a 'Sloppy' Stack too, Enable the ones you want from these sections in the settings. [CR]Instead of being confused with all those choices half enabled i decided to go another way. [CR]You enable/disable the ones you dont like and let me handle the broken providers. [CR]How it should be :)</description>
+        <disclaimer lang="en_US">The author is not responsible for the use of this addon. The author is not responsible for the content found using this addon. The author does not host or own any content found within this addon.[CR]The author is in no way affiliated with Kodi, Team Kodi, or the XBMC Foundation.[CR]This is a Non-profit resource, organized solely for educational purposes which is protected under the Fair-Use doctrine of the Copyright Act, Specifically section 107, which does promote freedom of expression, by permitting the unlicensed use of copyright-protected works.</disclaimer>
+        <license>Free the People!, Free the World!!</license>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+            <screenshot>resources/screenshots/screenshot_1.png</screenshot>
+        </assets>
+        <news>[B] Total CleanUp of EN Providers[/B]: Checked and all good as of 06-17-2019. [CR][B] (If a non-en provider is broken let me know, as i dont bother with em.)[/B] [CR][B] (Please Report Any Issues To Me Directly. Details Are in Settings.)[/B] </news>
+    </extension>
 </addon>
 
 <addon id="plugin.video.toonmania2" name="Toonmania2" version="0.5.3" provider-name="doko, MetalKettle">
@@ -319,35 +285,105 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="plugin.video.uranus" version="2018.11.28" name="Uranus" provider-name="Uranus">
+<addon id="plugin.video.venom" version="3.1.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+
+	<requires>
+		<import addon="xbmc.python" version="2.19.0" />
+		<import addon="script.module.requests" version="2.19.1" />
+		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
+		<import addon="script.module.metahandler" version="1.0.0" />
+		<import addon="plugin.video.youtube" version="6.2.0"/>
+		<import addon="script.module.resolveurl" />
+		<import addon="script.module.openscrapers" />
+		<import addon="script.module.addon.signals" version="0.0.1"/>
+	</requires>
+
+	<extension point="xbmc.python.pluginsource" library="venom.py">
+		<provides>video</provides>
+	</extension>
+
+	<extension point="xbmc.service" library="service.py" start="startup" />
+	<extension point="xbmc.python.module" library="resources/lib/"/>
+
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] We do not host any of the contents streamed</summary>
+		<description lang="en">[B]Venom[/B][CR] This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels.[CR]The author does not host any of the content in this addon and takes no responsibility for content found.</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+			<screenshot>resources/screenshots/screenshot01a.jpg</screenshot>
+			<screenshot>resources/screenshots/screenshot02a.jpg</screenshot>
+			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
+		</assets>
+		<news>
+[B][COLOR red]Update - v3.1.0 - July 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added Container.Refresh to cache search
+    clearing option so items are removed instantly.[/I]
+[COLOR yellow]--[/COLOR][I] Added hard coding of "Dialog" source list for
+    cases when ExtendedInfo or OpenInfo is visible.
+    Directory list style ends up in background and is
+    not preferable list type in this case.[/I]
+[COLOR yellow]--[/COLOR][I] Added "Anime" menu option to root listing.
+    This is Experimental! at this time and is turned
+    off by default. See Navigation settings[/I]
+[COLOR yellow]--[/COLOR][I] Added "Originals" menu to "TVShows" menu
+    for Netflix, Hulu, and Amazon. Turned off by
+    default. See Navigation settings[/I]
+[COLOR yellow]--[/COLOR][I] Added UpNext setting access to Tools menu.[/I]
+[COLOR yellow]--[/COLOR][I] Added ResolveUrl function cache clear
+    option to Tools menu.[/I]
+[COLOR yellow]--[/COLOR][I] Moved "Enable Christmas Collection" to
+    Navigation category in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few new boxsets to Collections.[/I]
+		</news>
+	</extension>
+
+</addon>
+
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.2" provider-name="doko">
     <requires>
-        <import addon="xbmc.python" version="2.19.0"/>
-        <import addon="script.uranus.artwork" version="2018.02.20"/>
-        <import addon="script.module.resolveurl" />
-        <import addon="script.module.metahandler" version="2.9.0"/>
-        <import addon="script.module.requests" version="2.12.4"/>
-        <import addon="script.module.beautifulsoup" version="3.2.1"/>
-        <import addon="script.module.schism.common" version="2017.06.08"/>
-        <import addon="script.module.futures" version="2.2.0"/>
-        <import addon="script.module.universalscrapers" version="1.0.0"/>
+        <import addon="xbmc.python" version="2.20.0"/>
+        <import addon="script.module.requests"/>
     </requires>
-    <extension point="xbmc.python.pluginsource" library="uranus.py">
+    <extension point="xbmc.python.pluginsource" library="Default.py">
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Uranus movies and TV shows</summary>
-        <description lang="en">Watch movies and TV shows in high quality! Please note that this addon is not an official part of the Kodi media player and is therefore not to be mentioned within Kodi's official support channels. This addon has nothing to do with the media player itself, nor its intended use, it is simply a third party plugin which has been added to your system.</description>
-        <disclaimer lang="en">The author does not host any content, nor is he affiliated with any of the content providers.</disclaimer>
-        <platform>all</platform>
-        <news>Fork of Elysium credit to original Devs / Replaced more lists / Added Christmas Collection</news>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
-        </assets>
+        <news>
+[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.3.2:[/B]
+- Fixed a fault in the stream getting logic.
+
+[B]0.3.1:[/B]
+- Fixed a new way of getting video streams.
+- Added "liked" lists to the Trakt search (besides your own lists).
+
+[B]0.3.0:[/B]
+- Fixed the multi-chapter context menu when using the "Clean Episode Titles" setting.
+
+[B]0.2.9:[/B]
+- Changed the multi-chapter support to be a context-menu, "Play Chapters", so now it's optional.
+        </news>
+        <description lang="en">
+Watch cartoons and anime from [COLOR orange][B]WatchCartoonOnline.io[/B][/COLOR].
+
+Support the WatchCartoonOnline website with a PayPal donation to:
+[COLOR khaki][B]wcohelp@yandex.com[/B][/COLOR]
+
+Add-on by doko.
+        </description>
+        <platform lang="en">all</platform>
+        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
     </extension>
 </addon>
 
-<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.4">
+<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.24">
   <requires>
     <import addon="xbmc.python" version="2.25.0" />
     <import addon="script.module.requests" version="2.12.4" />
@@ -366,34 +402,26 @@ This is a Non-profit resource, organized solely for educational purposes which i
   </extension>
 </addon>
 
-<addon id="plugin.video.yoda" version="1.0.3.01" name="[COLORgreen]yoda[/COLOR]" provider-name="S">
+<addon id="repo.plugin.video.9anime" name="DxCx Kodi Repository" version="0.0.4" provider-name="DxCx">
 	<requires>
-		<import addon="xbmc.python" version="2.19.0" />
-		<import addon="script.module.yoda" />
-		<import addon="script.yoda.artwork" version="1.0.0" />
-		<import addon="script.yoda.metadata" version="1.0.0" />
-		<import addon="script.module.resolveurl" />
-		<import addon="script.module.requests" />
-		<import addon="script.module.metahandler" version="1.0.0" />
+		<import addon="xbmc.addon" version="12.0.0"/>
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="yoda.py">
-		<provides>video</provides>
-        <provides>audio</provides>
+	<extension point="xbmc.addon.repository" name="DxCx Kodi Repository">
+			<info compressed="false">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master</datadir>
+			<hashes>false</hashes>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary lang="en">[COLORlime]yoda[/COLOR]</summary>
-		<description>[COLOR aqua]yoda Movies and TV. This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels. The author does not host any of the content in this addon and takes no responsibility for content found[/COLOR]</description>
-        <disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!
-</disclaimer>
+		<summary lang="en">Repository for DxCx video plugin</summary>
+		<description lang="en">Download and install DxCx's addons repository.</description>
+		<source>https://github.com/DxCx/repo.plugin.video.9anime</source>
 		<platform>all</platform>
 		<assets>
-			<icon>icon.jpg</icon>
-			<fanart>fanart.png</fanart>
-    			<screenshot>resources/screenshots/screenshot-01.png</screenshot>
-    			<screenshot>resources/screenshots/screenshot-02.png</screenshot>
-    			<screenshot>resources/screenshots/screenshot-03.png</screenshot>
+		   <icon>resources/icon.png</icon>
+		   <fanart>resources/fanart.jpg</fanart>
 		</assets>
-		<news></news>
+		<news>[B]0.0.1[/B][CR]• Initial release</news>
 	</extension>
 </addon>
 
@@ -410,6 +438,39 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
+<addon id="repository.jewrepo" name="[COLOR purple]JewRepo[/COLOR]" version="1.5.4" provider-name="JewBMX">
+    <requires>
+        <import addon="xbmc.addon" version="12.0.0"/>
+    </requires>
+    <extension point="xbmc.addon.repository" name="[COLOR purple]JewRepo[/COLOR]">
+        <info compressed="false">https://raw.githubusercontent.com/jewbmx/repo/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jewbmx/repo/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jewbmx/repo/master/zips/</datadir>
+        <hashes>false</hashes>
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/</datadir>
+        </dir>
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
+        </dir>
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+        </dir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Free the People, Free the World!</summary>
+        <description>JewBMX's Official Repository</description>
+        <platform>all</platform>
+        <genre>movies,usa</genre>
+    </extension>
+</addon>
+
 <addon id="repository.jsergio" name="jsergio repo" version="1.0.4" provider-name="jsergio">
 	<extension point="xbmc.addon.repository" name="jsergio repo">
         <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
@@ -423,15 +484,38 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="repository.magicality" name="Magicality Repo" version="0.0.4" provider-name="Wilson Magic">
-	<extension point="xbmc.addon.repository" name="Magicality Repo">
-		<info compressed="false">https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/Wilson-Magic/repository.magicality/master/zips</datadir>
+<addon id="repository.openmeta" name="OpenMeta Repository" version="1.4" provider-name="A4K">
+	<extension point="xbmc.addon.repository" name="OpenMeta Repository">
+		<dir>
+            <info compressed="false">https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/</datadir>
+        </dir>
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/</datadir>
+		</dir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary>Magicality</summary>
-		<description>Magicality - Home of Masterani Redux</description>
+		<summary>OpenMeta Repository</summary>
+		<description>The official home of OpenMeta and OpenInfo.</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.openscrapers" name="OpenScrapers Repository" version="1.0" provider-name="A4K">
+	<extension point="xbmc.addon.repository" name="OpenScrapers Repository">
+		<dir>
+            <info compressed="false">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/</datadir>
+        </dir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>OpenScrapers Repository</summary>
+		<description>The official repo for OpenScrapers!.</description>
 		<disclaimer></disclaimer>
 		<platform>all</platform>
 	</extension>
@@ -464,31 +548,51 @@ This is a Non-profit resource, organized solely for educational purposes which i
 	</extension>
 </addon>
 
-<addon id="repository.supremacy" name="[COLORaqua]supremacy[/COLOR]" version="1.0" provider-name="supremacy">
-	<extension point="xbmc.addon.repository" name="[COLORaqua]supremacy[/COLOR]">
-	<dir>
-		<info compressed="false">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/</datadir>
-	</dir>
-	<dir>
-        <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
-    </dir>
-    <dir>
-        <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
-    </dir>
-		<info compressed="false">http://2supremacy.uk/addons/addon.xml</info>
-		<checksum>http://2supremacy.uk/addons/addons.xml.md5</checksum>
-		<datadir zip="true">http://2supremacy.uk/addons/</datadir>
+<addon id="repository.venom" name="[B][COLOR red]Venom[/COLOR] Repo[/B]" version="1.6" provider-name="Venom">
+	<extension point="xbmc.addon.repository" name="Venom Repo">
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/123Venom/zips/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/123Venom/zips/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/123Venom/zips/master/</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/nixgates/nixgates/master/packages/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/nixgates/nixgates/master/packages/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/nixgates/nixgates/master/packages</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/a4k-openproject/repository.openmeta/master/zips/</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/marcelveldt/repository.marcelveldt/master/</datadir>
+		</dir>
+
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary>video addon for supremacy</summary>
-		<description>Latest Addon Updates For Supremacy Repository</description>
+		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] We do not host any of the contents streamed</summary>
+		<description lang="en">[B][COLOR red]Venom[/COLOR][/B] - This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels.The author does not host any of the content in this addon and takes no responsibility for content found.</description>
+		<disclaimer lang="en">The author is not responsible for the use of this addon. The author is not responsible for the content found using this addon. The author does not host or own any content found within this addon. The author is in no way affiliated with Kodi, Team Kodi, or the XBMC Foundation. This is a Non-profit resource, organized solely for educational purposes which is protected under the Fair-Use doctrine of the Copyright Act, Specifically section 107, which does promote freedom of expression, by permitting the unlicensed use of copyright-protected works</disclaimer>
 		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+		</assets>
+		<news></news>
 	</extension>
 </addon>
 
@@ -533,120 +637,54 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.schism.common" name="Schism Common Libraries" version="2018.03.10" provider-name="common">
-	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
-		<import addon="script.module.six" />
-		<import addon="script.module.metahandler" />
-		<import addon="script.module.beautifulsoup" />
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Collection of modules used by common</summary>
-		<description lang="en">Collection of modules used by common</description>
-		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-	</extension>
-</addon>
-
-<addon id="script.module.yoda" name="[COLORgreen]yoda Module[/COLOR]" version="1.0.8.01" provider-name="S">
-	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">yoda</summary>
-		<description></description>
-        <disclaimer lang="en"></disclaimer>
-	</extension>
-</addon>
-
-<addon id="script.neptune.artwork" version="1.1.2" name="Neptune Rising Artwork" provider-name="Mr. Blamo">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<summary>Themes for the Neptune Rising Addon</summary>
-		<description>Themes for Neptune Rising are maintained separately to make distribution of the the addon itself easier/faster.</description>
-        <disclaimer lang="en">The author is not responsible for the use of this addon. The author is not responsible for the content found using this addon. The author does not host or own any content found within this addon.
-The author is in no way affiliated with Kodi, Team Kodi, or the XBMC Foundation.
-This is a Non-profit resource, organized solely for educational purposes which is protected under the Fair-Use doctrine of the Copyright Act, Specifically section 107, which does promote freedom of expression, by permitting the unlicensed use of copyright-protected works.
-</disclaimer>
-		<platform>all</platform>
-		<license>Beerware rev. 42</license>
-	</extension>
-</addon>
-
-<addon id="script.neptune.metadata" version="1.0.5" name="Neptune Rising Metadata" provider-name="Mr.Blamo">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<summary>Metadata for the Neptune Rising Addon</summary>
-		<description>Metadata for Neptune Rising are maintained separately to make distribution of the the addon itself easier/faster.</description>
-		<platform>all</platform>
-	</extension>
-</addon>
-
-<addon id="script.realdebrid.mod" name="RealDebrid-Mod" version="1.1.2" provider-name="ptom">
-	<requires>
-        <import addon="script.module.requests" version="2.3.0"/>
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.1">
+    <requires>
+        <import addon="xbmc.python" version="2.19.0" />
+        <import addon="script.module.beautifulsoup4" />
+        <import addon="script.module.beautifulsoup" />
+        <import addon="script.module.dateutil" />
+        <import addon="script.module.futures" />
+        <import addon="script.module.requests" />
     </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-		<provides>executable</provides>
-	</extension>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<description lang="en">Unofficial RealDebrid client. Manage your torrents, unrestricted links and view host statuses all within Kodi.</description>
-        <summary>Unofficial RealDebrid client. Manage your torrents, unrestricted links and view host statuses all within Kodi.</summary>
-        <news>v0.5 - added "Play using RealDebrid" to context menu</news>
-        <website>http://www.ptom.co.uk</website>
-		<platform>all</platform>
-		<language>en</language>
-		<email>ptom98@gmail.com</email>
-	</extension>
+    <extension library="lib" point="xbmc.python.module" />
+    <extension point="xbmc.addon.metadata">
+        <summary>Scrubs v2 Module(The Guts)</summary>
+        <description>Scrubs v2 Module(The Guts)</description>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
 </addon>
 
-<addon id="script.uranus.artwork" version="2018.02.20" name="Uranus Artwork" provider-name="Uranus">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-	</requires>
-	<extension point="xbmc.python.script" library="default.py">
-		<provides>executable</provides>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary>Themes for the Uranus Addon</summary>
-		<description></description>
-		<platform>all</platform>
-		<news>Added new artwork</news>
-	</extension>
+<addon id="script.scrubsv2.artwork" version="1.4" name="[COLOR orange]Scrubs v2 Artwork[/COLOR]" provider-name="JewBMX">
+    <requires>
+        <import addon="xbmc.python" version="2.19.0"/>
+    </requires>
+    <extension point="xbmc.python.module" library="lib" />
+    <extension point="xbmc.addon.metadata">
+        <summary>Scrubs v2 Artwork</summary>
+        <description>Scrubs v2 Artwork</description>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+        <news>Reduced All FileSizes and removed Caps from FolderNames.</news>
+    </extension>
 </addon>
 
-<addon id="script.yoda.artwork" version="1.0.0" name="[COLORgreen]yoda Artwork[/COLOR]" provider-name="S">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<summary>Themes For yoda Addon</summary>
-		<description>Artwork Module For yoda Addon</description>
-        <disclaimer lang="en"></disclaimer>
-		<platform>all</platform>
-	</extension>
-</addon>
-
-<addon id="script.yoda.metadata" version="1.0.0" name="[COLORgreen]yoda Metadata[/COLOR]" provider-name="S">
+<addon id="script.scrubsv2.metadata" version="1.2" name="[COLOR orange]Scrubs v2 Metadata[/COLOR]" provider-name="JewBMX">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
-		<summary>Metadata for the yoda Addon</summary>
-		<description>Metadata for yoda are maintained separately to make distribution of the the addon itself easier/faster.</description>
+		<summary>Scrubs v2 Metadata</summary>
+		<description>Scrubs v2 Metadata</description>
 		<platform>all</platform>
+		<assets>
+			<icon>icon.jpg</icon>
+		</assets>
 	</extension>
 </addon>
 

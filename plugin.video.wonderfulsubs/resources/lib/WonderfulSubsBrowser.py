@@ -9,6 +9,19 @@ class WonderfulSubsBrowser(BrowserBase):
     _BASE_URL = "https://www.wonderfulsubs.com"
     _RESULTS_PER_SEARCH_PAGE = 25
 
+    def __init__(self, base_flavor):
+        super(WonderfulSubsBrowser, self).__init__()
+        self._FILTER_FLAVOR = self._filter_flavor_key(base_flavor)
+
+    def _filter_flavor_key(self, base_flavor):
+        flavor_key = {
+            "Subs Only": "is_subbed",
+            "Dubs Only": "is_dubbed",
+            "None": None
+            }
+
+        return flavor_key[base_flavor]
+
     def _parse_anime_view(self, res):
         result = []
         image = res.get("poster_tall", None)
@@ -22,13 +35,16 @@ class WonderfulSubsBrowser(BrowserBase):
             "plot": res["description"],
         }
 
-        if res["is_dubbed"]:
+        if self._FILTER_FLAVOR:
+            return self._parse_filtered_anime_view(res, base)
+
+        if res.get("is_dubbed", None):
             result.append(utils.allocate_item("%s (Dub)" % base["name"],
                                               "%s/dub" % base["url"],
                                               True,
                                               base["image"],
                                               base["plot"]))
-        if res["is_subbed"]:
+        if res.get("is_subbed", None):
             result.append(utils.allocate_item("%s (Sub)" % base["name"],
                                               "%s/sub" % base["url"],
                                               True,
@@ -38,15 +54,21 @@ class WonderfulSubsBrowser(BrowserBase):
 
         return result
 
+    def _parse_filtered_anime_view(self, res, base):
+        result = []
+
+        if res.get(self._FILTER_FLAVOR, None):
+            result.append(utils.allocate_item(base["name"],
+                                              "%s/%s" % (base["url"], self._FILTER_FLAVOR[3:6]),
+                                              True,
+                                              base["image"],
+                                              base["plot"]))
+
+        return result
+
     def _parse_history_view(self, res):
         name = res
         return utils.allocate_item(name, "search/" + name + "/1", True)
-
-    def _parse_watchlist_anime_view(self, res):
-        name = res[1]
-        image = res[2]
-        url = res[0]
-        return utils.allocate_item(name, "animes/" + url, True, image)
 
     def _handle_paging(self, total_results, base_url, page):
         total_pages = int(math.ceil(total_results /
@@ -92,11 +114,12 @@ class WonderfulSubsBrowser(BrowserBase):
         all_results += self._handle_paging(total_results, base_plugin_url, page)
         return all_results
 
-    def _format_episode(self, sname, anime_url, is_dubbed, ses_idx, einfo):
+    def _format_episode(self, sname, anime_url, is_dubbed, ses_idx, einfo, kitsu_id):
         desc = None if not einfo.has_key("description") else einfo["description"]
         image = None
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
-            image = einfo["thumbnail"].pop().get("source", None)
+            image_idx = 0 if len(einfo["thumbnail"]) == 1 else 1
+            image = einfo["thumbnail"].pop(image_idx).get("source", None)
 
         sources = self._format_sources(sname, is_dubbed, einfo)
 
@@ -106,10 +129,11 @@ class WonderfulSubsBrowser(BrowserBase):
             base.update({
                 "name": einfo["title"],
                 "id": str(einfo["ova_number"]),
-                "url": "play/%s/%s/%d/%s" % (anime_url,
+                "url": "play/%s/%s/%d/%s/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
-                                          str(einfo["ova_number"])),
+                                          str(einfo["ova_number"]),
+                                          kitsu_id),
                 "sources": sources,
                 "image": image,
                 "plot": desc,
@@ -119,10 +143,11 @@ class WonderfulSubsBrowser(BrowserBase):
             base.update({
                 "name": einfo["title"] if "Episode" in einfo["title"] else "Ep. %s (%s)" %(einfo["episode_number"], einfo["title"]), 
                 "id": str(einfo["episode_number"]),
-                "url": "play/%s/%s/%d/%s" % (anime_url,
+                "url": "play/%s/%s/%d/%s/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
-                                          str(einfo["episode_number"])),
+                                          str(einfo["episode_number"]),
+                                          kitsu_id),
                 "sources": sources,
                 "image": image,
                 "plot": desc,
@@ -154,7 +179,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def _format_link(self, sname, rlink):
         if type(rlink) is list:
-            rlink = rlink.pop()
+            rlink = rlink[0]
 
         video_data = {
             "code": rlink,
@@ -202,6 +227,9 @@ class WonderfulSubsBrowser(BrowserBase):
                 else:
                     ses_obj["name"] = season_col["title"]
 
+                ses_obj["image"] = "https://media.kitsu.io/anime/poster_images/%s/large.jpg" %(season_col.get("kitsu_id", ''))
+                ses_obj["plot"] = season_col.get("description", None)
+
                 # TODO: by ID, not name
                 if seasons.has_key(ses_obj["name"]):
                     ses_obj = seasons[ses_obj["name"]]
@@ -217,7 +245,8 @@ class WonderfulSubsBrowser(BrowserBase):
 
                     ep_info = self._format_episode("Server %d" % sindex,
                                                    anime_url, is_dubbed,
-                                                   ses_obj["id"], einfo)
+                                                   ses_obj["id"], einfo,
+                                                   season_col.get("kitsu_id", None))
                     if not eps.has_key(ep_info["id"]):
                         eps[ep_info["id"]] = ep_info
                         continue
@@ -238,9 +267,9 @@ class WonderfulSubsBrowser(BrowserBase):
             "seasons": dict([(str(i['id']), i) for i in seasons.values()]),
         }
 
-    def _get_anime_episodes(self, info, season):
+    def _get_anime_episodes(self, info, season, desc_order):
         season = info["seasons"][season]
-        episodes = sorted(season["episodes"].values(), reverse=True, key=lambda x:
+        episodes = sorted(season["episodes"].values(), reverse=desc_order, key=lambda x:
                           float(x["id"]))
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
@@ -310,21 +339,21 @@ class WonderfulSubsBrowser(BrowserBase):
         info = self._get_anime_info(anime_url, is_dubbed)
         return (info["name"], info["image"])
 
-    def get_anime_seasons(self, anime_url, is_dubbed):
+    def get_anime_seasons(self, anime_url, is_dubbed, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)
         if len(info["seasons"]) == 1:
-            return self._get_anime_episodes(info, info["seasons"].keys().pop())
+            return self._get_anime_episodes(info, info["seasons"].keys().pop(), desc_order)
 
         seasons = sorted(info["seasons"].values(), key=lambda x: x["id"])
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
                                                  True,
-                                                 info["image"],
-                                                 info["plot"]), seasons)
+                                                 x["image"],
+                                                 x["plot"]), seasons)
 
-    def get_anime_episodes(self, anime_url, is_dubbed, season):
+    def get_anime_episodes(self, anime_url, is_dubbed, season, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)
-        return self._get_anime_episodes(info, season)
+        return self._get_anime_episodes(info, season, desc_order)
 
     def get_episode_sources(self, anime_url, is_dubbed, season, episode):
         info = self._get_anime_info(anime_url, is_dubbed)

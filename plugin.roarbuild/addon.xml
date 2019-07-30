@@ -1,14 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addon
-  author="N2Roar"
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.1">
+  version="0.0.2"
+  provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
+		<import addon="inputstream.adaptive"/>
+		<import addon="inputstream.rtmp"/>
 		<import addon="plugin.program.autocompletion"/>
 		<!-- 3rd Party Useful Addons -->
-		<import addon="plugin.video.metalliq"/>
+		<import addon="plugin.video.openmeta"/>
 		<!-- 3rd Party Useful Modules -->
 		<import addon="service.subtitles.opensubtitles_by_opensubtitles"/>
 	</requires>
