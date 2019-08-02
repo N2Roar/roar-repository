@@ -1,3 +1,20 @@
+[B][COLOR red]Update - v3.1.2 - July 31, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb TVShows.  Sorry typo in last
+    update broke it.[/I]
+[COLOR yellow]--[/COLOR][I] Added Scott Adkins to Martial Arts actors
+    per request.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed "Play Random" for TVShows and
+    Seasons.[/I]
+
+[B][COLOR red]Update - v3.1.1 - July 31, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new "Martial Arts" sections to
+    "Collections". Contains sub menu for "All
+    Movies" and "actors".[/I]
+[COLOR yellow]--[/COLOR][I] Changed check for OpenInfo from
+    .getProperty() to .getCondVisibility().  This
+    seems to yeield more consistent results
+    regardless if OpenInfo is in background.[/I]
+
 [B][COLOR red]Update - v3.1.0 - July 28, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added Container.Refresh to cache search
     clearing option so items are removed instantly.[/I]
@@ -17,7 +34,6 @@
 [COLOR yellow]--[/COLOR][I] Moved "Enable Christmas Collection" to
     Navigation category in settings.[/I]
 [COLOR yellow]--[/COLOR][I] Added a few new boxsets to Collections.[/I]
-
 
 [B][COLOR red]Update - v3.0.9 - July 25, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Lot of code cleanup and removal of unnecessary

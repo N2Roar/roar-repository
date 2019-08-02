@@ -37,7 +37,7 @@ class Navigator:
             self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png','DefaultVideoPlaylists.png')
             self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
 
-        if not control.setting('newmovies.widget') == '0':
+        if control.setting('newmovies.widget') != '0':
             indexer = 32478
             indexer_icon = 'imdb.png'
             setting = control.setting('newmovies.widget')
@@ -56,8 +56,11 @@ class Navigator:
             self.addDirectoryItem(32480 if control.setting('index.labels') == 'false' else indexer, 'tvWidget', 'latest-episodes.png' if control.setting('icon.logos') == 'Traditional' else indexer_icon, 'DefaultRecentlyAddedEpisodes.png')
             self.addDirectoryItem(32483 if control.setting('index.labels') == 'false' else 32484, 'calendar&url=added', 'latest-episodes.png' if control.setting('icon.logos') == 'Traditional' else 'tvmaze.png', 'DefaultTVShows.png', queue=True)
 
-        if not control.setting('furk.api') == '' or None:
+        if control.setting('furk.api') != '':
             self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png',  'DefaultMovies.png')
+
+        # if self.getMenuEnabled('navi.youtube') == True:
+            # self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
 
         self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultAddonsSearch.png')
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonService.png')
@@ -118,7 +121,7 @@ class Navigator:
         self.addDirectoryItem(32444 if control.setting('index.labels') == 'false' else 32445, 'movies&url=traktrecommendations', 'highly-rated.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
         self.addDirectoryItem(32446 if control.setting('index.labels') == 'false' else 32447, 'movies&url=featured', 'movies.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
 
-        if not control.setting('newmovies.widget') == '0':
+        if control.setting('newmovies.widget') != '0':
             self.addDirectoryItem(32477 if control.setting('index.labels') == 'false' else 32478, 'newMovies', 'movies.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultRecentlyAddedMovies.png')
 
         self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'DefaultSets.png')
@@ -489,7 +492,7 @@ class Navigator:
 
         url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
-        thumb = os.path.join(artPath, thumb) if not artPath is None else icon
+        thumb = os.path.join(artPath, thumb) if artPath is not None else icon
 
         if not icon.startswith('Default'):
              icon = os.path.join(artPath, icon)
@@ -500,7 +503,7 @@ class Navigator:
         if queue is True:
             cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
-        if not context is None:
+        if context is not None:
             cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 
         cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
@@ -514,7 +517,7 @@ class Navigator:
             item.setProperty('IsPlayable', 'false')
         item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
 
-        if not addonFanart is None:
+        if addonFanart is not None:
             item.setProperty('Fanart_Image', addonFanart)
 
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder= isFolder)

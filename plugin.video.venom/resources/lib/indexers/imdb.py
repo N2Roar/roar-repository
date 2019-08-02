@@ -206,7 +206,7 @@ class movies:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(imdb, tmdb)
-                if not extended_art is None:
+                if extended_art is not None:
                     item.update(extended_art)
                     meta.update(item)
 

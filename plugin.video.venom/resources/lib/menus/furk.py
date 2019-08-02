@@ -57,7 +57,7 @@ class Furk:
                         continue
                 if url_dl == '':
                     continue
-                if not int(i['files_num_video_player']) > 1:
+                if int(i['files_num_video_player']) !> 1:
                     if int(i['ss_num']) > 0:
                         thumb = i['ss_urls'][0]
                     else:
@@ -150,7 +150,7 @@ class Furk:
                         continue
                 if url_dl == '':
                     continue
-                if not int(i['files_num_video_player']) > 1:
+                if int(i['files_num_video_player']) !> 1:
                     if int(i['ss_num']) > 0:
                         thumb = i['ss_urls'][0]
                     else:

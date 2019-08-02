@@ -1,6 +1,13 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
 
+- Quick patch update for tv shows to work again. (Big Thanks to WeekendSource.)
+(Nothing else is changed, checked, or updated. just a few little url changes.)
+
+[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
+[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.5.3 [/COLOR][/B]
 - Added a Custom List option in More Stuff. Set it up in Settings to work your way.
 (examples of list structure can be found on my github xml repo.)
 - Updated some settings code to please a few people. (Might solve their "issues".)
@@ -11,9 +18,6 @@
 (Movies still has youtube result allowed, Show i tested with was just subs, Sound was EN.)
 - Tossed in about 15 more new Providers i made while cleaning url lists.
 (Beware of quality, proper results, and whatever else i may of skipped lol, i make em in stages.)
-
-[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
-[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
 
 [B][COLOR purple] v4.5.2 [/COLOR][/B]
 - Readjusted some code for Downloads, had a glitch for windows 10, changed some wording again too lol.

@@ -26,11 +26,11 @@ class tvshows:
         self.lang = control.apiLanguage()['tvdb']
         
         self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'https://www.thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
-        self.tvdb_by_imdb = 'https://www.thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'https://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'https://www.thetvdb.com/banners/'
         
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user

@@ -25,7 +25,7 @@ class lib_tools:
             folder = xbmc.makeLegalFilename(folder)
             control.makeFile(folder)
             try:
-                if not 'ftp://' in folder:
+                if 'ftp://' not in folder:
                     raise Exception()
                 from ftplib import FTP
                 ftparg = re.compile('ftp://(.+?):(.+?)@(.+?):?(\d+)?/(.+/?)').findall(folder)

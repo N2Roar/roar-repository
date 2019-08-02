@@ -28,7 +28,7 @@ def log(msg, caller=None, level = LOGNOTICE):
     print DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled)
     print DEBUGPREFIX + ' Debug Log?: ' + str(debug_log)
 
-    if not control.setting('addon_debug') == 'true':
+    if control.setting('addon_debug') != 'true':
         return
 
     try:

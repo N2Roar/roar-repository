@@ -22,24 +22,33 @@ def google(url, ref=None):
             c = resp[2]['Set-Cookie'].split(';')[0]
             url = '%s|Cookie=%s' % (loc, c)
             return url
-        if any(x in url for x in ['youtube.', 'docid=']): url = 'https://drive.google.com/file/d/%s/view' % re.compile('docid=([\w-]+)').findall(url)[0]
+
+        if any(x in url for x in ['youtube.', 'docid=']):
+            url = 'https://drive.google.com/file/d/%s/view' % re.compile('docid=([\w-]+)').findall(url)[0]
+
         netloc = urlparse.urlparse(url.strip().lower()).netloc
         netloc = netloc.split('.google')[0]
+
         if netloc == 'docs' or netloc == 'drive':
             url = url.split('/preview', 1)[0]
             url = url.replace('drive.google.com', 'docs.google.com')
+
         headers = {'User-Agent': client.agent()}
         result = client.request(url, output='extended', headers=headers)
+
         try:
             headers['Cookie'] = result[2]['Set-Cookie']
         except:
             pass
+
         result = result[0]
+
         if netloc == 'docs' or netloc == 'drive':
             result = re.compile('"fmt_stream_map",(".+?")').findall(result)[0]
             result = json.loads(result)
             result = [i.split('|')[-1] for i in result.split(',')]
             result = sum([googletag(i, append_height=True) for i in result], [])
+
         elif netloc == 'photos':
             result = result.replace('\r', '').replace('\n', '').replace('\t', '')
             result = re.compile('"\d*/\d*x\d*.+?","(.+?)"').findall(result)[0]
@@ -47,17 +56,22 @@ def google(url, ref=None):
             result = re.compile('url=(.+?)&').findall(result)
             result = [urllib.unquote(i) for i in result]
             result = sum([googletag(i, append_height=True) for i in result], [])
+
         elif netloc == 'picasaweb':
             id = re.compile('#(\d*)').findall(url)[0]
             result = re.search('feedPreload:\s*(.*}]}})},', result, re.DOTALL).group(1)
             result = json.loads(result)['feed']['entry']
+
             if len(result) > 1:
                 result = [i for i in result if str(id) in i['link'][0]['href']][0]
+
             elif len(result) == 1:
                 result = result[0]
+
             result = result['media']['content']
             result = [i['url'] for i in result if 'video' in i['type']]
             result = sum([googletag(i, append_height=True) for i in result], [])
+
         elif netloc == 'plus':
             id = (urlparse.urlparse(url).path).split('/')[-1]
             result = result.replace('\r', '').replace('\n', '').replace('\t', '')
@@ -68,15 +82,20 @@ def google(url, ref=None):
             result = sum([googletag(i, append_height=True) for i in result], [])
         result = sorted(result, key=lambda i: i.get('height', 0), reverse=True)
         url = []
+
         for q in ['4K', '1440p', '1080p', 'HD', 'SD']:
             try:
                 url += [[i for i in result if i.get('quality') == q][0]]
             except:
                 pass
+
         for i in url:
             i.pop('height', None)
             i.update({'url': i['url'] + '|%s' % urllib.urlencode(headers)})
-        if not url: return
+
+        if not url:
+            return
+
         return url
     except:
         return
@@ -85,10 +104,12 @@ def google(url, ref=None):
 def googletag(url, append_height=False):
     quality = re.compile('itag=(\d*)').findall(url)
     quality += re.compile('=m(\d*)$').findall(url)
+
     try:
         quality = quality[0]
     except:
         return []
+
     itag_map = {'151': {'quality': 'SD', 'height': 72}, '212': {'quality': 'SD', 'height': 480}, '313': {'quality': '4K', 'height': 2160},
                 '242': {'quality': 'SD', 'height': 240}, '315': {'quality': '4K', 'height': 2160}, '219': {'quality': 'SD', 'height': 480},
                 '133': {'quality': 'SD', 'height': 240}, '271': {'quality': '1440p', 'height': 1440}, '272': {'quality': '4K', 'height': 2160},
@@ -110,8 +131,10 @@ def googletag(url, append_height=False):
                 '132': {'quality': 'SD', 'height': 240}, '18': {'quality': 'SD', 'height': 360}, '37': {'quality': '1080p', 'height': 1080},
                 '35': {'quality': 'SD', 'height': 480}, '34': {'quality': 'SD', 'height': 360}, '298': {'quality': 'HD', 'height': 720},
                 '299': {'quality': '1080p', 'height': 1080}, '169': {'quality': 'HD', 'height': 720}}
+
     if quality in itag_map:
         quality = itag_map[quality]
+
         if append_height:
             return [{'quality': quality['quality'], 'height': quality['height'], 'url': url}]
         else:

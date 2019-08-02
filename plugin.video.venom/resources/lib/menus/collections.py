@@ -27,7 +27,7 @@ action = params.get('action')
 class Collections:
     def __init__(self):
         self.list = []
-
+        self.disable_fanarttv = control.setting('disable.fanarttv')
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
@@ -37,8 +37,6 @@ class Collections:
         self.lang = control.apiLanguage()['trakt']
         self.traktCredentials = trakt.getTraktCredentialsInfo()
 
-        self.imdb_link = 'https://www.imdb.com'
-
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
 
         self.tmdb_key = control.setting('tm.user')
@@ -47,311 +45,336 @@ class Collections:
 
         self.user = str(self.imdb_user) + str(self.tmdb_key)
 
-        self.disable_fanarttv = control.setting('disable.fanarttv')
-
         self.tmdb_link = 'https://api.themoviedb.org'
-        self.tmdb_api_link = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
+        self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&page=1' % ('%s', self.tmdb_key)
 
+        self.imdb_link = 'https://www.imdb.com'
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdblist2_link = 'https://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
+
+# Martial Arts Movies
+        self.martialartsmovies_link = self.tmdb_api_link % '117973'
+
+# Martial Arts Actors
+        self.brandonlee_link = self.tmdb_api_link % '117971'
+        self.brucelee2_link = self.tmdb_api_link % '118011'
+        self.chucknorris_link = self.tmdb_api_link % '118012'
+        self.chowyunfat_link = self.tmdb_api_link % '118014'
+        self.donnieyen_link = self.tmdb_api_link % '118015'
+        self.garydaniels_link = self.tmdb_api_link % '118035'
+        self.jackiechan_link = self.tmdb_api_link % '118017'
+        self.jasonstatham_link = self.tmdb_api_link % '118016'
+        self.vandamme_link = self.tmdb_api_link % '118022'
+        self.jetli_link = self.tmdb_api_link % '118023'
+        self.markdacascos_link = self.tmdb_api_link % '118024'
+        self.michaeljaiwhite_link = self.tmdb_api_link % '118025'
+        self.philipng_link = self.tmdb_api_link % '118026'
+        self.rain_link = self.tmdb_api_link % '118033'
+        self.robinshou_link = self.tmdb_api_link % '118028'
+        self.scottadkins_link = self.tmdb_api_link % '118061'
+        self.stevenseagal_link = self.tmdb_api_link % '118029'
+        self.tigerchen_link = self.tmdb_api_link % '118030'
+        self.tonyjaa_link = self.tmdb_api_link % '118031'
+
 # Christmas Movies
-        self.xmasmovies_link = 'https://api.themoviedb.org/3/list/32770?api_key=%s' % (self.tmdb_key)
+        self.xmasmovies_link = self.tmdb_api_link % '32770'
 
 # DC Comics Movies
-        self.dcmovies_link = 'https://api.themoviedb.org/3/list/32799?api_key=%s' % (self.tmdb_key)
+        self.dcmovies_link = self.tmdb_api_link % '32799'
 
 # Disney Movies
-        self.disneymovies_link = 'https://api.themoviedb.org/3/list/32800?api_key=%s' % (self.tmdb_key)
+        self.disneymovies_link = self.tmdb_api_link % '32800'
 
 # Kids Movies
-        self.kidsmovies_link = 'https://api.themoviedb.org/3/list/32802?api_key=%s' % (self.tmdb_key)
+        self.kidsmovies_link = self.tmdb_api_link % '32802'
 
 # Marvel Movies
-        self.marvelmovies_link = 'https://api.themoviedb.org/3/list/32793?api_key=%s' % (self.tmdb_key)
+        self.marvelmovies_link = self.tmdb_api_link % '32793'
 
 # Boxset Collection
-        self.rounds_link = self.tmdb_api_link % ('13120', self.tmdb_key)
-        self.tmdb300_link = self.tmdb_api_link % ('13132', self.tmdb_key)
-        self.fortyeighthours_link = self.tmdb_api_link % ('33259', self.tmdb_key)
-        self.aceventura_link = self.tmdb_api_link % ('33260', self.tmdb_key)
-        self.aceventura_link = self.tmdb_api_link % ('33260', self.tmdb_key)
-        self.airplane_link = self.tmdb_api_link % ('33261', self.tmdb_key)
-        self.airport_link = self.tmdb_api_link % ('33262', self.tmdb_key)
-        self.americangraffiti_link = self.tmdb_api_link % ('33263', self.tmdb_key)
-        self.anaconda_link = self.tmdb_api_link % ('33264', self.tmdb_key)
-        self.analyzethis_link = self.tmdb_api_link % ('33265', self.tmdb_key)
-        self.anchorman_link = self.tmdb_api_link % ('33266', self.tmdb_key)
-        self.austinpowers_link = self.tmdb_api_link % ('33267', self.tmdb_key)
-        self.avp_link = self.tmdb_api_link % ('13199', self.tmdb_key)
-        self.backtothefuture_link = self.tmdb_api_link % ('33268', self.tmdb_key)
-        self.badass_link = self.tmdb_api_link % ('13205', self.tmdb_key)
-        self.badboys_link = self.tmdb_api_link % ('33269', self.tmdb_key)
-        self.badsanta_link = self.tmdb_api_link % ('33270', self.tmdb_key)
-        self.basicinstinct_link = self.tmdb_api_link % ('33271', self.tmdb_key)
-        self.bestofthebest_link = self.tmdb_api_link % ('13269', self.tmdb_key)
-        self.beverlyhillscop_link = self.tmdb_api_link % ('33272', self.tmdb_key)
-        self.bigmommashouse_link = self.tmdb_api_link % ('33273', self.tmdb_key)
-        self.bloodsport_link = self.tmdb_api_link % ('13281', self.tmdb_key)
-        self.bluesbrothers_link = self.tmdb_api_link % ('33274', self.tmdb_key)
-        self.bourne_link = self.tmdb_api_link % ('33275', self.tmdb_key)
-        self.brucealmighty_link = self.tmdb_api_link % ('33276', self.tmdb_key)
-        self.brucelee_link = self.tmdb_api_link % ('13295', self.tmdb_key)
-        self.caddyshack_link = self.tmdb_api_link % ('33277', self.tmdb_key)
-        self.catsanddogs_link = self.tmdb_api_link % ('16501', self.tmdb_key)
-        self.cheaperbythedozen_link = self.tmdb_api_link % ('33278', self.tmdb_key)
-        self.cheechandchong_link = self.tmdb_api_link % ('33420', self.tmdb_key)
-        self.childsplay_link = self.tmdb_api_link % ('33279', self.tmdb_key)
-        self.cityslickers_link = self.tmdb_api_link % ('33280', self.tmdb_key)
-        self.conan_link = self.tmdb_api_link % ('33281', self.tmdb_key)
-        self.crank_link = self.tmdb_api_link % ('33282', self.tmdb_key)
-        self.crocodiledundee_link = self.tmdb_api_link % ('33419', self.tmdb_key)
-        self.thecrow_link = self.tmdb_api_link % ('13294', self.tmdb_key)
-        self.davincicode_link = self.tmdb_api_link % ('33283', self.tmdb_key)
-        self.daddydaycare_link = self.tmdb_api_link % ('33284', self.tmdb_key)
-        self.deathwish_link = self.tmdb_api_link % ('33285', self.tmdb_key)
-        self.deltaforce_link = self.tmdb_api_link % ('33286', self.tmdb_key)
-        self.diehard_link = self.tmdb_api_link % ('33287', self.tmdb_key)
-        self.dirtydancing_link = self.tmdb_api_link % ('33288', self.tmdb_key)
-        self.dirtyharry_link = self.tmdb_api_link % ('33289', self.tmdb_key)
-        self.divergent_link = self.tmdb_api_link % ('13311', self.tmdb_key)
-        self.dumbanddumber_link = self.tmdb_api_link % ('33290', self.tmdb_key)
-        self.escapefromnewyork_link = self.tmdb_api_link % ('33291', self.tmdb_key)
-        self.everywhichwaybutloose_link = self.tmdb_api_link % ('33292', self.tmdb_key)
-        self.exorcist_link = self.tmdb_api_link % ('33293', self.tmdb_key)
-        self.theexpendables_link = self.tmdb_api_link % ('33294', self.tmdb_key)
-        self.fastandthefurious_link = self.tmdb_api_link % ('13062', self.tmdb_key)
-        self.fatherofthebride_link = self.tmdb_api_link % ('33295', self.tmdb_key)
-        self.fletch_link = self.tmdb_api_link % ('33296', self.tmdb_key)
-        self.thefly_link = self.tmdb_api_link % ('13303', self.tmdb_key)
-        self.friday_link = self.tmdb_api_link % ('33297', self.tmdb_key)
-        self.fridaythe13th_link = self.tmdb_api_link % ('33298', self.tmdb_key)
-        self.fugitive_link = self.tmdb_api_link % ('33299', self.tmdb_key)
-        self.gijoe_link = self.tmdb_api_link % ('33300', self.tmdb_key)
-        self.getshorty_link = self.tmdb_api_link % ('33301', self.tmdb_key)
-        self.gettysburg_link = self.tmdb_api_link % ('33302', self.tmdb_key)
-        self.ghostrider_link = self.tmdb_api_link % ('33303', self.tmdb_key)
-        self.ghostbusters_link = self.tmdb_api_link % ('33201', self.tmdb_key)
-        self.godsnotdead_link = self.tmdb_api_link % ('33304', self.tmdb_key)
-        self.godfather_link = self.tmdb_api_link % ('33305', self.tmdb_key)
-        self.godzilla_link = self.tmdb_api_link % ('33306', self.tmdb_key)
-        self.grownups_link = self.tmdb_api_link % ('33307', self.tmdb_key)
-        self.grumpyoldmen_link = self.tmdb_api_link % ('33308', self.tmdb_key)
-        self.gunsofnavarone_link = self.tmdb_api_link % ('33309', self.tmdb_key)
-        self.halloween_link = self.tmdb_api_link % ('33310', self.tmdb_key)
-        self.hangover_link = self.tmdb_api_link % ('33311', self.tmdb_key)
-        self.hanniballector_link = self.tmdb_api_link % ('33312', self.tmdb_key)
-        self.hellraiser_link = self.tmdb_api_link % ('33313', self.tmdb_key)
-        self.highlander_link = self.tmdb_api_link % ('13256', self.tmdb_key)
+        self.rounds_link = self.tmdb_api_link % '13120'
+        self.tmdb300_link = self.tmdb_api_link % '13132'
+        self.fortyeighthours_link = self.tmdb_api_link % '33259'
+        self.aceventura_link = self.tmdb_api_link % '33260'
+        self.aceventura_link = self.tmdb_api_link % '33260'
+        self.airplane_link = self.tmdb_api_link % '33261'
+        self.airport_link = self.tmdb_api_link % '33262'
+        self.americangraffiti_link = self.tmdb_api_link % '33263'
+        self.anaconda_link = self.tmdb_api_link % '33264'
+        self.analyzethis_link = self.tmdb_api_link % '33265'
+        self.anchorman_link = self.tmdb_api_link % '33266'
+        self.austinpowers_link = self.tmdb_api_link % '33267'
+        self.avp_link = self.tmdb_api_link % '13199'
+        self.backtothefuture_link = self.tmdb_api_link % '33268'
+        self.badass_link = self.tmdb_api_link % '13205'
+        self.badboys_link = self.tmdb_api_link % '33269'
+        self.badsanta_link = self.tmdb_api_link % '33270'
+        self.basicinstinct_link = self.tmdb_api_link % '33271'
+        self.bestofthebest_link = self.tmdb_api_link % '13269'
+        self.beverlyhillscop_link = self.tmdb_api_link % '33272'
+        self.bigmommashouse_link = self.tmdb_api_link % '33273'
+        self.bloodsport_link = self.tmdb_api_link % '13281'
+        self.bluesbrothers_link = self.tmdb_api_link % '33274'
+        self.bourne_link = self.tmdb_api_link % '33275'
+        self.brucealmighty_link = self.tmdb_api_link % '33276'
+        self.brucelee_link = self.tmdb_api_link % '13295'
+        self.caddyshack_link = self.tmdb_api_link % '33277'
+        self.catsanddogs_link = self.tmdb_api_link % '16501'
+        self.cheaperbythedozen_link = self.tmdb_api_link % '33278'
+        self.cheechandchong_link = self.tmdb_api_link % '33420'
+        self.childsplay_link = self.tmdb_api_link % '33279'
+        self.cityslickers_link = self.tmdb_api_link % '33280'
+        self.conan_link = self.tmdb_api_link % '33281'
+        self.crank_link = self.tmdb_api_link % '33282'
+        self.crocodiledundee_link = self.tmdb_api_link % '33419'
+        self.thecrow_link = self.tmdb_api_link % '13294'
+        self.davincicode_link = self.tmdb_api_link % '33283'
+        self.daddydaycare_link = self.tmdb_api_link % '33284'
+        self.deathwish_link = self.tmdb_api_link % '33285'
+        self.deltaforce_link = self.tmdb_api_link % '33286'
+        self.diehard_link = self.tmdb_api_link % '33287'
+        self.dirtydancing_link = self.tmdb_api_link % '33288'
+        self.dirtyharry_link = self.tmdb_api_link % '33289'
+        self.divergent_link = self.tmdb_api_link % '13311'
+        self.dumbanddumber_link = self.tmdb_api_link % '33290'
+        self.escapefromnewyork_link = self.tmdb_api_link % '33291'
+        self.everywhichwaybutloose_link = self.tmdb_api_link % '33292'
+        self.exorcist_link = self.tmdb_api_link % '33293'
+        self.theexpendables_link = self.tmdb_api_link % '33294'
+        self.fastandthefurious_link = self.tmdb_api_link % '13062'
+        self.fatherofthebride_link = self.tmdb_api_link % '33295'
+        self.fletch_link = self.tmdb_api_link % '33296'
+        self.thefly_link = self.tmdb_api_link % '13303'
+        self.friday_link = self.tmdb_api_link % '33297'
+        self.fridaythe13th_link = self.tmdb_api_link % '33298'
+        self.fugitive_link = self.tmdb_api_link % '33299'
+        self.gijoe_link = self.tmdb_api_link % '33300'
+        self.getshorty_link = self.tmdb_api_link % '33301'
+        self.gettysburg_link = self.tmdb_api_link % '33302'
+        self.ghostrider_link = self.tmdb_api_link % '33303'
+        self.ghostbusters_link = self.tmdb_api_link % '33201'
+        self.godsnotdead_link = self.tmdb_api_link % '33304'
+        self.godfather_link = self.tmdb_api_link % '33305'
+        self.godzilla_link = self.tmdb_api_link % '33306'
+        self.grownups_link = self.tmdb_api_link % '33307'
+        self.grumpyoldmen_link = self.tmdb_api_link % '33308'
+        self.gunsofnavarone_link = self.tmdb_api_link % '33309'
+        self.halloween_link = self.tmdb_api_link % '33310'
+        self.hangover_link = self.tmdb_api_link % '33311'
+        self.hanniballector_link = self.tmdb_api_link % '33312'
+        self.hellraiser_link = self.tmdb_api_link % '33313'
+        self.highlander_link = self.tmdb_api_link % '13256'
         self.thehobbit_link = 'https://www.imdb.com/search/title?title=the+hobbit&title_type=feature,tv_movie&num_votes=1000,&countries=us&languages=en'
-        self.hollowman_link = self.tmdb_api_link % ('13251', self.tmdb_key)
-        self.honeyishrunkthekids_link = self.tmdb_api_link % ('33208', self.tmdb_key)
-        self.horriblebosses_link = self.tmdb_api_link % ('33314', self.tmdb_key)
-        self.hostel_link = self.tmdb_api_link % ('33315', self.tmdb_key)
-        self.hotshots_link = self.tmdb_api_link % ('33316', self.tmdb_key)
+        self.hollowman_link = self.tmdb_api_link % '13251'
+        self.honeyishrunkthekids_link = self.tmdb_api_link % '33208'
+        self.horriblebosses_link = self.tmdb_api_link % '33314'
+        self.hostel_link = self.tmdb_api_link % '33315'
+        self.hotshots_link = self.tmdb_api_link % '33316'
         self.hungergames_link = 'https://www.imdb.com/search/title?title=hunger+games&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
-        self.huntsman_link = self.tmdb_api_link % ('13235', self.tmdb_key)
-        self.independenceday_link = self.tmdb_api_link % ('33317', self.tmdb_key)
-        self.indianajones_link = self.tmdb_api_link % ('113191', self.tmdb_key)
-        self.insidious_link = self.tmdb_api_link % ('33319', self.tmdb_key)
-        self.ironeagle_link = self.tmdb_api_link % ('33320', self.tmdb_key)
-        self.jackreacher_link = self.tmdb_api_link % ('33321', self.tmdb_key)
-        self.jackryan_link = self.tmdb_api_link % ('33322', self.tmdb_key)
-        self.jackass_link = self.tmdb_api_link % ('33323', self.tmdb_key)
-        self.jamesbond_link = self.tmdb_api_link % ('33324', self.tmdb_key)
-        self.jaws_link = self.tmdb_api_link % ('33325', self.tmdb_key)
-        self.jeeperscreepers_link = self.tmdb_api_link % ('33326', self.tmdb_key)
-        self.johnwick_link = self.tmdb_api_link % ('113190', self.tmdb_key)
-        self.journeytocenter_link = self.tmdb_api_link % ('13216', self.tmdb_key)
-        self.judgedredd_link = self.tmdb_api_link % ('13215', self.tmdb_key)
-        self.jumanji_link = self.tmdb_api_link % ('113189', self.tmdb_key)
-        self.jumpst_link = self.tmdb_api_link % ('13213', self.tmdb_key)
-        self.jurassicpark_link = self.tmdb_api_link % ('113188', self.tmdb_key)
-        self.kickass_link = self.tmdb_api_link % ('33329', self.tmdb_key)
-        self.killbill_link = self.tmdb_api_link % ('33330', self.tmdb_key)
-        self.kingkong_link = self.tmdb_api_link % ('113082', self.tmdb_key)
-        self.laracroft_link = self.tmdb_api_link % ('33332', self.tmdb_key)
-        self.legallyblonde_link = self.tmdb_api_link % ('33333', self.tmdb_key)
-        self.lethalweapon_link = self.tmdb_api_link % ('33334', self.tmdb_key)
-        self.lookwhostalking_link = self.tmdb_api_link % ('33335', self.tmdb_key)
+        self.huntsman_link = self.tmdb_api_link % '13235'
+        self.independenceday_link = self.tmdb_api_link % '33317'
+        self.indianajones_link = self.tmdb_api_link % '113191'
+        self.insidious_link = self.tmdb_api_link % '33319'
+        self.ironeagle_link = self.tmdb_api_link % '33320'
+        self.jackreacher_link = self.tmdb_api_link % '33321'
+        self.jackryan_link = self.tmdb_api_link % '33322'
+        self.jackass_link = self.tmdb_api_link % '33323'
+        self.jamesbond_link = self.tmdb_api_link % '33324'
+        self.jaws_link = self.tmdb_api_link % '33325'
+        self.jeeperscreepers_link = self.tmdb_api_link % '33326'
+        self.johnwick_link = self.tmdb_api_link % '113190'
+        self.journeytocenter_link = self.tmdb_api_link % '13216'
+        self.judgedredd_link = self.tmdb_api_link % '13215'
+        self.jumanji_link = self.tmdb_api_link % '113189'
+        self.jumpst_link = self.tmdb_api_link % '13213'
+        self.jurassicpark_link = self.tmdb_api_link % '113188'
+        self.kickass_link = self.tmdb_api_link % '33329'
+        self.killbill_link = self.tmdb_api_link % '33330'
+        self.kingkong_link = self.tmdb_api_link % '113082'
+        self.laracroft_link = self.tmdb_api_link % '33332'
+        self.legallyblonde_link = self.tmdb_api_link % '33333'
+        self.lethalweapon_link = self.tmdb_api_link % '33334'
+        self.lookwhostalking_link = self.tmdb_api_link % '33335'
         self.lordoftherings_link = 'https://www.imdb.com/search/title?title=the+lord+of+the+rings&title_type=feature&num_votes=1000,&countries=us&languages=en'
-        self.machete_link = self.tmdb_api_link % ('33336', self.tmdb_key)
-        self.madmax_link = self.tmdb_api_link % ('13188', self.tmdb_key)
-        self.magicmike_link = self.tmdb_api_link % ('33337', self.tmdb_key)
-        self.majorleague_link = self.tmdb_api_link % ('33338', self.tmdb_key)
-        self.manfromsnowyriver_link = self.tmdb_api_link % ('33339', self.tmdb_key)
-        self.mask_link = self.tmdb_api_link % ('33340', self.tmdb_key)
-        self.matrix_link = self.tmdb_api_link % ('33341', self.tmdb_key)
-        self.mazerunner_link = self.tmdb_api_link % ('13182', self.tmdb_key)
-        self.themechanic_link = self.tmdb_api_link % ('33342', self.tmdb_key)
-        self.meettheparents_link = self.tmdb_api_link % ('33343', self.tmdb_key)
-        self.meninblack_link = self.tmdb_api_link % ('33344', self.tmdb_key)
-        self.mightyducks_link = self.tmdb_api_link % ('33345', self.tmdb_key)
-        self.misscongeniality_link = self.tmdb_api_link % ('33346', self.tmdb_key)
-        self.missinginaction_link = self.tmdb_api_link % ('33347', self.tmdb_key)
-        self.missionimpossible_link = self.tmdb_api_link % ('113187', self.tmdb_key)
+        self.machete_link = self.tmdb_api_link % '33336'
+        self.madmax_link = self.tmdb_api_link % '13188'
+        self.magicmike_link = self.tmdb_api_link % '33337'
+        self.majorleague_link = self.tmdb_api_link % '33338'
+        self.manfromsnowyriver_link = self.tmdb_api_link % '33339'
+        self.mask_link = self.tmdb_api_link % '33340'
+        self.matrix_link = self.tmdb_api_link % '33341'
+        self.mazerunner_link = self.tmdb_api_link % '13182'
+        self.themechanic_link = self.tmdb_api_link % '33342'
+        self.meettheparents_link = self.tmdb_api_link % '33343'
+        self.meninblack_link = self.tmdb_api_link % '33344'
+        self.mightyducks_link = self.tmdb_api_link % '33345'
+        self.misscongeniality_link = self.tmdb_api_link % '33346'
+        self.missinginaction_link = self.tmdb_api_link % '33347'
+        self.missionimpossible_link = self.tmdb_api_link % '113187'
         self.themummy_link = 'https://www.imdb.com/search/title?title=mummy&title_type=feature&release_date=1999-01-01,&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
-        self.nakedgun_link = self.tmdb_api_link % ('33349', self.tmdb_key)
-        self.nationallampoon_link = self.tmdb_api_link % ('33350', self.tmdb_key)
-        self.nationallampoonsvacation_link = self.tmdb_api_link % ('33351', self.tmdb_key)
-        self.nationaltreasure_link = self.tmdb_api_link % ('33352', self.tmdb_key)
-        self.neighbors_link = self.tmdb_api_link % ('33353', self.tmdb_key)
-        self.nightatthemuseum_link = self.tmdb_api_link % ('33354', self.tmdb_key)
-        self.nightmareonelmstreet_link = self.tmdb_api_link % ('33355', self.tmdb_key)
-        self.nowyouseeme_link = self.tmdb_api_link % ('33356', self.tmdb_key)
-        self.nuttyprofessor_link = self.tmdb_api_link % ('33357', self.tmdb_key)
-        self.oceanseleven_link = self.tmdb_api_link % ('33358', self.tmdb_key)
-        self.oddcouple_link = self.tmdb_api_link % ('33359', self.tmdb_key)
-        self.ohgod_link = self.tmdb_api_link % ('33360', self.tmdb_key)
-        self.olympushasfallen_link = self.tmdb_api_link % ('33361', self.tmdb_key)
-        self.omen_link = self.tmdb_api_link % ('33362', self.tmdb_key)
-        self.paulblart_link = self.tmdb_api_link % ('33363', self.tmdb_key)
-        self.piratesofthecaribbean_link = self.tmdb_api_link % ('33364', self.tmdb_key)
-        self.pitchperfect_link = self.tmdb_api_link % ('13144', self.tmdb_key)
-        self.planetoftheapes_link = self.tmdb_api_link % ('13141', self.tmdb_key)
-        self.policeacademy_link = self.tmdb_api_link % ('33366', self.tmdb_key)
-        self.poltergeist_link = self.tmdb_api_link % ('33367', self.tmdb_key)
-        self.porkys_link = self.tmdb_api_link % ('33368', self.tmdb_key)
-        self.predator_link = self.tmdb_api_link % ('13136', self.tmdb_key)
-        self.thepurge_link = self.tmdb_api_link % ('33370', self.tmdb_key)
-        self.rambo_link = self.tmdb_api_link % ('33371', self.tmdb_key)
-        self.red_link = self.tmdb_api_link % ('33372', self.tmdb_key)
-        self.revengeofthenerds_link = self.tmdb_api_link % ('33373', self.tmdb_key)
-        self.riddick_link = self.tmdb_api_link % ('33374', self.tmdb_key)
-        self.ridealong_link = self.tmdb_api_link % ('33375', self.tmdb_key)
-        self.thering_link = self.tmdb_api_link % ('33418', self.tmdb_key)
-        self.robocop_link = self.tmdb_api_link % ('13115', self.tmdb_key)
-        self.rocky_link = self.tmdb_api_link % ('33377', self.tmdb_key)
-        self.romancingthestone_link = self.tmdb_api_link % ('33378', self.tmdb_key)
-        self.rushhour_link = self.tmdb_api_link % ('33379', self.tmdb_key)
-        self.santaclause_link = self.tmdb_api_link % ('33380', self.tmdb_key)
-        self.saw_link = self.tmdb_api_link % ('33381', self.tmdb_key)
-        self.sexandthecity_link = self.tmdb_api_link % ('33382', self.tmdb_key)
-        self.shaft_link = self.tmdb_api_link % ('33383', self.tmdb_key)
-        self.shanghainoon_link = self.tmdb_api_link % ('33384', self.tmdb_key)
-        self.sincity_link = self.tmdb_api_link % ('33385', self.tmdb_key)
-        self.sinister_link = self.tmdb_api_link % ('33386', self.tmdb_key)
-        self.sisteract_link = self.tmdb_api_link % ('33387', self.tmdb_key)
-        self.smokeyandthebandit_link = self.tmdb_api_link % ('33388', self.tmdb_key)
-        self.speed_link = self.tmdb_api_link % ('33389', self.tmdb_key)
-        self.stakeout_link = self.tmdb_api_link % ('33390', self.tmdb_key)
-        self.startrek_link = self.tmdb_api_link % ('33391', self.tmdb_key)
-        self.starwars_link = self.tmdb_api_link % ('113185', self.tmdb_key)
-        self.thesting_link = self.tmdb_api_link % ('33392', self.tmdb_key)
-        self.taken_link = self.tmdb_api_link % ('33393', self.tmdb_key)
-        self.taxi_link = self.tmdb_api_link % ('33394', self.tmdb_key)
-        self.ted_link = self.tmdb_api_link % ('33395', self.tmdb_key)
-        self.teenwolf_link = self.tmdb_api_link % ('33396', self.tmdb_key)
-        self.terminator_link = self.tmdb_api_link % ('33397', self.tmdb_key)
-        self.termsofendearment_link = self.tmdb_api_link % ('33398', self.tmdb_key)
-        self.texaschainsawmassacre_link = self.tmdb_api_link % ('33399', self.tmdb_key)
-        self.thething_link = self.tmdb_api_link % ('33400', self.tmdb_key)
-        self.thomascrownaffair_link = self.tmdb_api_link % ('33401', self.tmdb_key)
+        self.nakedgun_link = self.tmdb_api_link % '33349'
+        self.nationallampoon_link = self.tmdb_api_link % '33350'
+        self.nationallampoonsvacation_link = self.tmdb_api_link % '33351'
+        self.nationaltreasure_link = self.tmdb_api_link % '33352'
+        self.neighbors_link = self.tmdb_api_link % '33353'
+        self.nightatthemuseum_link = self.tmdb_api_link % '33354'
+        self.nightmareonelmstreet_link = self.tmdb_api_link % '33355'
+        self.nowyouseeme_link = self.tmdb_api_link % '33356'
+        self.nuttyprofessor_link = self.tmdb_api_link % '33357'
+        self.oceanseleven_link = self.tmdb_api_link % '33358'
+        self.oddcouple_link = self.tmdb_api_link % '33359'
+        self.ohgod_link = self.tmdb_api_link % '33360'
+        self.olympushasfallen_link = self.tmdb_api_link % '33361'
+        self.omen_link = self.tmdb_api_link % '33362'
+        self.paulblart_link = self.tmdb_api_link % '33363'
+        self.piratesofthecaribbean_link = self.tmdb_api_link % '33364'
+        self.pitchperfect_link = self.tmdb_api_link % '13144'
+        self.planetoftheapes_link = self.tmdb_api_link % '13141'
+        self.policeacademy_link = self.tmdb_api_link % '33366'
+        self.poltergeist_link = self.tmdb_api_link % '33367'
+        self.porkys_link = self.tmdb_api_link % '33368'
+        self.predator_link = self.tmdb_api_link % '13136'
+        self.thepurge_link = self.tmdb_api_link % '33370'
+        self.rambo_link = self.tmdb_api_link % '33371'
+        self.red_link = self.tmdb_api_link % '33372'
+        self.revengeofthenerds_link = self.tmdb_api_link % '33373'
+        self.riddick_link = self.tmdb_api_link % '33374'
+        self.ridealong_link = self.tmdb_api_link % '33375'
+        self.thering_link = self.tmdb_api_link % '33418'
+        self.robocop_link = self.tmdb_api_link % '13115'
+        self.rocky_link = self.tmdb_api_link % '33377'
+        self.romancingthestone_link = self.tmdb_api_link % '33378'
+        self.rushhour_link = self.tmdb_api_link % '33379'
+        self.santaclause_link = self.tmdb_api_link % '33380'
+        self.saw_link = self.tmdb_api_link % '33381'
+        self.sexandthecity_link = self.tmdb_api_link % '33382'
+        self.shaft_link = self.tmdb_api_link % '33383'
+        self.shanghainoon_link = self.tmdb_api_link % '33384'
+        self.sincity_link = self.tmdb_api_link % '33385'
+        self.sinister_link = self.tmdb_api_link % '33386'
+        self.sisteract_link = self.tmdb_api_link % '33387'
+        self.smokeyandthebandit_link = self.tmdb_api_link % '33388'
+        self.speed_link = self.tmdb_api_link % '33389'
+        self.stakeout_link = self.tmdb_api_link % '33390'
+        self.startrek_link = self.tmdb_api_link % '33391'
+        self.starwars_link = self.tmdb_api_link % '113185'
+        self.thesting_link = self.tmdb_api_link % '33392'
+        self.taken_link = self.tmdb_api_link % '33393'
+        self.taxi_link = self.tmdb_api_link % '33394'
+        self.ted_link = self.tmdb_api_link % '33395'
+        self.teenwolf_link = self.tmdb_api_link % '33396'
+        self.terminator_link = self.tmdb_api_link % '33397'
+        self.termsofendearment_link = self.tmdb_api_link % '33398'
+        self.texaschainsawmassacre_link = self.tmdb_api_link % '33399'
+        self.thething_link = self.tmdb_api_link % '33400'
+        self.thomascrownaffair_link = self.tmdb_api_link % '33401'
         self.transformers_link = 'https://www.imdb.com/search/title?title=transformers&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
-        self.transporter_link = self.tmdb_api_link % ('33402', self.tmdb_key)
+        self.transporter_link = self.tmdb_api_link % '33402'
         self.tron_link = 'https://www.imdb.com/search/title?title=tron&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
         self.twilight_link = 'https://www.imdb.com/search/title?title=twilight&title_type=feature&num_votes=1000,&countries=us&languages=en&plot=vampire&sort=release_date,desc'
-        self.undersiege_link = self.tmdb_api_link % ('33403', self.tmdb_key)
+        self.undersiege_link = self.tmdb_api_link % '33403'
         self.underworld_link = 'https://www.imdb.com/search/title?title=Underworld&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,asc'
-        self.universalsoldier_link = self.tmdb_api_link % ('33404', self.tmdb_key)
-        self.wallstreet_link = self.tmdb_api_link % ('33405', self.tmdb_key)
-        self.waynesworld_link = self.tmdb_api_link % ('33406', self.tmdb_key)
-        self.weekendatbernies_link = self.tmdb_api_link % ('33407', self.tmdb_key)
-        self.wholenineyards_link = self.tmdb_api_link % ('33408', self.tmdb_key)
-        self.xfiles_link = self.tmdb_api_link % ('33409', self.tmdb_key)
-        self.xxx_link = self.tmdb_api_link % ('33410', self.tmdb_key)
-        self.youngguns_link = self.tmdb_api_link % ('33411', self.tmdb_key)
-        self.zoolander_link = self.tmdb_api_link % ('33412', self.tmdb_key)
-        self.zorro_link = self.tmdb_api_link % ('33413', self.tmdb_key)
-
+        self.universalsoldier_link = self.tmdb_api_link % '33404'
+        self.wallstreet_link = self.tmdb_api_link % '33405'
+        self.waynesworld_link = self.tmdb_api_link % '33406'
+        self.weekendatbernies_link = self.tmdb_api_link % '33407'
+        self.wholenineyards_link = self.tmdb_api_link % '33408'
+        self.xfiles_link = self.tmdb_api_link % '33409'
+        self.xxx_link = self.tmdb_api_link % '33410'
+        self.youngguns_link = self.tmdb_api_link % '33411'
+        self.zoolander_link = self.tmdb_api_link % '33412'
+        self.zorro_link = self.tmdb_api_link % '33413'
 
 # Boxset Collection Kids
-        self.onehundredonedalmations_link = self.tmdb_api_link % ('33182', self.tmdb_key)
-        self.addamsfamily_link = self.tmdb_api_link % ('33183', self.tmdb_key)
-        self.aladdin_link = self.tmdb_api_link % ('33184', self.tmdb_key)
-        self.alvinandthechipmunks_link = self.tmdb_api_link % ('33185', self.tmdb_key)
-        self.atlantis_link = self.tmdb_api_link % ('33186', self.tmdb_key)
-        self.babe_link = self.tmdb_api_link % ('33187', self.tmdb_key)
-        self.balto_link = self.tmdb_api_link % ('33188', self.tmdb_key)
-        self.bambi_link = self.tmdb_api_link % ('33189', self.tmdb_key)
-        self.beautyandthebeast_link = 'https://api.themoviedb.org/3/list/33190?api_key=%s' % (self.tmdb_key)
-        self.beethoven_link = 'https://api.themoviedb.org/3/list/33191?api_key=%s' % (self.tmdb_key)
-        self.brotherbear_link = 'https://api.themoviedb.org/3/list/33192?api_key=%s' % (self.tmdb_key)
-        self.cars_link = 'https://api.themoviedb.org/3/list/33193?api_key=%s' % (self.tmdb_key)
-        self.cinderella_link = 'https://api.themoviedb.org/3/list/33194?api_key=%s' % (self.tmdb_key)
-        self.cloudywithachanceofmeatballs_link = 'https://api.themoviedb.org/3/list/33195?api_key=%s' % (self.tmdb_key)
-        self.despicableme_link = 'https://api.themoviedb.org/3/list/33197?api_key=%s' % (self.tmdb_key)
-        self.findingnemo_link = 'https://api.themoviedb.org/3/list/33198?api_key=%s' % (self.tmdb_key)
-        self.foxandthehound_link = 'https://api.themoviedb.org/3/list/33199?api_key=%s' % (self.tmdb_key)
-        self.freewilly_link = 'https://api.themoviedb.org/3/list/33200?api_key=%s' % (self.tmdb_key)
-        self.ghostbusters_link = 'https://api.themoviedb.org/3/list/33201?api_key=%s' % (self.tmdb_key)
-        self.gremlins_link = 'https://api.themoviedb.org/3/list/33202?api_key=%s' % (self.tmdb_key)
-        self.happyfeet_link = 'https://api.themoviedb.org/3/list/33204?api_key=%s' % (self.tmdb_key)
-        self.harrypotter_link = 'https://api.themoviedb.org/3/list/33205?api_key=%s' % (self.tmdb_key)
-        self.homealone_link = 'https://api.themoviedb.org/3/list/33206?api_key=%s' % (self.tmdb_key)
-        self.homewardbound_link = 'https://api.themoviedb.org/3/list/33207?api_key=%s' % (self.tmdb_key)
-        self.honeyishrunkthekids_link = 'https://api.themoviedb.org/3/list/33208?api_key=%s' % (self.tmdb_key)
-        self.hoteltransylvania_link = 'https://api.themoviedb.org/3/list/33209?api_key=%s' % (self.tmdb_key)
-        self.howtotrainyourdragon_link = 'https://api.themoviedb.org/3/list/33210?api_key=%s' % (self.tmdb_key)
-        self.hunchbackofnotredame_link = 'https://api.themoviedb.org/3/list/33211?api_key=%s' % (self.tmdb_key)
-        self.iceage_link = 'https://api.themoviedb.org/3/list/33212?api_key=%s' % (self.tmdb_key)
-        self.jurassicpark_link = self.tmdb_api_link % ('113188', self.tmdb_key)
-        self.kungfupanda_link = 'https://api.themoviedb.org/3/list/33218?api_key=%s' % (self.tmdb_key)
-        self.ladyandthetramp_link = 'https://api.themoviedb.org/3/list/33219?api_key=%s' % (self.tmdb_key)
-        self.liloandstitch_link = 'https://api.themoviedb.org/3/list/33220?api_key=%s' % (self.tmdb_key)
-        self.madagascar_link = 'https://api.themoviedb.org/3/list/33221?api_key=%s' % (self.tmdb_key)
-        self.monstersinc_link = 'https://api.themoviedb.org/3/list/33222?api_key=%s' % (self.tmdb_key)
-        self.mulan_link = 'https://api.themoviedb.org/3/list/33223?api_key=%s' % (self.tmdb_key)
-        self.narnia_link = 'https://api.themoviedb.org/3/list/33224?api_key=%s' % (self.tmdb_key)
-        self.newgroove_link = 'https://api.themoviedb.org/3/list/33225?api_key=%s' % (self.tmdb_key)
-        self.openseason_link = 'https://api.themoviedb.org/3/list/33226?api_key=%s' % (self.tmdb_key)
-        self.planes_link = 'https://api.themoviedb.org/3/list/33227?api_key=%s' % (self.tmdb_key)
-        self.pocahontas_link = 'https://api.themoviedb.org/3/list/33228?api_key=%s' % (self.tmdb_key)
-        self.problemchild_link = 'https://api.themoviedb.org/3/list/33229?api_key=%s' % (self.tmdb_key)
-        self.rio_link = 'https://api.themoviedb.org/3/list/33230?api_key=%s' % (self.tmdb_key)
-        self.sammysadventures_link = 'https://api.themoviedb.org/3/list/33231?api_key=%s' % (self.tmdb_key)
-        self.scoobydoo_link = 'https://api.themoviedb.org/3/list/33232?api_key=%s' % (self.tmdb_key)
-        self.shortcircuit_link = 'https://api.themoviedb.org/3/list/33233?api_key=%s' % (self.tmdb_key)
-        self.shrek_link = 'https://api.themoviedb.org/3/list/33234?api_key=%s' % (self.tmdb_key)
-        self.spongebobsquarepants_link = 'https://api.themoviedb.org/3/list/33235?api_key=%s' % (self.tmdb_key)
-        self.spykids_link = 'https://api.themoviedb.org/3/list/33236?api_key=%s' % (self.tmdb_key)
-        self.starwars_link = self.tmdb_api_link % ('113185', self.tmdb_key)
-        self.stuartlittle_link = 'https://api.themoviedb.org/3/list/33238?api_key=%s' % (self.tmdb_key)
-        self.tarzan_link = 'https://api.themoviedb.org/3/list/33239?api_key=%s' % (self.tmdb_key)
-        self.teenagemutantninjaturtles_link = 'https://api.themoviedb.org/3/list/33240?api_key=%s' % (self.tmdb_key)
-        self.thejunglebook_link = 'https://api.themoviedb.org/3/list/33216?api_key=%s' % (self.tmdb_key)
-        self.thekaratekid_link = 'https://api.themoviedb.org/3/list/33241?api_key=%s' % (self.tmdb_key)
-        self.thelionking_link = 'https://api.themoviedb.org/3/list/33242?api_key=%s' % (self.tmdb_key)
-        self.thelittlemermaid_link = 'https://api.themoviedb.org/3/list/33243?api_key=%s' % (self.tmdb_key)
-        self.theneverendingstory_link = 'https://api.themoviedb.org/3/list/33248?api_key=%s' % (self.tmdb_key)
-        self.thesmurfs_link = 'https://api.themoviedb.org/3/list/33249?api_key=%s' % (self.tmdb_key)
-        self.toothfairy_link = 'https://api.themoviedb.org/3/list/33251?api_key=%s' % (self.tmdb_key)
-        self.tinkerbell_link = 'https://api.themoviedb.org/3/list/33252?api_key=%s' % (self.tmdb_key)
-        self.tomandjerry_link = 'https://api.themoviedb.org/3/list/33253?api_key=%s' % (self.tmdb_key)
-        self.toystory_link = 'https://api.themoviedb.org/3/list/33254?api_key=%s' % (self.tmdb_key)
-        self.veggietales_link = 'https://api.themoviedb.org/3/list/33255?api_key=%s' % (self.tmdb_key)
-        self.winniethepooh_link = 'https://api.themoviedb.org/3/list/33257?api_key=%s' % (self.tmdb_key)
-        self.wizardofoz_link = 'https://api.themoviedb.org/3/list/33258?api_key=%s' % (self.tmdb_key)
+        self.onehundredonedalmations_link = self.tmdb_api_link % '33182'
+        self.addamsfamily_link = self.tmdb_api_link % '33183'
+        self.aladdin_link = self.tmdb_api_link % '33184'
+        self.alvinandthechipmunks_link = self.tmdb_api_link % '33185'
+        self.atlantis_link = self.tmdb_api_link % '33186'
+        self.babe_link = self.tmdb_api_link % '33187'
+        self.balto_link = self.tmdb_api_link % '33188'
+        self.bambi_link = self.tmdb_api_link % '33189'
+        self.beautyandthebeast_link = self.tmdb_api_link % '33190'
+        self.beethoven_link = self.tmdb_api_link % '33191'
+        self.brotherbear_link = self.tmdb_api_link % '33192'
+        self.cars_link = self.tmdb_api_link % '33193'
+        self.cinderella_link = self.tmdb_api_link % '33194'
+        self.cloudywithachanceofmeatballs_link = self.tmdb_api_link % '33195'
+        self.despicableme_link = self.tmdb_api_link % '33197'
+        self.findingnemo_link = self.tmdb_api_link % '33198'
+        self.foxandthehound_link = self.tmdb_api_link % '33199'
+        self.freewilly_link = self.tmdb_api_link % '33200'
+        self.ghostbusters_link = self.tmdb_api_link % '33201'
+        self.gremlins_link =  self.tmdb_api_link % '33202'
+        self.happyfeet_link = self.tmdb_api_link % '33204'
+        self.harrypotter_link = self.tmdb_api_link % '33205'
+        self.homealone_link = self.tmdb_api_link % '33206'
+        self.homewardbound_link = self.tmdb_api_link % '33207'
+        self.honeyishrunkthekids_link = self.tmdb_api_link % '33208'
+        self.hoteltransylvania_link = self.tmdb_api_link % '33209'
+        self.howtotrainyourdragon_link = self.tmdb_api_link % '33210'
+        self.hunchbackofnotredame_link = self.tmdb_api_link % '33211'
+        self.iceage_link = self.tmdb_api_link % '33212'
+        self.jurassicpark_link = self.tmdb_api_link % '113188'
+        self.kungfupanda_link = self.tmdb_api_link % '33218'
+        self.ladyandthetramp_link = self.tmdb_api_link % '33219'
+        self.liloandstitch_link = self.tmdb_api_link % '33220'
+        self.madagascar_link = self.tmdb_api_link % '33221'
+        self.monstersinc_link = self.tmdb_api_link % '33222'
+        self.mulan_link = self.tmdb_api_link % '33223'
+        self.narnia_link = self.tmdb_api_link % '33224'
+        self.newgroove_link = self.tmdb_api_link % '33225'
+        self.openseason_link = self.tmdb_api_link % '33226'
+        self.planes_link = self.tmdb_api_link % '33227'
+        self.pocahontas_link = self.tmdb_api_link % '33228'
+        self.problemchild_link = self.tmdb_api_link % '33229'
+        self.rio_link = self.tmdb_api_link % '33230'
+        self.sammysadventures_link = self.tmdb_api_link % '33231'
+        self.scoobydoo_link = self.tmdb_api_link % '33232'
+        self.shortcircuit_link = self.tmdb_api_link % '33233'
+        self.shrek_link = self.tmdb_api_link % '33234'
+        self.spongebobsquarepants_link = self.tmdb_api_link % '33235'
+        self.spykids_link = self.tmdb_api_link % '33236'
+        self.starwars_link = self.tmdb_api_link % '113185'
+        self.stuartlittle_link = self.tmdb_api_link % '33238'
+        self.tarzan_link = self.tmdb_api_link % '33239'
+        self.teenagemutantninjaturtles_link = self.tmdb_api_link % '33240'
+        self.thejunglebook_link = self.tmdb_api_link % '33216'
+        self.thekaratekid_link = self.tmdb_api_link % '33241'
+        self.thelionking_link = self.tmdb_api_link % '33242'
+        self.thelittlemermaid_link = self.tmdb_api_link % '33243'
+        self.theneverendingstory_link = self.tmdb_api_link % '33248'
+        self.thesmurfs_link = self.tmdb_api_link % '33249'
+        self.toothfairy_link = self.tmdb_api_link % '33251'
+        self.tinkerbell_link = self.tmdb_api_link % '33252'
+        self.tomandjerry_link = self.tmdb_api_link % '33253'
+        self.toystory_link = self.tmdb_api_link % '33254'
+        self.veggietales_link = self.tmdb_api_link % '33255'
+        self.winniethepooh_link = self.tmdb_api_link % '33257'
+        self.wizardofoz_link = self.tmdb_api_link % '33258'
 
 # Superhero Collection
-        self.avengers_link = self.tmdb_api_link % ('33128', self.tmdb_key)
-        self.batman_link = self.tmdb_api_link % ('33129', self.tmdb_key)
-        self.captainamerica_link =self.tmdb_api_link % ('33130', self.tmdb_key)
-        self.darkknight_link = self.tmdb_api_link % ('33132', self.tmdb_key)
-        self.fantasticfour_link = self.tmdb_api_link % ('33133', self.tmdb_key)
-        self.hulk_link = self.tmdb_api_link % ('33134', self.tmdb_key)
-        self.ironman_link = self.tmdb_api_link % ('33135', self.tmdb_key)
-        self.spiderman_link = self.tmdb_api_link % ('33126', self.tmdb_key)
-        self.superman_link = self.tmdb_api_link % ('33136', self.tmdb_key)
+        self.avengers_link = self.tmdb_api_link % '33128'
+        self.batman_link = self.tmdb_api_link % '33129'
+        self.captainamerica_link =self.tmdb_api_link % '33130'
+        self.darkknight_link = self.tmdb_api_link % '33132'
+        self.fantasticfour_link = self.tmdb_api_link % '33133'
+        self.hulk_link = self.tmdb_api_link % '33134'
+        self.ironman_link = self.tmdb_api_link % '33135'
+        self.spiderman_link = self.tmdb_api_link % '33126'
+        self.superman_link = self.tmdb_api_link % '33136'
         self.thor_link = 'https://www.imdb.com/search/title?title=thor&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,desc'
-        self.xmen_link = self.tmdb_api_link % ('33137', self.tmdb_key)
+        self.xmen_link = self.tmdb_api_link % '33137'
 
 
     def collectionsNavigator(self, lite=False):
         self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'DefaultVideoPlaylists.png')
+        self.addDirectoryItem('Martial Arts', 'collection_martial_arts', 'boxsets.png', 'DefaultVideoPlaylists.png')
+
         if self.getMenuEnabled('navi.xmascollections') is True:
             self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('DC Comics', 'collections&url=dcmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
@@ -552,6 +575,35 @@ class Collections:
         self.addDirectoryItem('Young Guns (1988-1990)', 'collections&url=youngguns', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('Zoolander (2001-2016)', 'collections&url=zoolander', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('Zorro (1998-2005)', 'collections&url=zorro', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
+        self.endDirectory()
+
+
+    def collection_martial_arts(self):
+        self.addDirectoryItem('All Movies', 'collections&url=martialartsmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
+        self.addDirectoryItem('By Actors', 'collection_martial_arts_actors', 'people.png', 'DefaultVideoPlaylists.png')
+        self.endDirectory()
+
+
+    def collection_martial_arts_actors(self):
+        self.addDirectoryItem('Brandon Lee', 'collections&url=brandonlee', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Bruce Lee', 'collections&url=brucelee2', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Chuck Norris', 'collections&url=chucknorris', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Chow Yun-Fat', 'collections&url=chowyunfat', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Donnie Yen', 'collections&url=donnieyen', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Gary Daniels', 'collections&url=garydaniels', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jackie Chan', 'collections&url=jackiechan', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jason Statham', 'collections&url=jasonstatham', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jean-Claude Van Damme', 'collections&url=vandamme', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jet Li', 'collections&url=jetli', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Mark Dacascos', 'collections&url=markdacascos', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Michael Jai White', 'collections&url=michaeljaiwhite', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Philip Ng', 'collections&url=philipng', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Rain', 'collections&url=rain', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Robin Shou', 'collections&url=robinshou', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Scott Adkins', 'collections&url=scottadkins', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Steven Seagal', 'collections&url=stevenseagal', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Tiger Chen', 'collections&url=tigerchen', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Tony Jaa', 'collections&url=tonyjaa', 'people.png', 'DefaultActor.png')
         self.endDirectory()
 
 
@@ -1018,7 +1070,7 @@ class Collections:
             pass
 
 
-    def movieDirectory(self, items):
+    def movieDirectory(self, items, next=True):
         if items is None or len(items) == 0: 
             control.idle()
             control.notification(title = 32000, message = 33049, icon = 'INFO')
@@ -1205,17 +1257,13 @@ class Collections:
                 if url == '':
                     raise Exception()
 
-                if not self.tmdb_link in url:
-                    url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
-
-                elif self.tmdb_link in url:
-                    url = '%s?action=tmdbmoviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
+                url = '%s?action=collections&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 item = control.item(label=nextMenu)
                 icon = control.addonNext()
                 item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 
-                # if not addonFanart is None:
+                # if addonFanart is not None:
                     # item.setProperty('Fanart_Image', addonFanart)
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
@@ -1235,13 +1283,13 @@ class Collections:
 
         url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
-        thumb = os.path.join(artPath, thumb) if not artPath is None else icon
+        thumb = os.path.join(artPath, thumb) if artPath is not None else icon
 
         cm = []
         if queue is True:
             cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
-        if not context is None:
+        if context is not None:
             cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 
         cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
@@ -1249,7 +1297,7 @@ class Collections:
         item = control.item(label=name)
         item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
 
-        if not addonFanart is None:
+        if addonFanart is not None:
             item.setProperty('Fanart_Image', addonFanart)
 
         item.addContextMenuItems(cm)

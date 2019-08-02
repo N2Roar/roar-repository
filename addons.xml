@@ -54,7 +54,7 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">ROAR Build</summary>
-		<description lang="en">Metalliq and other useful stuff</description>
+		<description lang="en">OpenMeta and other useful stuff</description>
 		<disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
 		<language>en</language>
 		<platform>all</platform>
@@ -80,7 +80,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">Toonmania2{CR}WatchNixtoons2[CR]WonderfulSubs</description>
+        <description lang="en">Toonmania2[CR]WatchNixtoons2[CR]WonderfulSubs</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -236,7 +236,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.5.3">
+<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.5.4">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.scrubsv2" />
@@ -285,7 +285,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.1.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.1.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -322,25 +322,13 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.0 - July 28, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added Container.Refresh to cache search
-    clearing option so items are removed instantly.[/I]
-[COLOR yellow]--[/COLOR][I] Added hard coding of "Dialog" source list for
-    cases when ExtendedInfo or OpenInfo is visible.
-    Directory list style ends up in background and is
-    not preferable list type in this case.[/I]
-[COLOR yellow]--[/COLOR][I] Added "Anime" menu option to root listing.
-    This is Experimental! at this time and is turned
-    off by default. See Navigation settings[/I]
-[COLOR yellow]--[/COLOR][I] Added "Originals" menu to "TVShows" menu
-    for Netflix, Hulu, and Amazon. Turned off by
-    default. See Navigation settings[/I]
-[COLOR yellow]--[/COLOR][I] Added UpNext setting access to Tools menu.[/I]
-[COLOR yellow]--[/COLOR][I] Added ResolveUrl function cache clear
-    option to Tools menu.[/I]
-[COLOR yellow]--[/COLOR][I] Moved "Enable Christmas Collection" to
-    Navigation category in settings.[/I]
-[COLOR yellow]--[/COLOR][I] Added a few new boxsets to Collections.[/I]
+[B][COLOR red]Update - v3.1.2 - July 31, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb TVShows.  Sorry typo in last
+    update broke it.[/I]
+[COLOR yellow]--[/COLOR][I] Added Scott Adkins to Martial Arts actors
+    per request.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed "Play Random" for TVShows and
+    Seasons.[/I]
 		</news>
 	</extension>
 
@@ -637,7 +625,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.1">
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.2">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.beautifulsoup4" />

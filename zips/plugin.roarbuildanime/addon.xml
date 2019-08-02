@@ -18,7 +18,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">Toonmania2{CR}WatchNixtoons2[CR]WonderfulSubs</description>
+        <description lang="en">Toonmania2[CR]WatchNixtoons2[CR]WonderfulSubs</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>

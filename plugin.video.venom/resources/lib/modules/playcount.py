@@ -309,7 +309,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         from metahandler import metahandlers
         from resources.lib.menus import episodes
 
-        # if not trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is not False:
         if traktIndicators is True:
             raise Exception()
         name = control.addonInfo('name')

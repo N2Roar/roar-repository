@@ -17,7 +17,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import utils, log_utils
+from resources.lib.modules import utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -27,7 +27,7 @@ action = params.get('action')
 class TVshows:
     def __init__(self, type = 'show', notifications = True):
         self.count = int(control.setting('page.item.limit'))
-        # if not type(self.count) is int:
+        # if type(self.count) is not int:
             # self.count = 40
         self.list = []
         self.meta = []

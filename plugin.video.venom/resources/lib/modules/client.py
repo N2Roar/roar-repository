@@ -45,7 +45,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
         if 'User-Agent' in headers:
             pass
-        elif not mobile is True:
+        elif mobile is not True:
             #headers['User-Agent'] = agent()
             headers['User-Agent'] = cache.get(randomagent, 1)
         else:

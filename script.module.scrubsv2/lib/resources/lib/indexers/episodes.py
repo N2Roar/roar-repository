@@ -21,9 +21,9 @@ class seasons:
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
-        self.tvdb_info_link = 'https://www.thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
-        self.tvdb_by_imdb = 'https://www.thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'https://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'https://www.thetvdb.com/banners/'
         self.tvdb_poster = 'https://www.thetvdb.com/banners/_cache/'
 
@@ -513,7 +513,7 @@ class episodes:
         self.unairedcolor = control.setting('unaired.identify')
         if self.unairedcolor == '': self.unairedcolor = 'darkred'
 
-        self.tvdb_info_link = 'https://www.thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
         self.tvdb_image = 'https://www.thetvdb.com/banners/'
         self.tvdb_poster = 'https://www.thetvdb.com/banners/_cache/'
 
