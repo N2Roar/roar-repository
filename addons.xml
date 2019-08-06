@@ -334,7 +334,7 @@
 
 </addon>
 
-<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.2" provider-name="doko">
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.3" provider-name="doko">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests"/>
@@ -345,6 +345,9 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.3.3:[/B]
+- Fixed the Trakt "liked" list display.
+
 [B]0.3.2:[/B]
 - Fixed a fault in the stream getting logic.
 
@@ -371,7 +374,7 @@ Add-on by doko.
     </extension>
 </addon>
 
-<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.24">
+<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.25">
   <requires>
     <import addon="xbmc.python" version="2.25.0" />
     <import addon="script.module.requests" version="2.12.4" />
