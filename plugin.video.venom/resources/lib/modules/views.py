@@ -99,5 +99,5 @@ def setView(content, viewDict=None):
 				except:
 					return
 
-        control.sleep(100)
+		control.sleep(100)
 

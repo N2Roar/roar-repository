@@ -1,18 +1,5 @@
 '''
-    Venom Add-on
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	Venom Add-on
 '''
 
 from resources.lib.modules import control
@@ -23,167 +10,168 @@ accepted_extensions = ['mkv','mp4','avi', 'm4v']
 
 
 class Furk:
-    def __init__(self):
-        self.base_link = "https://www.furk.net"
-        self.meta_search_link = "/api/plugins/metasearch?api_key=%s&q=%s"
-        self.get_user_files_link = "/api/file/get?api_key=%s"
-        self.file_info_link = "/api/file/info?api_key%s"
-        self.file_link_link = "/api/file/link?"
-        self.protect_file_link = "/api/file/protect?"
-        self.user_feeds_link = "/api/feed/get?"
-        self.add_download_link = "/api/dl/add?"
-        self.api_key = control.setting('furk.api')
-        self.list = []
-        test = os.
+	def __init__(self):
+		self.base_link = "https://www.furk.net"
+		self.meta_search_link = "/api/plugins/metasearch?api_key=%s&q=%s"
+		self.get_user_files_link = "/api/file/get?api_key=%s"
+		self.file_info_link = "/api/file/info?api_key%s"
+		self.file_link_link = "/api/file/link?"
+		self.protect_file_link = "/api/file/protect?"
+		self.user_feeds_link = "/api/feed/get?"
+		self.add_download_link = "/api/dl/add?"
+		self.api_key = control.setting('furk.api')
+		self.list = []
+		test = os.
 
 
-        def user_files(self):
-        if self.api_key == '':
-            return ''
-        try:
-            s = requests.Session()
-            url = self.base_link + self.get_user_files_link % self.api_key
-            p = s.get(url)
-            p = json.loads(p.text)
-            files = p['files']
-            for i in files:
-                name = i['name']
-                id = i['id']
-                url_dl = ''
-                for x in accepted_extensions:
-                    if i['url_dl'].endswith(x):
-                       url_dl = i['url_dl']
-                    else:
-                        continue
-                if url_dl == '':
-                    continue
-                if int(i['files_num_video_player']) !> 1:
-                    if int(i['ss_num']) > 0:
-                        thumb = i['ss_urls'][0]
-                    else:
-                        thumb = ''
-                    self.addDirectoryItem(name , url_dl, thumb, '', False)
-                else:
-                    pass
-            self.endDirectory()
-            return ''
-        except:
-            pass
+		def user_files(self):
+		if self.api_key == '':
+			return ''
+		try:
+			s = requests.Session()
+			url = self.base_link + self.get_user_files_link % self.api_key
+			p = s.get(url)
+			p = json.loads(p.text)
+			files = p['files']
 
-    def search(self):
-        from resources.lib.menus import navigator
-        navigator.Navigator().addDirectoryItem('New Search', 'furkSearchNew', 'search.png', 'search.png')
+			for i in files:
+				name = i['name']
+				id = i['id']
+				url_dl = ''
+				for x in accepted_extensions:
+					if i['url_dl'].endswith(x):
+					url_dl = i['url_dl']
+					else:
+						continue
+				if url_dl == '':
+					continue
+				if int(i['files_num_video_player']) !> 1:
+					if int(i['ss_num']) > 0:
+						thumb = i['ss_urls'][0]
+					else:
+						thumb = ''
+					self.addDirectoryItem(name , url_dl, thumb, '', False)
+				else:
+					pass
+			self.endDirectory()
+			return ''
+		except:
+			pass
 
-        try:
-            from sqlite3 import dbapi2 as database
-        except:
-            from pysqlite2 import dbapi2 as database
+	def search(self):
+		from resources.lib.menus import navigator
+		navigator.Navigator().addDirectoryItem('New Search', 'furkSearchNew', 'search.png', 'search.png')
 
-        dbcon = database.connect(control.searchFile)
-        dbcur = dbcon.cursor()
+		try:
+			from sqlite3 import dbapi2 as database
+		except:
+			from pysqlite2 import dbapi2 as database
 
-        try:
-            dbcur.executescript("CREATE TABLE IF NOT EXISTS furk (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
-        except:
-            pass
+		dbcon = database.connect(control.searchFile)
+		dbcur = dbcon.cursor()
 
-        dbcur.execute("SELECT * FROM furk ORDER BY ID DESC")
-        lst = []
+		try:
+			dbcur.executescript("CREATE TABLE IF NOT EXISTS furk (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
+		except:
+			pass
 
-        delete_option = False
-        for (id,term) in dbcur.fetchall():
-            if term not in str(lst):
-                delete_option = True
-                navigator.Navigator().addDirectoryItem(term, 'furkMetaSearch&url=%s' % term, 'search.png', 'search.png')
-                lst += [(term)]
-        dbcur.close()
+		dbcur.execute("SELECT * FROM furk ORDER BY ID DESC")
+		lst = []
 
-        if delete_option:
-            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
+		delete_option = False
+		for (id,term) in dbcur.fetchall():
+			if term not in str(lst):
+				delete_option = True
+				navigator.Navigator().addDirectoryItem(term, 'furkMetaSearch&url=%s' % term, 'search.png', 'search.png')
+				lst += [(term)]
+		dbcur.close()
 
-        navigator.Navigator().endDirectory()
+		if delete_option:
+			navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
 
-    def search_new(self):
-            control.idle()
+		navigator.Navigator().endDirectory()
 
-            t = control.lang(32010).encode('utf-8')
-            k = control.keyboard('', t) ; k.doModal()
-            q = k.getText() if k.isConfirmed() else None
+	def search_new(self):
+			control.idle()
 
-            if (q is None or q == ''): return
+			t = control.lang(32010).encode('utf-8')
+			k = control.keyboard('', t) ; k.doModal()
+			q = k.getText() if k.isConfirmed() else None
 
-            try:
-                from sqlite3 import dbapi2 as database
-            except:
-                from pysqlite2 import dbapi2 as database
+			if (q is None or q == ''): return
 
-            dbcon = database.connect(control.searchFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("INSERT INTO furk VALUES (?,?)", (None,q))
-            dbcon.commit()
-            dbcur.close()
+			try:
+				from sqlite3 import dbapi2 as database
+			except:
+				from pysqlite2 import dbapi2 as database
 
-            url = urllib.quote_plus(q)
-            url = '%s?action=furkMetaSearch&url=%s' % (sys.argv[0], urllib.quote_plus(url))
-            control.execute('Container.Update(%s)' % url)
+			dbcon = database.connect(control.searchFile)
+			dbcur = dbcon.cursor()
+			dbcur.execute("INSERT INTO furk VALUES (?,?)", (None,q))
+			dbcon.commit()
+			dbcur.close()
 
-    def furk_meta_search(self, url):
-        if self.api_key == '':
-            return ''
-        try:
-            s = requests.Session()
-            url = (self.base_link + self.meta_search_link % (self.api_key, url)).replace(' ', '+')
-            p = s.get(url)
-            p = json.loads(p.text)
-            files = p['files']
-            for i in files:
-                name = i['name']
-                id = i['id']
-                url_dl = ''
-                for x in accepted_extensions:
-                    if 'url_dl' in i:
-                        if i['url_dl'].endswith(x):
-                            url_dl = i['url_dl']
-                        else:
-                            continue
-                    else:
-                        continue
-                if url_dl == '':
-                    continue
-                if int(i['files_num_video_player']) !> 1:
-                    if int(i['ss_num']) > 0:
-                        thumb = i['ss_urls'][0]
-                    else:
-                        thumb = ''
+			url = urllib.quote_plus(q)
+			url = '%s?action=furkMetaSearch&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+			control.execute('Container.Update(%s)' % url)
 
-                    self.addDirectoryItem(name, url_dl, thumb, '', False)
+	def furk_meta_search(self, url):
+		if self.api_key == '':
+			return ''
+		try:
+			s = requests.Session()
+			url = (self.base_link + self.meta_search_link % (self.api_key, url)).replace(' ', '+')
+			p = s.get(url)
+			p = json.loads(p.text)
+			files = p['files']
+			for i in files:
+				name = i['name']
+				id = i['id']
+				url_dl = ''
+				for x in accepted_extensions:
+					if 'url_dl' in i:
+						if i['url_dl'].endswith(x):
+							url_dl = i['url_dl']
+						else:
+							continue
+					else:
+						continue
+				if url_dl == '':
+					continue
+				if int(i['files_num_video_player']) !> 1:
+					if int(i['ss_num']) > 0:
+						thumb = i['ss_urls'][0]
+					else:
+						thumb = ''
 
-                else:
-                    # print(i['name'])
-                    # self.addDirectoryItem(i['name'].encode('utf-8'), i['url_dl'], '', '')
-                    continue
-            self.endDirectory()
-            return ''
-        except:
-            pass
+					self.addDirectoryItem(name, url_dl, thumb, '', False)
 
-    def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
-        try:
-            if type(name) is str or type(name) is unicode:
-                name = str(name)
-            if type(name) is int:
-                name = control.lang(name).encode('utf-8')
-        except:
-            import traceback
-            traceback.print_exc()
+				else:
+					# print(i['name'])
+					# self.addDirectoryItem(i['name'].encode('utf-8'), i['url_dl'], '', '')
+					continue
+			self.endDirectory()
+			return ''
+		except:
+			pass
 
-            url = '%s?action=%s' % (sysaddon, query) if isAction else query
-            item = control.item(label=name)
-            item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
-            control.addItem(handle=syshandle, url=url, listitem=item)
+	def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
+		try:
+			if type(name) is str or type(name) is unicode:
+				name = str(name)
+			if type(name) is int:
+				name = control.lang(name).encode('utf-8')
+		except:
+			import traceback
+			traceback.print_exc()
+
+			url = '%s?action=%s' % (sysaddon, query) if isAction else query
+			item = control.item(label=name)
+			item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
+			control.addItem(handle=syshandle, url=url, listitem=item)
 
 
-    def endDirectory(self):
-        control.content(syshandle, 'addons')
-        control.directory(syshandle, cacheToDisc=True)
-        control.sleep(200)
+	def endDirectory(self):
+		control.content(syshandle, 'addons')
+		control.directory(syshandle, cacheToDisc=True)
+		control.sleep(200)

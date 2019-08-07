@@ -267,19 +267,22 @@ class tvshows:
 				item = client.request(url)
 				item = json.loads(item)
 
-				title = (item.get('name')).encode('utf-8')
+				try:
+					title = (item.get('name')).encode('utf-8')
+				except:
+					title = item.get('name')
 
-				year = item.get('premiered', '0')
+				year = str(item.get('premiered', '0'))
 
 				imdb = item.get('externals').get('imdb', '0')
-				if imdb is None or imdb == '':
-					imdb = '0'
-
-				tvdb = str(item.get('externals').get('thetvdb', '0'))
-				if tvdb is None or tvdb == '':
+				if imdb == '' or imdb is None or imdb == 'None':
 					tvdb = '0'
 
-				# TXMaze does not have tmdb in api
+				tvdb = str(item.get('externals').get('thetvdb', '0'))
+				if tvdb == '' or tvdb is None or tvdb == 'None':
+					tvdb = '0'
+
+				# TVMaze does not have tmdb in api
 				tmdb = '0'
 
 				premiered = item.get('premiered', '0')

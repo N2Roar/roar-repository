@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import time, xbmc
 from resources.lib.modules import control
 
@@ -57,13 +56,19 @@ def insert(meta):
 		t = int(time.time())
 
 		for m in meta:
+			if "user" not in m:
+				m["user"] = ''
+			if "lang" not in m:
+				m["lang"] = 'en'
 			i = repr(m['item'])
-			dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
+
+			dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m['imdb'], m['lang'], m['user'], m['tmdb'], m['lang'], m['user'], m['tvdb'], m['lang'], m['user']))
 			dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m['imdb'], m['tmdb'], m['tvdb'], m['lang'], m['user'], i, t))
 
 		dbcur.connection.commit()
 		dbcon.close()
 	except:
+		dbcon.close()
 		import traceback
 		traceback.print_exc()
 		return

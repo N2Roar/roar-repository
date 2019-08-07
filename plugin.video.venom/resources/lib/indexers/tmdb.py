@@ -120,7 +120,7 @@ class Movies:
 				item = self.get_request(url)
 
 				imdb = item.get('imdb_id', '0')
-				if imdb == '' or imdb is None:
+				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
 				# studio = item['production_companies']
@@ -263,7 +263,7 @@ class Movies:
 				item = self.get_request(url)
 
 				imdb = item.get('imdb_id', '0')
-				if imdb == '' or imdb is None:
+				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
 				# studio = item['production_companies']
@@ -471,11 +471,11 @@ class TVshows:
 				item = self.get_request(url)
 
 				tvdb = str(item.get('external_ids').get('tvdb_id'))
-				if tvdb == '' or tvdb is None:
+				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
 				imdb = (item.get('external_ids').get('imdb_id'))
-				if imdb == '' or imdb is None:
+				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
 				genre = item['genres']
@@ -584,11 +584,11 @@ class TVshows:
 				item = self.get_request(url)
 
 				tvdb = str(item.get('external_ids').get('tvdb_id'))
-				if tvdb == '' or tvdb is None:
+				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
 				imdb = (item.get('external_ids').get('imdb_id'))
-				if imdb == '' or imdb is None:
+				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
 				genre = item['genres']
