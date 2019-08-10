@@ -496,6 +496,14 @@ elif action == 'podcastOne':
     else:
         podcast.podcast().pco_root()
 
+elif action == 'ustvgoNavigator':
+    from resources.lib.indexers import ustvgo
+    ustvgo.ustvgo().root()
+
+elif action == 'ustvgoPlay':
+    from resources.lib.indexers import ustvgo
+    ustvgo.ustvgo().play(url)
+
 elif action == 'radioNavigator':
     from resources.lib.indexers import tunes
     tunes.radionet().root()
@@ -544,9 +552,9 @@ elif action == 'xdirectory':
     from resources.lib.indexers import lists
     lists.indexer().getx(url)
 
-elif action == 'developer':
+elif action == 'listssearch':
     from resources.lib.indexers import lists
-    lists.indexer().developer()
+    lists.indexer().search(url)
 
 elif action == 'tvtuner':
     from resources.lib.indexers import lists
@@ -735,39 +743,39 @@ def toggleAll(setting, query=None, sourceList=None):
     control.openSettings(query)
 
 if mode == "toggleAllNormal":
-    sourcelist = ['123123movies', '1putlocker', 'allucxyz', 'bnwmovies', 'cartoonhd', 'cartoonhdto',
-            'cartoonwire', 'cmovies', 'cmovieshd', 'cmovieshdbz', 'cooltvseries', 'deepmovie',
-            'extramovies', 'ffilms', 'filmxy', 'flenixonline', 'flixgo', 'fmoviesag', 'fmoviesio', 'ganool123',
-            'geektv', 'gostream123', 'gowatchseries', 'hdbest', 'hdmto', 'hdpopcorns', 'hubmovie',
-            'iwannawatch', 'mkvhub', 'movie4kis', 'moviescouch', 'mycoolmoviezone', 'myhdpopcorn',
-            'mymovie4k', 'myswatchseri', 'mywatchep4', 'mywatchepseries', 'putlockerfree',
-            'putlockersonline', 'putlockersplus', 'rarefilmm', 'seehd', 'series9', 'seriesfree', 'seriesonline',
-            'solarmoviefree', 'telepisodes', 'timewatch', 'tvbox', 'tvmovieflix', 'watchseries', 'watchserieshd',
-            'watchseriessi', 'yesmoviesgg'
+    sourcelist = ['123123movies', '1movietv', '1putlocker', '5movies', 'allucxyz', 'bnwmovies',
+            'cartoonhd', 'cartoonhdto', 'cartoonwire', 'cmovies', 'cmovieshd', 'cmovieshdbz', 'cooltvseries',
+            'deepmovie', 'extramovies', 'ffilms', 'filmxy', 'flenixonline', 'flixgo', 'fmoviesag', 'fmoviesio',
+            'ganool123', 'geektv', 'gomo', 'gostream123', 'gowatchseries', 'hdbest', 'hdmto', 'hdpopcorns',
+            'hubmovie', 'iwannawatch', 'mkvhub', 'movie4kis', 'moviescouch', 'mycoolmoviezone',
+            'mycouchtuner', 'myhdpopcorn', 'mymovie4k', 'myswatchseri', 'mywatchep4', 'mywatchepseries',
+            'putlockerfree', 'putlockersonline', 'putlockersplus', 'rarefilmm', 'seehd', 'series9', 'seriesfree',
+            'seriesonline', 'solarmoviefree', 'telepisodes', 'timewatch', 'tvbox', 'tvmovieflix', 'watchseries',
+            'watchserieshd', 'watchseriessi', 'yesmoviesgg'
     ]
     toggleAll(params['setting'], params['query'], sourcelist)
 
 if mode == "toggleAllSpares":
     sourcelist = ['0123putlocker', '123movieshubz', '4anime', 'animefreak', 'animego', 'animepark',
-            'animeshow', 'animetoon', 'cartoonextra', 'cartoontab', 'fmovies', 'ganoolrip', 'getmywatchseries',
+            'animeshow', 'animetoon', 'cartoonextra', 'cartoontab', 'filmv', 'fmovies', 'ganoolrip', 'getmywatchseries',
             'gogoanime', 'gogoanime1', 'gogoanimestv', 'gomoviesonl', 'goprojectfreetv', 'hdmo', 'hackimdb',
-            'hnmovies', 'movies123', 'mymoviego', 'mymoviesonline', 'myprojectfreetv', 'myputlockers',
+            'hnmovies', 'megashare9', 'movies123', 'mymoviego', 'mymoviesonline', 'myprojectfreetv', 'myputlockers',
             'newepisodes', 'nitermovies', 'pokemonfire', 'primewire', 'putlockered', 'putlockeronl', 'sharemovies',
             'sezonlukdizi', 'solarmovienet', 'toonget', 'toonova', 'watch32hd', 'watchseriessto', 'wsunblock', 'zmovies'
     ]
     toggleAll(params['setting'], params['query'], sourcelist)
 
 if mode == "toggleAllDebrid":
-    sourcelist = ['0day', '2ddl', '300mbdownload', '300mbfilms', 'bestmoviez', 'ddlspot',
-            'ddlvalley', 'directdl', 'moviesleak', 'mvrls', 'rlsb', 'rlsbb', 'scenerls', 'tvdownload',
+    sourcelist = ['0day', '2ddl', '300mbdownload', '300mbfilms', 'bestmoviez', 'ddlspot', 'ddlvalley',
+            'directdl', 'maxrls', 'moviesleak', 'mvrls', 'rlsb', 'rlsbb', 'sceneddl', 'scenerls', 'tvdownload',
             'ultrahdindir', 'warezmovies'
     ]
     toggleAll(params['setting'], params['query'], sourcelist)
 
 if mode == "toggleAllTorrent":
-    sourcelist = ['111ys', '1337x', 'eztv', 'glodls', 'kickass2', 'limetorr', 'magnetdl', 'mkvcage',
-            'piratebay', 'skytorrents', 'torrapi', 'torrdown', 'torrentquest', 'xpause', 'yifyddl', 'ytsam',
-            'zoogle'
+    sourcelist = ['111ys', '1337x', 'btscene', 'doublr', 'eztv', 'glodls', 'kickass2', 'limetorr', 'magnetdl',
+            'mkvcage', 'piratebay', 'skytorrents', 'torrapi', 'torrdown', 'torrentquest', 'xpause', 'yifyddl',
+            'ytsam', 'zoogle'
     ]
     toggleAll(params['setting'], params['query'], sourcelist)
 

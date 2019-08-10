@@ -48,6 +48,8 @@ class source:
                             for source in more_sources.more_gomo(link, hostDict):
                                 sources.append(source)
                         else:
+                            if "//ouo.io/" in link:
+                                continue
                             quality, info = source_utils.get_release_quality(link, link)
                             valid, host = source_utils.is_host_valid(link, hostDict)
                             sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': False})

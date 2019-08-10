@@ -256,8 +256,9 @@ class navigator:
 
 
     def moreplugs(self):
+        self.addDirectoryItem('usTVgo', 'ustvgoNavigator', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.customList') == True:
-            self.addDirectoryItem('Custom List', 'navCustom', 'highly-rated.png', 'DefaultTVShows.png')
+            self.addDirectoryItem('Custom List', 'navCustom', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.iptvChannels') == True:
             self.addDirectoryItem(42023, 'iptvChannels', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.jewMC') == True:

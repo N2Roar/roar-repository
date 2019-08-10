@@ -43,7 +43,8 @@ class indexer:
     def rootXXX(self):
         try:
             regex.clear()
-            url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/xxx.xml'
+            url = 'https://raw.githubusercontent.com/Tempest0580/xml/master/adult.m3u'
+            #url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/xxx.xml'
             self.list = self.noname_list(url)
             for i in self.list:
                 i.update({'content': 'addons'})

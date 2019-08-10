@@ -2,7 +2,9 @@
 # -Cleaned and Checked on 07-25-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -12,13 +14,14 @@ class source:
         self.domains = ['flenix.online', 'flenix-hd.online']
         self.base_link = 'http://flenix.online'
         self.search_link = '/?s=%s+%s'
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             title = cleantitle.geturl(title).replace('-', '+')
             url = self.base_link + self.search_link % (title, year)
-            searchPage = client.request(url)
+            searchPage = self.scraper.get(url).content
             results = re.compile('<a href="(.+?)" title="(.+?)">').findall(searchPage)
             for url, checkit in results:
                 zcheck = '%s (%s)' % (title, year)
@@ -37,7 +40,7 @@ class source:
             if url == None:
                 return sources
             hostDict = hostDict + hostprDict
-            sourcesPage = client.request(url)
+            sourcesPage = self.scraper.get(url).content
             results = re.compile('<iframe.+?src="(.+?)"').findall(sourcesPage)
             for url in results:
                 quality, info = source_utils.get_release_quality(url, url)

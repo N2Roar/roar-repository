@@ -34,7 +34,7 @@ class source:
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []
-            url = url + 'watching.html/'
+            url = url + "watching.html/"
             r = client.request(url)
             t = re.compile('data-.+?="(.+?)".+?href="javascript:void').findall(r)
             for url in t:

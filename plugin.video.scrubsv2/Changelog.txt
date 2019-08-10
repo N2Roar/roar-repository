@@ -1,11 +1,21 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
 
-- Quick patch update for tv shows to work again. (Big Thanks to WeekendSource.)
-(Nothing else is changed, checked, or updated. just a few little url changes.)
+
+- Added youtube to the blocked hosts list so it doesnt sneak up anymore.
+(Saves a little time coding and the normal youtube use will still work fine.)
+- Made some more Providers. Also Fixed Some.
+- Added some Providers by Tempest.(Thanks Sir.)
+- Updated and Added some IPTV stuff.
+- Made a new Plugin called usTVgo.(IPTV Website.)
+(Still wanting more? Check out TempTV.)
 
 [B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
 [B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.5.4 [/COLOR][/B]
+- Quick patch update for tv shows to work again. (Big Thanks to WeekendSource.)
+(Nothing else is changed, checked, or updated. just a few little url changes.)
 
 [B][COLOR purple] v4.5.3 [/COLOR][/B]
 - Added a Custom List option in More Stuff. Set it up in Settings to work your way.

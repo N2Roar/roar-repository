@@ -79,6 +79,37 @@ def findThat(text, regex):
         return []
 
 
+def findall(data, regex):
+    p_reg = re.compile(regex, re.DOTALL + re.MULTILINE + re.UNICODE)
+    result = p_reg.findall(data)
+    return result
+
+
+def findallIgnoreCase(data, regex):
+    p_reg = re.compile(regex, re.DOTALL + re.MULTILINE + re.UNICODE + re.IGNORECASE)
+    result = p_reg.findall(data)
+    return result
+
+
+def regex_from_to(text, from_string, to_string, excluding=True):
+    if excluding:
+        try:
+            r = re.search("(?i)" + from_string + "([\S\s]+?)" + to_string, text).group(1)
+        except:
+            r = ''
+    else:
+        try:
+            r = re.search("(?i)(" + from_string + "[\S\s]+?" + to_string + ")", text).group(1)
+        except:
+            r = ''
+    return r
+
+
+def regex_get_all(text, start_with, end_with):
+    r = re.findall("(?i)(" + start_with + "[\S\s]+?" + end_with + ")", text)
+    return r
+
+
 class GetSum(object):
     _frame_regex = r'(?:iframe|source).+?(?:src)=(?:\"|\')(.+?)(?:\"|\')'
     _datavideo_regex = r'(?:data-video|data-src|data-href)=(?:\"|\')(.+?)(?:\"|\')'

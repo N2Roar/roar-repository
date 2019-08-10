@@ -54,6 +54,8 @@ class source:
             r = self.session.get(url, headers=self.headers).content
             match = re.compile('<IFRAME.+?SRC="(.+?)"', re.DOTALL | re.IGNORECASE).findall(r)
             for url in match:
+                if 'youtube' in url:
+                    continue
                 url =  "https:" + url if not url.startswith('http') else url
                 valid, host = source_utils.is_host_valid(url, hostDict)
                 if valid:

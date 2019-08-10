@@ -120,7 +120,9 @@
         <setting label="Disable All Normal Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?mode=toggleAllNormal&amp;setting=false&amp;openSettings&amp;query=3.0)"/>
         <setting label="Enable All Normal Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?mode=toggleAllNormal&amp;setting=true&amp;openSettings&amp;query=3.0)"/>
         <setting id="provider.123123movies" type="bool" label="provider.123123movies" default="true" />
+        <setting id="provider.1movietv" type="bool" label="provider.1movietv" default="true" />
         <setting id="provider.1putlocker" type="bool" label="provider.1putlocker" default="true" />
+        <setting id="provider.5movies" type="bool" label="provider.5movies" default="true" />
         <setting id="provider.allucxyz" type="bool" label="provider.allucxyz" default="true" />
         <setting id="provider.bnwmovies" type="bool" label="provider.bnwmovies" default="true" />
         <setting id="provider.cartoonhd" type="bool" label="provider.cartoonhd" default="true" />
@@ -140,6 +142,7 @@
         <setting id="provider.fmoviesio" type="bool" label="provider.fmoviesio" default="true" />
         <setting id="provider.ganool123" type="bool" label="provider.ganool123" default="true" />
         <setting id="provider.geektv" type="bool" label="provider.geektv" default="true" />
+        <setting id="provider.gomo" type="bool" label="provider.gomo" default="true" />
         <setting id="provider.gostream123" type="bool" label="provider.gostream123" default="true" />
         <setting id="provider.gowatchseries" type="bool" label="provider.gowatchseries" default="true" />
         <setting id="provider.hdbest" type="bool" label="provider.hdbest" default="true" />
@@ -150,6 +153,8 @@
         <setting id="provider.mkvhub" type="bool" label="provider.mkvhub" default="true" />
         <setting id="provider.movie4kis" type="bool" label="provider.movie4kis" default="true" />
         <setting id="provider.moviescouch" type="bool" label="provider.moviescouch" default="true" />
+        <setting id="provider.mycoolmoviezone" type="bool" label="provider.mycoolmoviezone" default="true" />
+        <setting id="provider.mycouchtuner" type="bool" label="provider.mycouchtuner" default="true" />
         <setting id="provider.myhdpopcorn" type="bool" label="provider.myhdpopcorn" default="true" />
         <setting id="provider.mymovie4k" type="bool" label="provider.mymovie4k" default="true" />
         <setting id="provider.myswatchseri" type="bool" label="provider.myswatchseri" default="true" />
@@ -191,10 +196,12 @@
         <setting id="provider.ddlspot" type="bool" label="provider.ddlspot" default="false" />
         <setting id="provider.ddlvalley" type="bool" label="provider.ddlvalley" default="false" />
         <setting id="provider.directdl" type="bool" label="provider.directdl" default="false" />
+        <setting id="provider.maxrls" type="bool" label="provider.maxrls" default="false" />
         <setting id="provider.moviesleak" type="bool" label="provider.moviesleak" default="false" />
         <setting id="provider.mvrls" type="bool" label="provider.mvrls" default="false" />
         <setting id="provider.rlsb" type="bool" label="provider.rlsb" default="false" />
         <setting id="provider.rlsbb" type="bool" label="provider.rlsbb" default="false" />
+        <setting id="provider.sceneddl" type="bool" label="provider.sceneddl" default="false" />
         <setting id="provider.scenerls" type="bool" label="provider.scenerls" default="false" />
         <setting id="provider.tvdownload" type="bool" label="provider.tvdownload" default="false" />
         <setting id="provider.ultrahdindir" type="bool" label="provider.ultrahdindir" default="false" />
@@ -212,6 +219,7 @@
         <setting id="provider.animetoon" type="bool" label="provider.animetoon" default="false" />
         <setting id="provider.cartoonextra" type="bool" label="provider.cartoonextra" default="false" />
         <setting id="provider.cartoontab" type="bool" label="provider.cartoontab" default="false" />
+        <setting id="provider.filmv" type="bool" label="provider.filmv" default="false" />
         <setting id="provider.fmovies" type="bool" label="provider.fmovies" default="false" />
         <setting id="provider.ganoolrip" type="bool" label="provider.ganoolrip" default="false" />
         <setting id="provider.getmywatchseries" type="bool" label="provider.getmywatchseries" default="false" />
@@ -223,6 +231,7 @@
         <setting id="provider.hackimdb" type="bool" label="provider.hackimdb" default="false" />
         <setting id="provider.hdmo" type="bool" label="provider.hdmo" default="false" />
         <setting id="provider.hnmovies" type="bool" label="provider.hnmovies" default="false" />
+        <setting id="provider.megashare9" type="bool" label="provider.megashare9" default="false" />
         <setting id="provider.movies123" type="bool" label="provider.movies123" default="false" />
         <setting id="provider.mymoviego" type="bool" label="provider.mymoviego" default="false" />
         <setting id="provider.mymoviesonline" type="bool" label="provider.mymoviesonline" default="false" />
@@ -349,6 +358,8 @@
         <setting label="Enable All Torrent Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?mode=toggleAllTorrent&amp;setting=true&amp;openSettings&amp;query=7.0)"/>
         <setting id="provider.111ys" type="bool" label="provider.111ys" default="false" />
         <setting id="provider.1337x" type="bool" label="provider.1337x" default="false" />
+        <setting id="provider.btscene" type="bool" label="provider.btscene" default="false" />
+        <setting id="provider.doublr" type="bool" label="provider.doublr" default="false" />
         <setting id="provider.eztv" type="bool" label="provider.eztv" default="false" />
         <setting id="provider.glodls" type="bool" label="provider.glodls" default="false" />
         <setting id="provider.kickass2" type="bool" label="provider.kickass2" default="false" />

@@ -33,6 +33,7 @@ class source:
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []
+            hostDict = hostDict + hostprDict
             if url == None:
                 return sources
             html = client.request(url)

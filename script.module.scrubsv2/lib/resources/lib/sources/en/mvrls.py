@@ -49,7 +49,7 @@ class source:
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []
-            if url == None:
+            if url is None:
                 return sources
             if debrid.status() is False:
                 raise Exception()
@@ -82,8 +82,6 @@ class source:
                         raise Exception()
                     url = client.replaceHTMLCodes(url)
                     url = url.encode('utf-8')
-                    if url in str(sources):
-                        continue
                     valid, host = source_utils.is_host_valid(url, hostDict)
                     if not valid:
                         raise Exception()
@@ -120,4 +118,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 
