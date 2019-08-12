@@ -26,7 +26,6 @@ class Movies:
 		self.tmdb_key = control.setting('tm.user')
 		if self.tmdb_key == '' or self.tmdb_key is None:
 			self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
-		# access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzMzIwODU1ZTY1YTk3NTgyOTdmZWM0ZjdjOTcxNzY5OCIsInN1YiI6IjVjNDYwODQ2OTI1MTQxMGUyNDRmMDU4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3pqIZisgsykso59k521K4plalhK7lnah2zADdHiB_g4'
 
 		self.tmdb_link = 'http://api.themoviedb.org'
 		# self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
@@ -57,7 +56,6 @@ class Movies:
 			# API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
 			throttleTime = response.headers['Retry-After']
 			control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='INFO')
-			# log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
 			sleep(int(throttleTime) + 1)
 			return self.get_request(url)
 		else:
@@ -413,7 +411,6 @@ class TVshows:
 			# API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
 			throttleTime = response.headers['Retry-After']
 			control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='INFO')
-			# log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
 			sleep(int(throttleTime) + 1)
 			return self.get_request(url)
 		else:

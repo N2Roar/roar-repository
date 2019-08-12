@@ -62,7 +62,6 @@ class TVshows:
 		self.popular_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
 		self.airing_link = 'http://www.imdb.com/search/title?title_type=tv_episode&release_date=date[1],date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
 		self.active_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=10,&production_status=active&sort=moviemeter,asc&count=%d&start=1' % self.count
-		#self.premiere_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
 		self.premiere_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=release_date,desc&count=%d&start=1' % self.count
 		self.rating_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=5000,&release_date=,date[0]&sort=user_rating,desc&count=%d&start=1' % self.count
 		self.views_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=num_votes,desc&count=%d&start=1' % self.count
@@ -85,14 +84,13 @@ class TVshows:
 		self.trakt_link = 'http://api.trakt.tv'
 		self.search_link = 'http://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
 
+		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
+		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
+		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/shows?page=1&limit=%d' % ('%s', '%s', self.count)
+		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows?page=1&limit=%d' % self.count
+		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
 		self.trakttrending_link = 'http://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
 		self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
-		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/'
-		# self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows'
-		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
 		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?page=1&limit=%d' % self.count
 
 		self.tvmaze_link = 'http://www.tvmaze.com'
@@ -122,21 +120,21 @@ class TVshows:
 				pass
 
 			if u in self.trakt_link and '/users/' in url:
-				urls = []
-				# Must only check if no type is specified at the end of the link, since this function can be called for specific show, season, and episode lists.
-				if url.endswith('/watchlist/'):
-					urls.append(url + 'shows')
-					urls.append(url + 'seasons')
-					urls.append(url + 'episodes')
-				else:
-					urls.append(url)
+				# urls = []
+				# # Must only check if no type is specified at the end of the link, since this function can be called for specific show, season, and episode lists.
+				# if url.endswith('/watchlist/'):
+					# urls.append(url + 'shows')
+					# urls.append(url + 'seasons')
+					# urls.append(url + 'episodes')
+				# else:
+					# urls.append(url)
 
-				lists = []
-				for u in urls:
-					self.list = []
-					result = cache.get(self.trakt_list, 0.3, u, self.trakt_user)
-					if result: lists += result
-				self.list = lists
+				# lists = []
+				# for u in urls:
+					# self.list = []
+					# result = cache.get(self.trakt_list, 0.3, u, self.trakt_user)
+					# if result: lists += result
+				# self.list = lists
 
 				# lists = []
 				# for u in urls:
@@ -152,6 +150,12 @@ class TVshows:
 						# result = cache.get(self.trakt_list, 0, u, self.trakt_user)
 						# if result: lists += result
 				# self.list = lists
+				try:
+					if not '/users/me/' in url: raise Exception()
+					if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user): raise Exception()
+					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
+				except:
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
 
 				self.sort()
 				if idx is True:
@@ -554,7 +558,8 @@ class TVshows:
 
 		# Trakt Watchlist
 		if self.traktCredentials is True:
-			trakt_watchlist = self.traktwatchlist_link + 'shows'
+			# trakt_watchlist = self.traktwatchlist_link + 'shows'
+			trakt_watchlist = self.traktwatchlist_link
 			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': trakt_watchlist, 'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
 
 		self.addDirectory(self.list)
@@ -596,8 +601,10 @@ class TVshows:
 
 		for item in items:
 			try:
-				try: title = item['title'].encode('utf-8')
-				except: title = item['title']
+				try:
+					title = item['title'].encode('utf-8')
+				except:
+					title = item['title']
 
 				year = str(item.get('year'))
 
@@ -868,7 +875,6 @@ class TVshows:
 
 				url = client.parseDOM(item, 'a', ret='href')[1]
 				url = re.findall('(nm\d*)', url, re.I)[0]
-				# url = self.person_link % (url, self.certificates)
 				url = self.person_link % url
 				url = client.replaceHTMLCodes(url)
 				url = url.encode('utf-8')
@@ -1192,11 +1198,12 @@ class TVshows:
 
 			# fanart_thread = threading.Thread
 			if (poster == '0' or fanart == '0' and total > 40) or (self.disable_fanarttv != 'true'):
-				from resources.lib.indexers import fanarttv
-				extended_art = fanarttv.get_tvshow_art(tvdb)
-				if extended_art is not None:
-					item.update(extended_art)
-					meta.update(item)
+				if tvdb is not None or tvdb != '0':
+					from resources.lib.indexers import fanarttv
+					extended_art = fanarttv.get_tvshow_art(tvdb)
+					if extended_art is not None:
+						item.update(extended_art)
+						meta.update(item)
 
 			if (self.disable_fanarttv == 'true' and (poster == '0' or fanart == '0')) or (
 				self.disable_fanarttv != 'true' and ((poster == '0' and item.get('poster2') == '0') or (

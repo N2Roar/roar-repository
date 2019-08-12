@@ -39,7 +39,6 @@ class Movies:
 		self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
 		self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
-		self.trakt_link = 'http://api.trakt.tv'
 		self.trakt_user = control.setting('trakt.user').strip()
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
 		self.lang = control.apiLanguage()['trakt']
@@ -100,17 +99,19 @@ class Movies:
 		self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=movie,tvMovie&sort=moviemeter,asc&count=%d&start=1' % self.count
 
+		self.trakt_link = 'http://api.trakt.tv'
 		self.search_link = 'http://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
-
 		self.traktlistsearch_link = 'http://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
 
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
+		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies?page=1&limit=%d' % ('%s', '%s', self.count)
+		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies?page=1&limit=%d' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?page=1&limit=%d' % self.count
-		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?page=1&limit=%d' % self.count
+		# self.progress_link = 'http://api.trakt.tv/users/me/watched/movies'
+		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
+		self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
 		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?page=1&limit=%d' % self.count 
 		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?page=1&limit=%d' % self.count
 		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?page=1&limit=%d' % self.count
@@ -547,18 +548,18 @@ class Movies:
 
 		for item in items:
 			try:
-				# title = (item.get('title')).encode('utf-8')
 
-				try: title = item['title'].encode('utf-8')
-				except: title = item['title']
-				title = client.replaceHTMLCodes(title)
-				try: title = title.encode('utf-8')
-				except: pass
+				try:
+					title = (item.get('title')).encode('utf-8')
+				except:
+					title = item.get('title')
 
 				year = str(item.get('year'))
 
-				try: progress = item['progress']
-				except: progress = None
+				try:
+					progress = item['progress']
+				except:
+					progress = None
 
 				imdb = item.get('ids', {}).get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
@@ -604,9 +605,9 @@ class Movies:
 		try:
 			result = trakt.getTrakt(url)
 			items = json.loads(result)
-
 		except:
 			pass
+
 		for item in items:
 			try:
 				try: name = item['list']['name']

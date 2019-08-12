@@ -1,7 +1,14 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
 
+- Made a new Plugin called ArconaiTV.(from a Old IPTV addon.)
+- Updated the usTVgo plugin.(Mostly by Tempest.)
+(Might of done some other changes but dont recall lol.)
 
+[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
+[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.5.5 [/COLOR][/B]
 - Added youtube to the blocked hosts list so it doesnt sneak up anymore.
 (Saves a little time coding and the normal youtube use will still work fine.)
 - Made some more Providers. Also Fixed Some.
@@ -9,9 +16,6 @@
 - Updated and Added some IPTV stuff.
 - Made a new Plugin called usTVgo.(IPTV Website.)
 (Still wanting more? Check out TempTV.)
-
-[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
-[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
 
 [B][COLOR purple] v4.5.4 [/COLOR][/B]
 - Quick patch update for tv shows to work again. (Big Thanks to WeekendSource.)

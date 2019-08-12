@@ -256,6 +256,7 @@ class navigator:
 
 
     def moreplugs(self):
+        self.addDirectoryItem('AcronaiTV',  'acronaitv_menu',  'channels.png',  'DefaultTVShows.png')
         self.addDirectoryItem('usTVgo', 'ustvgoNavigator', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.customList') == True:
             self.addDirectoryItem('Custom List', 'navCustom', 'channels.png', 'DefaultTVShows.png')

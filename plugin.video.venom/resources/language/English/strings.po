@@ -2947,7 +2947,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#40061"
-msgid ""
+msgid "Enable Youtube Menu"
 msgstr ""
 
 msgctxt "#40062"

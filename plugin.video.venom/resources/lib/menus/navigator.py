@@ -59,8 +59,8 @@ class Navigator:
 		if control.setting('furk.api') != '':
 			self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png',  'DefaultMovies.png')
 
-		# if self.getMenuEnabled('navi.youtube') == True:
-			# self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
+		if self.getMenuEnabled('navi.youtube') == True:
+			self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
 
 		self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultAddonsSearch.png')
 		self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonService.png')
@@ -153,6 +153,7 @@ class Navigator:
 			if traktIndicators is True:
 				self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				# self.addDirectoryItem(32037, 'movies&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'DefaultVideoPlaylists.png', queue=True)
 
 		elif traktCredentials is True:
@@ -162,6 +163,7 @@ class Navigator:
 			if traktIndicators is True:
 				self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				# self.addDirectoryItem(32037, 'movies&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 
 		elif imdbCredentials is True:
 			# self.addDirectoryItem(32032, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultVideoPlaylists.png', queue=True)
@@ -526,4 +528,3 @@ class Navigator:
 	def endDirectory(self):
 		control.content(syshandle, 'addons')
 		control.directory(syshandle, cacheToDisc=True)
-		# control.sleep(200)

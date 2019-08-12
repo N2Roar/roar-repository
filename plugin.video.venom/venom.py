@@ -38,8 +38,10 @@ if action is None:
 	from resources.lib.menus import navigator
 	from resources.lib.modules import cache
 	run = control.setting('first.info')
-	if run == '': run = 'true' #clean install scenerio
-	if cache._find_cache_version(): run = 'true'  #check whether plugin.video.venom has been updated-use to be for script.module.venom
+	if run == '':
+		run = 'true' #clean install scenerio
+	if cache._find_cache_version():
+		run = 'true'  #check whether plugin.video.venom has been updated-use to be for script.module.venom
 	if run == 'true':
 		from resources.lib.modules import changelog
 		changelog.get()
@@ -331,6 +333,10 @@ elif action == 'episodes':
 	episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
 	# episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
+elif action == 'episodesPage':
+	from resources.lib.menus import episodes
+	episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+
 elif action == 'tvWidget':
 	from resources.lib.menus import episodes
 	episodes.Episodes().widget()
@@ -387,6 +393,30 @@ elif action == 'youtube':
 		youtube.yt_index().root(action)
 	else:
 		youtube.yt_index().get(action, subid)
+
+elif action == 'kidscorner':
+    from resources.lib.indexers import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
+
+elif action == 'musicvids':
+    from resources.lib.indexers import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
+
+elif action == 'fitness':
+    from resources.lib.indexers import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
+
+
+
 
 
 

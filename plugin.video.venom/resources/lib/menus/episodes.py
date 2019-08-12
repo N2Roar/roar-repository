@@ -17,7 +17,6 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import metacache
-# from resources.lib.modules import utils
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -53,17 +52,16 @@ class Episodes:
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
 
 		self.trakt_link = 'http://api.trakt.tv'
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[29]/60/'
-		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?limit=100'
+		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/episodes?page=1&limit=%d' % ('%s', '%s', self.count)
+		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes?page=1&limit=%d' % self.count
+		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?page=1&limit=%d' % self.count
 		self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
 		self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
-		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes'
+		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes?limit=100'
 		self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
-
+		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[29]/60/'
 		self.tvmaze_link = 'http://api.tvmaze.com'
 		self.added_link = 'http://api.tvmaze.com/schedule'
 		self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
@@ -190,7 +188,7 @@ class Episodes:
 
 	def unfinished(self):
 		try:
-			self.list = cache.get(self.trakt_list, 0.3, self.traktunfinished_link, self.trakt_user, True)
+			self.list = cache.get(self.trakt_list, 0.3, self.traktunfinished_link , self.trakt_user, False)
 			# self.sort(type = 'calendar')
 			self.episodeDirectory(self.list, unfinished=True)
 			return self.list
@@ -394,13 +392,25 @@ class Episodes:
 		except:
 			return
 
+		try:
+			q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
+			if int(q['limit']) != len(items):
+				raise Exception()
+			q.update({'page': str(int(q['page']) + 1)})
+			q = (urllib.urlencode(q)).replace('%2C', ',')
+			next = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
+		except:
+			next = ''
+
 		for item in items:
 			try:
 				if 'show' not in item or 'episode' not in item:
 					raise Exception()
 
-				try: title = (item['episode']['title']).encode('utf-8')
-				except: title = item['episode']['title']
+				try:
+					title = (item['episode']['title']).encode('utf-8')
+				except:
+					title = item['episode']['title']
 				if title is None or title == '':
 					raise Exception()
 
@@ -414,8 +424,10 @@ class Episodes:
 				if episode == '0':
 					raise Exception()
 
-				try: tvshowtitle = (item['show']['title']).encode('utf-8')
-				except: tvshowtitle = item['show']['title']
+				try:
+					tvshowtitle = (item['show']['title']).encode('utf-8')
+				except:
+					tvshowtitle = item['show']['title']
 				if tvshowtitle is None or tvshowtitle == '':
 					raise Exception()
 
@@ -481,7 +493,7 @@ class Episodes:
 							'year': year, 'premiered': premiered, 'added': added, 'lastplayed': lastplayed,
 							'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
 							'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb,
-							'tvdb': tvdb, 'progress': progress, 'episodeIDS': episodeIDS}
+							'tvdb': tvdb, 'progress': progress, 'episodeIDS': episodeIDS, 'next': next}
 
 				if 'airday' in item and not item['airday'] is None and item['airday'] != '':
 					values['airday'] = item['airday']
@@ -1156,11 +1168,6 @@ class Episodes:
 					raise Exception()
 
 				try:
-					tvshowtitle = (item.get('show', {}).get('name', 0)).encode('utf-8')
-				except:
-					tvshowtitle = item.get('show', {}).get('name', 0)
-
-				try:
 					title = (item.get('name', 0)).encode('utf-8')
 				except:
 					title = item.get('name', 0)
@@ -1178,6 +1185,11 @@ class Episodes:
 				year = str(item.get('show').get('premiered', '0'))
 
 				try:
+					tvshowtitle = (item.get('show', {}).get('name', 0)).encode('utf-8')
+				except:
+					tvshowtitle = item.get('show', {}).get('name', 0)
+
+				try:
 					tvshowyear = item['show']['year']
 				except:
 					tvshowyear = year
@@ -1189,9 +1201,7 @@ class Episodes:
 				# TVMaze does not have tmdb in their api
 				tmdb = '0'
 
-				tvdb = str(item.get('show', {}).get('externals', {}).get('thetvdb', 0))
-				if tvdb == '' or tvdb is None or tvdb == 'None':
-					tvdb = '0'
+				tvdb = str(item.get('show').get('externals').get('thetvdb', 0))
 
 # ### episode IDS
 				episodeIDS = {}
@@ -1234,7 +1244,10 @@ class Episodes:
 
 				rating = str(item.get('show', {}).get('rating', {}).get('average', 0))
 
-				status = str(item.get('show', {}).get('status', 0))
+				try:
+					status = str(item.get('show', {}).get('status', 0))
+				except:
+					status = 'Continuing'
 
 				try:
 					plot = item.get('show', {}).get('summary', 0)
@@ -1285,11 +1298,6 @@ class Episodes:
 
 
 	def episodeDirectory(self, items, unfinished=False):
-		if items is None or len(items) == 0:
-			control.idle()
-			control.notification(title=32326, message=33049, icon='INFO')
-			sys.exit()
-
 		# Retrieve additional metadata if not super info was retireved (eg: Trakt lists, such as Unfinished and History)
 		try:
 			if 'extended' not in items[0] or not items[0]['extended']:
@@ -1312,6 +1320,12 @@ class Episodes:
 			except:
 				pass
 
+		if items is None or len(items) == 0:
+			control.idle()
+			control.notification(title=32326, message=33049, icon='INFO')
+			sys.exit()
+
+
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
@@ -1324,6 +1338,10 @@ class Episodes:
 			multi = []
 		multi = len([x for y, x in enumerate(multi) if x not in multi[:y]])
 		multi = True if multi > 1 else False
+		try:
+			if '/users/me/history/' in items[0]['next']:
+				multi = True
+		except: pass
 
 		try:
 			sysaction = items[0]['action']
@@ -1635,11 +1653,32 @@ class Episodes:
 
 				if control.setting('auto.playlistcreate') == 'true':
 					control.playlist.add(url=url, listitem=item)
-
 			except:
 				import traceback
 				traceback.print_exc()
 				pass
+
+		if 'next' in items[0]:
+			try:
+				url = items[0]['next']
+				if url == '':
+					raise Exception()
+
+				nextMenu = control.lang(32053).encode('utf-8')
+				if '/users/me/history/' in url:
+					url = '%s?action=calendar&url=%s' % (sysaddon, urllib.quote_plus(url))
+
+				item = control.item(label=nextMenu)
+				icon = control.addonNext()
+				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
+				# if addonFanart is not None:
+					# item.setProperty('Fanart_Image', addonFanart)
+				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
+			except:
+				import traceback
+				traceback.print_exc()
+				pass
+
 
 		# Show multi as show, in order to display unwatched count if enabled.
 		if multi is True and unwatchedEnabled == 'true':

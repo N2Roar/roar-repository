@@ -25,6 +25,7 @@
 <!-- Navigation - 1 -->
 	<category label="32621">
 		<setting type="lsep" label="32001" />
+		<setting id="navi.youtube" type="bool" label="40061" default="false" />
 		<setting id="navi.xmascollections" type="bool" label="40064" default="false" />
 		<setting id="navi.originals" type="bool" label="40069" default="false" />
 		<setting id="navi.anime" type="bool" label="40068" default="false" />

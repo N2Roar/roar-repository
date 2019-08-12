@@ -24,6 +24,11 @@ podcast_show = params.get('podcastshow')
 podcast_cat = params.get('podcastlist')
 podcast_cats = params.get('podcastcategories')
 podcast_episode = params.get('podcastepisode')
+arconai_cable = params.get('arconai_cable')
+arconai_shows = params.get('arconai_shows')
+arconai_movies = params.get('arconai_movies')
+arconai_play = params.get('arconai_play')
+selection = params.get('selection')
 url = params.get('url')
 image = params.get('image')
 meta = params.get('meta')
@@ -495,6 +500,26 @@ elif action == 'podcastOne':
         podcast.podcast().podcast_play(action, podcast_episode)
     else:
         podcast.podcast().pco_root()
+
+elif action == 'acronaitv_menu':
+    from resources.lib.indexers import acronaitv
+    acronaitv.acronaitv().list_categories()
+
+elif action == 'arconai_cable':
+    from resources.lib.indexers import acronaitv
+    acronaitv.acronaitv().list_cable()
+
+elif action == 'arconai_shows':
+    from resources.lib.indexers import acronaitv
+    acronaitv.acronaitv().list_shows()
+
+elif action == 'arconai_movies':
+    from resources.lib.indexers import acronaitv
+    acronaitv.acronaitv().list_movies()
+
+elif action == 'arconai_play':
+    from resources.lib.indexers import acronaitv
+    acronaitv.acronaitv().play_video(params['selection'])
 
 elif action == 'ustvgoNavigator':
     from resources.lib.indexers import ustvgo

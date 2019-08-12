@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.1.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.1.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,13 +36,23 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.3 - Aug 6, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed View types not loading.[/I]
-[COLOR yellow]--[/COLOR][I] Added separate sorting options for
-    TVShows, Progress, and Calenndar.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed metache.insert() error.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed Trakt Progress percent showing
-    for titles where it should not be.[/I]
+[B][COLOR red]Update - v3.1.4 - Aug 10, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Trakt Watchlists now follows the "Page Item Limit"
+    option for Movies and TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Trakt custom Lists and Liked Lists now follows
+    the "Page Item Limit" option for both Movies
+    and TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Trakt History now follows the "Page Item Limit"
+    option for both Movies and TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Added a new "YouTube Videos" section
+    with many lists for Movies, Music, Comedy,
+    Sports, and Documentaries.  This is turned
+    off by default. Enable in naviagation
+    settings[/I]
+[COLOR yellow]--[/COLOR][I] Fixed TVMaze Calendar items fanart. Some
+    shows had incorect fanart and may play
+    wrong title.  TVMaze uses a "None" string
+    value when tvdb_id is not known.[/I]
 		</news>
 	</extension>
 

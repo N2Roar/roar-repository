@@ -8,7 +8,8 @@ from resources.lib.modules import workers
 
 class youtube(object):
 	def __init__(self, key=''):
-		self.list = [] ; self.data = []
+		self.list = []
+		self.data = []
 		self.base_link = 'http://www.youtube.com'
 		self.key_link = '&key=%s' % key
 		self.playlists_link = 'https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&channelId=%s'
@@ -69,8 +70,10 @@ class youtube(object):
 				url = url.encode('utf-8')
 
 				image = item['snippet']['thumbnails']['high']['url']
+
 				if '/default.jpg' in image:
 					raise Exception()
+
 				image = image.encode('utf-8')
 
 				self.list.append({'title': title, 'url': url, 'image': image})
