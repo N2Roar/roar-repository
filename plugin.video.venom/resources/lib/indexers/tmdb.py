@@ -37,6 +37,8 @@ class Movies:
 ###                                                                                  other "append_to_response" options                                           external_ids,alternative_titles,videos,images
 		self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
+		self.tmdb_people_link = 'https://api.themoviedb.org/3/movie/%s/credits?api_key=%s' % ('%s', self.tmdb_key)
+
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 
@@ -146,37 +148,24 @@ class Movies:
 					mpaa = str(mpaa)
 				except: mpaa = '0'
 
-				director = item['credits']['crew']
-				try:
-					director = [x['name'] for x in director if x['job'] == 'Director']
-				except:
-					director = '0'
-				if director == '' or director is None or director == []:
-					director = '0'
-				director = (' / '.join(director))
+				credits = item['credits']
+				director = writer = '0'
+				for person in credits['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
-				writer = item['credits']['crew']
-				try:
-					writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
-				except:
-					writer = '0'
-				try:
-					writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
-				except:
-					writer = '0'
-				if writer == '' or writer is None or writer == []:
-					writer = '0'
-				writer = (' / '.join(writer))
-
-				cast = item['credits']['cast']
-				try:
-					cast = [(x['name'], x['character']) for x in cast]
-				except:
-					cast = []
+				castandart = []
+				for person in item['credits']['cast']:
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 				item = {}
 				item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 				meta = {}
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
@@ -289,34 +278,30 @@ class Movies:
 					mpaa = str(mpaa)
 				except: mpaa = '0'
 
-				director = item['credits']['crew']
-				try: director = [x['name'] for x in director if x['job'] == 'Director']
-				except: director = '0'
-				if director == '' or director is None or director == []: director = '0'
-				director = ' / '.join(director)
+				credits = item['credits']
+				director = writer = '0'
+				for person in credits['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
-				writer = item['credits']['crew']
-				try:
-					writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
-				except:
-					writer = '0'
-				try:
-					writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
-				except:
-					writer = '0'
-				if writer == '' or writer is None or writer == []:
-					writer = '0'
-				writer = (' / '.join(writer))
+				# cast = item['credits']['cast']
+				# try:
+					# cast = [(x['name'], x['character']) for x in cast]
+				# except:
+					# cast = []
 
-				cast = item['credits']['cast']
-				try:
-					cast = [(x['name'], x['character']) for x in cast]
-				except:
-					cast = []
+				castandart = []
+				for person in item['credits']['cast']:
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 				item = {}
 				item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 				meta = {}
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
@@ -365,6 +350,15 @@ class Movies:
 
 		extended_art = {'extended': True, 'poster3': poster3, 'fanart3': fanart3}
 		return extended_art
+
+
+	def tmdb_people(self, tmdb):
+		if (self.tmdb_key == '') or (tmdb == '0' or tmdb is None):
+			return None
+		people = self.get_request(self.tmdb_people_link % tmdb)
+		if people is None:
+			return None
+		return people
 
 
 
@@ -498,31 +492,30 @@ class TVshows:
 				except: studio = '0'
 				if studio == '' or studio is None: studio = '0'
 
-				director = item['credits']['crew']
-				# try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
-				try: director = [x['name'] for x in director if x['job'] == 'Director']
-				except: director = '0'
-				if director == '' or director is None or director == []: director = '0'
-				director = ' / '.join(director)
+				credits = item['credits']
+				director = writer = '0'
+				for person in credits['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
-				writer = item['credits']['crew']
-				# try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
-				try: writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
-				except: writer = '0'
-				try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
-				except: writer = '0'
-				if writer == '' or writer is None or writer == []: writer = '0'
-				writer = ' / '.join(writer)
+				# cast = item['credits']['cast']
+				# try:
+					# cast = [(x['name'], x['character']) for x in cast]
+				# except:
+					# cast = []
 
-				cast = item['credits']['cast']
-				# try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
-				try: cast = [(x['name'], x['character']) for x in cast]
-				except: cast = []
-
+				castandart = []
+				for person in item['credits']['cast']:
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 				item = {}
 				item = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
+								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
 								'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {}
@@ -609,30 +602,28 @@ class TVshows:
 				except: studio = '0'
 				if studio == '' or studio is None: studio = '0'
 
-				director = item['credits']['crew']
-				# try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
-				try: director = [x['name'] for x in director if x['job'] == 'Director']
-				except: director = '0'
-				if director == '' or director is None or director == []: director = '0'
-				director = ' / '.join(director)
+				credits = item['credits']
+				director = writer = '0'
+				for person in credits['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
-				writer = item['credits']['crew']
-				# try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
-				try: writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
-				except: writer = '0'
-				try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
-				except: writer = '0'
-				if writer == '' or writer is None or writer == []: writer = '0'
-				writer = ' / '.join(writer)
+				# cast = item['credits']['cast']
+				# try: cast = [(x['name'], x['character']) for x in cast]
+				# except: cast = []
 
-				cast = item['credits']['cast']
-				# try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
-				try: cast = [(x['name'], x['character']) for x in cast]
-				except: cast = []
+				castandart = []
+				for person in item['credits']['cast']:
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 				item = {}
 				item = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 				meta = {}
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}

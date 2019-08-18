@@ -59,6 +59,7 @@ class Movies:
 		self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
 
 		self.tmdb_link = 'http://api.themoviedb.org'
+		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
@@ -567,7 +568,7 @@ class Movies:
 
 				tmdb = str(item.get('ids', {}).get('tmdb', 0))
 				if tmdb == '' or tmdb is None or tmdb == 'None':
-					imdb = '0'
+					tmdb = '0'
 
 				premiered = item.get('released', '0')
 
@@ -770,15 +771,16 @@ class Movies:
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
-				try:
-					cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-				except:
-					cast = '0'
-				cast = client.replaceHTMLCodes(cast)
-				cast = cast.encode('utf-8')
-				cast = client.parseDOM(cast, 'a')
-				if cast == []:
-					cast = '0'
+				# try:
+					# cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
+				# except:
+					# cast = '0'
+				# cast = client.replaceHTMLCodes(cast)
+				# cast = cast.encode('utf-8')
+				# cast = client.parseDOM(cast, 'a')
+				# if cast == []:
+					# cast = '0'
+				cast = '0'
 
 				plot = '0'
 				try:
@@ -940,7 +942,7 @@ class Movies:
 
 			tmdb = str(item.get('ids', {}).get('tmdb', 0))
 			if tmdb == '' or tmdb is None or tmdb == 'None':
-				imdb = '0'
+				tmdb = '0'
 
 			premiered = item.get('released', '0')
 
@@ -964,20 +966,24 @@ class Movies:
 
 			plot = item.get('overview', '0')
 
-			# if self.list[i]['director'] == '0' or self.list[i]['writer'] == '0' or self.list[i]['cast'] == '0':
-			director = '0' ; writer = '0'; cast = '0'
-			# if control.setting('disable.dir.writer.cast') == 'false':
-			people = trakt.getPeople(imdb, 'movies')
-			director = writer = ''
-			if 'crew' in people and 'directing' in people['crew']:
-				director = ', '.join([director['person']['name'] for director in people['crew']['directing'] if director['job'].lower() == 'director'])
-			if 'crew' in people and 'writing' in people['crew']:
-				writer = ', '.join([writer['person']['name'] for writer in people['crew']['writing'] if writer['job'].lower() in ['writer', 'screenplay', 'author']])
+			from resources.lib.indexers.tmdb import Movies
+			# credits = Movies().tmdb_people(tmdb)
+			credits = cache.get(Movies().tmdb_people, 168, tmdb)
 
-			cast = []
-			for person in people.get('cast', []):
-				cast.append({'name': person['person']['name'], 'role': person['character']})
-			cast = [(person['name'], person['role']) for person in cast]
+			castandart = []
+			for person in credits['cast']:
+				try:
+					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+				except:
+					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+
+			director = writer = '0'
+			for person in credits['crew']:
+				if 'Director' in person['job']:
+					director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+
+				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
 			try:
 				if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
@@ -992,7 +998,7 @@ class Movies:
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-						'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
+						'writer': writer, 'cast': '0', 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
 						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
 						'discart': '0', 'metacache': False}
 
@@ -1001,7 +1007,8 @@ class Movies:
 			# fanart_thread = threading.Thread
 			if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0' and total > 40) or (self.disable_fanarttv != 'true'):
 				from resources.lib.indexers import fanarttv
-				extended_art = fanarttv.get_movie_art(imdb, tmdb)
+				# extended_art = fanarttv.get_movie_art(imdb, tmdb)
+				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 				if extended_art is not None:
 					item.update(extended_art)
 					meta.update(item)
@@ -1011,14 +1018,15 @@ class Movies:
 					self.list[i]['fanart'] == '0' and item.get('fanart2') == '0'))):
 				# if total <= 40:
 				from resources.lib.indexers.tmdb import Movies
-				tmdb_art = Movies().tmdb_art(tmdb)
+				# tmdb_art = Movies().tmdb_art(tmdb)
+				tmdb_art = cache.get(Movies().tmdb_art, 168, tmdb)
 				item.update(tmdb_art)
 				if item.get('landscape', '0') == '0':
 					landscape = item.get('fanart3', '0')
 					item.update({'landscape': landscape})
 				meta.update(item)
-
 			item = dict((k,v) for k, v in item.iteritems() if v != '0')
+			# item = dict((k,v) for k, v in item.iteritems())
 			self.list[i].update(item)
 
 			self.meta.append(meta)
@@ -1204,6 +1212,7 @@ class Movies:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
+				cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
@@ -1213,9 +1222,11 @@ class Movies:
 ####################################
 
 				item = control.item(label=labelProgress)
-				# item = control.item(label=label)
-				if 'cast' in i:
-					item.setCast(i['cast'])
+
+				if 'castandart' in i:
+					# meta.update({'cast': '0'})
+					item.setCast(i['castandart'])
+
 				# if fanart != '0' and fanart is not None:
 					# item.setProperty('Fanart_Image', fanart)
 				item.setArt(art)

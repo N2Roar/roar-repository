@@ -132,6 +132,7 @@ class Episodes:
 					try:
 						self.list = sorted(self.list, key=lambda k: k['tvshowtitle'].lower(), reverse=reverse)
 					except:
+						# self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse=reverse)
 						self.list = sorted(self.list, key=lambda k: k['title'].lower(), reverse=reverse)
 				elif attribute == 2:
 					self.list = sorted(self.list, key=lambda k: float(k['rating']), reverse=reverse)
@@ -220,8 +221,8 @@ class Episodes:
 		try:
 			from resources.lib.menus import seasons
 			items[index]['seasoncount'] = seasons.Seasons().seasonCount(items[index]['tvshowtitle'],
-																items[index]['year'], items[index]['imdb'],
-																items[index]['tvdb'], items[index]['season'])
+											items[index]['year'], items[index]['imdb'],
+											items[index]['tvdb'], items[index]['season'])
 		except:
 			import traceback
 			traceback.print_exc()
@@ -543,11 +544,12 @@ class Episodes:
 					raise Exception()
 
 				season = str(item['seasons'][-1]['number'])
-
 				episode = str(item['seasons'][-1]['episodes'][-1]['number'])
 
-				try: tvshowtitle = (item['show']['title']).encode('utf-8')
-				except: tvshowtitle = item['show']['title']
+				try:
+					tvshowtitle = (item['show']['title']).encode('utf-8')
+				except:
+					tvshowtitle = item['show']['title']
 				if tvshowtitle is None or tvshowtitle == '':
 					raise Exception()
 
@@ -618,7 +620,8 @@ class Episodes:
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
-				# artwork = zip.read('banners.xml')
+				artwork = zip.read('banners.xml')
+				actors = zip.read('actors.xml')
 				zip.close()
 
 				result = result.split('<Episode>')
@@ -786,10 +789,19 @@ class Episodes:
 				writer = ' / '.join(writer)
 				writer = client.replaceHTMLCodes(writer)
 
-				cast = client.parseDOM(item2, 'Actors')[0]
-				cast = [x for x in cast.split('|') if x != '']
-				cast = [(x.encode('utf-8'), '') for x in cast]
-				if cast is None or cast == '': cast = []
+				import xml.etree.ElementTree as ET
+				tree = ET.ElementTree(ET.fromstring(actors))
+				root = tree.getroot()
+				castandart = []
+				for actor in root.iter('Actor'):
+					person = [name.text for name in actor]
+					image = person[1]
+					name = person[2]
+					role = person[3]
+					try:
+						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					except:
+						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 
 				try:
 					plot = client.parseDOM(item, 'Overview')[0]
@@ -808,7 +820,7 @@ class Episodes:
 							'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
 							'added': added, 'lastplayed': lastplayed, 'status': status, 'studio': studio, 'genre': genre,
 							'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-							'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
+							'writer': writer, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
 							'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
 							'unaired': unaired, 'episodeIDS': episodeIDS}
 
@@ -853,7 +865,8 @@ class Episodes:
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
-				# artwork = zip.read('banners.xml')
+				artwork = zip.read('banners.xml')
+				actors = zip.read('actors.xml')
 				zip.close()
 
 				result = result.split('<Episode>')
@@ -1062,15 +1075,19 @@ class Episodes:
 				writer = client.replaceHTMLCodes(writer)
 				writer = writer.encode('utf-8')
 
-				try:
-					cast = client.parseDOM(item2, 'Actors')[0]
-				except:
-					cast = ''
-				cast = [x for x in cast.split('|') if x != '']
-				try:
-					cast = [(x.encode('utf-8'), '') for x in cast]
-				except:
-					cast = []
+				import xml.etree.ElementTree as ET
+				tree = ET.ElementTree(ET.fromstring(actors))
+				root = tree.getroot()
+				castandart = []
+				for actor in root.iter('Actor'):
+					person = [name.text for name in actor]
+					image = person[1]
+					name = person[2]
+					role = person[3]
+					try:
+						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					except:
+						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 
 				try:
 					plot = client.parseDOM(item, 'Overview')[0]
@@ -1088,7 +1105,7 @@ class Episodes:
 				values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
 								'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
 								'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
-								'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast,
+								'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart,
 								'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
 								'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
@@ -1298,6 +1315,11 @@ class Episodes:
 
 
 	def episodeDirectory(self, items, unfinished=False):
+		if items is None or len(items) == 0:
+			control.idle()
+			control.notification(title=32326, message=33049, icon='INFO')
+			sys.exit()
+
 		# Retrieve additional metadata if not super info was retireved (eg: Trakt lists, such as Unfinished and History)
 		try:
 			if 'extended' not in items[0] or not items[0]['extended']:
@@ -1319,12 +1341,6 @@ class Episodes:
 				items = json.loads(items)
 			except:
 				pass
-
-		if items is None or len(items) == 0:
-			control.idle()
-			control.notification(title=32326, message=33049, icon='INFO')
-			sys.exit()
-
 
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
@@ -1597,12 +1613,12 @@ class Episodes:
 				syslabelProgress = urllib.quote_plus(labelProgress)
 
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s' % (
-										sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
+						sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
 				if isFolder is True:
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
-										sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
+							sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
 
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (
 										sysaddon, syslabelProgress, sysurl, sysmeta, sysart)))
@@ -1615,6 +1631,8 @@ class Episodes:
 				if isFolder is False:
 					cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (
 										sysaddon, sysurl, sysmeta)))
+					cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
+										sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
 
 				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
 										sysaddon, systvshowtitle, year, imdb, tvdb)))
@@ -1637,8 +1655,8 @@ class Episodes:
 				if 'episodeIDS' in i:
 					item.setUniqueIDs(i['episodeIDS'])
 
-				# if 'cast' in i:
-					# item.setCast(i['cast'])
+				if 'castandart' in i:
+					item.setCast(i['castandart'])
 
 				# if fanart != '0' and not fanart is None:
 					# item.setProperty('Fanart_Image', fanart)

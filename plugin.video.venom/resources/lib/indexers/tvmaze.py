@@ -8,11 +8,11 @@ import json, requests, threading, re, urllib
 import datetime
 
 from resources.lib.modules import control
-from resources.lib.modules import log_utils
 from resources.lib.modules import client
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
+
 
 networks_this_season = [
 			('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
@@ -311,16 +311,16 @@ class tvshows:
 
 				status = item.get('status', '0')
 
-				try:
-					cast = []
-					for person in item['_embedded']['cast']:
-						cast.append({'name': person['person']['name'], 'role': person['character']['name']})
-					cast = [(person['name'], person['role']) for person in cast]
-				except:
-					cast = '0'
+				castandart = []
+				for person in item['_embedded']['cast']:
+					try:
+						castandart.append({'name': person['person']['name'].encode('utf-8'), 'role': person['character']['name'].encode('utf-8'), 'thumbnail': (person['person']['image']['original'] if person['person']['image']['original'] is not None else '0')})
+					except:
+						castandart.append({'name': person['person']['name'], 'role': person['character']['name'], 'thumbnail': (person['person']['image']['medium'] if person['person']['image']['medium'] is not None else '0')})
 
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
+
 
 ###--Check TVDb for missing info
 				if tvdb == '0' or imdb == '0':
@@ -379,13 +379,13 @@ class tvshows:
 					except:
 						fanart = '0'
 
-					if cast == '0':
-						try:
-							cast = client.parseDOM(item3, 'Actors')[0]
-							cast = [x for x in cast.split('|') if x != '']
-							cast = [(x.encode('utf-8'), '') for x in cast]
-						except:
-							cast = '0'
+					# if cast == '0':
+						# try:
+							# cast = client.parseDOM(item3, 'Actors')[0]
+							# cast = [x for x in cast.split('|') if x != '']
+							# cast = [(x.encode('utf-8'), '') for x in cast]
+						# except:
+							# cast = '0'
 
 					try:
 						mpaa = client.parseDOM(item3, 'ContentRating')[0]
@@ -412,7 +412,7 @@ class tvshows:
 
 				if next == '0':
 					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast,
+					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart,
 							'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
 							'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
 
@@ -421,7 +421,7 @@ class tvshows:
 
 				else:
 					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast,
+					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart,
 							'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
 							'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 

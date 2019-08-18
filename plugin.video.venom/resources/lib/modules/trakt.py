@@ -27,7 +27,6 @@ databaseName = control.cacheFile
 databaseTable = 'trakt'
 
 
-
 def getTrakt(url, post = None, cache = True, check = True, timestamp = None, extended = False, direct = False, authentication = None):
 	try:
 		if not url.startswith(BASE_URL):

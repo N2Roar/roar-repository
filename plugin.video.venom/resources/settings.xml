@@ -59,7 +59,8 @@
 		<setting type="lsep" label="40025" />
 		<setting type="action" action="InstallAddon(service.upnext)" label="40027" option="close" visible="!System.HasAddon(service.upnext)"/>
 		<setting type="bool" id="enable.upnext" default="false" label="40028" visible="System.HasAddon(service.upnext)" />
-		<setting id="upnext.notice" type="text" label="  If enabled Episodes are hard coded to Auto play" default="" enable="false" />
+<!-- 		<setting id="upnext.notice" type="text" label="  If enabled Episodes are hard coded to Auto play" default="" enable="false" /> -->
+		<setting id="upnext.notice" type="action" label="  [COLOR FFA0C12C]If enabled Episodes are hard coded to Auto play[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
 		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
 		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
 		<setting id="tvshows.seasoncount.enabled" type="bool" label="33890" default="false" />

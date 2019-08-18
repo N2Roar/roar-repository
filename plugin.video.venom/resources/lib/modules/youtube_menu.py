@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, re, urllib, urllib2
-from resources.lib.modules import control, log_utils
+from resources.lib.modules import control
 
 syshandle = int(sys.argv[1])
 
@@ -61,8 +61,6 @@ class youtube_menu(object):
 	def addUserItem(self, name, channel_id, icon, fanart):
 		user = channel_id
 		work_url = "plugin://plugin.video.youtube/user/%s/" % user
-		log_utils.log('work_url = %s' % str(work_url), __name__, log_utils.LOGDEBUG)
-
 		liz = control.item(name)
 		liz.setInfo( type='video', infoLabels={'title': name})
 		liz.setArt({'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart})

@@ -100,4 +100,3 @@ def setView(content, viewDict=None):
 					return
 
 		control.sleep(100)
-

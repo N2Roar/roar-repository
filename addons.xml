@@ -285,7 +285,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.1.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.1.6" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -293,7 +293,7 @@
 		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
 		<import addon="script.module.metahandler" version="1.0.0" />
 		<import addon="plugin.video.youtube" version="6.2.0"/>
-		<import addon="script.module.resolveurl" />
+		<import addon="script.module.resolveurl" version="5.0.0"/>
 		<import addon="script.module.openscrapers" />
 		<import addon="script.module.addon.signals" version="0.0.1"/>
 	</requires>
@@ -322,29 +322,16 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.4 - Aug 10, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Trakt Watchlists now follows the "Page Item Limit"
-    option for Movies and TVShows.[/I]
-[COLOR yellow]--[/COLOR][I] Trakt custom Lists and Liked Lists now follows
-    the "Page Item Limit" option for both Movies
-    and TVShows.[/I]
-[COLOR yellow]--[/COLOR][I] Trakt History now follows the "Page Item Limit"
-    option for both Movies and TVShows.[/I]
-[COLOR yellow]--[/COLOR][I] Added a new "YouTube Videos" section
-    with many lists for Movies, Music, Comedy,
-    Sports, and Documentaries.  This is turned
-    off by default. Enable in naviagation
-    settings[/I]
-[COLOR yellow]--[/COLOR][I] Fixed TVMaze Calendar items fanart. Some
-    shows had incorect fanart and may play
-    wrong title.  TVMaze uses a "None" string
-    value when tvdb_id is not known.[/I]
+[B][COLOR red]Update - v3.1.6 - Aug 17, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo from last update effecting
+    Trakt lists due to new added actor profile
+    pics.[/I]
 		</news>
 	</extension>
 
 </addon>
 
-<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.4" provider-name="doko">
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.5" provider-name="doko">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests"/>
@@ -355,6 +342,11 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.3.5:[/B]
+- Fixed the Episode and Movie searches, the results are now playable.
+- Added the "Always Show Multi-chapter Dialog" setting, for use w/ shows that split episodes in parts.
+- Improved the Trakt listings, they now support movies, shows, seasons and episodes.
+
 [B]0.3.4:[/B]
 - Added a simple search history feature, see Search -> "Search History" menu.
 
@@ -367,9 +359,6 @@
 [B]0.3.1:[/B]
 - Fixed a new way of getting video streams.
 - Added "liked" lists to the Trakt search (besides your own lists).
-
-[B]0.3.0:[/B]
-- Fixed the multi-chapter context menu when using the "Clean Episode Titles" setting.
         </news>
         <description lang="en">
 Watch cartoons and anime from [COLOR orange][B]WatchCartoonOnline.io[/B][/COLOR].

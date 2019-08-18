@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import urllib,json,base64
-from resources.lib.modules import client,cache
+import urllib, json, base64
+from resources.lib.modules import client, cache
 
 
 class tvMaze:
@@ -24,11 +24,14 @@ class tvMaze:
 				query = '?' + urllib.urlencode(query)
 			else:
 				query = ''
+
 			# Make the request
 			request = self.api_url % (endpoint, query)
+
 			# Send the request and get the response
 			# Get the results from cache if available
 			response = cache.get(client.request, 24, request)
+
 			# Retrun the result as a dictionary
 			return json.loads(response)
 		except:
@@ -39,9 +42,11 @@ class tvMaze:
 	def showLookup(self, type, id):
 		try:
 			result = self.request('lookup/shows', {type: id})
+
 			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
+
 			return result
 		except:
 			pass
@@ -52,10 +57,13 @@ class tvMaze:
 		try:
 			if (not self.showID(show_id)):
 				raise Exception()
+
 			result = self.request('shows/%d' % self.show_id)
+
 			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
+
 			return result
 		except:
 			pass
@@ -66,7 +74,9 @@ class tvMaze:
 		try:
 			if (not self.showID(show_id)):
 				raise Exception()
+
 			result = self.request('shows/%d/seasons' % int( self.show_id ))
+
 			if (len(result) > 0 and 'id' in result[0]):
 				return result
 		except:
@@ -82,7 +92,9 @@ class tvMaze:
 		try:
 			if (not self.showID(show_id)):
 				raise Exception()
+
 			result = self.request('shows/%d/episodes' % int( self.show_id ), 'specials=1' if specials else '')
+
 			if (len(result) > 0 and 'id' in result[0]):
 				return result
 		except:
@@ -93,7 +105,10 @@ class tvMaze:
 	def episodeAbsoluteNumber(self, thetvdb, season, episode):
 		try:
 			url = 'http://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('MUQ2MkYyRjkwMDMwQzQ0NA=='.decode('base64'), thetvdb, int(season), int(episode))
-			return int(client.parseDOM(client.request(url), 'absolute_number')[0])
+			r = client.request(url)
+			episode = client.parseDOM(r, 'absolute_number')[0]
+
+			return int(episode)
 		except:
 			pass
 		return episode
@@ -109,4 +124,3 @@ class tvMaze:
 			return title
 		except:
 			pass
-

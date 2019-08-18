@@ -1,3 +1,17 @@
+[B][COLOR red]Update - v3.1.6 - Aug 17, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo from last update effecting
+    Trakt lists due to new added actor profile
+    pics.[/I]
+
+[B][COLOR red]Update - v3.1.5 - Aug 15, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added Actor profile pics using setCast().
+    Note this will be seen in std Info dialogs.
+    Infolabels for cast and castandrole no
+    longer in use.  Movies are complete but
+    a few TVShow lists are unfinished at this
+    time, IMDb to name one.  Sorry folks
+    leaving for vaca.  See yall in a week![/I]
+
 [B][COLOR red]Update - v3.1.4 - Aug 10, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Trakt Watchlists now follows the "Page Item Limit"
     option for Movies and TVShows.[/I]

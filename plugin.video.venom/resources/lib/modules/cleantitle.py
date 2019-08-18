@@ -25,7 +25,16 @@ def geturl(title):
 	if title is None:
 		return
 	title = title.lower()
-	title = title.translate(None, ':*?"\'\.<>|&!,')
+
+	#title = title.translate(None, ':*?"\'\.<>|&!,')
+	try:
+		# This gives a weird error saying that translate only takes 1 argument, not 2. However, the Python 2 documentation states 2, but 1 for Python 3.
+		# This has most likley to do with titles being unicode (foreign titles)
+		title = title.translate(None, ':*?"\'\.<>|&!,')
+	except:
+		for c in ':*?"\'\.<>|&!,':
+			title = title.replace(c, '')
+
 	title = title.replace('/', '-')
 	title = title.replace(' ', '-')
 	title = title.replace('--', '-')

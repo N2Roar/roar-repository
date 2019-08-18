@@ -37,6 +37,9 @@ class Seasons:
 		# self.tvdb_key = control.setting('tvdb.user')
 		# if self.tvdb_key == '' or self.tvdb_key is None:
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		# decoded key above = 1D62F2F90030C444
+		# Test for api response
+		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.zip
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -271,8 +274,9 @@ class Seasons:
 			data = urllib2.urlopen(url, timeout=30).read()
 
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-			result = zip.read('%s.xml' % 'en')
+			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
+			actors = zip.read('actors.xml')
 			zip.close()
 
 			dupe = client.parseDOM(result, 'SeriesName')[0]
@@ -285,14 +289,14 @@ class Seasons:
 				data = urllib2.urlopen(url, timeout=30).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.xml' % 'en')
+				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
+				actors = zip.read('actors.xml')
 				zip.close()
 
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
 				data = urllib2.urlopen(url, timeout=30).read()
-
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result2 = zip.read('%s.xml' % lang)
 				zip.close()
@@ -437,12 +441,20 @@ class Seasons:
 			except:
 				mpaa = '0'
 
-			try:
-				cast = client.parseDOM(item, 'Actors')[0]
-				cast = [x for x in cast.split('|') if x != '']
-				cast = [(x.encode('utf-8'), '') for x in cast]
-			except:
-				cast = []
+			import xml.etree.ElementTree as ET
+			tree = ET.ElementTree(ET.fromstring(actors))
+			root = tree.getroot()
+
+			castandart = []
+			for actor in root.iter('Actor'):
+				person = [name.text for name in actor]
+				image = person[1]
+				name = person[2]
+				role = person[3]
+				try:
+					castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+				except:
+					castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 
 			try:
 				label = client.parseDOM(item2, 'SeriesName')[0]
@@ -497,8 +509,8 @@ class Seasons:
 					thumb = '0'
 				thumb = client.replaceHTMLCodes(thumb)
 				thumb = thumb.encode('utf-8')
-
-				if thumb == '0': thumb = poster
+				if thumb == '0':
+					thumb = poster
 
 				try:
 					seasoncount = counts[season]
@@ -506,7 +518,7 @@ class Seasons:
 					seasoncount = None
 
 				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status,
-											'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb,
+											'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
 											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
 
 			except:
@@ -633,7 +645,7 @@ class Seasons:
 
 				self.list.append({'title': title, 'label': label, 'seasoncount': seasoncount, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
 								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-								'director': director, 'writer': writer, 'cast': cast, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
+								'director': director, 'writer': writer, 'castandart': castandart, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
 								'fanart': fanart, 'thumb': thumb, 'unaired': unaired, 'episodeIDS': episodeIDS})
 			except:
 				pass
@@ -968,8 +980,9 @@ class Seasons:
 
 				if 'episodeIDS' in i:
 					item.setUniqueIDs(i['episodeIDS'])
-				if 'cast' in i:
-					item.setCast(i['cast'])
+
+				if 'castandart' in i:
+					item.setCast(i['castandart'])
 
 				# if fanart != '0' and fanart is not None:
 					# item.setProperty('Fanart_Image', fanart)
