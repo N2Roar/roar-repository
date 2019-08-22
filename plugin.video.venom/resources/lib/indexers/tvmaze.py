@@ -224,7 +224,7 @@ class tvshows:
 
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
@@ -345,8 +345,8 @@ class tvshows:
 				try:
 					if self.tvdb_key == '' or tvdb == '0':
 						raise Exception()
-					url = self.tvdb_info_link % tvdb
-					item3 = client.request(url, timeout='20', error=True)
+					url = self.tvdb_info_link % (tvdb, self.lang)
+					item3 = client.request(url, timeout='10', error=True)
 				except:
 					item3 = None
 
@@ -379,14 +379,6 @@ class tvshows:
 					except:
 						fanart = '0'
 
-					# if cast == '0':
-						# try:
-							# cast = client.parseDOM(item3, 'Actors')[0]
-							# cast = [x for x in cast.split('|') if x != '']
-							# cast = [(x.encode('utf-8'), '') for x in cast]
-						# except:
-							# cast = '0'
-
 					try:
 						mpaa = client.parseDOM(item3, 'ContentRating')[0]
 					except: mpaa = 'NR'
@@ -412,18 +404,22 @@ class tvshows:
 
 				if next == '0':
 					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart,
-							'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
-							'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
+					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
+							'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
+							'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
+							'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
+							'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
 
 					meta = {}
 					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
 				else:
 					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart,
-							'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
-							'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
+							'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
+							'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
+							'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
+							'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 					meta = {}
 					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}

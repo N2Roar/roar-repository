@@ -1224,7 +1224,6 @@ class Movies:
 				item = control.item(label=labelProgress)
 
 				if 'castandart' in i:
-					# meta.update({'cast': '0'})
 					item.setCast(i['castandart'])
 
 				# if fanart != '0' and fanart is not None:

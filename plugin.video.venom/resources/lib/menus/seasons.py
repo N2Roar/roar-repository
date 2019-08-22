@@ -444,7 +444,6 @@ class Seasons:
 			import xml.etree.ElementTree as ET
 			tree = ET.ElementTree(ET.fromstring(actors))
 			root = tree.getroot()
-
 			castandart = []
 			for actor in root.iter('Actor'):
 				person = [name.text for name in actor]
@@ -517,9 +516,11 @@ class Seasons:
 				except:
 					seasoncount = None
 
-				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status,
-											'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
-											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
+				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year,
+								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
+								'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
+								'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
+								'thumb': thumb, 'unaired': unaired})
 
 			except:
 				pass

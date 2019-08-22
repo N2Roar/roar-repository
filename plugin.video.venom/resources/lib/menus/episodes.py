@@ -62,9 +62,11 @@ class Episodes:
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes?limit=100'
 		self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
 		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[29]/60/'
+
 		self.tvmaze_link = 'http://api.tvmaze.com'
 		self.added_link = 'http://api.tvmaze.com/schedule'
 		self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
+		# self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s&embed=cast'
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
@@ -130,9 +132,9 @@ class Episodes:
 			if attribute > 0:
 				if attribute == 1:
 					try:
-						self.list = sorted(self.list, key=lambda k: k['tvshowtitle'].lower(), reverse=reverse)
+						# self.list = sorted(self.list, key=lambda k: k['tvshowtitle'].lower(), reverse=reverse)
+						self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['tvshowtitle'].lower()), reverse=reverse)
 					except:
-						# self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse=reverse)
 						self.list = sorted(self.list, key=lambda k: k['title'].lower(), reverse=reverse)
 				elif attribute == 2:
 					self.list = sorted(self.list, key=lambda k: float(k['rating']), reverse=reverse)
@@ -316,7 +318,8 @@ class Episodes:
 				self.list.append({'name': name, 'url': url, 'image': 'calendar.png', 'icon': 'DefaultYear.png', 'action': 'calendar'})
 			except:
 				pass
-		if idx is True: self.addDirectory(self.list)
+		if idx is True:
+			self.addDirectory(self.list)
 		return self.list
 
 
@@ -788,6 +791,29 @@ class Episodes:
 				writer = [x for x in writer.split('|') if x != '']
 				writer = ' / '.join(writer)
 				writer = client.replaceHTMLCodes(writer)
+
+			# try:
+				# director = client.parseDOM(item, 'Director')[0]
+			# except:
+				# director = ''
+			# director = [x for x in director.split('|') if x != '']
+			# director = ' / '.join(director)
+			# if director == '':
+				# director = '0'
+			# director = client.replaceHTMLCodes(director)
+			# director = director.encode('utf-8')
+
+			# try:
+				# writer = client.parseDOM(item, 'Writer')[0]
+			# except:
+				# writer = ''
+			# writer = [x for x in writer.split('|') if x != '']
+			# writer = ' / '.join(writer)
+			# if writer == '':
+				# writer = '0'
+			# writer = client.replaceHTMLCodes(writer)
+			# writer = writer.encode('utf-8')
+
 
 				import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
@@ -1272,9 +1298,10 @@ class Episodes:
 				except:
 					plot = '0'
 
-				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear,
-								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
-								'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
+				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle,
+							'tvshowyear': tvshowyear, 'premiered': premiered, 'status': status, 'studio': studio,
+							'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb,
+							'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
 				if 'airday' in item and item['airday'] is not None and item['airday'] != '':
 					values['airday'] = item['airday']

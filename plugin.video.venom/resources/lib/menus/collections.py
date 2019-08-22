@@ -1238,7 +1238,6 @@ class Collections:
 				item = control.item(label=label)
 
 				if 'castandart' in i:
-					# meta.update({'cast': '0'})
 					item.setCast(i['castandart'])
 
 				# if fanart != '0' and not fanart is None:

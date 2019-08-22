@@ -285,7 +285,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.1.6" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.1.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -322,10 +322,13 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.6 - Aug 17, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed typo from last update effecting
-    Trakt lists due to new added actor profile
-    pics.[/I]
+[B][COLOR red]Update - v3.1.7 - Aug 18, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Finished actor profile pics for TVShows,
+    Seasons, and Episodes.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed sorting of some MyTVShows lists not
+    filter for "The, "An", and "A".[/I]
+[COLOR yellow]--[/COLOR][I] Added Re-Scrape option to Context Menu
+    to bypass cached links.[/I]
 		</news>
 	</extension>
 

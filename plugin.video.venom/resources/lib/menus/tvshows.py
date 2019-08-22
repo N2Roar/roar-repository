@@ -4,11 +4,11 @@
 	Venom Add-on
 '''
 
-import os, sys, re
-import json, urllib, urlparse, datetime
+import os, sys, re, json
+import urllib, urlparse
+import datetime
 
 from resources.lib.modules import trakt
-# from resources.lib.modules import cleantitle
 from resources.lib.modules import cleangenre
 from resources.lib.modules import control
 from resources.lib.modules import client
@@ -17,7 +17,6 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-# from resources.lib.modules import utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -50,8 +49,7 @@ class TVshows:
 
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
-		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
@@ -279,7 +277,8 @@ class TVshows:
 			if attribute > 0:
 				if attribute == 1:
 					try:
-						self.list = sorted(self.list, key = lambda k: k['tvshowtitle'].lower(), reverse = reverse)
+						# self.list = sorted(self.list, key = lambda k: k['tvshowtitle'].lower(), reverse = reverse)
+						self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['tvshowtitle'].lower()), reverse=reverse)
 					except:
 						self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
 				elif attribute == 2:
@@ -825,15 +824,15 @@ class TVshows:
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
-				try:
-					cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-				except:
-					cast = '0'
-				cast = client.replaceHTMLCodes(cast)
-				cast = cast.encode('utf-8')
-				cast = client.parseDOM(cast, 'a')
-				if cast == []:
-					cast = '0'
+				# try:
+					# cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
+				# except:
+					# cast = '0'
+				# cast = client.replaceHTMLCodes(cast)
+				# cast = cast.encode('utf-8')
+				# cast = client.parseDOM(cast, 'a')
+				# if cast == []:
+					# cast = '0'
 
 				plot = '0'
 				try:
@@ -850,8 +849,9 @@ class TVshows:
 				plot = client.replaceHTMLCodes(plot)
 				plot = plot.encode('utf-8')
 
-				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-									'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration,
+							'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0',
+							'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
 			except:
 				pass
 		return list
@@ -1036,8 +1036,9 @@ class TVshows:
 			if tvdb == '0' or tvdb is None:
 				raise Exception()
 
-			url = self.tvdb_info_link % tvdb
+			url = self.tvdb_info_link % (tvdb, self.lang)
 			item = client.request(url, timeout='10', error = True)
+
 			if item is None:
 				raise Exception()
 
@@ -1130,22 +1131,23 @@ class TVshows:
 			else:
 				mpaa = self.list[i]['mpaa']
 
-			if 'castandart' not in self.list[i]:
-				castandart = '0'
-				try:
-					cast = client.parseDOM(item, 'Actors')[0]
-				except:
-					cast = ''
-				cast = [x for x in cast.split('|') if x != '']
-				try:
-					cast = [(x.encode('utf-8'), '') for x in cast]
-				except:
-					cast = []
-				if cast == []:
-					cast = '0'
-			else:
-				cast = '0'
-				castandart = self.list[i]['castandart']
+			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == '0':
+				url2 = self.tvdb_info_link % (tvdb, 'actors')
+				actors = client.request(url2, timeout='10', error=True)
+				castandart = []
+				if actors is not None:
+					import xml.etree.ElementTree as ET
+					tree = ET.ElementTree(ET.fromstring(actors))
+					root = tree.getroot()
+					for actor in root.iter('Actor'):
+						person = [name.text for name in actor]
+						image = person[1]
+						name = person[2]
+						role = person[3]
+						try:
+							castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						except:
+							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 
 			try:
 				plot = client.parseDOM(item, 'Overview')[0]
@@ -1155,6 +1157,15 @@ class TVshows:
 				plot = '0'
 			plot = client.replaceHTMLCodes(plot)
 			plot = plot.encode('utf-8')
+
+			try:
+				status = client.parseDOM(item, 'Status')[0]
+			except:
+				status = ''
+			if status == '':
+				status = 'Ended'
+			status = client.replaceHTMLCodes(status)
+			status = status.encode('utf-8')
 
 			if 'poster' not in self.list[i] or self.list[i]['poster'] == '0':
 				try:
@@ -1195,10 +1206,12 @@ class TVshows:
 			else:
 				fanart = self.list[i]['fanart']
 
-			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'premiered': premiered, 'studio': studio,
-						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'castandart': castandart, 'plot': plot,
-						'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0',
-						'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False}
+			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
+					'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
+					'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot,
+					'status': status, 'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner,
+					'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0',
+					'clearart': '0', 'landscape': fanart, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
@@ -1275,7 +1288,8 @@ class TVshows:
 				# meta.update({'tmdb_id': tmdb})
 				meta.update({'tvdb_id': tvdb})
 				meta.update({'mediatype': 'tvshow'})
-				meta.update({'tvshowtitle': systitle})
+				# meta.update({'tvshowtitle': systitle})
+				meta.update({'tvshowtitle': label})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
 				try:
