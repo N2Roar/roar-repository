@@ -172,7 +172,7 @@ msgid "IMDb"
 msgstr ""
 
 msgctxt "#32035"
-msgid ""
+msgid "Remove Duplicate Sources"
 msgstr ""
 
 msgctxt "#32036"
@@ -312,7 +312,7 @@ msgid "Unwatched in Trakt"
 msgstr ""
 
 msgctxt "#32070"
-msgid "[COLOR = yellowgreen]Trakt Manager[/COLOR]"
+msgid "[COLOR yellowgreen]Trakt Manager[/COLOR]"
 msgstr ""
 
 msgctxt "#32071"
@@ -492,7 +492,7 @@ msgid "SD Hosters in Auto Play"
 msgstr ""
 
 msgctxt "#32341"
-msgid "Exclude Hosters with captchas"
+msgid "Include Hosters with captchas"
 msgstr ""
 
 msgctxt "#32342"
@@ -580,7 +580,7 @@ msgid "[B]SETTINGS[/B] : Navigation"
 msgstr ""
 
 msgctxt "#32363"
-msgid "HEVC"
+msgid "Include HEVC"
 msgstr ""
 
 msgctxt "#32364"
@@ -752,7 +752,7 @@ msgid "%s seconds"
 msgstr ""
 
 msgctxt "#32406"
-msgid "Remaining providers: %s"
+msgid "[COLOR cyan]Remaining providers:[/COLOR] %s"
 msgstr ""
 
 msgctxt "#32407"
@@ -1308,7 +1308,7 @@ msgid "Adding to library..."
 msgstr ""
 
 msgctxt "#32553"
-msgid "Updating TV shows..."
+msgid "Updating TV Shows In Local Library..."
 msgstr ""
 
 msgctxt "#32554"
@@ -1408,43 +1408,43 @@ msgid "Debrid Source Identifier Color"
 msgstr ""
 
 msgctxt "#32589"
-msgid "[COLOR=blue]Blue[/COLOR]"
+msgid "[COLOR blue]Blue[/COLOR]"
 msgstr ""
 
 msgctxt "#32590"
-msgid "[COLOR=red]Red[/COLOR]"
+msgid "[COLOR red]Red[/COLOR]"
 msgstr ""
 
 msgctxt "#32591"
-msgid "[COLOR=yellow]Yellow[/COLOR]"
+msgid "[COLOR yellow]Yellow[/COLOR]"
 msgstr ""
 
 msgctxt "#32592"
-msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
+msgid "[COLOR deeppink]Deep Pink[/COLOR]"
 msgstr ""
 
 msgctxt "#32593"
-msgid "[COLOR=cyan]Cyan[/COLOR]"
+msgid "[COLOR cyan]Cyan[/COLOR]"
 msgstr ""
 
 msgctxt "#32594"
-msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
+msgid "[COLOR lawngreen]Lawn Green[/COLOR]"
 msgstr ""
 
 msgctxt "#32595"
-msgid "[COLOR=gold]Gold[/COLOR]"
+msgid "[COLOR gold]Gold[/COLOR]"
 msgstr ""
 
 msgctxt "#32596"
-msgid "[COLOR=magenta]Magenta[/COLOR]"
+msgid "[COLOR magenta]Magenta[/COLOR]"
 msgstr ""
 
 msgctxt "#32597"
-msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
+msgid "[COLOR yellowgreen]Yellow Green[/COLOR]"
 msgstr ""
 
 msgctxt "#32598"
-msgid "No Color"
+msgid "[COLOR nocolor]No Color[/COLOR]"
 msgstr ""
 
 msgctxt "#32599"
@@ -1476,11 +1476,11 @@ msgid "Click to clear search history"
 msgstr ""
 
 msgctxt "#32606"
-msgid "[COLOR=lime]Paid[/COLOR]"
+msgid "[COLOR %s]Paid[/COLOR]"
 msgstr ""
 
 msgctxt "#32607"
-msgid "[COLOR=red]Free[/COLOR]"
+msgid "[COLOR %s]Free[/COLOR]"
 msgstr ""
 
 msgctxt "#32608"
@@ -1492,27 +1492,27 @@ msgid "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32610"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]All [/COLOR]Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]All [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32611"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Providers [/COLOR]Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]Providers [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32612"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Metadata [/COLOR]Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]Metadata [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32613"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Cache [/COLOR]..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]Cache [/COLOR]..."
 msgstr ""
 
 msgctxt "#32614"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Search[/COLOR] Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]Search[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32615"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Bookmarks[/COLOR] Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR yellow]Bookmarks[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32616"
@@ -1708,31 +1708,40 @@ msgid "Check Host for Valid URL"
 msgstr ""
 
 msgctxt "#32666"
-msgid ""
+msgid "[COLOR skyblue]Sky Blue[/COLOR]"
 msgstr ""
 
 msgctxt "#32667"
-msgid ""
+msgid "[COLOR lime]Lime[/COLOR]"
 msgstr ""
 
 msgctxt "#32668"
-msgid ""
+msgid "[COLOR limegreen]Lime Green[/COLOR]"
 msgstr ""
 
 msgctxt "#32669"
-msgid ""
+msgid "[COLOR deepskyblue]Deep Sky Blue[/COLOR]"
 msgstr ""
 
 msgctxt "#32670"
+msgid "[COLOR white]White[/COLOR]"
+msgstr ""
+
+msgctxt "#32671"
+msgid "[COLOR whitesmoke]White Smoke[/COLOR]"
+msgstr ""
+
+msgctxt "#32672"
 msgid ""
 msgstr ""
 
+msgctxt "#32673"
+msgid ""
+msgstr ""
 
-
-
-
-
-
+msgctxt "#32674"
+msgid ""
+msgstr ""
 
 
 
@@ -2017,6 +2026,27 @@ msgctxt "#33499"
 msgid ""
 msgstr ""
 
+msgctxt "#33500"
+msgid ""
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 msgctxt "#35500"
 msgid "Watch"
 msgstr ""
@@ -2278,43 +2308,43 @@ msgid "Default"
 msgstr ""
 
 msgctxt "#33565"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33566"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33567"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33568"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33569"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33570"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33571"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33572"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33573"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33574"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33575"

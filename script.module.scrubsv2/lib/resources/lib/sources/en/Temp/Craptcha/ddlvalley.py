@@ -17,8 +17,8 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['ddlvalley.unblocked.lc', 'ddlvalley.me'] # Old ddlvalley.cool
-        self.base_link = 'https://ddlvalley.unblocked.lc'
-        self.search_link = 'search/%s/'
+        self.base_link = 'https://ddlvalley.unblocked.dk'
+        self.search_link = '/search/%s/'
         self.scraper = cfscrape.create_scraper()
 
 

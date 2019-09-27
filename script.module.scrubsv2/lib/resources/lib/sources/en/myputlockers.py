@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urlparse,urllib,base64
-from resources.lib.modules import cleantitle,client,cache,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import cache
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -25,7 +28,7 @@ class source:
             r = [(i[0][0], i[1][0], i[2][0]) for i in r if (cleantitle.get(i[2][0]) == cleantitle.get(title) and i[1][0] == year)]
             url = r[0][0]
             return url
-        except Exception:
+        except:
             return
 
 
@@ -104,8 +107,8 @@ class source:
                     except:
                         pass
             return sources
-        except Exception:
-            return
+        except:
+            return sources
 
 
     def resolve(self, url):

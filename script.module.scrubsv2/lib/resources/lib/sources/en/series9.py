@@ -1,18 +1,21 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import cleantitle,client,directstream
+import re,requests,urllib,urlparse
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import getSum
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
+        self.language = ['en']  # Removed  seriesonline.io  series9.co  series9.io
         self.domains = ['series9.to']
-        self.base_link = 'https://series9.to'
+        self.base_link = 'https://www4.series9.to'
         self.search_link = '/movie/search/%s'
-# Removed  seriesonline.io  series9.co  series9.io
 
 
     def matchAlias(self, title, aliases):
@@ -101,6 +104,7 @@ class source:
             sources = []
             if url == None:
                 return sources
+            hostDict = hostDict + hostprDict
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
             aliases = eval(data['aliases'])
@@ -125,32 +129,40 @@ class source:
             else:
                 links = client.parseDOM(r, 'a', ret='player-data')
             for link in links:
-                if '123movieshd' in link or 'seriesonline' in link:
+                link = "https:" + link if not link.startswith('http') else link
+                if 'vidcloud' in link:
+                    r = client.request(link, headers=headers, timeout='10')
+                    match = getSum.findSum(r)
+                    for url in match:
+                        url = "https:" + url if not url.startswith('http') else url
+                        url = requests.get(url).url if 'api.vidnode' in url else url
+                        valid, host = source_utils.is_host_valid(url, hostDict)
+                        if valid:
+                            quality, info = source_utils.get_release_quality(url, url)
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                elif '123movieshd' in link or 'seriesonline' in link:
                     r = client.request(link, headers=headers, timeout='10')
                     r = re.findall('(https:.*?redirector.*?)[\'\"]', r)
                     for i in r:
-                        try:
-                            sources.append({'source': 'gvideo', 'quality': directstream.googletag(i)[0]['quality'], 'language': 'en', 'url': i, 'direct': True, 'debridonly': False})
-                        except:
-                            pass
+                        sources.append({'source': 'gvideo', 'quality': directstream.googletag(i)[0]['quality'], 'language': 'en', 'url': i, 'direct': True, 'debridonly': False})
                 else:
-                    try:
-                        host = re.findall('([\w]+[.][\w]+)$', urlparse.urlparse(link.strip().lower()).netloc)[0]
-                        if not host in hostDict:
-                            raise Exception()
-                        host = client.replaceHTMLCodes(host)
-                        host = host.encode('utf-8')
-                        sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': link, 'direct': False, 'debridonly': False})
-                    except:
-                        pass
+                    valid, host = source_utils.is_host_valid(link, hostDict)
+                    if valid:
+                        quality, info = source_utils.get_release_quality(link, link)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources
 
 
     def resolve(self, url):
-        if "google" in url:
+        if 'google' in url:
             return directstream.googlepass(url)
+        elif 'vidcloud' in url:
+            r = client.request(url)
+            url = re.findall("file: '(.+?)'", r)[0]
+            return url
         else:
             return url
+
 

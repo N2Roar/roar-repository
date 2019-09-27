@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -34,28 +36,25 @@ class source:
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []
-            if url == None: return sources
+            if url == None:
+                return sources
             r = client.request(url)
-            try:
-                match = re.compile('href="(.+?)" rel="noindex\,nofollow">Watch This Link</a>').findall(r)
-                for url in match:
-                    if url == None: return sources
-                    r = client.request(url)
-                    match = re.compile('<a href="(.+?)://(.+?)/(.+?)"><button class="wpb\_button  wpb\_btn\-primary wpb\_regularsize"> Click Here To Play</button> </a>').findall(r)
-                    for http,host,url in match: 
-                        url = '%s://%s/%s' % (http,host,url)
-                        info = source_utils.check_url(url)
-                        quality = source_utils.check_url(url)
-                        valid, host = source_utils.is_host_valid(host, hostDict)
-                        if valid:
-                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
-            except:
-                return
+            match = re.compile('href="(.+?)" rel="noindex\,nofollow">Watch This Link</a>').findall(r)
+            for url in match:
+                r = client.request(url)
+                match = re.compile('<a href="(.+?)://(.+?)/(.+?)"><button class="wpb\_button  wpb\_btn\-primary wpb\_regularsize"> Click Here To Play</button> </a>').findall(r)
+                for http, host, url in match:
+                    url = '%s://%s/%s' % (http, host, url)
+                    valid, host = source_utils.is_host_valid(host, hostDict)
+                    if valid:
+                        quality, info = source_utils.get_release_quality(url, url)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
+            return sources
         except:
-            return
-        return sources
+            return sources
 
 
     def resolve(self, url):
         return url
+
 

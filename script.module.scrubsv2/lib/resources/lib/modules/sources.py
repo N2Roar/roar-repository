@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import re,urllib,urlparse,random,json,sys,time,datetime,xbmc
-from resources.lib.modules import client,cleantitle,control,cache,workers
-from resources.lib.modules import debrid,trakt,tvmaze,source_utils,log_utils
+import re,sys,urllib,urlparse,json
+import time,datetime,random,xbmc
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import cache
+from resources.lib.modules import control
+from resources.lib.modules import debrid
+from resources.lib.modules import log_utils
+from resources.lib.modules import source_utils
+from resources.lib.modules import trakt
+from resources.lib.modules import tvmaze
+from resources.lib.modules import workers
 try:
 	from sqlite3 import dbapi2 as database
 except:
@@ -10,7 +19,7 @@ except:
 try:
 	import resolveurl
 except:
-	pass
+	import urlresolver as resolveurl
 
 
 class sources:
@@ -109,7 +118,6 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)
                 item.setInfo(type='video', infoLabels = control.metadataClean(meta))
-                #item.setInfo(type='video', infoLabels = meta) # old code
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
                 pass
@@ -169,16 +177,12 @@ class sources:
                         raise Exception()
                     w = workers.Thread(self.sourcesResolve, items[i])
                     w.start()
-####
-                    #### Host505 code to test.
                     if items[i].get('source') in self.hostcapDict:
                         offset = 60 * 2
                     elif items[i].get('source').lower() == 'torrent':
                         offset = float('inf')
                     else:
                         offset = 0
-                    #### Uncom hostcapDict bit below if ditchin.
-####
                     #offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
                     m = ''
                     for x in range(3600):
@@ -764,8 +768,7 @@ class sources:
         filter = []
         filter += [i for i in self.sources if i['direct'] == True]
         filter += [i for i in self.sources if i['direct'] == False]
-        self.sources = filter
-###
+        #self.sources = filter
         try: # Dupe Check Code
             if control.setting('remove.dupes') == 'true':
                 self.sources = list(self.uniqueSourcesGen(filter))
@@ -773,7 +776,6 @@ class sources:
                 self.sources = filter
         except:
             self.sources = filter
-###
         filter = []
         for d in debrid.debrid_resolvers:
             valid_hoster = set([i['source'] for i in self.sources])
@@ -993,16 +995,12 @@ class sources:
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
-####
-                    #### Host505 code to test.
                     if items[i].get('source') in self.hostcapDict:
                         offset = 60 * 2
                     elif items[i].get('source').lower() == 'torrent':
                         offset = float('inf')
                     else:
                         offset = 0
-                    #### Uncom hostcapDict bit below if ditchin.
-####
                     m = ''
                     for x in range(3600):
                         try:
@@ -1015,8 +1013,6 @@ class sources:
                         k = control.condVisibility('Window.IsActive(virtualkeyboard)')
                         if k:
                             m += '1'; m = m[-1]
-####
-                        #### Host505 code 
                         if (w.is_alive() == False or x > 30 + offset) and not k:
                             break
                         k = control.condVisibility('Window.IsActive(yesnoDialog)')
@@ -1024,8 +1020,6 @@ class sources:
                             m += '1'; m = m[-1]
                         if (w.is_alive() == False or x > 30 + offset) and not k:
                             break
-                        #### Used to be  (w.is_alive() == False or x > 30)
-####
                         time.sleep(0.5)
                     for x in range(30):
                         try:
@@ -1166,7 +1160,7 @@ class sources:
         self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
         self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se', 'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
         self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
-        self.hostblockDict = ['youtube.com', 'waaw.tv', 'netu.tv', 'movdivx.com', 'divxme.com', 'streamflv.com', 'speedvid.net', 'powvideo.net', 'povvideo.net', 'estream.to']
+        self.hostblockDict = ['youtube.com', 'hqq.tv', 'waaw.tv', 'netu.tv', 'movdivx.com', 'divxme.com', 'divxstage.eu', 'streamflv.com', 'speedvid.net', 'powvideo.net', 'povvideo.net', 'estream.to']
 
 
     def enableAll(self):

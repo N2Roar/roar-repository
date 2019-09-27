@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,json
-from resources.lib.modules import client,debrid,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -19,7 +21,7 @@ class source:
             url = {'imdb': imdb, 'title': title, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -28,7 +30,7 @@ class source:
             url = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -41,7 +43,7 @@ class source:
             url['title'], url['premiered'], url['season'], url['episode'] = title, premiered, season, episode
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -79,7 +81,7 @@ class source:
                     continue
                 sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
             return sources
-        except BaseException:
+        except:
             return sources
 
 

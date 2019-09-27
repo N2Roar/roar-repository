@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re 
-from resources.lib.modules import client,cleantitle
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
 
 
 class source:
@@ -13,7 +14,6 @@ class source:
         self.base_link = 'http://www.bnwmovies.com'
         self.search_link = '%s/search?q=bnwmovies.com+%s+%s'
         self.goog = 'https://www.google.co.uk'
-        # /search/
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -53,4 +53,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

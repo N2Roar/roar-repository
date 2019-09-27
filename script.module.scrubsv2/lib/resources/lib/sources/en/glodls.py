@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse
-from resources.lib.modules import cache,cleantitle,debrid,source_utils
-from resources.lib.modules import client2 as client
-
+from resources.lib.modules import cache
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
+#from resources.lib.modules import client2 as client
+from resources.lib.modules import client
 
 class source:
     def __init__(self):

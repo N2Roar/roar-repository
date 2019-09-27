@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-02-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Rewrote to be a little cleaner and get all the sources.
-## forgot which spots for fembed so replace is on both lol
 
 import re,base64
-from resources.lib.modules import client,cleantitle,tvmaze
-from resources.lib.modules import source_utils,cfscrape
+from resources.lib.modules import client
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
+from resources.lib.modules import tvmaze
 
 
 class source:
@@ -67,7 +69,6 @@ class source:
                 except:
                     match = re.compile('<IFRAME SRC="(.+?)"').findall(html)
                 for url in match:
-                    url = url.replace('femoload.xyz', 'fembed.com')
                     valid, host = source_utils.is_host_valid(url, hostDict)
                     if valid:
                         quality, info = source_utils.get_release_quality(url, url)
@@ -81,7 +82,6 @@ class source:
                         except:
                             match = re.compile('<source src="(.+?)"').findall(r)
                         for link in match:
-                            link = link.replace('femoload.xyz', 'fembed.com')
                             valid, host = source_utils.is_host_valid(link, hostDict)
                             if valid:
                                 quality, info = source_utils.get_release_quality(link, link)
@@ -93,4 +93,5 @@ class source:
 
     def resolve(self, url):
                 return url
+
 

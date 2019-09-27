@@ -16,628 +16,740 @@ class movies:
         self.trakt_link = 'https://api.trakt.tv'
         self.imdb_link = 'http://www.imdb.com'
         self.tmdb_key = control.setting('tm.user')
-        self.omdb_key = control.setting('omdb.key')
         if self.tmdb_key == '' or self.tmdb_key == None:
             self.tmdb_key = base64.b64decode('YzhiN2RiNzAxYmFjMGIyNmVkZmNjOTNiMzk4NTg5NzI=')
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-        self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
+        self.omdb_key = control.setting('omdb.key')
+        if self.omdb_key == '' or self.omdb_key == None:
+            self.omdb_key = '74703860'
         self.trakt_user = re.sub('[^a-z0-9]', '-', control.setting('trakt.user').strip().lower())
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tmdb_lang = 'en'
+        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
         self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
         self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.tmdb_lang)
         self.imdb_by_query = 'http://www.omdbapi.com/?t=%s&y=%s&apikey=%s' % ("%s", "%s", self.omdb_key)
         self.imdbinfo = 'http://www.omdbapi.com/?i=%s&plot=full&r=json&apikey=%s' % ("%s", self.omdb_key)
-        #self.imdbinfo = 'http://www.omdbapi.com/?i=%s&plot=short&r=json&apikey=74703860'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         self.search_link = 'https://api.themoviedb.org/3/search/movie?&api_key=%s&query=%s'
         self.tmdb_by_query_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ("%s", self.tmdb_key)
 
-        self.popular_link = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&page=1'
-        self.toprated_link = 'https://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
-        self.featured_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&primary_release_date.gte=date[365]&primary_release_date.lte=date[60]&page=1'
-        self.theaters_link = 'https://api.themoviedb.org/3/movie/now_playing?api_key=%s&page=1'
-        self.premiere_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&first_air_date.gte=%s&first_air_date.lte=%s&page=1' % ('%s', self.year_date, self.today_date)
+        self.popular_link = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&page=1' % self.tmdb_key
+        self.toprated_link = 'https://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1' % self.tmdb_key
+        self.featured_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&primary_release_date.gte=date[365]&primary_release_date.lte=date[60]&page=1' % self.tmdb_key
+        self.theaters_link = 'https://api.themoviedb.org/3/movie/now_playing?api_key=%s&page=1' % self.tmdb_key
+        self.premiere_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&first_air_date.gte=%s&first_air_date.lte=%s&page=1' % (self.tmdb_key, self.year_date, self.today_date)
 
-        self.TmdbListURL = 'https://api.themoviedb.org/3/list/'
-        self.tmdbUserListURL = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ("%s", self.tmdb_key)
+        self.tmdbUserLists_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s' % ("%s", self.tmdb_key)
 
-        self.tmdbjewmovies_link = self.TmdbListURL + '86696?api_key=%s' % (self.tmdb_key)
-        self.tmdbjewtestmovies_link = self.TmdbListURL + '97123?api_key=%s' % (self.tmdb_key)
+        self.tmdbjewmovies_link = self.tmdbUserLists_link % ('86696')
+        self.tmdbjewtestmovies_link = self.tmdbUserLists_link % ('97123')
 
-        self.tmdbdcmovies_link = self.TmdbListURL + '3?api_key=%s' % (self.tmdb_key)
-        self.tmdbdcanimovies_link = self.TmdbListURL + '62764?api_key=%s' % (self.tmdb_key)
-        self.tmdbmarvelmovies_link = self.TmdbListURL + '1?api_key=%s' % (self.tmdb_key)
-        self.tmdbmarvelanimovies_link = self.TmdbListURL + '62905?api_key=%s' % (self.tmdb_key)
-        self.tmdbdisnemovies_link = self.TmdbListURL + '11338?api_key=%s' % (self.tmdb_key)
-        self.tmdbboxsetmovies_link = self.TmdbListURL + '11549?api_key=%s' % (self.tmdb_key)
-        self.tmdbbestpicwin_link = self.TmdbListURL + '11334?api_key=%s' % (self.tmdb_key)
-        self.tmdb420_link = self.TmdbListURL + '13376?api_key=%s' % (self.tmdb_key)
-        self.tmdbanimal_link = self.TmdbListURL + '48131?api_key=%s' % (self.tmdb_key)
-        self.tmdbbased_link = self.TmdbListURL + '13479?api_key=%s' % (self.tmdb_key)
-        self.tmdbbooks_link = self.TmdbListURL + '46382?api_key=%s' % (self.tmdb_key)
-        self.tmdbbrucelee_link = self.TmdbListURL + '13295?api_key=%s' % (self.tmdb_key)
-        self.tmdbchi_link = self.TmdbListURL + '36970?api_key=%s' % (self.tmdb_key)
-        self.tmdbchristmas_link = self.TmdbListURL + '13378?api_key=%s' % (self.tmdb_key)
-        self.tmdbcold_link = self.TmdbListURL + '36444?api_key=%s' % (self.tmdb_key)
-        self.tmdbcomed_link = self.TmdbListURL + '47393?api_key=%s' % (self.tmdb_key)
-        self.tmdbconman_link = self.TmdbListURL + '36664?api_key=%s' % (self.tmdb_key)
-        self.tmdbconsp_link = self.TmdbListURL + '36692?api_key=%s' % (self.tmdb_key)
-        self.tmdbdatenight_link = self.TmdbListURL + '47441?api_key=%s' % (self.tmdb_key)
-        self.tmdbdc_link = self.TmdbListURL + '12725?api_key=%s' % (self.tmdb_key)
-        self.tmdbdisney_link = self.TmdbListURL + '12711?api_key=%s' % (self.tmdb_key)
-        self.tmdbdreamworks_link = self.TmdbListURL + '13475?api_key=%s' % (self.tmdb_key)
-        self.tmdbdrugrel_link = self.TmdbListURL + '36409?api_key=%s' % (self.tmdb_key)
-        self.tmdbeaster_link = self.TmdbListURL + '13381?api_key=%s' % (self.tmdb_key)
-        self.tmdbfast_link = self.TmdbListURL + '38852?api_key=%s' % (self.tmdb_key)
-        self.tmdbfight_link = self.TmdbListURL + '47453?api_key=%s' % (self.tmdb_key)
-        self.tmdbfourth_link = self.TmdbListURL + '13577?api_key=%s' % (self.tmdb_key)
-        self.tmdbgamers_link = self.TmdbListURL + '48216?api_key=%s' % (self.tmdb_key)
-        self.tmdbgangsters_link = self.TmdbListURL + '36407?api_key=%s' % (self.tmdb_key)
-        self.tmdbgwg_link = self.TmdbListURL + '44884?api_key=%s' % (self.tmdb_key)
-        self.tmdbhack_link = self.TmdbListURL + '43444?api_key=%s' % (self.tmdb_key)
-        self.tmdbhalloween_link = self.TmdbListURL + '13383?api_key=%s' % (self.tmdb_key)
-        self.tmdbheist_link = self.TmdbListURL + '47388?api_key=%s' % (self.tmdb_key)
-        self.tmdbhero_link = self.TmdbListURL + '13584?api_key=%s' % (self.tmdb_key)
-        self.tmdbkidz_link = self.TmdbListURL + '13368?api_key=%s' % (self.tmdb_key)
-        self.tmdblego_link = self.TmdbListURL + '13585?api_key=%s' % (self.tmdb_key)
-        self.tmdbmafia_link = self.TmdbListURL + '12710?api_key=%s' % (self.tmdb_key)
-        self.tmdbmarvel_link = self.TmdbListURL + '11332?api_key=%s' % (self.tmdb_key)
-        self.tmdbnewyear_link = self.TmdbListURL + '13379?api_key=%s' % (self.tmdb_key)
-        self.tmdboscars_link = self.TmdbListURL + '28?api_key=%s' % (self.tmdb_key)
-        self.tmdbprincess_link = self.TmdbListURL + '13583?api_key=%s' % (self.tmdb_key)
-        self.tmdbsnatched_link = self.TmdbListURL + '36945?api_key=%s' % (self.tmdb_key)
-        self.tmdbsports_link = self.TmdbListURL + '37061?api_key=%s' % (self.tmdb_key)
-        self.tmdbspotlight_link = self.TmdbListURL + '13375?api_key=%s' % (self.tmdb_key)
-        self.tmdbspy_link = self.TmdbListURL + '36553?api_key=%s' % (self.tmdb_key)
-        self.tmdbstandup_link = self.TmdbListURL + '37533?api_key=%s' % (self.tmdb_key)
-        self.tmdbthanks_link = self.TmdbListURL + '13578?api_key=%s' % (self.tmdb_key)
-        self.tmdbtragedy_link = self.TmdbListURL + '47457?api_key=%s' % (self.tmdb_key)
-        self.tmdbtruestory_link = self.TmdbListURL + '40740?api_key=%s' % (self.tmdb_key)
-        self.tmdbufo_link = self.TmdbListURL + '47454?api_key=%s' % (self.tmdb_key)
-        self.tmdburban_link = self.TmdbListURL + '48235?api_key=%s' % (self.tmdb_key)
-        self.tmdbvalentines_link = self.TmdbListURL + '13576?api_key=%s' % (self.tmdb_key)
-        self.tmdbvigilante_link = self.TmdbListURL + '38386?api_key=%s' % (self.tmdb_key)
-        self.tmdbxmas_link = self.TmdbListURL + '12944?api_key=%s' % (self.tmdb_key)
 
-### Classic
-        self.tmdbclaction_link = self.TmdbListURL + '36478?api_key=%s' % (self.tmdb_key)
-        self.tmdbcladven_link = self.TmdbListURL + '36479?api_key=%s' % (self.tmdb_key)
-        self.tmdbclanim_link = self.TmdbListURL + '36481?api_key=%s' % (self.tmdb_key)
-        self.tmdbclcom_link = self.TmdbListURL + '36482?api_key=%s' % (self.tmdb_key)
-        self.tmdbclcrime_link = self.TmdbListURL + '36483?api_key=%s' % (self.tmdb_key)
-        self.tmdbcldram_link = self.TmdbListURL + '36484?api_key=%s' % (self.tmdb_key)
-        self.tmdbclfam_link = self.TmdbListURL + '36485?api_key=%s' % (self.tmdb_key)
-        self.tmdbfancl_link = self.TmdbListURL + '36486?api_key=%s' % (self.tmdb_key)
-        self.tmdbclhoro_link = self.TmdbListURL + '36487?api_key=%s' % (self.tmdb_key)
-        self.tmdbclmys_link = self.TmdbListURL + '36488?api_key=%s' % (self.tmdb_key)
-        self.tmdbclrom_link = self.TmdbListURL + '36489?api_key=%s' % (self.tmdb_key)
-        self.tmdbclscifi_link = self.TmdbListURL + '36490?api_key=%s' % (self.tmdb_key)
-        self.tmdbclthrill_link = self.TmdbListURL + '36492?api_key=%s' % (self.tmdb_key)
-        self.tmdbwesterns2_link = self.TmdbListURL + '36468?api_key=%s' % (self.tmdb_key)
+    def tmdbUserLists_ActorCollections(self):
+        theUserLists = [
+            ('Adam Sandler', '32777'),
+            ('Al Pacino', '32815'),
+            ('Alan Rickman', '32819'),
+            ('Angelina Jolie', '32821'),
+            ('Anthony Hopkins', '32820'),
+            ('Arnold Schwarzenegger', '32825'),
+            ('Bruce Lee', '13295'),
+            ('Charlize Theron', '32826'),
+            ('Clint Eastwood', '32827'),
+            ('Demi Moore', '32828'),
+            ('Denzel Washington', '32829'),
+            ('Eddie Murphy', '32830'),
+            ('Elvis Presley', '32831'),
+            ('Gene Wilder', '32999'),
+            ('Gerard Butler', '33000'),
+            ('Goldie Hawn', '33023'),
+            ('Jason Statham', '33001'),
+            ('Jean-Claude Van Damme', '33002'),
+            ('Jeffrey Dean Morgan', '33003'),
+            ('John Travolta', '33004'),
+            ('Johnny Depp', '33005'),
+            ('Julia Roberts', '33006'),
+            ('Kevin Costner', '33015'),
+            ('Liam Neeson', '33016'),
+            ('Mel Gibson', '33017'),
+            ('Melissa McCarthy', '33020'),
+            ('Meryl Streep', '33021'),
+            ('Michelle Pfeiffer', '33022'),
+            ('Nicolas Cage', '33024'),
+            ('Nicole Kidman', '33025'),
+            ('Paul Newman', '33026'),
+            ('Reese Witherspoon', '33027'),
+            ('Robert De Niro', '33028'),
+            ('Samuel L Jackson', '33029'),
+            ('Scarlett Johansson', '33031'),
+            ('Sean Connery', '33030'),
+            ('Sharon Stone', '33032'),
+            ('Sigourney Weaver', '33033'),
+            ('Steven Seagal', '33035'),
+            ('Tom Hanks', '33036'),
+            ('Vin Diesel', '33037'),
+            ('Wesley Snipes', '33038'),
+            ('Will Smith', '33039'),
+            ('Winona Ryder', '33040')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
-### More
-        self.tmdbkatsfavs_link = self.TmdbListURL + '35871?api_key=%s' % (self.tmdb_key)
-        self.tmdbwarm_link = self.TmdbListURL + '35876?api_key=%s' % (self.tmdb_key)
-        self.tmdbldmov_link = self.TmdbListURL + '35881?api_key=%s' % (self.tmdb_key)
-        self.tmdbBcfavs_link = self.TmdbListURL + '35679?api_key=%s' % (self.tmdb_key)
-        self.tmdbenforcersfavs_link = self.TmdbListURL + '35873?api_key=%s' % (self.tmdb_key) 
-        self.tmdbstalkerfav_link = self.TmdbListURL + '35869?api_key=%s' % (self.tmdb_key)
-        self.tmdbHorroricons_link = self.TmdbListURL + '35693?api_key=%s' % (self.tmdb_key)
-        self.tmdbMh_link = self.TmdbListURL + '35698?api_key=%s' % (self.tmdb_key)
-        self.tmdbcanada_link = self.TmdbListURL + '35688?api_key=%s' % (self.tmdb_key)
-        self.tmdbparanormal_link = self.TmdbListURL + '35706?api_key=%s' % (self.tmdb_key)
-        self.tmdbanime_link = self.TmdbListURL + '35678?api_key=%s' % (self.tmdb_key)
-        self.tmdbScfinew_link = self.TmdbListURL + '35701?api_key=%s' % (self.tmdb_key)
-        self.tmdbkrests_link = self.TmdbListURL + '35992?api_key=%s' % (self.tmdb_key)
-        self.tmdbleon_link = self.TmdbListURL + '35702?api_key=%s' % (self.tmdb_key)
-        self.tmdbcom1_link = self.TmdbListURL + '37193?api_key=%s' % (self.tmdb_key)
-        self.tmdbxmas_link = self.TmdbListURL + '35870?api_key=%s' % (self.tmdb_key)
-        self.tmdbsuper_link = self.TmdbListURL + '36121?api_key=%s' % (self.tmdb_key)
-        self.tmdbCrushersr_link = self.TmdbListURL + '36084?api_key=%s' % (self.tmdb_key)
-        self.tmdbtoddler_link = self.TmdbListURL + '35684?api_key=%s' % (self.tmdb_key)
-        self.tmdblearning_link = self.TmdbListURL + '35687?api_key=%s' % (self.tmdb_key)
-        self.tmdbteen_link = self.TmdbListURL + '35680?api_key=%s' % (self.tmdb_key)
-        self.tmdbKids_link = self.TmdbListURL + '35682?api_key=%s' % (self.tmdb_key)
-        self.tmdbaddiction_link = self.TmdbListURL + '35709?api_key=%s' % (self.tmdb_key)
-        self.tmdbdbiographies_link = self.TmdbListURL + '35681?api_key=%s' % (self.tmdb_key)
-        self.tmdbother_link = self.TmdbListURL + '36400?api_key=%s' % (self.tmdb_key)
-        self.tmdbmyths_link = self.TmdbListURL + '36402?api_key=%s' % (self.tmdb_key)
-        self.tmdburban_link = self.TmdbListURL + '36401?api_key=%s' % (self.tmdb_key)
-        self.tmdbmental_link = self.TmdbListURL + '36491?api_key=%s' % (self.tmdb_key)
-        self.tmdbkillers_link = self.TmdbListURL + '35700?api_key=%s' % (self.tmdb_key)
-        self.tmdbConspiracies_link = self.TmdbListURL + '36116?api_key=%s' % (self.tmdb_key)
 
-### Popular Collections
-        self.carmovies_link = self.TmdbListURL + '32790?api_key=%s' % (self.tmdb_key)
-        self.xmasmovies_link = self.TmdbListURL + '32770?api_key=%s' % (self.tmdb_key)
-        self.dcmovies_link = self.TmdbListURL + '32799?api_key=%s' % (self.tmdb_key)
-        self.disneymovies_link = self.TmdbListURL + '32800?api_key=%s' % (self.tmdb_key)
-        self.kidsmovies_link = self.TmdbListURL + '32802?api_key=%s' % (self.tmdb_key)
-        self.marvelmovies_link = self.TmdbListURL + '32793?api_key=%s' % (self.tmdb_key)
+    def tmdbUserLists_DCvsMarvel(self):
+        theUserLists = [
+            ('DC Comics Collection', '32799'),
+            ('Marvel Collection', '32793'),
+            ('DC Movies', '12725'),
+            ('Marvel Movies', '11332'),
+            ('DC-Animated Movies', '62764'),
+            ('Marvel Animated Movies', '62905'),
+            ('The DC Comics Universe', '3'),
+            ('The Marvel Universe', '1')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
-### Superhero Collections
-        self.avengers_link = self.TmdbListURL + '33128?api_key=%s' % (self.tmdb_key)
-        self.batman_link = self.TmdbListURL + '33129?api_key=%s' % (self.tmdb_key)
-        self.captainamerica_link = self.TmdbListURL + '33130?api_key=%s' % (self.tmdb_key)
-        self.darkknight_link = self.TmdbListURL + '33132?api_key=%s' % (self.tmdb_key)
-        self.fantasticfour_link = self.TmdbListURL + '33133?api_key=%s' % (self.tmdb_key)
-        self.hulk_link = self.TmdbListURL + '33134?api_key=%s' % (self.tmdb_key)
-        self.ironman_link = self.TmdbListURL + '33135?api_key=%s' % (self.tmdb_key)
-        self.spiderman_link = self.TmdbListURL + '33126?api_key=%s' % (self.tmdb_key)
-        self.superman_link = self.TmdbListURL + '33136?api_key=%s' % (self.tmdb_key)
-        self.xmen_link = self.TmdbListURL + '33137?api_key=%s' % (self.tmdb_key)
 
-### Actor Collections
-        self.adamsandler_link = self.TmdbListURL + '32777?api_key=%s' % (self.tmdb_key)
-        self.alpacino_link = self.TmdbListURL + '32815?api_key=%s' % (self.tmdb_key)
-        self.alanrickman_link = self.TmdbListURL + '32819?api_key=%s' % (self.tmdb_key)
-        self.anthonyhopkins_link = self.TmdbListURL + '32820?api_key=%s' % (self.tmdb_key)
-        self.angelinajolie_link = self.TmdbListURL + '32821?api_key=%s' % (self.tmdb_key)
-        self.arnoldschwarzenegger_link = self.TmdbListURL + '32825?api_key=%s' % (self.tmdb_key)
-        self.charlizetheron_link = self.TmdbListURL + '32826?api_key=%s' % (self.tmdb_key)
-        self.clinteastwood_link = self.TmdbListURL + '32827?api_key=%s' % (self.tmdb_key)
-        self.demimoore_link = self.TmdbListURL + '32828?api_key=%s' % (self.tmdb_key)
-        self.denzelwashington_link = self.TmdbListURL + '32829?api_key=%s' % (self.tmdb_key)
-        self.eddiemurphy_link = self.TmdbListURL + '32830?api_key=%s' % (self.tmdb_key)
-        self.elvispresley_link = self.TmdbListURL + '32831?api_key=%s' % (self.tmdb_key)
-        self.genewilder_link = self.TmdbListURL + '32999?api_key=%s' % (self.tmdb_key)
-        self.gerardbutler_link = self.TmdbListURL + '33000?api_key=%s' % (self.tmdb_key)
-        self.goldiehawn_link = self.TmdbListURL + '33023?api_key=%s' % (self.tmdb_key)
-        self.jasonstatham_link = self.TmdbListURL + '33001?api_key=%s' % (self.tmdb_key)
-        self.jeanclaudevandamme_link = self.TmdbListURL + '33002?api_key=%s' % (self.tmdb_key)
-        self.jeffreydeanmorgan_link = self.TmdbListURL + '33003?api_key=%s' % (self.tmdb_key)
-        self.johntravolta_link = self.TmdbListURL + '33004?api_key=%s' % (self.tmdb_key)
-        self.johnnydepp_link = self.TmdbListURL + '33005?api_key=%s' % (self.tmdb_key)
-        self.juliaroberts_link = self.TmdbListURL + '33006?api_key=%s' % (self.tmdb_key)
-        self.kevincostner_link = self.TmdbListURL + '33015?api_key=%s' % (self.tmdb_key)
-        self.liamneeson_link = self.TmdbListURL + '33016?api_key=%s' % (self.tmdb_key)
-        self.melgibson_link = self.TmdbListURL + '33017?api_key=%s' % (self.tmdb_key)
-        self.melissamccarthy_link = self.TmdbListURL + '33020?api_key=%s' % (self.tmdb_key)
-        self.merylstreep_link = self.TmdbListURL + '33021?api_key=%s' % (self.tmdb_key)
-        self.michellepfeiffer_link = self.TmdbListURL + '33022?api_key=%s' % (self.tmdb_key)
-        self.nicolascage_link = self.TmdbListURL + '33024?api_key=%s' % (self.tmdb_key)
-        self.nicolekidman_link = self.TmdbListURL + '33025?api_key=%s' % (self.tmdb_key)
-        self.paulnewman_link = self.TmdbListURL + '33026?api_key=%s' % (self.tmdb_key)
-        self.reesewitherspoon_link = self.TmdbListURL + '33027?api_key=%s' % (self.tmdb_key)
-        self.robertdeniro_link = self.TmdbListURL + '33028?api_key=%s' % (self.tmdb_key)
-        self.samueljackson_link = self.TmdbListURL + '33029?api_key=%s' % (self.tmdb_key)
-        self.seanconnery_link = self.TmdbListURL + '33030?api_key=%s' % (self.tmdb_key)
-        self.scarlettjohansson_link = self.TmdbListURL + '33031?api_key=%s' % (self.tmdb_key)
-        self.sharonstone_link = self.TmdbListURL + '33032?api_key=%s' % (self.tmdb_key)
-        self.sigourneyweaver_link = self.TmdbListURL + '33033?api_key=%s' % (self.tmdb_key)
-        self.stevenseagal_link = self.TmdbListURL + '33035?api_key=%s' % (self.tmdb_key)
-        self.tomhanks_link = self.TmdbListURL + '33036?api_key=%s' % (self.tmdb_key)
-        self.vindiesel_link = self.TmdbListURL + '33037?api_key=%s' % (self.tmdb_key)
-        self.wesleysnipes_link = self.TmdbListURL + '33038?api_key=%s' % (self.tmdb_key)
-        self.willsmith_link = self.TmdbListURL + '33039?api_key=%s' % (self.tmdb_key)
-        self.winonaryder_link = self.TmdbListURL + '33040?api_key=%s' % (self.tmdb_key)
+    def tmdbUserLists_Holidays(self):
+        theUserLists = [
+            ('4th of July', '13577'),
+            ('Christmas Collection', '32770'),
+            ('Christmas Movies', '12944'),
+            ('Christmas', '13378'),
+            ('Easter', '13381'),
+            ('Halloween Time', '13383'),
+            ('New Years', '13379'),
+            ('Thanksgiving', '13578'),
+            ('Valentines Day', '13576'),
+            ('Xmas Movies', '35870')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
-### Boxset Collections Kids
-        self.onehundredonedalmations_link = self.TmdbListURL + '33182?api_key=%s' % (self.tmdb_key)
-        self.addamsfamily_link = self.TmdbListURL + '33183?api_key=%s' % (self.tmdb_key)
-        self.aladdin_link = self.TmdbListURL + '33184?api_key=%s' % (self.tmdb_key)
-        self.alvinandthechipmunks_link = self.TmdbListURL + '33185?api_key=%s' % (self.tmdb_key)
-        self.atlantis_link = self.TmdbListURL + '33186?api_key=%s' % (self.tmdb_key)
-        self.babe_link = self.TmdbListURL + '33187?api_key=%s' % (self.tmdb_key)
-        self.balto_link = self.TmdbListURL + '33188?api_key=%s' % (self.tmdb_key)
-        self.bambi_link = self.TmdbListURL + '33189?api_key=%s' % (self.tmdb_key)
-        self.beautyandthebeast_link = self.TmdbListURL + '33190?api_key=%s' % (self.tmdb_key)
-        self.beethoven_link = self.TmdbListURL + '33191?api_key=%s' % (self.tmdb_key)
-        self.brotherbear_link = self.TmdbListURL + '33192?api_key=%s' % (self.tmdb_key)
-        self.cars_link = self.TmdbListURL + '33193?api_key=%s' % (self.tmdb_key)
-        self.cinderella_link = self.TmdbListURL + '33194?api_key=%s' % (self.tmdb_key)
-        self.cloudywithachanceofmeatballs_link = self.TmdbListURL + '33195?api_key=%s' % (self.tmdb_key)
-        self.despicableme_link = self.TmdbListURL + '33197?api_key=%s' % (self.tmdb_key)
-        self.findingnemo_link = self.TmdbListURL + '33198?api_key=%s' % (self.tmdb_key)
-        self.foxandthehound_link = self.TmdbListURL + '33199?api_key=%s' % (self.tmdb_key)
-        self.freewilly_link = self.TmdbListURL + '33200?api_key=%s' % (self.tmdb_key)
-        self.ghostbusters_link = self.TmdbListURL + '33201?api_key=%s' % (self.tmdb_key)
-        self.gremlins_link = self.TmdbListURL + '33202?api_key=%s' % (self.tmdb_key)
-        self.happyfeet_link = self.TmdbListURL + '33204?api_key=%s' % (self.tmdb_key)
-        self.harrypotter_link = self.TmdbListURL + '33205?api_key=%s' % (self.tmdb_key)
-        self.homealone_link = self.TmdbListURL + '33206?api_key=%s' % (self.tmdb_key)
-        self.homewardbound_link = self.TmdbListURL + '33207?api_key=%s' % (self.tmdb_key)
-        self.honeyishrunkthekids_link = self.TmdbListURL + '33208?api_key=%s' % (self.tmdb_key)
-        self.hoteltransylvania_link = self.TmdbListURL + '33209?api_key=%s' % (self.tmdb_key)
-        self.howtotrainyourdragon_link = self.TmdbListURL + '33210?api_key=%s' % (self.tmdb_key)
-        self.hunchbackofnotredame_link = self.TmdbListURL + '33211?api_key=%s' % (self.tmdb_key)
-        self.iceage_link = self.TmdbListURL + '33212?api_key=%s' % (self.tmdb_key)
-        self.jurassicpark_link = self.TmdbListURL + '33217?api_key=%s' % (self.tmdb_key)
-        self.kungfupanda_link = self.TmdbListURL + '33218?api_key=%s' % (self.tmdb_key)
-        self.ladyandthetramp_link = self.TmdbListURL + '33219?api_key=%s' % (self.tmdb_key)
-        self.liloandstitch_link = self.TmdbListURL + '33220?api_key=%s' % (self.tmdb_key)
-        self.madagascar_link = self.TmdbListURL + '33221?api_key=%s' % (self.tmdb_key)
-        self.monstersinc_link = self.TmdbListURL + '33222?api_key=%s' % (self.tmdb_key)
-        self.mulan_link = self.TmdbListURL + '33223?api_key=%s' % (self.tmdb_key)
-        self.narnia_link = self.TmdbListURL + '33224?api_key=%s' % (self.tmdb_key)
-        self.newgroove_link = self.TmdbListURL + '33225?api_key=%s' % (self.tmdb_key)
-        self.openseason_link = self.TmdbListURL + '33226?api_key=%s' % (self.tmdb_key)
-        self.planes_link = self.TmdbListURL + '33227?api_key=%s' % (self.tmdb_key)
-        self.pocahontas_link = self.TmdbListURL + '33228?api_key=%s' % (self.tmdb_key)
-        self.problemchild_link = self.TmdbListURL + '33229?api_key=%s' % (self.tmdb_key)
-        self.rio_link = self.TmdbListURL + '33230?api_key=%s' % (self.tmdb_key)
-        self.sammysadventures_link = self.TmdbListURL + '33231?api_key=%s' % (self.tmdb_key)
-        self.scoobydoo_link = self.TmdbListURL + '33232?api_key=%s' % (self.tmdb_key)
-        self.shortcircuit_link = self.TmdbListURL + '33233?api_key=%s' % (self.tmdb_key)
-        self.shrek_link = self.TmdbListURL + '33234?api_key=%s' % (self.tmdb_key)
-        self.spongebobsquarepants_link = self.TmdbListURL + '33235?api_key=%s' % (self.tmdb_key)
-        self.spykids_link = self.TmdbListURL + '33236?api_key=%s' % (self.tmdb_key)
-        self.starwars_link = self.TmdbListURL + '33237?api_key=%s' % (self.tmdb_key)
-        self.stuartlittle_link = self.TmdbListURL + '33238?api_key=%s' % (self.tmdb_key)
-        self.tarzan_link = self.TmdbListURL + '33239?api_key=%s' % (self.tmdb_key)
-        self.teenagemutantninjaturtles_link = self.TmdbListURL + '33240?api_key=%s' % (self.tmdb_key)
-        self.thejunglebook_link = self.TmdbListURL + '33216?api_key=%s' % (self.tmdb_key)
-        self.thekaratekid_link = self.TmdbListURL + '33241?api_key=%s' % (self.tmdb_key)
-        self.thelionking_link = self.TmdbListURL + '33242?api_key=%s' % (self.tmdb_key)
-        self.thelittlemermaid_link = self.TmdbListURL + '33243?api_key=%s' % (self.tmdb_key)
-        self.theneverendingstory_link = self.TmdbListURL + '33248?api_key=%s' % (self.tmdb_key)
-        self.thesmurfs_link = self.TmdbListURL + '33249?api_key=%s' % (self.tmdb_key)
-        self.toothfairy_link = self.TmdbListURL + '33251?api_key=%s' % (self.tmdb_key)
-        self.tinkerbell_link = self.TmdbListURL + '33252?api_key=%s' % (self.tmdb_key)
-        self.tomandjerry_link = self.TmdbListURL + '33253?api_key=%s' % (self.tmdb_key)
-        self.toystory_link = self.TmdbListURL + '33254?api_key=%s' % (self.tmdb_key)
-        self.veggietales_link = self.TmdbListURL + '33255?api_key=%s' % (self.tmdb_key)
-        self.winniethepooh_link = self.TmdbListURL + '33257?api_key=%s' % (self.tmdb_key)
-        self.wizardofoz_link = self.TmdbListURL + '33258?api_key=%s' % (self.tmdb_key)
 
-### BoxSets
-        self.tmdb3nin_link = self.TmdbListURL + '13130?api_key=%s' % (self.tmdb_key)
-        self.tmdbrounds_link = self.TmdbListURL + '13120?api_key=%s' % (self.tmdb_key)
-        self.tmdb28days_link = self.TmdbListURL + '13126?api_key=%s' % (self.tmdb_key)
-        self.tmdbdal_link = self.TmdbListURL + '13113?api_key=%s' % (self.tmdb_key)
-        self.tmdb300_link = self.TmdbListURL + '13132?api_key=%s' % (self.tmdb_key)
-        self.tmdbgoofy_link = self.TmdbListURL + '16489?api_key=%s' % (self.tmdb_key)
-        self.tmdbhaunted_link = self.TmdbListURL + '13137?api_key=%s' % (self.tmdb_key)
-        self.tmdbelmst_link = self.TmdbListURL + '13163?api_key=%s' % (self.tmdb_key)
-        self.tmdbace_link = self.TmdbListURL + '13145?api_key=%s' % (self.tmdb_key)
-        self.tmdbadams_link = self.TmdbListURL + '13148?api_key=%s' % (self.tmdb_key)
-        self.tmdbagent_link = self.TmdbListURL + '16496?api_key=%s' % (self.tmdb_key)
-        self.tmdbaladdin_link = self.TmdbListURL + '13155?api_key=%s' % (self.tmdb_key)
-        self.tmdbalice_link = self.TmdbListURL + '13158?api_key=%s' % (self.tmdb_key)
-        self.tmdbalien_link = self.TmdbListURL + '13161?api_key=%s' % (self.tmdb_key)
-        self.tmdballdogs_link = self.TmdbListURL + '16473?api_key=%s' % (self.tmdb_key)
-        self.tmdbamninja_link = self.TmdbListURL + '13168?api_key=%s' % (self.tmdb_key)
-        self.tmdbampie_link = self.TmdbListURL + '13176?api_key=%s' % (self.tmdb_key)
-        self.tmdbanchor_link = self.TmdbListURL + '13180?api_key=%s' % (self.tmdb_key)
-        self.tmdbaustin_link = self.TmdbListURL + '13193?api_key=%s' % (self.tmdb_key)
-        self.tmdbavengers_link = self.TmdbListURL + '13196?api_key=%s' % (self.tmdb_key)
-        self.tmdbavp_link = self.TmdbListURL + '13199?api_key=%s' % (self.tmdb_key)
-        self.tmdbbabe_link = self.TmdbListURL + '13201?api_key=%s' % (self.tmdb_key)
-        self.tmdbbadass_link = self.TmdbListURL + '13205?api_key=%s' % (self.tmdb_key)
-        self.tmdbbb_link = self.TmdbListURL + '13208?api_key=%s' % (self.tmdb_key)
-        self.tmdbbn_link = self.TmdbListURL + '13210?api_key=%s' % (self.tmdb_key)
-        self.tmdbbalto_link = self.TmdbListURL + '13214?api_key=%s' % (self.tmdb_key)
-        self.tmdbbambi_link = self.TmdbListURL + '13217?api_key=%s' % (self.tmdb_key)
-        self.tmdbbarber_link = self.TmdbListURL + '13220?api_key=%s' % (self.tmdb_key)
-        self.tmdbbatman_link = self.TmdbListURL + '13223?api_key=%s' % (self.tmdb_key)
-        self.tmdbbean_link = self.TmdbListURL + '13225?api_key=%s' % (self.tmdb_key)
-        self.tmdbbeauty_link = self.TmdbListURL + '13229?api_key=%s' % (self.tmdb_key)
-        self.tmdbbeethoven_link = self.TmdbListURL + '13263?api_key=%s' % (self.tmdb_key)
-        self.tmdbbob_link = self.TmdbListURL + '13269?api_key=%s' % (self.tmdb_key)
-        self.tmdbbeverly_link = self.TmdbListURL + '13272?api_key=%s' % (self.tmdb_key)
-        self.tmdbbig_link = self.TmdbListURL + '13274?api_key=%s' % (self.tmdb_key)
-        self.tmdbblood_link = self.TmdbListURL + '13281?api_key=%s' % (self.tmdb_key)
-        self.tmdbboon_link = self.TmdbListURL + '13287?api_key=%s' % (self.tmdb_key)
-        self.tmdbbourne_link = self.TmdbListURL + '13288?api_key=%s' % (self.tmdb_key)
-        self.tmdbbridget_link = self.TmdbListURL + '13289?api_key=%s' % (self.tmdb_key)
-        self.tmdbbrotherbear_link = self.TmdbListURL + '13292?api_key=%s' % (self.tmdb_key)
-        self.tmdbcaptain_link = self.TmdbListURL + '13224?api_key=%s' % (self.tmdb_key)
-        self.tmdbcars_link = self.TmdbListURL + '13244?api_key=%s' % (self.tmdb_key)
-        self.tmdbcasper_link = self.TmdbListURL + '16469?api_key=%s' % (self.tmdb_key)
-        self.tmdbcatsanddogs_link = self.TmdbListURL + '16501?api_key=%s' % (self.tmdb_key)
-        self.tmdbcharlottes_link = self.TmdbListURL + '96168?api_key=%s' % (self.tmdb_key)
-        self.tmdbchilds_link = self.TmdbListURL + '13246?api_key=%s' % (self.tmdb_key)
-        self.tmdbcinderella_link = self.TmdbListURL + '13249?api_key=%s' % (self.tmdb_key)
-        self.tmdbcity_link = self.TmdbListURL + '13253?api_key=%s' % (self.tmdb_key)
-        self.tmdbclerks_link = self.TmdbListURL + '13255?api_key=%s' % (self.tmdb_key)
-        self.tmdbcloudy_link = self.TmdbListURL + '13259?api_key=%s' % (self.tmdb_key)
-        self.tmdbcocoon_link = self.TmdbListURL + '13260?api_key=%s' % (self.tmdb_key)
-        self.tmdbconan_link = self.TmdbListURL + '13262?api_key=%s' % (self.tmdb_key)
-        self.tmdbcrank_link = self.TmdbListURL + '13273?api_key=%s' % (self.tmdb_key)
-        self.tmdbcroc_link = self.TmdbListURL + '13278?api_key=%s' % (self.tmdb_key)
-        self.tmdbcrouching_link = self.TmdbListURL + '13291?api_key=%s' % (self.tmdb_key)
-        self.tmdbcube_link = self.TmdbListURL + '13304?api_key=%s' % (self.tmdb_key)
-        self.tmdbcurious_link = self.TmdbListURL + '16497?api_key=%s' % (self.tmdb_key)
-        self.tmdbdaddy_link = self.TmdbListURL + '16487?api_key=%s' % (self.tmdb_key)
-        self.tmdbdespicable_link = self.TmdbListURL + '13299?api_key=%s' % (self.tmdb_key)
-        self.tmdbdiary_link = self.TmdbListURL + '13300?api_key=%s' % (self.tmdb_key)
-        self.tmdbdie_link = self.TmdbListURL + '13302?api_key=%s' % (self.tmdb_key)
-        self.tmdbdirtyd_link = self.TmdbListURL + '13305?api_key=%s' % (self.tmdb_key)
-        self.tmdbdirtyh_link = self.TmdbListURL + '13307?api_key=%s' % (self.tmdb_key)
-        self.tmdbdivergent_link = self.TmdbListURL + '13311?api_key=%s' % (self.tmdb_key)
-        self.tmdbdolittle_link = self.TmdbListURL + '16505?api_key=%s' % (self.tmdb_key)
-        self.tmdbdolphin_link = self.TmdbListURL + '13312?api_key=%s' % (self.tmdb_key)
-        self.tmdbdragon_link = self.TmdbListURL + '13313?api_key=%s' % (self.tmdb_key)
-        self.tmdbdumb_link = self.TmdbListURL + '13314?api_key=%s' % (self.tmdb_key)
-        self.tmdbevil_link = self.TmdbListURL + '13308?api_key=%s' % (self.tmdb_key)
-        self.tmdbexorcist_link = self.TmdbListURL + '13309?api_key=%s' % (self.tmdb_key)
-        self.tmdbfantasia_link = self.TmdbListURL + '16521?api_key=%s' % (self.tmdb_key)
-        self.tmdbfurious_link = self.TmdbListURL + '13062?api_key=%s' % (self.tmdb_key)
-        self.tmdbferngully_link = self.TmdbListURL + '16522?api_key=%s' % (self.tmdb_key)
-        self.tmdbfinal_link = self.TmdbListURL + '13306?api_key=%s' % (self.tmdb_key)
-        self.tmdbfinding_link = self.TmdbListURL + '16499?api_key=%s' % (self.tmdb_key)
-        self.tmdbfox_link = self.TmdbListURL + '13301?api_key=%s' % (self.tmdb_key)
-        self.tmdbfree_link = self.TmdbListURL + '13298?api_key=%s' % (self.tmdb_key)
-        self.tmdbfriday13_link = self.TmdbListURL + '13296?api_key=%s' % (self.tmdb_key)
-        self.tmdbfriday_link = self.TmdbListURL + '13315?api_key=%s' % (self.tmdb_key)
-        self.tmdbgi_link = self.TmdbListURL + '13293?api_key=%s' % (self.tmdb_key)
-        self.tmdbgarfield_link = self.TmdbListURL + '16520?api_key=%s' % (self.tmdb_key)
-        self.tmdbgreen_link = self.TmdbListURL + '13282?api_key=%s' % (self.tmdb_key)
-        self.tmdbgremlins_link = self.TmdbListURL + '13280?api_key=%s' % (self.tmdb_key)
-        self.tmdbgrown_link = self.TmdbListURL + '13279?api_key=%s' % (self.tmdb_key)
-        self.tmdbgrumpy_link = self.TmdbListURL + '13275?api_key=%s' % (self.tmdb_key)
-        self.tmdbhalloween_link = self.TmdbListURL + '13316?api_key=%s' % (self.tmdb_key)
-        self.tmdbhannibal_link = self.TmdbListURL + '13270?api_key=%s' % (self.tmdb_key)
-        self.tmdbhappy_link = self.TmdbListURL + '13265?api_key=%s' % (self.tmdb_key)
-        self.tmdbharold_link = self.TmdbListURL + '13264?api_key=%s' % (self.tmdb_key)
-        self.tmdbharry_link = self.TmdbListURL + '13261?api_key=%s' % (self.tmdb_key)
-        self.tmdbhell_link = self.TmdbListURL + '13257?api_key=%s' % (self.tmdb_key)
-        self.tmdbherbie_link = self.TmdbListURL + '16524?api_key=%s' % (self.tmdb_key)
-        self.tmdbhighlander_link = self.TmdbListURL + '13256?api_key=%s' % (self.tmdb_key)
-        self.tmdbhollow_link = self.TmdbListURL + '13251?api_key=%s' % (self.tmdb_key)
-        self.tmdbhome_link = self.TmdbListURL + '13250?api_key=%s' % (self.tmdb_key)
-        self.tmdbhomeward_link = self.TmdbListURL + '13248?api_key=%s' % (self.tmdb_key)
-        self.tmdbhoney_link = self.TmdbListURL + '13247?api_key=%s' % (self.tmdb_key)
-        ## Spare list?  self.tmdbhoney_link = self.TmdbListURL + '16471?api_key=%s' % (self.tmdb_key)
-        self.tmdbhoodwink_link = self.TmdbListURL + '16523?api_key=%s' % (self.tmdb_key)
-        self.tmdbhorrible_link = self.TmdbListURL + '13245?api_key=%s' % (self.tmdb_key)
-        self.tmdbhot_link = self.TmdbListURL + '13242?api_key=%s' % (self.tmdb_key)
-        self.tmdbhottub_link = self.TmdbListURL + '13241?api_key=%s' % (self.tmdb_key)
-        self.tmdbhotel_link = self.TmdbListURL + '13240?api_key=%s' % (self.tmdb_key)
-        self.tmdbhow_link = self.TmdbListURL + '13239?api_key=%s' % (self.tmdb_key)
-        self.tmdbhunch_link = self.TmdbListURL + '16472?api_key=%s' % (self.tmdb_key)
-        ## Spare list?  self.tmdbhunch_link = self.TmdbListURL + '13237?api_key=%s' % (self.tmdb_key)
-        self.tmdbhunger_link = self.TmdbListURL + '13236?api_key=%s' % (self.tmdb_key)
-        self.tmdbiceage_link = self.TmdbListURL + '13234?api_key=%s' % (self.tmdb_key)
-        self.tmdbindependence_link = self.TmdbListURL + '13232?api_key=%s' % (self.tmdb_key)
-        self.tmdbindiana_link = self.TmdbListURL + '13231?api_key=%s' % (self.tmdb_key)
-        self.tmdbinfernal_link = self.TmdbListURL + '13230?api_key=%s' % (self.tmdb_key)
-        self.tmdbinsidious_link = self.TmdbListURL + '13228?api_key=%s' % (self.tmdb_key)
-        self.tmdbinspector_link = self.TmdbListURL + '16492?api_key=%s' % (self.tmdb_key)
-        self.tmdbipman_link = self.TmdbListURL + '13227?api_key=%s' % (self.tmdb_key)
-        self.tmdbironfists_link = self.TmdbListURL + '13226?api_key=%s' % (self.tmdb_key)
-        self.tmdbjackass_link = self.TmdbListURL + '13222?api_key=%s' % (self.tmdb_key)
-        self.tmdbjames_link = self.TmdbListURL + '13221?api_key=%s' % (self.tmdb_key)
-        self.tmdbjaws_link = self.TmdbListURL + '13219?api_key=%s' % (self.tmdb_key)
-        self.tmdbjohnny_link = self.TmdbListURL + '13218?api_key=%s' % (self.tmdb_key)
-        self.tmdbjourney_link = self.TmdbListURL + '13216?api_key=%s' % (self.tmdb_key)
-        self.tmdbdredd_link = self.TmdbListURL + '13215?api_key=%s' % (self.tmdb_key)
-        self.tmdbjump_link = self.TmdbListURL + '13213?api_key=%s' % (self.tmdb_key)
-        self.tmdbjurassic_link = self.TmdbListURL + '13211?api_key=%s' % (self.tmdb_key)
-        self.tmdbjusticeleague_link = self.TmdbListURL + '16491?api_key=%s' % (self.tmdb_key)
-        self.tmdbkick_link = self.TmdbListURL + '13207?api_key=%s' % (self.tmdb_key)
-        self.tmdbkickboxer_link = self.TmdbListURL + '13206?api_key=%s' % (self.tmdb_key)
-        self.tmdbkill_link = self.TmdbListURL + '13203?api_key=%s' % (self.tmdb_key)
-        self.tmdbkung_link = self.TmdbListURL + '13202?api_key=%s' % (self.tmdb_key)
-        self.tmdblady_link = self.TmdbListURL + '13200?api_key=%s' % (self.tmdb_key)
-        self.tmdblast_link = self.TmdbListURL + '13198?api_key=%s' % (self.tmdb_key)
-        self.tmdblegally_link = self.TmdbListURL + '13197?api_key=%s' % (self.tmdb_key)
-        self.tmdblegostar_link = self.TmdbListURL + '16482?api_key=%s' % (self.tmdb_key)
-        self.tmdblethal_link = self.TmdbListURL + '13195?api_key=%s' % (self.tmdb_key)
-        self.tmdblikemike_link = self.TmdbListURL + '16486?api_key=%s' % (self.tmdb_key)
-        self.tmdblilo_link = self.TmdbListURL + '16500?api_key=%s' % (self.tmdb_key)
-        self.tmdblookwho_link = self.TmdbListURL + '13191?api_key=%s' % (self.tmdb_key)
-        self.tmdblord_link = self.TmdbListURL + '13190?api_key=%s' % (self.tmdb_key)
-        self.tmdbmachete_link = self.TmdbListURL + '13189?api_key=%s' % (self.tmdb_key)
-        self.tmdbmadmax_link = self.TmdbListURL + '13188?api_key=%s' % (self.tmdb_key)
-        self.tmdbmadagascar_link = self.TmdbListURL + '13187?api_key=%s' % (self.tmdb_key)
-        self.tmdbmajor_link = self.TmdbListURL + '13185?api_key=%s' % (self.tmdb_key)
-        self.tmdbmaze_link = self.TmdbListURL + '13182?api_key=%s' % (self.tmdb_key)
-        self.tmdbmeet_link = self.TmdbListURL + '13179?api_key=%s' % (self.tmdb_key)
-        self.tmdbmib_link = self.TmdbListURL + '13178?api_key=%s' % (self.tmdb_key)
-        self.tmdbmission_link = self.TmdbListURL + '13175?api_key=%s' % (self.tmdb_key)
-        self.tmdbmonster_link = self.TmdbListURL + '13174?api_key=%s' % (self.tmdb_key)
-        self.tmdbmonty_link = self.TmdbListURL + '13173?api_key=%s' % (self.tmdb_key)
-        self.tmdbmulan_link = self.TmdbListURL + '13172?api_key=%s' % (self.tmdb_key)
-        self.tmdbmbfgw_link = self.TmdbListURL + '13170?api_key=%s' % (self.tmdb_key)
-        self.tmdbnational_link = self.TmdbListURL + '13167?api_key=%s' % (self.tmdb_key)
-        self.tmdbnever_link = self.TmdbListURL + '13166?api_key=%s' % (self.tmdb_key)
-        self.tmdbnewgroove_link = self.TmdbListURL + '13164?api_key=%s' % (self.tmdb_key)
-        self.tmdbnatm_link = self.TmdbListURL + '16483?api_key=%s' % (self.tmdb_key)
-        self.tmdbnims_link = self.TmdbListURL + '13162?api_key=%s' % (self.tmdb_key)
-        self.tmdbninja_link = self.TmdbListURL + '13160?api_key=%s' % (self.tmdb_key)
-        self.tmdbnysm_link = self.TmdbListURL + '13159?api_key=%s' % (self.tmdb_key)
-        self.tmdbnymph_link = self.TmdbListURL + '13157?api_key=%s' % (self.tmdb_key)
-        self.tmdboceans_link = self.TmdbListURL + '13156?api_key=%s' % (self.tmdb_key)
-        self.tmdbolympus_link = self.TmdbListURL + '13154?api_key=%s' % (self.tmdb_key)
-        self.tmdbonce_link = self.TmdbListURL + '13152?api_key=%s' % (self.tmdb_key)
-        self.tmdbong_link = self.TmdbListURL + '13151?api_key=%s' % (self.tmdb_key)
-        self.tmdbopen_link = self.TmdbListURL + '13150?api_key=%s' % (self.tmdb_key)
-        self.tmdbparanormal_link = self.TmdbListURL + '13149?api_key=%s' % (self.tmdb_key)
-        self.tmdbpercy_link = self.TmdbListURL + '13147?api_key=%s' % (self.tmdb_key)
-        self.tmdbpeter_link = self.TmdbListURL + '16498?api_key=%s' % (self.tmdb_key)
-        self.tmdbpirates_link = self.TmdbListURL + '13146?api_key=%s' % (self.tmdb_key)
-        self.tmdbpitch_link = self.TmdbListURL + '13144?api_key=%s' % (self.tmdb_key)
-        self.tmdbplanes_link = self.TmdbListURL + '13142?api_key=%s' % (self.tmdb_key)
-        self.tmdbplanet_link = self.TmdbListURL + '13141?api_key=%s' % (self.tmdb_key)
-        self.tmdbpoca_link = self.TmdbListURL + '13140?api_key=%s' % (self.tmdb_key)
-        self.tmdbpolice_link = self.TmdbListURL + '13139?api_key=%s' % (self.tmdb_key)
-        self.tmdbpolter_link = self.TmdbListURL + '13138?api_key=%s' % (self.tmdb_key)
-        self.tmdbpowerrangers_link = self.TmdbListURL + '16493?api_key=%s' % (self.tmdb_key)
-        self.tmdbpredator_link = self.TmdbListURL + '13136?api_key=%s' % (self.tmdb_key)
-        self.tmdbproblem_link = self.TmdbListURL + '13135?api_key=%s' % (self.tmdb_key)
-        self.tmdbpsycho_link = self.TmdbListURL + '13133?api_key=%s' % (self.tmdb_key)
-        self.tmdbquarantine_link = self.TmdbListURL + '13128?api_key=%s' % (self.tmdb_key)
-        self.tmdbred_link = self.TmdbListURL + '13124?api_key=%s' % (self.tmdb_key)
-        self.tmdbrambo_link = self.TmdbListURL + '13125?api_key=%s' % (self.tmdb_key)
-        self.tmdbredcliff_link = self.TmdbListURL + '13123?api_key=%s' % (self.tmdb_key)
-        self.tmdbresident_link = self.TmdbListURL + '13122?api_key=%s' % (self.tmdb_key)
-        self.tmdbriddick_link = self.TmdbListURL + '13121?api_key=%s' % (self.tmdb_key)
-        self.tmdbride_link = self.TmdbListURL + '13119?api_key=%s' % (self.tmdb_key)
-        self.tmdbrio_link = self.TmdbListURL + '13117?api_key=%s' % (self.tmdb_key)
-        self.tmdbrise_link = self.TmdbListURL + '13116?api_key=%s' % (self.tmdb_key)
-        self.tmdbrobocop_link = self.TmdbListURL + '13115?api_key=%s' % (self.tmdb_key)
-        self.tmdbrocky_link = self.TmdbListURL + '13114?api_key=%s' % (self.tmdb_key)
-        self.tmdbromancing_link = self.TmdbListURL + '13112?api_key=%s' % (self.tmdb_key)
-        self.tmdbrush_link = self.TmdbListURL + '13111?api_key=%s' % (self.tmdb_key)
-        self.tmdbsammy_link = self.TmdbListURL + '13110?api_key=%s' % (self.tmdb_key)
-        self.tmdbsaw_link = self.TmdbListURL + '13109?api_key=%s' % (self.tmdb_key)
-        self.tmdbscary_link = self.TmdbListURL + '13108?api_key=%s' % (self.tmdb_key)
-        self.tmdbscream_link = self.TmdbListURL + '13107?api_key=%s' % (self.tmdb_key)
-        self.tmdbshanghai_link = self.TmdbListURL + '13106?api_key=%s' % (self.tmdb_key)
-        self.tmdbsherlock_link = self.TmdbListURL + '13105?api_key=%s' % (self.tmdb_key)
-        self.tmdbshort_link = self.TmdbListURL + '13104?api_key=%s' % (self.tmdb_key)
-        self.tmdbshrek_link = self.TmdbListURL + '16470?api_key=%s' % (self.tmdb_key)
-        self.tmdbsin_link = self.TmdbListURL + '13103?api_key=%s' % (self.tmdb_key)
-        self.tmdbsmokey_link = self.TmdbListURL + '13101?api_key=%s' % (self.tmdb_key)
-        self.tmdbspacechimps_link = self.TmdbListURL + '16495?api_key=%s' % (self.tmdb_key)
-        self.tmdbspongebob_link = self.TmdbListURL + '16508?api_key=%s' % (self.tmdb_key)
-        self.tmdbspy_link = self.TmdbListURL + '13099?api_key=%s' % (self.tmdb_key)
-        self.tmdbstartrek_link = self.TmdbListURL + '13098?api_key=%s' % (self.tmdb_key)
-        self.tmdbstarwars_link = self.TmdbListURL + '12741?api_key=%s' % (self.tmdb_key)
-        self.tmdbstarship_link = self.TmdbListURL + '13097?api_key=%s' % (self.tmdb_key)
-        self.tmdbstepup_link = self.TmdbListURL + '13096?api_key=%s' % (self.tmdb_key)
-        self.tmdbstuart_link = self.TmdbListURL + '16488?api_key=%s' % (self.tmdb_key)
-        self.tmdbtaken_link = self.TmdbListURL + '13095?api_key=%s' % (self.tmdb_key)
-        self.tmdbtarzan_link = self.TmdbListURL + '13094?api_key=%s' % (self.tmdb_key)
-        self.tmdbted_link = self.TmdbListURL + '13093?api_key=%s' % (self.tmdb_key)
-        self.tmdbteenw_link = self.TmdbListURL + '13091?api_key=%s' % (self.tmdb_key)
-        self.tmdbteenage_link = self.TmdbListURL + '13092?api_key=%s' % (self.tmdb_key)
-        self.tmdbtexas_link = self.TmdbListURL + '13089?api_key=%s' % (self.tmdb_key)
-        self.tmdbbefore_link = self.TmdbListURL + '13267?api_key=%s' % (self.tmdb_key)
-        self.tmdbbestexotic_link = self.TmdbListURL + '13268?api_key=%s' % (self.tmdb_key)
-        self.tmdbbutterfly_link = self.TmdbListURL + '13297?api_key=%s' % (self.tmdb_key)
-        self.tmdbnarnia_link = self.TmdbListURL + '13283?api_key=%s' % (self.tmdb_key)
-        self.tmdbconjuring_link = self.TmdbListURL + '13266?api_key=%s' % (self.tmdb_key)
-        self.tmdbcrow_link = self.TmdbListURL + '13294?api_key=%s' % (self.tmdb_key)
-        self.tmdbexpendables_link = self.TmdbListURL + '13310?api_key=%s' % (self.tmdb_key)
-        self.tmdbflintstones_link = self.TmdbListURL + '16474?api_key=%s' % (self.tmdb_key)
-        self.tmdbfly_link = self.TmdbListURL + '13303?api_key=%s' % (self.tmdb_key)
-        self.tmdbgodfather_link = self.TmdbListURL + '13285?api_key=%s' % (self.tmdb_key)
-        self.tmdbgrudge_link = self.TmdbListURL + '13277?api_key=%s' % (self.tmdb_key)
-        self.tmdbhangover_link = self.TmdbListURL + '13271?api_key=%s' % (self.tmdb_key)
-        self.tmdbhills_link = self.TmdbListURL + '13254?api_key=%s' % (self.tmdb_key)
-        self.tmdbhobbit_link = self.TmdbListURL + '13252?api_key=%s' % (self.tmdb_key)
-        self.tmdbhuman_link = self.TmdbListURL + '13238?api_key=%s' % (self.tmdb_key)
-        self.tmdbhuntsman_link = self.TmdbListURL + '13235?api_key=%s' % (self.tmdb_key)
-        self.tmdbinbetweeners_link = self.TmdbListURL + '13233?api_key=%s' % (self.tmdb_key)
-        self.tmdbjungle_link = self.TmdbListURL + '13212?api_key=%s' % (self.tmdb_key)
-        self.tmdbkarate_link = self.TmdbListURL + '13209?api_key=%s' % (self.tmdb_key)
-        self.tmdblbt_link = self.TmdbListURL + '16485?api_key=%s' % (self.tmdb_key)
-        self.tmdblion_link = self.TmdbListURL + '13194?api_key=%s' % (self.tmdb_key)
-        self.tmdbmermaid_link = self.TmdbListURL + '13192?api_key=%s' % (self.tmdb_key)
-        self.tmdbnoman_link = self.TmdbListURL + '13184?api_key=%s' % (self.tmdb_key)
-        self.tmdbmatrix_link = self.TmdbListURL + '13183?api_key=%s' % (self.tmdb_key)
-        self.tmdbmechanic_link = self.TmdbListURL + '13181?api_key=%s' % (self.tmdb_key)
-        self.tmdbmighty_link = self.TmdbListURL + '13177?api_key=%s' % (self.tmdb_key)
-        self.tmdbmummy_link = self.TmdbListURL + '13171?api_key=%s' % (self.tmdb_key)
-        self.tmdbmuppets_link = self.TmdbListURL + '16494?api_key=%s' % (self.tmdb_key)
-        self.tmdbnaked_link = self.TmdbListURL + '13169?api_key=%s' % (self.tmdb_key)
-        self.tmdbnes_link = self.TmdbListURL + '13165?api_key=%s' % (self.tmdb_key)
-        self.tmdbnightmare_link = self.TmdbListURL + '13163?api_key=%s' % (self.tmdb_key)
-        self.tmdbomen_link = self.TmdbListURL + '13153?api_key=%s' % (self.tmdb_key)
-        self.tmdbpink_link = self.TmdbListURL + '13320?api_key=%s' % (self.tmdb_key)
-        self.tmdbprotector_link = self.TmdbListURL + '13134?api_key=%s' % (self.tmdb_key)
-        self.tmdbpunisher_link = self.TmdbListURL + '13131?api_key=%s' % (self.tmdb_key)
-        self.tmdbpurge_link = self.TmdbListURL + '13129?api_key=%s' % (self.tmdb_key)
-        self.tmdbraid_link = self.TmdbListURL + '13127?api_key=%s' % (self.tmdb_key)
-        self.tmdbreef_link = self.TmdbListURL + '16490?api_key=%s' % (self.tmdb_key)
-        self.tmdbring_link = self.TmdbListURL + '13118?api_key=%s' % (self.tmdb_key)
-        self.tmdbsandlot_link = self.TmdbListURL + '16502?api_key=%s' % (self.tmdb_key)
-        self.tmdbsmurfs_link = self.TmdbListURL + '13100?api_key=%s' % (self.tmdb_key)
-        self.tmdbtooth_link = self.TmdbListURL + '13084?api_key=%s' % (self.tmdb_key)
-        self.tmdbwholenine_link = self.TmdbListURL + '13071?api_key=%s' % (self.tmdb_key)
-        self.tmdbwoman_link = self.TmdbListURL + '13070?api_key=%s' % (self.tmdb_key)
-        self.tmdbthink_link = self.TmdbListURL + '13088?api_key=%s' % (self.tmdb_key)
-        self.tmdbthomas_link = self.TmdbListURL + '16503?api_key=%s' % (self.tmdb_key)
-        self.tmdbthree_link = self.TmdbListURL + '13087?api_key=%s' % (self.tmdb_key)
-        self.tmdbtinker_link = self.TmdbListURL + '13086?api_key=%s' % (self.tmdb_key)
-        self.tmdbtitans_link = self.TmdbListURL + '13085?api_key=%s' % (self.tmdb_key)
-        self.tmdbtoy_link = self.TmdbListURL + '13060?api_key=%s' % (self.tmdb_key)
-        self.tmdbtransformers_link = self.TmdbListURL + '13083?api_key=%s' % (self.tmdb_key)
-        self.tmdbtransporter_link = self.TmdbListURL + '13082?api_key=%s' % (self.tmdb_key)
-        self.tmdbtremors_link = self.TmdbListURL + '13081?api_key=%s' % (self.tmdb_key)
-        self.tmdbtron_link = self.TmdbListURL + '13080?api_key=%s' % (self.tmdb_key)
-        self.tmdbtwilight_link = self.TmdbListURL + '13079?api_key=%s' % (self.tmdb_key)
-        self.tmdbunder_link = self.TmdbListURL + '13078?api_key=%s' % (self.tmdb_key)
-        self.tmdbunderworld_link = self.TmdbListURL + '13077?api_key=%s' % (self.tmdb_key)
-        self.tmdbundisputed_link = self.TmdbListURL + '13076?api_key=%s' % (self.tmdb_key)
-        self.tmdbuniversal_link = self.TmdbListURL + '13075?api_key=%s' % (self.tmdb_key)
-        self.tmdbvhs_link = self.TmdbListURL + '13074?api_key=%s' % (self.tmdb_key)
-        self.tmdbwallace_link = self.TmdbListURL + '16504?api_key=%s' % (self.tmdb_key)
-        self.tmdbwayne_link = self.TmdbListURL + '13073?api_key=%s' % (self.tmdb_key)
-        self.tmdbweekend_link = self.TmdbListURL + '13072?api_key=%s' % (self.tmdb_key)
-        self.tmdbwrong_link = self.TmdbListURL + '13069?api_key=%s' % (self.tmdb_key)
-        self.tmdbxxx_link = self.TmdbListURL + '13068?api_key=%s' % (self.tmdb_key)
-        self.tmdbyoung_link = self.TmdbListURL + '13067?api_key=%s' % (self.tmdb_key)
-        self.tmdbzoo_link = self.TmdbListURL + '13066?api_key=%s' % (self.tmdb_key)
-        self.tmdbzorro_link = self.TmdbListURL + '13065?api_key=%s' % (self.tmdb_key)
+    def tmdbUserLists_Assortment(self):
+        theUserLists = [
+            ('420', '13376'),
+            ('1980s', '36945'),
+            ('1990s', '37061'),
+            ('Addiction', '35709'),
+            ('Anime', '33416'),
+            ('Animes', '35678'),
+            ('Based on a True Story', '13479'),
+            ('Best Picture Winners - The Academy Awards', '28'),
+            ('Best Picture Winners', '11334'),
+            ('Biographies', '35681'),
+            ('Bonecrushers Favs', '35679'),
+            ('Boxsets Movies', '11549'),
+            ('Canada Loves', '35688'),
+            ('Car Movie Collection', '32790'),
+            ('ChickFlicks', '47441'),
+            ('Classic Action', '36478'),
+            ('Classic Westerns', '36468'),
+            ('Cold War', '36444'),
+            ('Comedy Movies', '37193'),
+            ('Comedy', '47393'),
+            ('Cons', '36664'),
+            ('Conspiracies', '36116'),
+            ('Conspiracy', '36692'),
+            ('Court', '48216'),
+            ('Crusher sr', '36084'),
+            ('Disney Collection', '32800'),
+            ('Disney Movies', '11338'),
+            ('Disney', '12711'),
+            ('Dreamworks', '13475'),
+            ('Drug-Related', '36409'),
+            ('Enforcer Favs', '35873'),
+            ('FBI', '48131'),
+            ('FG The Cars the Star Movies', '38852'),
+            ('Fighting', '47453'),
+            ('Gangster', '36407'),
+            ('Griffs True Stories', '40740'),
+            ('Hackers', '43444'),
+            ('Heist', '47388'),
+            ('Horror Icons 2', '35693'),
+            ('Kats Favs', '35871'),
+            ('Kids Collection', '13368'),
+            ('Kids Movie Collection', '32802'),
+            ('Kids Zone', '35682'),
+            ('Killers', '35700'),
+            ('Krests', '35992'),
+            ('Learning and Nature', '35687'),
+            ('Lego Movie Collection', '13585'),
+            ('Leons Creations', '35702'),
+            ('Lockdown', '35881'),
+            ('Mafia Hits', '12710'),
+            ('Man and Machine', '48235'),
+            ('Mental Health', '36491'),
+            ('Morbidlyhorrorfying', '35698'),
+            ('Myths', '36402'),
+            ('Other Mysteries', '36400'),
+            ('Paranormal', '35706'),
+            ('Politics', '36970'),
+            ('Princesses', '13583'),
+            ('Scifi', '35701'),
+            ('SciFi', '47454'),
+            ('Scottish', '44884'),
+            ('Skateboarding', '46382'),
+            ('Spies', '36553'),
+            ('Spotlight', '13375'),
+            ('Stalker Favs', '35869'),
+            ('Stand Up', '37533'),
+            ('Star Trek', '38386'),
+            ('Super Heroes Section', '36121'),
+            ('Super Heroes', '13584'),
+            ('Teen', '35680'),
+            ('Toddlers', '35684'),
+            ('Urban', '36401'),
+            ('War', '47457'),
+            ('Warhammer Movies', '35876')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
-### More Boxsets
-        self.fortyeighthours_link = self.TmdbListURL + '33259?api_key=%s' % (self.tmdb_key)
-        self.airplane_link = self.TmdbListURL + '33261?api_key=%s' % (self.tmdb_key)
-        self.airport_link = self.TmdbListURL + '33262?api_key=%s' % (self.tmdb_key)
-        self.americangraffiti_link = self.TmdbListURL + '33263?api_key=%s' % (self.tmdb_key)
-        self.anaconda_link = self.TmdbListURL + '33264?api_key=%s' % (self.tmdb_key)
-        self.analyzethis_link = self.TmdbListURL + '33265?api_key=%s' % (self.tmdb_key)
-        self.backtothefuture_link = self.TmdbListURL + '33268?api_key=%s' % (self.tmdb_key)
-        self.badsanta_link = self.TmdbListURL + '33270?api_key=%s' % (self.tmdb_key)
-        self.basicinstinct_link = self.TmdbListURL + '33271?api_key=%s' % (self.tmdb_key)
-        self.bluesbrothers_link = self.TmdbListURL + '33274?api_key=%s' % (self.tmdb_key)
-        self.brucealmighty_link = self.TmdbListURL + '33276?api_key=%s' % (self.tmdb_key)
-        self.caddyshack_link = self.TmdbListURL + '33277?api_key=%s' % (self.tmdb_key)
-        self.cheaperbythedozen_link = self.TmdbListURL + '33278?api_key=%s' % (self.tmdb_key)
-        self.cheechandchong_link = self.TmdbListURL + '33420?api_key=%s' % (self.tmdb_key)
-        self.davincicode_link = self.TmdbListURL + '33283?api_key=%s' % (self.tmdb_key)
-        self.deathwish_link = self.TmdbListURL + '33285?api_key=%s' % (self.tmdb_key)
-        self.deltaforce_link = self.TmdbListURL + '33286?api_key=%s' % (self.tmdb_key)
-        self.escapefromnewyork_link = self.TmdbListURL + '33291?api_key=%s' % (self.tmdb_key)
-        self.everywhichwaybutloose_link = self.TmdbListURL + '33292?api_key=%s' % (self.tmdb_key)
-        self.fatherofthebride_link = self.TmdbListURL + '33295?api_key=%s' % (self.tmdb_key)
-        self.fletch_link = self.TmdbListURL + '33296?api_key=%s' % (self.tmdb_key)
-        self.fugitive_link = self.TmdbListURL + '33299?api_key=%s' % (self.tmdb_key)
-        self.gijoe_link = self.TmdbListURL + '33300?api_key=%s' % (self.tmdb_key)
-        self.getshorty_link = self.TmdbListURL + '33301?api_key=%s' % (self.tmdb_key)
-        self.gettysburg_link = self.TmdbListURL + '33302?api_key=%s' % (self.tmdb_key)
-        self.ghostrider_link = self.TmdbListURL + '33303?api_key=%s' % (self.tmdb_key)
-        self.ghostbusters_link = self.TmdbListURL + '33201?api_key=%s' % (self.tmdb_key)
-        self.godsnotdead_link = self.TmdbListURL + '33304?api_key=%s' % (self.tmdb_key)
-        self.godzilla_link = self.TmdbListURL + '33306?api_key=%s' % (self.tmdb_key)
-        self.gunsofnavarone_link = self.TmdbListURL + '33309?api_key=%s' % (self.tmdb_key)
-        self.hostel_link = self.TmdbListURL + '33315?api_key=%s' % (self.tmdb_key)
-        self.ironeagle_link = self.TmdbListURL + '33320?api_key=%s' % (self.tmdb_key)
-        self.jackreacher_link = self.TmdbListURL + '33321?api_key=%s' % (self.tmdb_key)
-        self.jackryan_link = self.TmdbListURL + '33322?api_key=%s' % (self.tmdb_key)
-        self.jeeperscreepers_link = self.TmdbListURL + '33326?api_key=%s' % (self.tmdb_key)
-        self.johnwick_link = self.TmdbListURL + '33327?api_key=%s' % (self.tmdb_key)
-        self.kingkong_link = self.TmdbListURL + '33331?api_key=%s' % (self.tmdb_key)
-        self.laracroft_link = self.TmdbListURL + '33332?api_key=%s' % (self.tmdb_key)
-        self.magicmike_link = self.TmdbListURL + '33337?api_key=%s' % (self.tmdb_key)
-        self.manfromsnowyriver_link = self.TmdbListURL + '33339?api_key=%s' % (self.tmdb_key)
-        self.mask_link = self.TmdbListURL + '33340?api_key=%s' % (self.tmdb_key)
-        self.misscongeniality_link = self.TmdbListURL + '33346?api_key=%s' % (self.tmdb_key)
-        self.missinginaction_link = self.TmdbListURL + '33347?api_key=%s' % (self.tmdb_key)
-        self.nakedgun_link = self.TmdbListURL + '33349?api_key=%s' % (self.tmdb_key)
-        self.nationallampoon_link = self.TmdbListURL + '33350?api_key=%s' % (self.tmdb_key)
-        self.nationallampoonsvacation_link = self.TmdbListURL + '33351?api_key=%s' % (self.tmdb_key)
-        self.neighbors_link = self.TmdbListURL + '33353?api_key=%s' % (self.tmdb_key)
-        self.nuttyprofessor_link = self.TmdbListURL + '33357?api_key=%s' % (self.tmdb_key)
-        self.oceanseleven_link = self.TmdbListURL + '33358?api_key=%s' % (self.tmdb_key) # ALT dupe maybe ditch if not updated soon.
-        self.oddcouple_link = self.TmdbListURL + '33359?api_key=%s' % (self.tmdb_key)
-        self.ohgod_link = self.TmdbListURL + '33360?api_key=%s' % (self.tmdb_key)
-        self.paulblartmallcop_link = self.TmdbListURL + '33363?api_key=%s' % (self.tmdb_key)
-        self.porkys_link = self.TmdbListURL + '33368?api_key=%s' % (self.tmdb_key)
-        self.revengeofthenerds_link = self.TmdbListURL + '33373?api_key=%s' % (self.tmdb_key)
-        self.santaclause_link = self.TmdbListURL + '33380?api_key=%s' % (self.tmdb_key)
-        self.sexandthecity_link = self.TmdbListURL + '33382?api_key=%s' % (self.tmdb_key)
-        self.shaft_link = self.TmdbListURL + '33383?api_key=%s' % (self.tmdb_key)
-        self.sinister_link = self.TmdbListURL + '33386?api_key=%s' % (self.tmdb_key)
-        self.sisteract_link = self.TmdbListURL + '33387?api_key=%s' % (self.tmdb_key)
-        self.speed_link = self.TmdbListURL + '33389?api_key=%s' % (self.tmdb_key)
-        self.stakeout_link = self.TmdbListURL + '33390?api_key=%s' % (self.tmdb_key)
-        self.taxi_link = self.TmdbListURL + '33394?api_key=%s' % (self.tmdb_key)
-        self.terminator_link = self.TmdbListURL + '33397?api_key=%s' % (self.tmdb_key)
-        self.termsofendearment_link = self.TmdbListURL + '33398?api_key=%s' % (self.tmdb_key)
-        self.thesting_link = self.TmdbListURL + '33392?api_key=%s' % (self.tmdb_key)
-        self.thething_link = self.TmdbListURL + '33400?api_key=%s' % (self.tmdb_key)
-        self.thomascrownaffair_link = self.TmdbListURL + '33401?api_key=%s' % (self.tmdb_key)
-        self.wallstreet_link = self.TmdbListURL + '33405?api_key=%s' % (self.tmdb_key)
-        self.wholenineyards_link = self.TmdbListURL + '33408?api_key=%s' % (self.tmdb_key)
-        self.xfiles_link = self.TmdbListURL + '33409?api_key=%s' % (self.tmdb_key)
+
+    def tmdbUserLists_Collections(self):
+        theUserLists = [
+            ('3 Ninjas', '13130'),
+            ('12 Rounds', '13120'),
+            ('28 Days Later', '13126'),
+            ('48 Hrs', '33259'),
+            ('101 Dalmations', '33182'),
+            ('300', '13132'),
+            ('A Goofy Movie', '16489'),
+            ('A Haunted House', '13137'),
+            ('Ace Ventura', '33260'),
+            ('Agent Cody Banks', '16496'),
+            ('Airplane', '33261'),
+            ('Airport', '33262'),
+            ('Aladdin', '33184'),
+            ('Alice in Wonderland', '13158'),
+            ('Alien', '13161'),
+            ('All Dogs', '16473'),
+            ('Alvin and the Chipmunks', '33185'),
+            ('American Graffiti', '33263'),
+            ('American Ninja', '13168'),
+            ('American Pie', '13176'),
+            ('Anaconda', '33264'),
+            ('Analyze This', '33265'),
+            ('Anchorman', '33266'),
+            ('Atlantis', '33186'),
+            ('Austin Powers', '33267'),
+            ('AVP', '13199'),
+            ('Babe', '33187'),
+            ('Back to the Future', '33268'),
+            ('Bad Ass', '13205'),
+            ('Bad Boys', '33269'),
+            ('Bad Santa', '33270'),
+            ('Balto', '33188'),
+            ('Bambi', '33189'),
+            ('Barbershop', '13220'),
+            ('Basic Instinct', '33271'),
+            ('Batman', '33129'),
+            ('Bean', '13225'),
+            ('Beauty and the Beast', '33190'),
+            ('Beethoven', '33191'),
+            ('Best of the Best', '13269'),
+            ('Beverly Hills Cop', '33272'),
+            ('Big Mommas House', '33273'),
+            ('Bloodsport', '13281'),
+            ('Boondock Saints', '13287'),
+            ('Bourne', '33275'),
+            ('Bridget Jones', '13289'),
+            ('Brother Bear', '33192'),
+            ('Bruce Almighty', '33276'),
+            ('Caddyshack', '33277'),
+            ('Captain America', '33130'),
+            ('Cars', '33193'),
+            ('Casper', '16469'),
+            ('Cats and Dogs', '16501'),
+            ('Charlottes Web', '96168'),
+            ('Cheaper by the Dozen', '33278'),
+            ('Cheech and Chong', '33420'),
+            ('Childs Play', '33279'),
+            ('Cinderella', '33194'),
+            ('City Slickers', '33280'),
+            ('Clerks', '13255'),
+            ('Cloudy with a Chance of Meatballs', '33195'),
+            ('Cocoon', '13260'),
+            ('Conan', '33281'),
+            ('Crank', '33282'),
+            ('Crocodile Dundee', '33419'),
+            ('Crouching Tiger', '13291'),
+            ('Cube', '13304'),
+            ('Curious George', '16497'),
+            ('Da Vinci Code', '33283'),
+            ('Daddy Day Care', '33284'),
+            ('Dark Knight', '33132'),
+            ('Death Wish', '33285'),
+            ('Delta Force', '33286'),
+            ('Despicable Me', '33197'),
+            ('Diary of a Wimpy Kid', '13300'),
+            ('Die Hard', '33287'),
+            ('Dirty Dancing', '33288'),
+            ('Dirty Harry', '33289'),
+            ('Divergent', '13311'),
+            ('Dolphin Tale', '13312'),
+            ('Dr. Dolittle', '16505'),
+            ('Dragon Tattoo', '13313'),
+            ('Dumb and Dumber', '33290'),
+            ('Escape From New York', '33291'),
+            ('Every Which Way But Loose', '33292'),
+            ('Evil Dead', '13308'),
+            ('Exorcist', '33293'),
+            ('Fantasia', '16521'),
+            ('Fantastic Four', '33133'),
+            ('Fast and Furious', '13062'),
+            ('Father of the Bride', '33295'),
+            ('Ferngully', '16522'),
+            ('Final Destination', '13306'),
+            ('Finding Nemo', '33198'),
+            ('Fletch', '33296'),
+            ('Flinstones', '16474'),
+            ('Fox and the Hound', '33199'),
+            ('Free Willy', '33200'),
+            ('Friday the 13th', '33298'),
+            ('Friday', '33297'),
+            ('Fugitive', '33299'),
+            ('G.I. Joe', '33300'),
+            ('Garfield', '16520'),
+            ('Get Shorty', '33301'),
+            ('Gettysburg', '33302'),
+            ('Ghost Rider', '33303'),
+            ('Ghostbusters', '33201'),
+            ('Godfather', '33305'),
+            ('Gods Not Dead', '33304'),
+            ('Godzilla', '33306'),
+            ('Green Street Holigans', '13282'),
+            ('Gremlins', '33202'),
+            ('Grown Ups', '33307'),
+            ('Grumpy Old Men', '33308'),
+            ('Guns of Navarone', '33309'),
+            ('Halloween', '33310'),
+            ('Hannibal Lector', '33312'),
+            ('Happy Feet', '33204'),
+            ('Harold and Kumar', '13264'),
+            ('Harry Potter', '33205'),
+            ('Hellraiser', '33313'),
+            ('Herbie', '16524'),
+            ('Highlander', '13256'),
+            ('Hills Have Eyes', '13254'),
+            ('Hollow Man', '13251'),
+            ('Home Alone', '33206'),
+            ('Homeward Bound', '33207'),
+            ('Honey, I Shrunk', '33208'),
+            ('Hoodwinked', '16523'),
+            ('Horrible Bosses', '33314'),
+            ('Hostel', '33315'),
+            ('Hot Shots', '33316'),
+            ('Hot Tub Time Machine', '13241'),
+            ('Hotel Transylvania', '33209'),
+            ('How to Train Your Dragon', '33210'),
+            ('Hulk', '33134'),
+            ('Human Centipede', '13238'),
+            ('Hunchback of Notre Dame', '33211'),
+            ('Ice Age', '33212'),
+            ('Independence Day', '33317'),
+            ('Indiana Jones', '33318'),
+            ('Infernal Affairs', '13230'),
+            ('Insidious', '33319'),
+            ('Inspector Gadget', '16492'),
+            ('IP Man', '13227'),
+            ('Iron Eagle', '33320'),
+            ('Iron Fists', '13226'),
+            ('Iron Man', '33135'),
+            ('Jack Reacher', '33321'),
+            ('Jack Ryan', '33322'),
+            ('Jackass', '33323'),
+            ('James Bond', '33324'),
+            ('Jaws', '33325'),
+            ('Jeepers Creepers', '33326'),
+            ('John Wick', '33327'),
+            ('Johnny English', '13218'),
+            ('Journey', '13216'),
+            ('Judge Dredd', '13215'),
+            ('Jumanji', '33328'),
+            ('Jump Street', '13213'),
+            ('Jurassic Park', '33217'),
+            ('Justice League', '16491'),
+            ('Kick-Ass', '33329'),
+            ('Kickboxer', '13206'),
+            ('Kill Bill', '33330'),
+            ('King Kong', '33331'),
+            ('Kung Fu Panda', '33218'),
+            ('Lady and the Tramp', '33219'),
+            ('Land Before Time', '16485'),
+            ('Lara Croft', '33332'),
+            ('Last Summer', '13198'),
+            ('Legally Blonde', '33333'),
+            ('Lego Star Wars', '16482'),
+            ('Lethal Weapon', '33334'),
+            ('Like Mike', '16486'),
+            ('Lilo and Stitch', '33220'),
+            ('Look Whos Talking', '33335'),
+            ('Lord of The Rings', '13190'),
+            ('Machete', '33336'),
+            ('Mad Max', '13188'),
+            ('Madagascar', '33221'),
+            ('Magic Mike', '33337'),
+            ('Major League', '33338'),
+            ('Man From Snowy River', '33339'),
+            ('Mask', '33340'),
+            ('Maze Runner', '13182'),
+            ('Meet the Parents', '33343'),
+            ('Men in Black', '33344'),
+            ('Miss Congeniality', '33346'),
+            ('Missing in Action', '33347'),
+            ('Mission: Impossible', '33348'),
+            ('Monsters Inc', '33222'),
+            ('Monty Python', '13173'),
+            ('Mulan', '33223'),
+            ('My Big Fat Greek Wedding', '13170'),
+            ('National Lampoon', '33350'),
+            ('National Lampoons Vacation', '33351'),
+            ('National Treasure', '33352'),
+            ('Neighbors', '33353'),
+            ('Never Back Down', '13166'),
+            ('New Groove', '33225'),
+            ('Night at the Museum', '33354'),
+            ('Nightmare on Elm Street', '33355'),
+            ('Nims Island', '13162'),
+            ('Ninja', '13160'),
+            ('Now You See Me', '33356'),
+            ('Nutty Professor', '33357'),
+            ('Nymphomaniac', '13157'),
+            ('Oceans Eleven', '33358'),
+            ('Odd Couple', '33359'),
+            ('Oh, God!', '33360'),
+            ('Olympus Has Fallen', '33361'),
+            ('Once Were Warriors', '13152'),
+            ('Ong Bak', '13151'),
+            ('Open Season', '33226'),
+            ('Paranormal Activities', '13149'),
+            ('Paul Blart: Mall Cop', '33363'),
+            ('Percy Jackson', '13147'),
+            ('Peter Pan', '16498'),
+            ('Pink Panther', '13320'),
+            ('Pirates of the Caribbean', '33364'),
+            ('Pitch', '13144'),
+            ('Planes', '33227'),
+            ('Planet of the Apes', '33365'),
+            ('Pocahontas', '33228'),
+            ('Police Academy', '33366'),
+            ('Poltergeist', '33367'),
+            ('Porkys', '33368'),
+            ('Power Rangers', '16493'),
+            ('Predator', '33369'),
+            ('Problem Child', '33229'),
+            ('Psycho', '13133'),
+            ('Punisher', '13131'),
+            ('Quarantine', '13128'),
+            ('Raid', '13127'),
+            ('Rambo', '33371'),
+            ('Red Cliff', '13123'),
+            ('RED', '33372'),
+            ('Resident Evil', '13122'),
+            ('Revenge of the Nerds', '33373'),
+            ('Riddick', '33374'),
+            ('Ride Along', '33375'),
+            ('Rio', '33230'),
+            ('Rise of The Footsoldier', '13116'),
+            ('Robocop', '33376'),
+            ('Rocky', '33377'),
+            ('Romancing the Stone', '33378'),
+            ('Rush Hour', '33379'),
+            ('Sammys Adventures', '33231'),
+            ('Santa Clause', '33380'),
+            ('Saw', '33381'),
+            ('Scary Movie', '13108'),
+            ('Scooby-Doo', '33232'),
+            ('Scream', '13107'),
+            ('Sex and the City', '33382'),
+            ('Shaft', '33383'),
+            ('Shanghai Noon', '33384'),
+            ('Sherlock Holmes', '13105'),
+            ('Short Circuit', '33233'),
+            ('Shrek', '33234'),
+            ('Sin City', '33385'),
+            ('Sinister', '33386'),
+            ('Sister Act', '33387'),
+            ('Smokey and the Bandit', '33388'),
+            ('Space Chimps', '16495'),
+            ('Speed', '33389'),
+            ('Spiderman', '33126'),
+            ('SpongeBob SquarePants', '33235'),
+            ('Spy Kids', '33236'),
+            ('Stakeout', '33390'),
+            ('Star Trek', '33391'),
+            ('Star Wars', '33237'),
+            ('Starship Troopers', '13097'),
+            ('Step Up', '13096'),
+            ('Stuart Little', '33238'),
+            ('Superman', '33136'),
+            ('Taken', '33393'),
+            ('Tarzan', '33239'),
+            ('Taxi', '33394'),
+            ('Ted', '33395'),
+            ('Teen Wolf', '33396'),
+            ('Teenage Mutant Ninja Turtles', '33240'),
+            ('Terminator', '33397'),
+            ('Terms of Endearment', '33398'),
+            ('Texas Chainsaw Massacre', '33399'),
+            ('The Addams Family', '13148'),
+            ('The Avengers', '13196'),
+            ('The Before', '13267'),
+            ('The Best Exotic Marigold Hotel', '13268'),
+            ('The Blues Brothers', '13284'),
+            ('The Butterfly Effect', '13297'),
+            ('The Chronicals of Narnia', '13283'),
+            ('The Conjuring', '13266'),
+            ('The Crow', '13294'),
+            ('The Expendables', '33294'),
+            ('The Fly', '13303'),
+            ('The Grudge', '13277'),
+            ('The Hangover', '13271'),
+            ('The Hobbit', '13252'),
+            ('The Hunger Games', '13236'),
+            ('The Huntsman', '13235'),
+            ('The Inbetweeners', '13233'),
+            ('The Jungle Book', '13212'),
+            ('The Karate Kid', '33241'),
+            ('The Lion King', '33242'),
+            ('The Little Mermaid', '33243'),
+            ('The Man With No Name', '13184'),
+            ('The Matrix', '13183'),
+            ('The Mechanic', '33342'),
+            ('The Mighty Ducks', '13177'),
+            ('The Mummy', '13171'),
+            ('The Muppets', '16494'),
+            ('The Naked Gun', '13169'),
+            ('The Neverending Story', '33248'),
+            ('The Omen', '13153'),
+            ('The Protector', '13134'),
+            ('The Purge', '33370'),
+            ('The Reef', '16490'),
+            ('The Ring', '33418'),
+            ('The Sandlot', '16502'),
+            ('The Smurfs', '33249'),
+            ('The Sting', '33392'),
+            ('The Thing', '33400'),
+            ('The Woman In Black', '13070'),
+            ('Think Like A Man', '13088'),
+            ('Thomas and Friends', '16503'),
+            ('Thomas Crown Affair', '33401'),
+            ('Three Colors', '13087'),
+            ('Tinkerbell', '33252'),
+            ('Titans', '13085'),
+            ('Tom and Jerry', '33253'),
+            ('Tooth Fairy', '33251'),
+            ('Toy Story', '33254'),
+            ('Transformers', '13083'),
+            ('Transporter', '33402'),
+            ('Tremors', '13081'),
+            ('Tron', '13080'),
+            ('Twilight', '13079'),
+            ('Under Siege', '33403'),
+            ('Underworld', '13077'),
+            ('Undisputed', '13076'),
+            ('Universal Soldier', '33404'),
+            ('VeggieTales', '33255'),
+            ('VHS', '13074'),
+            ('Wall Street', '33405'),
+            ('Wallace and Grommit', '16504'),
+            ('Waynes World', '33406'),
+            ('Weekend at Bernies', '33407'),
+            ('Whole Nine Yards', '33408'),
+            ('Winnie the Pooh', '33257'),
+            ('Wizard of Oz', '33258'),
+            ('Wrong Turn', '13069'),
+            ('X-Files', '33409'),
+            ('X-Men', '33137'),
+            ('xXx', '33410'),
+            ('Young Guns', '33411'),
+            ('Zoolander', '33412'),
+            ('Zorro', '33413')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
+
+
+    def tmdbUserLists_CollectionsDupes(self):
+        theUserLists = [
+            ('101 Dalmatians', '13113'),
+            ('Ace Ventura', '13145'),
+            ('Addams Family', '33183'),
+            ('Aladdin', '13155'),
+            ('Anchorman', '13180'),
+            ('Austin Powers', '13193'),
+            ('Avengers', '33128'),
+            ('Babe', '13201'),
+            ('Bad Boys', '13208'),
+            ('Balto', '13214'),
+            ('Bambi', '13217'),
+            ('Batman', '13223'),
+            ('Beauty and the Beast', '13229'),
+            ('Beethoven', '13263'),
+            ('Beverly Hills Cop', '13272'),
+            ('Big Mommas House', '13274'),
+            ('Blues Brothers', '33274'),
+            ('Bourne', '13288'),
+            ('Brother Bear', '13292'),
+            ('Captain America', '13224'),
+            ('Cars', '13244'),
+            ('Childs Play', '13246'),
+            ('Cinderella', '13249'),
+            ('City Slickers', '13253'),
+            ('Cloudy with a Chance of Meatballs', '13259'),
+            ('Conan', '13262'),
+            ('Crank', '13273'),
+            ('Crocodile Dundee', '13278'),
+            ('Daddy Daycare', '16487'),
+            ('Despicable Me', '13299'),
+            ('Die Hard', '13302'),
+            ('Dirty Dancing', '13305'),
+            ('Dirty Harry', '13307'),
+            ('Dumb and Dumber', '13314'),
+            ('Finding Nemo', '16499'),
+            ('Fox and the Hound', '13301'),
+            ('Free Willy', '13298'),
+            ('Friday the 13th', '13296'),
+            ('Friday', '13315'),
+            ('G.I. Joe', '13293'),
+            ('Godfather', '13285'),
+            ('Gremlins', '13280'),
+            ('Grown Ups', '13279'),
+            ('Grumpy Old Men', '13275'),
+            ('Halloween', '13316'),
+            ('Hangover', '33311'),
+            ('Hannibal Lector', '13270'),
+            ('Happy Feet', '13265'),
+            ('Harry Potter', '13261'),
+            ('Hellraiser', '13257'),
+            ('Home Alone', '13250'),
+            ('Homeward', '13248'),
+            ('Honey I Shrunk', '13247'),
+            ('Horrible Bosses', '13245'),
+            ('Hot Shots', '13242'),
+            ('Hotel Transylvania', '13240'),
+            ('How to Train Your Dragon', '13239'),
+            ('Hunchback of Notre Dame', '13237'),
+            ('Ice Age', '13234'),
+            ('Independence Day', '13232'),
+            ('Indiana Jones', '13231'),
+            ('Insidious', '13228'),
+            ('Jackass', '13222'),
+            ('James Bond', '13221'),
+            ('Jaws', '13219'),
+            ('Jungle Book', '33216'),
+            ('Jurassic Park', '13211'),
+            ('Karate Kid', '13209'),
+            ('Kick Ass', '13207'),
+            ('Kill Bill', '13203'),
+            ('Kung Fu Panda', '13202'),
+            ('Lady and the Tramp', '13200'),
+            ('Legally Blonde', '13197'),
+            ('Lethal Weapon', '13195'),
+            ('Lilo and Stitch', '16500'),
+            ('Look Whos Talking', '13191'),
+            ('Machete', '13189'),
+            ('Madagascar', '13187'),
+            ('Major League', '13185'),
+            ('Matrix', '33341'),
+            ('Meet the Parents', '13179'),
+            ('Men in Black', '13178'),
+            ('Mighty Ducks', '33345'),
+            ('Mission Impossible', '13175'),
+            ('Monsters Inc', '13174'),
+            ('Mulan', '13172'),
+            ('Naked Gun', '33349'),
+            ('Narnia', '33224'),
+            ('National Treasure', '13167'),
+            ('Neighbors', '13210'),
+            ('New Groove', '13164'),
+            ('Night at the Museum', '16483'),
+            ('Nightmare on Elm Street', '13163'),
+            ('Now You See Me', '13159'),
+            ('Oceans', '13156'),
+            ('Olympus Has Fallen', '13154'),
+            ('Omen', '33362'),
+            ('Open Season', '13150'),
+            ('Pirates of the Caribbean', '13146'),
+            ('Planes', '13142'),
+            ('Planet of the Apes', '13141'),
+            ('Pocahontas', '13140'),
+            ('Police Academy', '13139'),
+            ('Poltergeist', '13138'),
+            ('Predator', '13136'),
+            ('Problem Child', '13135'),
+            ('R.E.D.', '13124'),
+            ('Rambo', '13125'),
+            ('Riddick', '13121'),
+            ('Ride Along', '13119'),
+            ('Rio', '13117'),
+            ('Robocop', '13115'),
+            ('Rocky', '13114'),
+            ('Romancing the Stone', '13112'),
+            ('Rush Hour', '13111'),
+            ('Sammys Adventure', '13110'),
+            ('Saw', '13109'),
+            ('Shanghai', '13106'),
+            ('Short Circuit', '13104'),
+            ('Shrek', '16470'),
+            ('Sin City', '13103'),
+            ('Sister Act', '13102'),
+            ('Smokey and the Bandit', '13101'),
+            ('Spongebob', '16508'),
+            ('Spy Kids', '13099'),
+            ('Star Trek', '13098'),
+            ('Star Wars', '12741'),
+            ('Stuart Little', '16488'),
+            ('Taken', '13095'),
+            ('Tarzan', '13094'),
+            ('Ted', '13093'),
+            ('Teen Wolf', '13091'),
+            ('Teenage Mutant Ninja Turtles', '13092'),
+            ('Terminator', '13090'),
+            ('Texas Chainsaw', '13089'),
+            ('The Lion King', '13194'),
+            ('The Little Mermaid', '13192'),
+            ('The Mechanic', '13181'),
+            ('The Neverending Story', '13165'),
+            ('The Purge', '13129'),
+            ('The Ring', '13118'),
+            ('The Smurfs', '13100'),
+            ('The Tooth Fairy', '13084'),
+            ('The Whole Nine Yards', '13071'),
+            ('Tinker Bell', '13086'),
+            ('Toy Story', '13060'),
+            ('Transporter', '13082'),
+            ('Under Siege', '13078'),
+            ('Universal Soldier', '13075'),
+            ('Waynes World', '13073'),
+            ('Weekend At Bernies', '13072'),
+            ('XXX', '13068'),
+            ('Young Guns', '13067'),
+            ('Zoolander', '13066'),
+            ('Zorro', '13065')
+        ]
+        for i in theUserLists:
+            self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
 
     def get(self, url, idx=True):
@@ -650,10 +762,7 @@ class movies:
                 u = urlparse.urlparse(url).netloc.lower()
             except:
                 pass
-            if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
-                self.list = self.tmdb_custom_list(url)
-                self.worker()
-            elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
+            if u in self.tmdb_link:
                 self.list = cache.get(self.tmdb_list, 24, url)
                 self.worker()
             elif u in self.trakt_link and '/users/' in url:
@@ -690,107 +799,16 @@ class movies:
             pass
 
 
-    def similar_movies(self, imdb):
-		url = '%s?action=get_similar_movies&imdb=%s' % (sys.argv[0], imdb)
-		control.execute('Container.Update(%s)' % url)
-
-
-    def get_similar_movies(self, imdb):
-        self.list = []
-        try:
-            imdb_page = "http://www.imdb.com/title/%s/" % imdb
-            r = OPEN_URL(imdb_page).content
-            r = client.parseDOM(r, 'div', attrs = {'class': 'rec_item'})[:20]
-        except:
-            return
-        for u in r:
-            imdb = client.parseDOM(u, 'a', ret='href')[0]
-            imdb = imdb.encode('utf-8')
-            imdb = re.findall('/tt(\d+)/', imdb)[0]
-            imdb = imdb.encode('utf-8')
-            if imdb == '0' or imdb == None or imdb == '':
-                raise Exception()
-            imdb = 'tt' + imdb
-            try:
-                url_tmdb = self.tmdb_by_query_imdb % imdb
-                if not len(self.list) >= 40:
-                    self.list = cache.get(self.tmdb_similar_list, 720, url_tmdb, imdb)
-            except:
-                pass
-        self.list = self.list[:40]
-        self.movieDirectory(self.list)
-
-
-    def tmdb_similar_list(self, url, imdb):
-        try:
-            result = OPEN_URL(url).content
-            result = json.loads(result)
-            item = result['movie_results'][0]
-        except:
-            return
-        next = ''
-        try:
-            title = item['title']
-            title = client.replaceHTMLCodes(title)
-            title = title.encode('utf-8')
-            year = item['release_date']
-            year = re.compile('(\d{4})').findall(year)[-1]
-            year = year.encode('utf-8')
-            tmdb = item['id']
-            tmdb = re.sub('[^0-9]', '', str(tmdb))
-            tmdb = tmdb.encode('utf-8')
-            poster = item['poster_path']
-            if poster == '' or poster == None:
-                raise Exception()
-            else:
-                poster = '%s%s' % (self.tmdb_poster, poster)
-            poster = poster.encode('utf-8')
-            fanart = item['backdrop_path']
-            if fanart == '' or fanart == None:
-                fanart = '0'
-            if not fanart == '0':
-                fanart = '%s%s' % (self.tmdb_image, fanart)
-            fanart = fanart.encode('utf-8')
-            premiered = item['release_date']
-            try:
-                premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-            except:
-                premiered = '0'
-            premiered = premiered.encode('utf-8')
-            rating = str(item['vote_average'])
-            if rating == '' or rating == None:
-                rating = '0'
-            rating = rating.encode('utf-8')
-            votes = str(item['vote_count'])
-            try:
-                votes = str(format(int(votes),',d'))
-            except:
-                pass
-            if votes == '' or votes == None:
-                votes = '0'
-            votes = votes.encode('utf-8')
-            plot = item['overview']
-            if plot == '' or plot == None:
-                plot = '0'
-            plot = client.replaceHTMLCodes(plot)
-            plot = plot.encode('utf-8')
-            tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-            try:
-                tagline = tagline.encode('utf-8')
-            except:
-                pass
-            self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': '0', 'duration': '0', 'rating': rating, 'votes': votes, 'mpaa': '0', 'director': '0', 'writer': '0', 'cast': '0', 'plot': plot, 'tagline': tagline, 'code': '0', 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'banner': '0', 'fanart': fanart, 'next': next})
-        except:
-                pass
-        return self.list
-
 
     def tmdb_list(self, url):
         next = url
-        for i in re.findall('date\[(\d+)\]', url):
-            url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
         try:
-            result = client.request(url % self.tmdb_key)
+            for i in re.findall('date\[(\d+)\]', url):
+                url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
+        except:
+            pass
+        try:
+            result = client.request(url)
             result = json.loads(result)
             items = result['results']
         except:
@@ -801,7 +819,7 @@ class movies:
             if page >= total:
                 raise Exception()
             url2 = '%s&page=%s' % (url.split('&page=', 1)[0], str(page+1))
-            result = client.request(url2 % self.tmdb_key)
+            result = client.request(url2)
             result = json.loads(result)
             items += result['results']
         except:
@@ -820,11 +838,11 @@ class movies:
         for item in items:
             try:
                 title = item['title']
-                # title = str(title)
-                # title = re.sub(r'\ -',r'', title)
-                # title =re.sub('+', ' ', title)
-                # title =re.sub(':','', title)
-                # title = item['title']
+                #title = str(title)
+                #title = re.sub(r'\ -',r'', title)
+                #title =re.sub('+', ' ', title)
+                #title =re.sub(':','', title)
+                #title = item['title']
                 title = client.replaceHTMLCodes(title)
                 title = title.encode('utf-8')
                 year = item['release_date']
@@ -835,75 +853,9 @@ class movies:
                 tmdb = tmdb.encode('utf-8')
                 poster = item['poster_path']
                 if poster == '' or poster == None:
-                    raise Exception()
+                    poster = '0'
                 else:
-                    poster = '%s%s' % (self.tmdb_poster, poster)
-                poster = poster.encode('utf-8')
-                fanart = item['backdrop_path']
-                if fanart == '' or fanart == None:
-                    fanart = '0'
-                if not fanart == '0':
-                    fanart = '%s%s' % (self.tmdb_image, fanart)
-                fanart = fanart.encode('utf-8')
-                premiered = item['release_date']
-                try:
-                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except:
-                    premiered = '0'
-                premiered = premiered.encode('utf-8')
-                rating = str(item['vote_average'])
-                if rating == '' or rating == None:
-                    rating = '0'
-                rating = rating.encode('utf-8')
-                votes = str(item['vote_count'])
-                try:
-                    votes = str(format(int(votes),',d'))
-                except:
-                    pass
-                if votes == '' or votes == None:
-                    votes = '0'
-                votes = votes.encode('utf-8')
-                plot = item['overview']
-                if plot == '' or plot == None:
-                    plot = '0'
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
-                tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                try:
-                    tagline = tagline.encode('utf-8')
-                except:
-                    pass
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': '0', 'duration': '0', 'rating': rating, 'votes': votes, 'mpaa': '0', 'director': '0', 'writer': '0', 'cast': '0', 'plot': plot, 'tagline': tagline, 'code': '0', 'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'banner': '0', 'fanart': fanart, 'next': next})
-            except:
-                pass
-        return self.list
-
-
-    def tmdb_custom_list(self, url):
-        try:
-            result = client.request(url)
-            result = json.loads(result)
-            items = result['items']
-        except:
-            return
-        next = ''
-        for item in items:
-            try:
-                title = item['title']
-                title = item['title']
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-                year = item['release_date']
-                year = re.compile('(\d{4})').findall(year)[-1]
-                year = year.encode('utf-8')
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
-                poster = item['poster_path']
-                if poster == '' or poster == None:
-                    raise Exception()
-                else:
-                    poster = '%s%s' % (self.tmdb_poster, poster)
+                    poster = self.tmdb_poster + poster
                 poster = poster.encode('utf-8')
                 fanart = item['backdrop_path']
                 if fanart == '' or fanart == None:
@@ -1474,48 +1426,40 @@ class movies:
 
     def movieDirectory(self, items):
         if items == None or len(items) == 0:
-            control.idle() ; sys.exit()
+            control.idle(); sys.exit()
         sysaddon = sys.argv[0]
         syshandle = int(sys.argv[1])
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
         traktCredentials = trakt.getTraktCredentialsInfo()
         try:
-            isOld = False ; control.item().getArt('type')
+            isOld = False; control.item().getArt('type')
         except:
             isOld = True
-        isEstuary = True if 'estuary' in control.skin else False
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
-        indicators = playcount.getMovieIndicators()
+        indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators()
         playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
-        # watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
-        # unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
-        watchedMenu = control.lang(32066).encode('utf-8')
-        unwatchedMenu = control.lang(32067).encode('utf-8')
+        watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
+        unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
         queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
         nextMenu = control.lang(32053).encode('utf-8')
+        addToLibrary = control.lang(32551).encode('utf-8')
         for i in items:
             try:
-                if not 'originaltitle' in i:
-                    i['originaltitle'] = '%s' %(i['title'])
-                label = '%s' % (i['title'])
-                tmdb, imdb, title, year = i['tmdb'], i['imdb'], i['originaltitle'], i['year']
+                label = '%s (%s)' % (i['title'], i['year'])
+                imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['originaltitle'], i['year']
                 sysname = urllib.quote_plus('%s (%s)' % (title, year))
                 systitle = urllib.quote_plus(title)
-                poster, banner, fanart = i['poster'], i['banner'], i['fanart']
-                if banner == '0' and not fanart == '0':
-                    banner = fanart
-                elif banner == '0' and not poster == '0':
-                    banner = poster
-                if poster == '0':
-                    poster = addonPoster
-                if banner == '0':
-                    banner = addonBanner
-                meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
+                meta = dict((k, v) for k, v in i.iteritems() if not v == '0')
+                meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
+                meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
-                if i['duration'] == '0':
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
+                #meta.update({'trailer': 'plugin://script.extendedinfo/?info=playtrailer&&id=%s' % imdb})
+                if not 'duration' in i:
+                    meta.update({'duration': '120'})
+                elif i['duration'] == '0':
                     meta.update({'duration': '120'})
                 try:
                     meta.update({'duration': str(int(meta['duration']) * 60)})
@@ -1525,34 +1469,16 @@ class movies:
                     meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
                 except:
                     pass
-                if isEstuary == True:
-                    try:
-                        del meta['cast']
-                    except:
-                        pass
-                if "tt" in imdb:
-                    sysmetalliq = "plugin://plugin.video.metalliq/movies/add_to_library_parsed/imdb/%s/direct.scrubsv2.q" % imdb
-                elif not tmdb == "0" or tmdb == None:
-                    sysmetalliq = "plugin://plugin.video.metalliq/movies/add_to_library_parsed/tmdb/%s/direct.scrubsv2.q" % tmdb
-                else:
-                    sysmetalliq = "0"
+                poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
+                poster = poster[0] if poster else addonPoster
+                meta.update({'poster': poster})
                 sysmeta = urllib.quote_plus(json.dumps(meta))
-                url_alt = '%s?action=play_alter&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
                 path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
                 cm = []
+                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                cm.append(('Trailer', 'RunPlugin(%s?action=trailer&name=%s)' % (sysaddon, sysname)))
-                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, urllib.quote_plus(url_alt), sysmeta)))
-                if not action == 'movieFavourites':
-                    cm.append(('Add to Watchlist', 'RunPlugin(%s?action=addFavourite&meta=%s&content=movies)' % (sysaddon, sysmeta)))
-                if action == 'movieFavourites':
-                    cm.append(('Remove From Watchlist', 'RunPlugin(%s?action=deleteFavourite&meta=%s&content=movies)' % (sysaddon, sysmeta)))
-                if action == 'movieProgress':
-                    cm.append(('Remove From Progress', 'RunPlugin(%s?action=deleteProgress&meta=%s&content=movies)' % (sysaddon, sysmeta)))
-                if not sysmetalliq == '0' or sysmetalliq == None:
-                    cm.append(('Add To Library', 'RunPlugin(%s)' % (sysmetalliq)))
                 try:
                     overlay = int(playcount.getMovieOverlay(indicators, imdb))
                     if overlay == 7:
@@ -1563,20 +1489,36 @@ class movies:
                         meta.update({'playcount': 0, 'overlay': 6})
                 except:
                     pass
-                # if traktCredentials == True:
-                    # cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&content=movie)' % (sysaddon, sysname, imdb)))
+                if traktCredentials == True:
+                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&content=movie)' % (sysaddon, sysname, imdb)))
+                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
                 if isOld == True:
                     cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 item = control.item(label=label)
-                item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
-                if settingFanart == 'true' and not fanart == '0':
-                    item.setProperty('Fanart_Image', fanart)
+                art = {}
+                art.update({'icon': poster, 'thumb': poster, 'poster': poster})
+                if 'banner' in i and not i['banner'] == '0':
+                    art.update({'banner': i['banner']})
+                else:
+                    art.update({'banner': addonBanner})
+                if 'clearlogo' in i and not i['clearlogo'] == '0':
+                    art.update({'clearlogo': i['clearlogo']})
+                if 'clearart' in i and not i['clearart'] == '0':
+                    art.update({'clearart': i['clearart']})
+                if settingFanart == 'true' and 'fanart2' in i and not i['fanart2'] == '0':
+                    item.setProperty('Fanart_Image', i['fanart2'])
+                elif settingFanart == 'true' and 'fanart' in i and not i['fanart'] == '0':
+                    item.setProperty('Fanart_Image', i['fanart'])
                 elif not addonFanart == None:
                     item.setProperty('Fanart_Image', addonFanart)
+                item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)
                 item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
-                #item.setInfo(type='Video', infoLabels = meta) # old code
+                #item.setInfo(type='Video', infoLabels=meta) # old code
+                video_streaminfo = {'codec': 'h264'}
+                item.addStreamInfo('video', video_streaminfo)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
             except:
                 pass
@@ -1595,22 +1537,22 @@ class movies:
             pass
         control.content(syshandle, 'movies')
         control.directory(syshandle, cacheToDisc=True)
-        views.setView('movies', {'skin.confluence': 500})
+        views.setView('movies', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
     def addDirectory(self, items, queue=False):
         if items == None or len(items) == 0:
-            return
+            control.idle(); sys.exit()
         sysaddon = sys.argv[0]
-        isPlayable = False if control.setting('autoplay') == 'false' and control.setting('hosts.mode') == '1' else True
+        syshandle = int(sys.argv[1])
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
+        queueMenu = control.lang(32065).encode('utf-8')
+        playRandom = control.lang(32535).encode('utf-8')
+        addToLibrary = control.lang(32551).encode('utf-8')
         for i in items:
             try:
-                try:
-                    name = control.lang(i['name']).encode('utf-8')
-                except:
-                    name = i['name']
-                if i['image'].startswith('http://'):
+                name = i['name']
+                if i['image'].startswith('http'):
                     thumb = i['image']
                 elif not artPath == None:
                     thumb = os.path.join(artPath, i['image'])
@@ -1622,13 +1564,22 @@ class movies:
                 except:
                     pass
                 cm = []
-                item = control.item(label=name, iconImage=thumb, thumbnailImage=thumb)
-                item.addContextMenuItems(cm, replaceItems=False)
+                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, urllib.quote_plus(i['url']))))
+                if queue == True:
+                    cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+                try:
+                    cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
+                except:
+                    pass
+                item = control.item(label=name)
+                item.setArt({'icon': thumb, 'thumb': thumb})
                 if not addonFanart == None:
                     item.setProperty('Fanart_Image', addonFanart)
-                control.addItem(handle=int(sys.argv[1]), url=url, listitem=item, isFolder=True)
+                item.addContextMenuItems(cm)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
                 pass
-        control.directory(int(sys.argv[1]), cacheToDisc=True)
+        control.content(syshandle, 'addons')
+        control.directory(syshandle, cacheToDisc=True)
 
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
@@ -42,7 +42,7 @@ class source:
             if results:
                 for url in results:
                     valid, host = source_utils.is_host_valid(url, hostDict)
-                    if valid and 'youtube' not in url:
+                    if valid:
                         quality, info = source_utils.get_release_quality(url, url)
                         sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
             return sources

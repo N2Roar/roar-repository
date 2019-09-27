@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Venom Add-on
+	Venom Add-on
 '''
 
 import json, requests, threading, re, urllib
@@ -12,7 +12,7 @@ from resources.lib.modules import client
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
-
+from resources.lib.modules import cache
 
 networks_this_season = [
 			('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
@@ -212,7 +212,6 @@ class tvshows:
 
 		self.tvmaze_link = 'http://www.tvmaze.com'
 		self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s?embed=cast'
-
 		# self.tvdb_key = control.setting('tvdb.user')
 		# if self.tvdb_key == '' or self.tvdb_key is None:
 			# self.tvdb_key = '1D62F2F90030C444'
@@ -264,7 +263,9 @@ class tvshows:
 		def items_list(i):
 			try:
 				url = self.tvmaze_info_link % i
-				item = client.request(url)
+				# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
+				# item = client.request(url)
+				item = client.request(url, timeout='20', error=True)
 				item = json.loads(item)
 
 				try:
@@ -321,11 +322,10 @@ class tvshows:
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
 
-
 ###--Check TVDb for missing info
 				if tvdb == '0' or imdb == '0':
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
-					item2 = client.request(url, timeout='20')
+					item2 = client.request(url, timeout='20', error=True)
 					item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
 					item2 = client.replaceHTMLCodes(item2)
 					item2 = client.parseDOM(item2, 'Series')
@@ -346,42 +346,28 @@ class tvshows:
 					if self.tvdb_key == '' or tvdb == '0':
 						raise Exception()
 					url = self.tvdb_info_link % (tvdb, self.lang)
-					item3 = client.request(url, timeout='10', error=True)
+					item3 = client.request(url, timeout='20', error=True)
 				except:
 					item3 = None
 
-				if poster == '0' and item3 is not None :
-					try:
-						poster = client.parseDOM(item3, 'poster')[0]
-						if poster != '' or not poster is None:
-							poster = self.tvdb_image + poster
-						else:
-							poster = '0'
-					except:
-						poster = '0'
-
 				if item3 is not None:
-					try:
-						banner = client.parseDOM(item3, 'banner')[0]
-						if banner != '' or banner is not None:
-							banner = self.tvdb_image + banner
-						else:
-							banner = '0'
-					except:
-						banner = '0'
+					if poster == '0' :
+						poster = client.parseDOM(item3, 'poster')[0]
+						if poster != '' or poster is not None:
+							poster = self.tvdb_image + poster
 
-					try:
-						fanart = client.parseDOM(item3, 'fanart')[0]
-						if fanart != '' or fanart is not None:
-							fanart = self.tvdb_image + fanart
-						else:
-							fanart = '0'
-					except:
-						fanart = '0'
+					banner = client.parseDOM(item3, 'banner')[0]
+					if banner != '' or banner is not None:
+						banner = self.tvdb_image + banner
+
+					fanart = client.parseDOM(item3, 'fanart')[0]
+					if fanart != '' or fanart is not None:
+						fanart = self.tvdb_image + fanart
 
 					try:
 						mpaa = client.parseDOM(item3, 'ContentRating')[0]
-					except: mpaa = 'NR'
+					except:
+						mpaa = 'NR'
 
 					if duration == '0':
 						try:
@@ -405,10 +391,10 @@ class tvshows:
 				if next == '0':
 					item = {}
 					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
-							'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
-							'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
-							'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
-							'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
+								'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
+								'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
+								'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
+								'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
 
 					meta = {}
 					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
@@ -416,19 +402,18 @@ class tvshows:
 				else:
 					item = {}
 					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
-							'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
-							'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
-							'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
-							'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+								'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
+								'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
+								'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
+								'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 					meta = {}
 					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
-				# fanart_thread = threading.Thread
 				if self.disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					extended_art = fanarttv.get_tvshow_art(tvdb)
-
+					# extended_art = fanarttv.get_tvshow_art(tvdb)
+					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
 					if extended_art is not None:
 						item.update(extended_art)
 						meta.update(item)
@@ -441,7 +426,8 @@ class tvshows:
 
 		try:
 			threads = []
-			for i in items: threads.append(workers.Thread(items_list, i))
+			for i in items:
+				threads.append(workers.Thread(items_list, i))
 			[i.start() for i in threads]
 			[i.join() for i in threads]
 

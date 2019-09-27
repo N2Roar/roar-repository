@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import requests
 import urllib,urlparse
-from resources.lib.modules import client,cache,cleantitle,utils
+import xml.etree.ElementTree as ET
+from resources.lib.modules import client
+from resources.lib.modules import cache
+from resources.lib.modules import cleantitle
+from resources.lib.modules import utils
 
 
 def _getAniList(url):
@@ -30,4 +35,30 @@ def getAlternativTitle(title):
         return r
     except:
         pass
+
+
+class AniDB:  #  http://wiki.anidb.net/w/User:Eloyard/anititles_dump
+    def __init__(self):
+        pass
+
+    def search(term, lang=None):
+        r = requests.get(
+            "http://anisearch.outrance.pl/index.php",
+            params={
+                "task": "search",
+                "query": term,
+                "langs": "ja,x-jat,en" if lang is None else ','.join(lang)
+            }
+        )
+        if r.status_code != 200:
+            raise ServerError
+        tree = ET.fromstring(r.text)
+        root = tree.getroot()
+        for item in root.iter("anime"):
+            results[aid]={}
+            for title in item.iter('title'):
+                if title.attrib['type'] in ['official', 'main']:
+                    results[aid][title.attrib['xml:lang']] = title.text
+        return results
+
 

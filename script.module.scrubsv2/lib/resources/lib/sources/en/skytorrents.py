@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
-import re, urllib, urlparse
-from resources.lib.modules import client, control
-from resources.lib.modules import cleantitle, debrid, source_utils
+import re,urllib,urlparse
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import control
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:

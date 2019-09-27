@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 02-01-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import cleantitle,client,source_utils
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -11,6 +13,7 @@ class source:
         self.language = ['en']  #  coolmoviezone.online
         self.domains = ['coolmoviezone.io']
         self.base_link = 'https://coolmoviezone.io'
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -26,7 +29,7 @@ class source:
         try:
             sources = []
             hostDict = hostprDict + hostDict
-            r = client.request(url)
+            r = self.scraper.get(url).content
             match = re.compile('<td align="center"><strong><a href="(.+?)"').findall(r)
             for url in match:
                 valid, host = source_utils.is_host_valid(url, hostDict)
@@ -34,7 +37,7 @@ class source:
                     quality, info = source_utils.get_release_quality(url, url)
                     sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
             return sources
-        except Exception:
+        except:
             return sources
 
 

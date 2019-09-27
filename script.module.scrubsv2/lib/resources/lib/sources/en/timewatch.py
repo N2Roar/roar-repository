@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urlparse
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -42,13 +44,11 @@ class source:
             html = self.scraper.get(url).content
             links = re.compile('id="linkplayer.+?href="(.+?)"',re.DOTALL).findall(html)
             for link in links:
-                if link in str(sources):
-                    continue
-                quality, info = source_utils.get_release_quality(link, link)
                 valid, host = source_utils.is_host_valid(link, hostDict)
                 if source_utils.limit_hosts() is True and host in str(sources):
                     continue
                 if valid:
+                    quality, info = source_utils.get_release_quality(link, link)
                     sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
             return sources
         except:

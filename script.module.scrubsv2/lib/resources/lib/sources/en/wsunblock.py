@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,base64
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -43,15 +45,15 @@ class source:
             match = re.compile('cale\.html\?r=(.+?)" class="watchlink" title="(.+?)"').findall(r)
             for url, host in match:
                 url  = base64.b64decode(url)
-                quality, info = source_utils.get_release_quality(url, url)
                 valid, host = source_utils.is_host_valid(host, hostDict)
                 if source_utils.limit_hosts() is True and host in str(sources):
                     continue
                 if valid:
-                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
-        except Exception:
-            return
-        return sources
+                    quality, info = source_utils.get_release_quality(url, url)
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+            return sources
+        except:
+            return sources
 
 
     def resolve(self, url):

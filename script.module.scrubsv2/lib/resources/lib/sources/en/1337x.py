@@ -1,16 +1,21 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-27-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re, urllib, urlparse
-from resources.lib.modules import cleantitle, debrid, source_utils, workers
-from resources.lib.modules import client2 as client, dom_parser2 as dom
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
+from resources.lib.modules import workers
+#from resources.lib.modules import client2 as client
+from resources.lib.modules import client
+from resources.lib.modules import dom_parser2 as dom
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru'] # Old  1337x.se  1337x.eu  1337x.ws
-        self.domains = ['1337x.to', '1337x.st', '1337x.is']
+        self.domains = ['1337x.to', '1337x.st', '1337x.is', 'the1337x.org']
         self.base_link = 'https://1337x.to/'
         self.tvsearch = 'https://1337x.to/sort-category-search/%s/TV/seeders/desc/1/'
         self.moviesearch = 'https://1337x.to/sort-category-search/%s/Movies/seeders/desc/1/'

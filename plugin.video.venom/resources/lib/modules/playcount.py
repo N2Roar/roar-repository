@@ -14,7 +14,7 @@ def getMovieIndicators(refresh=False):
 		if traktIndicators is True:
 			raise Exception()
 		from metahandler import metahandlers
-		indicators = metahandlers.MetaData(preparezip = False)
+		indicators = metahandlers.MetaData()
 		return indicators
 	except:
 		pass
@@ -40,7 +40,7 @@ def getTVShowIndicators(refresh=False):
 			raise Exception()
 
 		from metahandler import metahandlers
-		indicators = metahandlers.MetaData(preparezip=False)
+		indicators = metahandlers.MetaData()
 		return indicators
 	except:
 		pass
@@ -65,7 +65,7 @@ def getSeasonIndicators(imdb, refresh=False):
 		if traktIndicators is True:
 			raise Exception()
 		from metahandler import metahandlers
-		indicators = metahandlers.MetaData(preparezip = False)
+		indicators = metahandlers.MetaData()
 		return indicators
 	except:
 		pass
@@ -216,7 +216,7 @@ def markMovieDuringPlayback(imdb, watched):
 
 	try:
 		from metahandler import metahandlers
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('movie', name='', imdb_id=imdb)
 		metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
 	except:
@@ -243,7 +243,7 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 	try:
 		from metahandler import metahandlers
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('tvshow', name='', imdb_id=imdb)
 		metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
 		metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
@@ -265,7 +265,7 @@ def movies(imdb, watched):
 
 	try:
 		from metahandler import metahandlers
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('movie', name='', imdb_id=imdb)
 		metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
 
@@ -289,7 +289,7 @@ def episodes(imdb, tvdb, season, episode, watched):
 
 	try:
 		from metahandler import metahandlers
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('tvshow', name='', imdb_id=imdb)
 		metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
 		metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
@@ -308,18 +308,19 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 	watched = int(watched)
 
 	try:
+		if traktIndicators is True:
+			raise Exception()
+
 		from metahandler import metahandlers
 		from resources.lib.menus import episodes
 
-		if traktIndicators is True:
-			raise Exception()
 		name = control.addonInfo('name')
 
 		dialog = control.progressDialogBG
 		dialog.create(str(name), str(tvshowtitle))
 		dialog.update(0, str(name), str(tvshowtitle))
 
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('tvshow', name='', imdb_id=imdb)
 
 		items = episodes.Episodes().get(tvshowtitle, '0', imdb, tvdb, idx = False)
@@ -365,21 +366,23 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 		else:
 			trakt.unwatch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = trakt.notification)
 	except:
-		import traceback
-		traceback.print_exc()
-		pass
+		# import traceback
+		# traceback.print_exc()
+		# pass
+		from resources.lib.modules import log_utils
+		log_utils.error()
 
 
 def tvshowsUpdate(imdb, tvdb):
 	try:
-		from metahandler import metahandlers
-		from resources.lib.menus import episodes
-
 		if traktIndicators is True:
 			raise Exception()
 
+		from metahandler import metahandlers
+		from resources.lib.menus import episodes
+
 		name = control.addonInfo('name')
-		metaget = metahandlers.MetaData(preparezip=False)
+		metaget = metahandlers.MetaData()
 		metaget.get_meta('tvshow', name='', imdb_id=imdb)
 
 		items = episodes.Episodes().get('', '0', imdb, tvdb, idx=False)
@@ -407,6 +410,8 @@ def tvshowsUpdate(imdb, tvdb):
 			metaget.change_watched('season', '', imdb_id = imdb, season = key, watched = 7 if countEpisode == len(value) else 6)
 		metaget.change_watched('tvshow', '', imdb_id = imdb, watched = 7 if countSeason == len(seasons.keys()) else 6)
 	except:
-		import traceback
-		traceback.print_exc()
+		# import traceback
+		# traceback.print_exc()
+		from resources.lib.modules import log_utils
+		log_utils.error()
 	control.refresh()

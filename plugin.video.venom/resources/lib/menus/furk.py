@@ -21,6 +21,8 @@ class Furk:
 		self.add_download_link = "/api/dl/add?"
 		self.api_key = control.setting('furk.api')
 		self.list = []
+
+# This looks wrong so check it
 		test = os.
 
 

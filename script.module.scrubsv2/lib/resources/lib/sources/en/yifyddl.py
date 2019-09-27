@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
 import re,urllib,urlparse
-from resources.lib.modules import client,debrid,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -62,7 +64,7 @@ class source:
                     sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': True})
             return sources
         except:
-            return
+            return sources
 
 
     def resolve(self, url):

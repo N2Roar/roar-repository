@@ -1,3 +1,51 @@
+[B][COLOR red]Update - v3.2.0 - Sept 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] changed clearlogo and clearart to
+    tvshow.clearart and tvshow.clearlogo to
+    fix skin issue seen in Estuary.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt lists not updating for changes
+    until 1hr passed due to cache duration.
+    Now if Trakt activity is newer than cache
+    write date the new data will be fetched[/I]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt lists sort by Title to ignore
+    articles (the, and, an).[/I]
+[COLOR yellow]--[/COLOR][I] Reworked multiline source list. There is
+    now a 2nd line color choice option in
+    settings. Switched formatting of 2nd line
+    to Italic. Removed occasional 0 values.[/I]
+[COLOR yellow]--[/COLOR][I] Added color choice options for progress
+    dialog premium and free lines.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few new colors to various options
+    in settings.[/I]
+
+[B][COLOR red]Update - v3.1.9 - Sept 11, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Reverted back to Trakt non page lists due
+    to issue with api sorting in response.[/I]
+[COLOR yellow]--[/COLOR][I] Removed indicators from "for" loop causing
+    menu slow downs due to unneccessary
+    calls to function.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting option to enable-disable
+    duplicate sources returned.[/I]
+[COLOR yellow]--[/COLOR][I] Added new Trakt caching method to extend
+    cache valid duration.  Now we check for a
+    change in Trakt WatchedActivity occurs and
+    refreshes Trakt list immediately.  If nothing
+    new is watched cache can be held for a
+    month until a change occurs.[/I]
+
+[B][COLOR red]Update - v3.1.8 - Aug 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed actor profiles for Silvo skin, note
+    that Silvo skin still has random issues with
+    season count due to an ExtendedSeasonPanel
+    that does not work well with 3rd party addons
+    so best to disable the season count
+    option.  I do have a modded Silvo
+    file to cure the problem if needed.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb random extended artwork drops.[/I]
+[COLOR yellow]--[/COLOR][I] Changed fanart.tv api call to threaded request
+    for TMDb Movies as experimental at this
+    time.  Menu load times was marginaly
+    shortened by .5-.75 secs.[/I]
+
 [B][COLOR red]Update - v3.1.7 - Aug 18, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Finished actor profile pics for TVShows,
     Seasons, and Episodes.[/I]

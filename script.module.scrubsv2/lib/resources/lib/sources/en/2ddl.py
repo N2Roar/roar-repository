@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
 import re,urllib,urlparse
-from resources.lib.modules import client,debrid,source_utils
+from resources.lib.modules import cfscrape
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -13,6 +16,7 @@ class source:
         self.domains = ['invictus.ws', 'twoddl.net', '2ddl.vg']
         self.base_link = 'https://2ddl.vg'
         self.search_link = '/?s=%s'
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -61,15 +65,15 @@ class source:
                 if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             url = self.search_link % urllib.quote_plus(query)
             url = urlparse.urljoin(self.base_link, url).replace('-', '+')
-            r = client.request(url)
+            r = self.scraper.get(url).content
             if r == None and 'tvshowtitle' in data:
                 season = re.search('S(.*?)E', hdlr)
                 season = season.group(1)
                 url = title
-                r = client.request(url)
+                r = self.scraper.get(url).content
             for loopCount in range(0,2):
                 if loopCount == 1 or (r == None and 'tvshowtitle' in data):
-                    r = client.request(url)
+                    r = self.scraper.get(url).content
                 posts = client.parseDOM(r, "div", attrs={"class": "postpage_movie_download"})
                 hostDict = hostprDict + hostDict
                 items = []
@@ -86,7 +90,7 @@ class source:
             for item in items:
                 try:
                     i = str(item)
-                    r = client.request(i)
+                    r = self.scraper.get(i).content
                     u = client.parseDOM(r, "div", attrs={"class": "multilink_lnks"})
                     for t in u:
                         r = client.parseDOM(t, 'a', ret='href')
@@ -95,10 +99,11 @@ class source:
                                 continue
                             if url in str(sources):
                                 continue
-                            quality, info = source_utils.get_release_quality(url)
+                            quality, info = source_utils.get_release_quality(url, url)
                             #if 'SD' in quality: continue  # Opened up for some testing.
                             valid, host = source_utils.is_host_valid(url, hostDict)
-                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
+                            if valid:
+                                sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
                 except:
                     pass
             return sources

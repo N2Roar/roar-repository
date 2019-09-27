@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
 
 from resources.lib.modules import getSum
 from resources.lib.modules import source_utils
@@ -31,12 +31,10 @@ class source:
             r = getSum.get(url, Type='cfscrape')
             match = getSum.findSum(r)
             for url in match:
-                if not 'youtube' in url:
-                    url = url.replace('xstreamcdn.com', 'fembed.com').replace('gcloud.live', 'fembed.com').replace('femoload.xyz', 'fembed.com').replace('there.to', 'fembed.com') if '/v/' in url else url
-                    quality, info = source_utils.get_release_quality(url, url)
-                    valid, host = source_utils.is_host_valid(url, hostDict)
-                    if valid:
-                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
+                quality, info = source_utils.get_release_quality(url, url)
+                valid, host = source_utils.is_host_valid(url, hostDict)
+                if valid:
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
@@ -64,6 +64,6 @@ class source:
                     url = getSum.get(link, Type='redirect')
                     return url
         except:
-            return
+            return url
 
 

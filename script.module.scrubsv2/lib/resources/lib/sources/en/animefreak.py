@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-08-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
-from resources.lib.modules import source_tools,tvmaze
+from resources.lib.modules import source_tools
+from resources.lib.modules import tvmaze
 
 
 class source:
@@ -56,7 +57,7 @@ class source:
                 return sources
             hostDict = hostprDict + hostDict
             r = getSum.get(url, Type='cfscrape')
-            match = getSum.findSum(r)
+            match = re.compile('(?:file|source)(?:\:)\s*(?:\"|\')(.+?)(?:\"|\')').findall(r)
             for url in match:
                 url = url.encode('utf-8')
                 info = source_tools.get_info(url)

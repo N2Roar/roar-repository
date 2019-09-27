@@ -49,37 +49,25 @@ if action == None:
     cache.cache_version_check()
     navigator.navigator().root()
 
+elif action == 'myDevTest':
+    from resources.lib.modules import getSum
+    getSum.TEST_RUN()
+
 elif action == 'movieNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().movies()
-
-elif action == 'movieliteNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().movies(lite=True)
 
 elif action == 'mymovieNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().mymovies()
 
-elif action == 'mymovieliteNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().mymovies(lite=True)
-
 elif action == 'tvNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().tvshows()
 
-elif action == 'tvliteNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().tvshows(lite=True)
-
 elif action == 'mytvNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().mytvshows()
-
-elif action == 'mytvliteNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().mytvshows(lite=True)
 
 elif action == 'channels':
     from resources.lib.indexers import channels
@@ -101,53 +89,41 @@ elif action == 'imdbLists':
     from resources.lib.indexers import navigator
     navigator.navigator().imdbLists()
 
+elif action == 'tmdbLists':
+    from resources.lib.indexers import navigator
+    navigator.navigator().tmdbLists()
+
 elif action == 'hellaLifeTimeHallMark':
     from resources.lib.indexers import movies
     movies.movies().hellaLifeTimeHallMark()
 
-elif action == 'JewNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().root()
+elif action == 'tmdbUserLists':
+    from resources.lib.indexers import tvshows2
+    tvshows2.tvshows().tmdbUserLists()
 
-elif action == 'myuranmvNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().myuranmv()
+elif action == 'tmdbActorCollections':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_ActorCollections()
 
-elif action == 'myholidmvNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().myholidmv()
+elif action == 'tmdbDCvsMarvel':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_DCvsMarvel()
 
-elif action == 'mysupermvNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().mysupermv()
+elif action == 'tmdbHolidays':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_Holidays()
 
-elif action == 'myurantvNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().myurantv()
+elif action == 'tmdbAssortment':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_Assortment()
 
-elif action == 'myclassicsNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().myclassics()
+elif action == 'tmdbCollections':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_Collections()
 
-elif action == 'mymoreNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().mymore()
-
-elif action == 'boxesNavigator':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().boxes()
-
-elif action == 'collectionActors':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().collectionActors()
-
-elif action == 'collectionBoxsetKids':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().collectionBoxsetKids()
-
-elif action == 'collectionSuperhero':
-    from resources.lib.indexers import navigator2
-    navigator2.navigator().collectionSuperhero()
+elif action == 'tmdbCollectionsDupes':
+    from resources.lib.indexers import movies2
+    movies2.movies().tmdbUserLists_CollectionsDupes()
 
 elif action == 'movies2':
     from resources.lib.indexers import movies2
@@ -529,6 +505,26 @@ elif action == 'ustvgoPlay':
     from resources.lib.indexers import ustvgo
     ustvgo.ustvgo().play(url)
 
+elif action == 'streamliveNavigator':
+    from resources.lib.indexers import streamlive
+    streamlive.streamlive().root()
+
+elif action == 'streamlivePlay':
+    from resources.lib.indexers import streamlive
+    streamlive.streamlive().play(url)
+
+elif action == 'hightimesNavigator':
+    from resources.lib.indexers import hightimes
+    hightimes.hightimes().root()
+
+elif action == 'getFreeWeed':
+    from resources.lib.indexers import hightimes
+    hightimes.hightimes().getFreeWeed()
+
+elif action == 'highPlay':
+    from resources.lib.indexers import hightimes
+    hightimes.hightimes().play(url)
+
 elif action == 'radioNavigator':
     from resources.lib.indexers import tunes
     tunes.radionet().root()
@@ -786,7 +782,7 @@ if mode == "toggleAllSpares":
             'gogoanime', 'gogoanime1', 'gogoanimestv', 'gomoviesonl', 'goprojectfreetv', 'hdmo', 'hackimdb',
             'hnmovies', 'megashare9', 'movies123', 'mymoviego', 'mymoviesonline', 'myprojectfreetv', 'myputlockers',
             'newepisodes', 'nitermovies', 'pokemonfire', 'primewire', 'putlockered', 'putlockeronl', 'sharemovies',
-            'sezonlukdizi', 'solarmovienet', 'toonget', 'toonova', 'watch32hd', 'watchseriessto', 'wsunblock', 'zmovies'
+            'sezonlukdizi', 'solarmovienet', 'toonget', 'toonova', 'watch32hd', 'watchseries4k', 'watchseriessto', 'wsunblock', 'zmovies'
     ]
     toggleAll(params['setting'], params['query'], sourcelist)
 

@@ -1,18 +1,19 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 02-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
 import re,urllib,urlparse
-from resources.lib.modules import client,debrid,source_utils
-
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
         self.domains = ['ddlspot.com']
-        self.base_link = 'http://www.ddlspot.com/'
-        self.search_link = 'search/?q=%s&m=1&x=0&y=0'
+        self.base_link = 'http://www.ddlspot.com'
+        self.search_link = '/search/?q=%s&m=1&x=0&y=0'
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -110,7 +111,7 @@ class source:
             if check:
                 sources = check
             return sources
-        except:
+        except Exception:
             return sources
 
 

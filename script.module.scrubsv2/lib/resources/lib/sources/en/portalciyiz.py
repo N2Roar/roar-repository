@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Think its all Turkish
 
 import re,urllib,urlparse
-from resources.lib.modules import directstream,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import directstream
+from resources.lib.modules import source_utils
 
 
 class source:

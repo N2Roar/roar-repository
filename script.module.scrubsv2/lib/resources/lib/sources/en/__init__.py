@@ -6,7 +6,6 @@ import os.path
 files = os.listdir(os.path.dirname(__file__))
 __all__ = [filename[:-3] for filename in files if not filename.startswith('__') and filename.endswith('.py')]
 
-# url = url.replace('vidtodoo.com', 'vidtodu.com').replace('vidtodo.com', 'vidtodu.com') if 'vidtod' in url else url
 
 ###Dev Shit.
 # TIP = '(this is fake and just a lazy way to force a scraper to not run lol.)'
@@ -15,10 +14,6 @@ __all__ = [filename[:-3] for filename in files if not filename.startswith('__') 
 
 # if debrid.status() is False: raise Exception()
 # if debrid.tor_enabled() is False: raise Exception()
-
-# from resources.lib.modules import cfscrape
-# self.scraper = cfscrape.create_scraper()
-# r = self.scraper.get(url).content
 
 # if not url: return
 # if url == None: return sources
@@ -30,6 +25,10 @@ __all__ = [filename[:-3] for filename in files if not filename.startswith('__') 
 # results_limit = 30
 # if results_limit < 1: continue
 # else: results_limit -= 1
+
+# from resources.lib.modules import cfscrape
+# self.scraper = cfscrape.create_scraper()
+# r = self.scraper.get(url).content
 
 # import xbmcgui
 # TIP = '(name as in you name it.)'
@@ -49,6 +48,10 @@ __all__ = [filename[:-3] for filename in files if not filename.startswith('__') 
     #log_utils.log('---Scraper Testing - Exception: \n' + str(failure))
     #return
 
-
+# from resources.lib.modules import more_sources
+# for source in more_sources.getMore(url, hostDict): sources.append(source)
+# for source in more_sources.more_gomo(url, hostDict): sources.append(source)
+# for source in more_sources.more_vidnode(url, hostDict): sources.append(source)
+# for source in more_sources.more_vidlink(url, hostDict): sources.append(source)
 
 

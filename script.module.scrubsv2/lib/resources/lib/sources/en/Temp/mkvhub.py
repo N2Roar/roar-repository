@@ -143,7 +143,7 @@ class source:
                     url = [i for i in data if 'magnet:' in i][0]
                     url = url.split('&tr')[0]
                     self._sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
-        except Exception:
+        except:
             pass
 
 

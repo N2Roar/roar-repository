@@ -1,16 +1,18 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-22-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['flixgo.co']
-        self.base_link = 'https://flixgo.co'
+        self.domains = ['flixgo.cc', 'flixgo.co']
+        self.base_link = 'https://flixgo.cc'
         self.search_link = '/?do=search&mode=advanced&subaction=search&story=%s+%s'
 
 

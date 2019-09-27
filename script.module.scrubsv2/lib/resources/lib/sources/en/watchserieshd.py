@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 03-21-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
+import re,requests
 from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
 from resources.lib.modules import getSum
 from resources.lib.modules import source_utils
 
@@ -43,17 +45,34 @@ class source:
             r = getSum.get(url)
             match = getSum.findSum(r)
             for url in match:
-                url = url.replace('xstreamcdn.com', 'fembed.com').replace('gcloud.live', 'fembed.com').replace('femoload.xyz', 'fembed.com').replace('there.to', 'fembed.com') if '/v/' in url else url
-                quality, info = source_utils.get_release_quality(url, url)
-                valid, host = source_utils.is_host_valid(url, hostDict)
-                if not 'vidcloud.icu' in url and valid:
-                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                if 'vidcloud' in url:
+                    result = getSum.get(url)
+                    match = getSum.findSum(result)
+                    for link in match:
+                        link = "https:" + link if not link.startswith('http') else link
+                        link = requests.get(link).url if 'vidnode' in link else link
+                        valid, host = source_utils.is_host_valid(link, hostDict)
+                        if valid:
+                            quality, info = source_utils.get_release_quality(link, link)
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
+                else:
+                    valid, host = source_utils.is_host_valid(url, hostDict)
+                    if valid:
+                        quality, info = source_utils.get_release_quality(url, url)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
             return sources
-        except Exception:
+        except:
             return sources
 
 
     def resolve(self, url):
-        return url
+        if "google" in url:
+            return directstream.googlepass(url)
+        elif 'vidcloud' in url:
+            r = getSum.get(url)
+            url = re.findall("file: '(.+?)'", r)[0]
+            return url
+        else:
+            return url
 
 

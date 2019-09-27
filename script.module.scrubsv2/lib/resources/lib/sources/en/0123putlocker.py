@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,base64
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -50,21 +52,18 @@ class source:
             if url == None:
                 return sources
             r = self.scraper.get(url).content
-            try:
-                match = re.compile('<p class="server_version"><img src="http://putlockertv.ws/themes/movies/img/icon/server/(.+?).png" width="16" height="16" /> <a href="(.+?)">').findall(r)
-                for host, url in match: 
-                    if host == 'internet':
-                        pass
-                    if source_utils.limit_hosts() is True and host in str(sources):
-                        continue
-                    valid, host = source_utils.is_host_valid(host, hostDict)
-                    if valid:
-                        sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False}) 
-            except:
-                return
+            match = re.compile('<p class="server_version"><img src="http://putlockertv.ws/themes/movies/img/icon/server/(.+?).png" width="16" height="16" /> <a href="(.+?)">').findall(r)
+            for host, url in match:
+                if host == 'internet':
+                    pass
+                if source_utils.limit_hosts() is True and host in str(sources):
+                    continue
+                valid, host = source_utils.is_host_valid(host, hostDict)
+                if valid:
+                    sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False}) 
+            return sources
         except Exception:
-            return
-        return sources
+            return sources
 
 
     def resolve(self, url):
@@ -75,4 +74,5 @@ class source:
             match = re.compile('src="(.+?)"').findall(info)
             for url in match:
                 return url
+
 

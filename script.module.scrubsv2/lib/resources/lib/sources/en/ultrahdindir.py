@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Fixed by Tempest
 
 import re,urllib,urlparse
-from resources.lib.modules import client,dom_parser2,debrid
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import dom_parser2
 
 
 class source:

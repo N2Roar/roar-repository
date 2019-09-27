@@ -1,23 +1,19 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,base64,json,time
-from resources.lib.modules import client,cleantitle,cache,directstream,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en'] # Old  cartoonhd.de
-        self.domains = ['cartoonhd.it', 'cartoonhd.cz', 'cartoonhd.care']
-        self._base_link = None
-
-
-    @property
-    def base_link(self):
-        if not self._base_link:
-            self._base_link = cache.get(self.__get_base_url, 120, 'http://%s' % self.domains[0])
-        return self._base_link
+        self.language = ['en'] # Old  cartoonhd.it  cartoonhd.de  cartoonhd.cz
+        self.domains = ['cartoonhd.com', 'cartoonhd.care']
+        self.base_link = 'https://cartoonhd.com'  # .care dont seem to work no more.
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -166,25 +162,10 @@ class source:
             return sources
 
 
-    def __get_base_url(self, fallback):
-        try:
-            for domain in self.domains:
-                try:
-                    url = 'http://%s' % domain
-                    r = client.request(url, limit=1, timeout='10')
-                    result = re.findall('<meta property="og:site_name" content="(.+?)" />', result, re.DOTALL)[0]
-                    if result and 'Cartoon HD' in result:
-                        return url
-                except:
-                    pass
-        except:
-            pass
-        return fallback
-
-
     def resolve(self, url):
         if 'google' in url and not 'googleapis' in url:
             return directstream.googlepass(url)
         else:
             return url
+
 

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# vidnode could be improved but resolve redirect works for now.
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
@@ -10,8 +11,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['yesmovies.gg']
-        self.base_link = 'https://yesmovies.gg'
+        self.domains = ['yesmovies.fm', 'yesmovies.gg']
+        self.base_link = 'https://www1.yesmovies.fm'
         self.movie_link = '/film/%s/watching.html?ep=0'
         self.tvshow_link = '/film/%s-season-%s/watching.html?ep=%s'
 
@@ -51,21 +52,28 @@ class source:
                 return sources
             hostDict = hostprDict + hostDict
             r = getSum.get(url)
-            qual = getSum.findThat(r, 'class="quality">(.+?)<')
-            for i in qual:
-                quality = source_utils.check_url(i)
-                info = i
+            qual = getSum.findThat(r, 'class="quality">(.+?)<')[0]
+            quality, info = source_utils.get_release_quality(qual, qual)
             match = getSum.findSum(r)
             for url in match:
-                url = url.replace('xstreamcdn.com', 'fembed.com').replace('gcloud.live', 'fembed.com').replace('femoload.xyz', 'fembed.com').replace('there.to', 'fembed.com') if '/v/' in url else url
-                valid, host = source_utils.is_host_valid(url, hostDict)
-                if not 'vidcloud' in url and valid:
-                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
-                return sources
+                if 'vidcloud' in url:
+                    r = getSum.get(url)
+                    match = getSum.findSum(r)
+                    for url in match:
+                        valid, host = source_utils.is_host_valid(url, hostDict)
+                        if valid:
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                else:
+                    valid, host = source_utils.is_host_valid(url, hostDict)
+                    if valid:
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+            return sources
         except:
-            return
+            return sources
 
 
     def resolve(self, url):
+        if 'api.vidnode.net' in url:
+            url = getSum.get(url, type='redirect')
         return url
 

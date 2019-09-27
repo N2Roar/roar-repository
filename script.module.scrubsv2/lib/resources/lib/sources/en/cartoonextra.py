@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-02-2019 by JewBMX in Scrubs.
-# This one is a little odd and needs improved for show seasons.
-# Some have season in the title ad toon form, others are anine form.
-# http://cartoonextra.in/avatar-the-last-airbender-episode-61
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,requests,urlparse
-from resources.lib.modules import client,cleantitle,tvmaze
-from resources.lib.modules import source_utils,source_tools
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_tools
+from resources.lib.modules import source_utils
+from resources.lib.modules import tvmaze
 
 
 class source:

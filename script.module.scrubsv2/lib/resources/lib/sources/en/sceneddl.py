@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-    Scenedll scraper for Exodus.
-    May 2019 - Checked
-    Updated and refactored by Exodus.
-    Originally created by Exodus.
-"""
+# -*- coding: UTF-8 -*-
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse
 from resources.lib.modules import client

@@ -31,7 +31,6 @@ class player(xbmc.Player):
             poster, thumb, meta = self.getMeta(meta)
             item = control.item(path=url)
             item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-            #item.setInfo(type='video', infoLabels = meta) # old code
             item.setInfo(type='video', infoLabels = control.metadataClean(meta))
             if 'plugin' in control.infoLabel('Container.PluginName'):
                 control.player.play(url, item)
@@ -180,38 +179,40 @@ class player(xbmc.Player):
 
 
     def idleForPlayback(self):
-        for i in range(0, 200):
-            if control.condVisibility('Window.IsActive(busydialog)') == 1:
-                control.idle()
+        for i in range(0, 400):
+            if control.condVisibility('Window.IsActive(busydialog)') == 1 or control.condVisibility('Window.IsActive(busydialognocancel)') == 1:
+                control.sleep(100)
             else:
+                control.execute('Dialog.Close(all,true)')
                 break
-            control.sleep(100)
 
 
     def onAVStarted(self):
-        try:
-            if int(control.getKodiVersion()) >= 18:
-                control.execute('Dialog.Close(all,true)')
-                if not self.offset == '0':
-                    self.seekTime(float(self.offset))
-                subtitles().get(self.name, self.imdb, self.season, self.episode)
-                self.idleForPlayback()
-        except:
-            pass
+        if int(control.getKodiVersion()) >= 18:
+            control.execute('Dialog.Close(all,true)')
+            if not self.offset == '0':
+                self.seekTime(float(self.offset))
+            subtitles().get(self.name, self.imdb, self.season, self.episode)
+            self.idleForPlayback()
+        else:
+            self.onPlayBackStarted()
 
 
     def onPlayBackStarted(self):
-        control.execute('Dialog.Close(all,true)')
-        if not self.offset == '0':
-            self.seekTime(float(self.offset))
-        subtitles().get(self.name, self.imdb, self.season, self.episode)
-        self.idleForPlayback()
+        if int(control.getKodiVersion()) < 18:
+            control.execute('Dialog.Close(all,true)')
+            if not self.offset == '0':
+                self.seekTime(float(self.offset))
+            subtitles().get(self.name, self.imdb, self.season, self.episode)
+            self.idleForPlayback()
+        else:
+            self.onAVStarted()
 
 
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
         if control.setting('crefresh') == 'true':
-            xbmc.executebuiltin('Container.Refresh')
+            control.refresh()
         try:
             if (self.currentTime / self.totalTime) >= .90:
                 self.libForPlayback()
@@ -223,7 +224,7 @@ class player(xbmc.Player):
         self.libForPlayback()
         self.onPlayBackStopped()
         if control.setting('crefresh') == 'true':
-            xbmc.executebuiltin('Container.Refresh')
+            control.refresh()
 
 
 class subtitles:

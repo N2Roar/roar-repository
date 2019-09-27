@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Dupe of wsunblock. only real difference is search vs build.
 
 import re,base64
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -58,7 +60,7 @@ class source:
                     quality, info = source_utils.get_release_quality(url, url)
                     sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
             return sources
-        except Exception:
+        except:
             return sources
 
 

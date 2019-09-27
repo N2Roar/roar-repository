@@ -185,7 +185,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.5.01" provider-name="A4K">
+<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.8.01" provider-name="A4K">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0"/>
 		<import addon="metadata.tvdb.com" version="3.0.14"/>
@@ -225,6 +225,9 @@
 		<website></website>
 		<source></source>
 		<news>
+		1.4.8 - Fix crash from empty "first_aired" string"
+		1.4.7 - Fix crash when we can't contact TVDB
+		1.4.6 - Fix crashes from non-existent keys
 		1.4.5 - Added default play action, options for movies are; Play/OpenInfo and options for episodes are; Play/OpenInfo(TV Show info)/OpenInfo(Episode info).
 		1.4.4 - Fix clearlogo for movies
 		1.4.3 - Fix typo in season fanart request.
@@ -236,15 +239,14 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.5.6">
+<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.5.9">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.scrubsv2" />
         <import addon="script.scrubsv2.artwork" />
         <import addon="script.scrubsv2.metadata" />
         <import addon="script.module.resolveurl" />
-        <import addon="script.module.metahandler" />
-        <import addon="script.module.requests" />
+        <import addon="script.module.urlresolver" optional="true" />
     </requires>
     <extension library="main.py" point="xbmc.python.pluginsource">
         <provides>video</provides>
@@ -261,7 +263,7 @@
             <fanart>fanart.jpg</fanart>
             <screenshot>resources/screenshots/screenshot_1.png</screenshot>
         </assets>
-        <news>[B] Total CleanUp of EN Providers[/B]: Checked and all good as of 06-17-2019. [CR][B] (If a non-en provider is broken let me know, as i dont bother with em.)[/B] [CR][B] (Please Report Any Issues To Me Directly. Details Are in Settings.)[/B] </news>
+        <news>[B] Total CleanUp of EN Providers[/B]: Checked and all good as of 08-24-2019. [CR][B] (If a non-en provider is broken let me know, as i dont bother with em.)[/B] [CR][B] (Please Report Any Issues To Me Directly. Details Are in Settings.)[/B] </news>
     </extension>
 </addon>
 
@@ -285,15 +287,15 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.1.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.module.requests" version="2.19.1" />
 		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
-		<import addon="script.module.metahandler" version="1.0.0" />
+		<import addon="script.module.metahandler" version="2.9.0" />
 		<import addon="plugin.video.youtube" version="6.2.0"/>
-		<import addon="script.module.resolveurl" version="5.0.0"/>
+		<import addon="script.module.resolveurl" version="5.0.27"/>
 		<import addon="script.module.openscrapers" />
 		<import addon="script.module.addon.signals" version="0.0.1"/>
 	</requires>
@@ -322,16 +324,26 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.7 - Aug 18, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Finished actor profile pics for TVShows,
-    Seasons, and Episodes.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed sorting of some MyTVShows lists not
-    filter for "The, "An", and "A".[/I]
-[COLOR yellow]--[/COLOR][I] Added Re-Scrape option to Context Menu
-    to bypass cached links.[/I]
+[B][COLOR red]Update - v3.2.0 - Sept 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] changed clearlogo and clearart to
+    tvshow.clearart and tvshow.clearlogo to
+    fix skin issue seen in Estuary.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt lists not updating for changes
+    until 1hr passed due to cache duration.
+    Now if Trakt activity is newer than cache
+    write date the new data will be fetched[/I]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt lists sort by Title to ignore
+    articles (the, and, an).[/I]
+[COLOR yellow]--[/COLOR][I] Reworked multiline source list. There is
+    now a 2nd line color choice option in
+    settings. Switched formatting of 2nd line
+    to Italic. Removed occasional 0 values.[/I]
+[COLOR yellow]--[/COLOR][I] Added color choice options for progress
+    dialog premium and free lines.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few new colors to various options
+    in settings.[/I]
 		</news>
 	</extension>
-
 </addon>
 
 <addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.5" provider-name="doko">
@@ -630,13 +642,14 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.4">
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.7">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.beautifulsoup4" />
         <import addon="script.module.beautifulsoup" />
         <import addon="script.module.dateutil" />
         <import addon="script.module.futures" />
+        <import addon="script.module.metahandler" />
         <import addon="script.module.requests" />
     </requires>
     <extension library="lib" point="xbmc.python.module" />

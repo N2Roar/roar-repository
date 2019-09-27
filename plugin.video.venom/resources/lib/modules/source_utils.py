@@ -21,20 +21,21 @@ RES_4K = ['4k', 'hd4k', 'hd4k ', '4khd', '4khd ', 'uhd', 'ultrahd', 'ultra hd', 
 RES_2K = ['2k', 'hd2k', 'hd2k ', '2khd', '2khd ', '2048p', '2048i', 'hd2048', '2048hd', '2048p ', '2048i ', 'hd2048 ', '2048hd ',
 						'1332p', '1332i', 'hd1332', '1332hd', '1332p ', '1332i ', 'hd1332 ', '1332hd ', '1556p', '1556i', 'hd1556', '1556hd',
 						'1556p ', '1556i ', 'hd1556 ', '1556hd ', ]
-
 RES_1080 = ['1080', '1080p', '1080i', 'hd1080', '1080hd', '1080 ', '1080p ', '1080i ', 'hd1080 ', '1080hd ', '1200p', '1200i', 'hd1200',
 						'1200hd', '1200p ', '1200i ', 'hd1200 ', '1200hd ']
 RES_HD = ['720', '720p', '720i', 'hd720', '720hd', 'hd', '720 ', '720p ', '720i ', 'hd720 ', '720hd ']
 RES_SD = ['576', '576p', '576i', 'sd576', '576sd', '576 ', '576p ', '576i ', 'sd576 ', '576sd ', '480', '480p', '480i', 'sd480', '480sd',
 						'480 ', '480p ', '480i ', 'sd480 ', '480sd ', '360', '360p', '360i', 'sd360', '360sd', '360 ', '360p ', '360i ', 'sd360 ', '360sd ',
 						'240', '240p', '240i', 'sd240', '240sd', '240 ', '240p ', '240i ', 'sd240 ', '240sd ']
+
 SCR = ['dvdscr', 'screener', 'scr', 'r5', 'r6', 'dvdscr ', 'r5 ', 'r6 ']
+
 CAM = ['camrip', 'cam rip', 'tsrip', 'ts rip', 'hdcam', 'hd cam', 'hdts', 'hd ts', 'dvdcam', 'dvd cam', 'dvdts', 'dvd ts', 'cam', 'telesync',
 						'tele sync', 'ts', 'camrip ', 'tsrip ', 'hcam', 'hdts ', 'dvdcam ', 'dvdts ', 'telesync ']
 
 
-CODEC_H265 = ['hevc', 'h265', 'h.265', 'x265', 'x.265 ', '265 ']
-CODEC_H264 = ['avc', 'h264', 'h.264', 'x264', 'x.264', '264 ']
+CODEC_H265 = ['hevc', 'h265', 'h.265', 'x265', 'x.265']
+CODEC_H264 = ['avc', 'h264', 'h.264', 'x264', 'x.264']
 CODEC_XVID = ['xvid', 'xvid ']
 CODEC_DIVX = ['divx', 'divx ', 'div2', 'div2 ', 'div3', 'div3 ']
 CODEC_MPEG = ['mp4', 'mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 ', 'mpeg ', 'msmpeg', 'msmpeg4', 'mpegurl',
@@ -42,9 +43,9 @@ CODEC_MPEG = ['mp4', 'mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 
 CODEC_AVI  = ['avi']
 CODEC_MKV  = ['mkv', 'mkv ', '.mkv', 'matroska', 'matroska ']
 
-
-AUDIO_8CH = ['ch8', '8ch', 'ch7', '7ch', '7 1', 'ch7 1', '7 1ch', 'ch8 ', '8ch ', 'ch7 ', '7ch ', '.ddp']
-AUDIO_6CH = ['ch6', '6ch', 'ch6', '6ch', '6 1', 'ch6 1', '6 1ch', '5 1', 'ch5 1', '5 1ch', '5.1.', 'ch6 ', '6ch ', 'ch6 ', '6ch ']
+AUDIO_8CH = ['ch8', '8ch', 'ch7.1', '7.1ch', '7.1']
+AUDIO_7CH = ['ch7', '7ch', 'ch6.1', '6.1ch', '6.1']
+AUDIO_6CH = ['ch6', '6ch', 'ch5.1', '5.1ch', '5.1']
 AUDIO_2CH = ['ch2', '2ch', 'stereo', 'dualaudio', 'dual-audio', 'dual', '2 0', 'ch2 0', '2 0ch', 'ch2 ', '2ch ', 'stereo ', 'dual audio', 'dual ']
 AUDIO_1CH = ['ch1', '1ch', 'mono', 'monoaudio', 'ch1 0', '1 0ch', 'ch1 ', '1ch ', 'mono ']
 
@@ -146,25 +147,37 @@ def getFileType(url):
 	if any(value in url for value in ['bluray', 'blu-ray']):
 		type += ' BLURAY /'
 
-	if any(value in url for value in ['.web-dl', '.webdl']):
-		type += ' WEB-DL /'
-
-	if any(value in url for value in ['hdrip', 'hd-rip']):
-		type += ' HDRIP /'
-
 	if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip']):
-		type += ' BD-R /'
+		type += ' BD-RIP /'
+
+	if ' remux ' in url:
+		type += ' REMUX /'
+
+	if any(i in url for i in ['dvd-rip', 'dvd.rip', 'dvdrip']):
+		type += ' DVD /'
+
+	if any(value in url for value in ['web-dl', 'web.dl', 'webdl', 'web-rip', 'web.rip', 'webrip']):
+		type += ' WEB /'
+
+	if 'hdtv' in url:
+		type += ' HDTV /'
+
+	if 'sdtv' in url:
+		type += ' SDTV /'
+
+	if any(value in url for value in ['hd-rip', 'hd.rip', 'hdrip']):
+		type += ' HDRIP /'
 
 	if any(value in url for value in ['.dd5.1', 'dolby-digital', 'dolby.digital']):
 		type += ' DOLBYDIGITAL /'
 
-	if any(value in url for value in ['.ddex', 'dolby-ex', 'dd-ex']):
+	if any(value in url for value in ['.ddex', 'dd-ex', 'dolby-ex', 'dolby.digital.ex']):
 		type += ' DD-EX /'
 
-	if any(value in url for value in ['dolby-digital-plus', 'dolby.digital.plus']):
-		type += ' DD-PLUS /'
+	if any(value in url for value in ['dolby-digital-plus', 'dolby.digital.plus', 'ddplus', 'dd-plus']):
+		type += ' DD+ /'
 
-	if any(value in url for value in ['truehd', '.ddhd']):
+	if any(value in url for value in ['true-hd', 'truehd', '.ddhd']):
 		type += ' DOLBY-TRUEHD /'
 
 	if 'atmos' in url:
@@ -190,6 +203,9 @@ def getFileType(url):
 
 	if any(value in url for value in AUDIO_8CH):
 		type += ' 8CH /'
+
+	if any(value in url for value in AUDIO_7CH):
+		type += ' 7CH /'
 
 	if any(value in url for value in AUDIO_6CH):
 		type += ' 6CH /'
@@ -466,12 +482,10 @@ def check_directstreams(url, hoster='', quality='SD'):
 
 	if 'google' in url or any(x in url for x in ['youtube.', 'docid=']):
 		urls = directstream.google(url)
-
 		if not urls:
 			tag = directstream.googletag(url)
 			if tag:
 				urls = [{'quality': tag[0]['quality'], 'url': url}]
-
 		if urls:
 			host = 'gvideo'
 

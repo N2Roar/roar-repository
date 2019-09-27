@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-23-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # really slow since it uses cfscrape.
 
 import re,requests
+from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
-from resources.lib.modules import cfscrape
 
 
 class source:

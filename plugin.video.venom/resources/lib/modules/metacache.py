@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import time, xbmc
+import time
 from resources.lib.modules import control
 
 try:
@@ -29,8 +29,8 @@ def fetch(items, lang = 'en', user=''):
 			match = dbcur.fetchone()
 			if match is not None:
 				t1 = int(match[6])
-				update = (abs(t2 - t1) / 3600) >= 720
 
+				update = (abs(t2 - t1) / 3600) >= 720
 				if update is True:
 					raise Exception()
 

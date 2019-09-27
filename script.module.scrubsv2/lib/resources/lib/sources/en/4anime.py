@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-22-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,requests
-from resources.lib.modules import cleantitle,directstream
-from resources.lib.modules import source_utils,tvmaze
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import source_utils
+from resources.lib.modules import tvmaze
 
 
 class source:
@@ -63,6 +65,5 @@ class source:
             return directstream.googlepass(url)
         else:
             return url
-
 
 

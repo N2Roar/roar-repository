@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
-#Created by Tempest
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# Created by Tempest
 
-import re,requests
-from resources.lib.modules import client,cleantitle,source_utils
+import re
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -11,8 +13,9 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['cmovieshd.bz']
-        self.base_link = 'https://www2.cmovieshd.bz'
+        self.base_link = 'https://www6.cmovieshd.bz'
         self.search_link = '/film/%s/watching.html?ep=0'
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -28,39 +31,38 @@ class source:
         try:
             sources = []
             hostDict = hostprDict + hostDict
-            r = requests.get(url).content
-            qual = re.compile('class="quality">(.+?)<').findall(r)
+            r = self.scraper.get(url).content
+            qual = re.compile('class="quality">(.+?)</span>').findall(r)
             for i in qual:
+                info = i
                 if '1080' in i:
                     quality = '1080p'
                 elif '720' in i:
                     quality = '720p'
                 else:
                     quality = 'SD'
-            u = client.parseDOM(r, "div", attrs={"class": "pa-main anime_muti_link"})
-            for t in u:
-                u = re.findall('<li class=".+?" data-video="(.+?)"', t)
-                for url in u:
-                    if 'vidcloud' in url:
-                        url = 'https:' + url
-                        r = requests.get(url).content
-                        t = re.findall('li data-status=".+?" data-video="(.+?)"', r)
-                        for url in t:
-                            if 'vidcloud' in url:
-                                continue
-                            valid, host = source_utils.is_host_valid(url, hostDict)
-                            if valid:
-                                sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
-                    if 'vidcloud' in url:
-                        continue
-                    valid, host = source_utils.is_host_valid(url, hostDict)
-                    if valid:
-                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
-                return sources
+            u = re.compile('data-video="(.+?)"').findall(r)
+            for url in u:
+                if not url.startswith('http'):
+                    url =  "https:" + url
+                if 'vidcloud' in url:
+                    r = self.scraper.get(url).content
+                    t = re.compile('data-video="(.+?)"').findall(r)
+                    for url in t:
+                        if not url.startswith('http'):
+                            url =  "https:" + url
+                        valid, host = source_utils.is_host_valid(url, hostDict)
+                        if valid and 'vidcloud' not in url:
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                valid, host = source_utils.is_host_valid(url, hostDict)
+                if valid and 'vidcloud' not in url:
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+            return sources
         except:
-            return
+            return sources
 
 
     def resolve(self, url):
         return url
+
 

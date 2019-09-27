@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -49,23 +51,22 @@ class source:
             if url == None:
                 return sources
             r = client.request(url)
-            try:
-                match = re.compile('<iframe class="metaframe rptss" src="https\://veohb\.net/(.+?)"').findall(r)
-                for url in match:
-                    url = 'https://veohb.net/' + url
-                    info = source_utils.check_url(url)
-                    quality = source_utils.check_url(url)
-                    sources.append({'source': 'veohb', 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
-            except:
-                return
+            match = re.compile('<iframe.+?src="(.+?)"').findall(r)
+            for url in match:
+                valid, host = source_utils.is_host_valid(url, hostDict)
+                quality, info = source_utils.get_release_quality(url, url)
+                sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False}) 
+            return sources
         except:
-            return
-        return sources
+            return sources
 
 
     def resolve(self, url):
-        r = client.request(url)
-        match = re.compile('<source src="(.+?)"').findall(r)
-        for url in match:
-            return url
+        if 'veohb.net/vid.php?' in url:
+            r = client.request(url)
+            url = re.compile('<source src="(.+?)"').findall(r)[0]
+        elif self.base_link in url:
+            r = client.request(url)
+            url = re.compile("file: '(.+?)'").findall(r)[0]
+        return url
 

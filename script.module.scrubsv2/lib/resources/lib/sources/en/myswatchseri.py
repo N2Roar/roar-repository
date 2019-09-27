@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,json
-from resources.lib.modules import cleantitle,client,proxy,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import more_sources
+from resources.lib.modules import proxy
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -96,6 +100,8 @@ class source:
                     if source_utils.limit_hosts() is True and host in str(sources):
                         continue
                     host = host.encode('utf-8')
+                    for source in more_sources.more_gomo(url, hostDict):
+                        sources.append(source)
                     if valid:
                         sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
                 except:
@@ -107,4 +113,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

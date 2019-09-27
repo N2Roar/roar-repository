@@ -1,16 +1,18 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse
-from resources.lib.modules import client,debrid,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['300mbfilms.co']
-        self.base_link = 'https://www.300mbfilms.co'
+        self.domains = ['300mbfilms.io', '300mbfilms.co']
+        self.base_link = 'https://www.300mbfilms.io'
         self.search_link = '/?s=%s'
 
 
@@ -57,7 +59,7 @@ class source:
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
             hdlr = 'S%02dE%02d' % (int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else data['year']
             query = '%s s%02de%02d' % (data['tvshowtitle'], int(data['season']), int(data['episode'])) \
-                    if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
+                if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|\'|<|>|\|)', ' ', query)
             url = self.search_link % urllib.quote_plus(query)
             url = urlparse.urljoin(self.base_link, url)

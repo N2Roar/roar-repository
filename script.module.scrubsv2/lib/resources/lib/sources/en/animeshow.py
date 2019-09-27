@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-02-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urlparse
-from resources.lib.modules import client,cleantitle,tvmaze
-from resources.lib.modules import source_utils,source_tools
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_tools
+from resources.lib.modules import source_utils
+from resources.lib.modules import tvmaze
 
 
 class source:

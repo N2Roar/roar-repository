@@ -1,4 +1,4 @@
-# Original file: schism_meta
+# Original file: schism_meta and code bits from others.
 # Contents: all sorts of random code for source work lol.
 
 import re,sys,urllib,urllib2,urlparse,time
@@ -208,7 +208,7 @@ websites = set()
 def check_dupes(url):
     from urlparse import urlparse
     parsed = urlparse(url)
-    website = parsed.hostname + parsed.path
+    website = parsed.hostname + parsed.path  # play with these a little
     if website in websites:
         return False
     websites.add(website)
@@ -216,11 +216,6 @@ def check_dupes(url):
 
 
 def check_playable(url):
-    """Checks if passed url is a live link.
-    :param str url: stream url
-    :return: playable stream url or None
-    :rtype: str or None
-    """
     try:
         headers = url.rsplit('|', 1)[1]
     except:
@@ -240,5 +235,83 @@ def check_playable(url):
     except:
         pass
     return result
+
+
+def check_quality(text=""):
+    text = text.lower()
+    key_words = {
+        "Cam": ["camrip", "cam"],
+         "Telesync": ["ts", "telesync", "pdvd"],
+         "Workprint": ["wp", "workprint"],
+         "Telecine": ["tc", "telecine"],
+         "Pay-Per-View Rip": ["ppv", "ppvrip"],
+         "Screener": ["scr", "screener", "screeener", "dvdscr", "dvdscreener", "bdscr"],
+         "DDC": ["ddc"],
+         "R5": ["r5", "r5.line", "r5 ac3 5 1 hq"],
+         "DVD-Rip": ["dvdrip", "dvd-rip"],
+         "DVD-R": ["dvdr", "dvd-full", "full-rip", "iso rip", "lossless rip", "untouched rip", "dvd-5 dvd-9"],
+         "HDTV": ["dsr", "dsrip", "dthrip", "dvbrip", "hdtv", "pdtv", "tvrip", "hdtvrip", "hdrip", "hdit", "high definition"],
+         "VODRip": ["vodrip", "vodr"],
+         "WEB-DL": ["webdl", "web dl", "web-dl"],
+         "WEBRip": ["web-rip", "webrip", "web rip"],
+         "WEBCap": ["web-cap", "webcap", "web cap"],
+         "BD/BRRip": ["bdrip", "brrip", "blu-ray", "bluray", "bdr", "bd5", "bd", "blurip"],
+         "MicroHD": ["microhd"],
+         "FullHD": ["fullhd"],
+         "BR-Line": ["br line"],
+         # video formats
+         "x264": ["x264", "x 264"],
+         "x265 HEVC": ["x265 hevc", "x265", "x 265", "hevc"],
+         # audio
+         "DD5.1": ["dd5 1", "dd51", "dual audio 5"],
+         "AC3 5.1": ["ac3"],
+         "ACC": ["acc"],
+         "DUAL AUDIO": ["dual", "dual audio"],
+    }
+    color = {
+        "Cam": "FFF4AE00",
+         "Telesync": "FFF4AE00",
+         "Workprint": "FFF4AE00",
+         "Telecine": "FFF4AE00",
+         "Pay-Per-View Rip": "FFD35400",
+         "Screener": "FFD35400",
+         "DDC": "FFD35400",
+         "R5": "FFD35400",
+         "DVD-Rip": "FFD35400",
+         "DVD-R": "FFD35400",
+         "HDTV": "FFD35400",
+         "VODRip": "FFD35400",
+         "WEB-DL": "FFD35400",
+         "WEBRip": "FFD35400",
+         "WEBCap": "FFD35400",
+         "BD/BRRip": "FFD35400",
+         "MicroHD": "FFD35400",
+         "FullHD": "FFD35400",
+         "BR-Line": "FFD35400",
+         # video formats
+         "x264": "FFFB0C06",
+         "x265 HEVC": "FFFB0C06",
+         # audio
+         "DD5.1": "FF089DE3",
+         "AC3 5.1": "FF089DE3",
+         "ACC": "FF089DE3",
+         "DUAL AUDIO": "FF089DE3",
+    }
+    text_quality = ""
+    for key in key_words:
+        for keyWord in key_words[key]:
+            if ' ' + keyWord + ' ' in ' ' + text + ' ':
+                text_quality += " [COLOR %s][%s][/COLOR]" % (color[key], key)
+    if "480p" in text:
+        text_quality += " [COLOR FFF4AE00][480p][/COLOR]"
+    if "720p" in text:
+        text_quality += " [COLOR FF5CD102][720p][/COLOR]"
+    if "1080p" in text:
+        text_quality += " [COLOR FF2980B9][1080p][/COLOR]"
+    if "3d" in text:
+        text_quality += " [COLOR FFD61515][3D][/COLOR]"
+    if "4k" in text:
+        text_quality += " [COLOR FF16A085][4K][/COLOR]"
+    return text_quality
 
 

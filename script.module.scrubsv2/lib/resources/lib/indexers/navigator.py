@@ -41,7 +41,7 @@ class navigator:
         if self.getMenuEnabled('navi.userlists') == True:
             self.addDirectoryItem(42003, 'imdbLists', 'imdb.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.userlists2') == True:
-            self.addDirectoryItem(42001, 'JewNavigator', 'tmdb.png', 'DefaultVideoPlaylists.png')
+            self.addDirectoryItem(42001, 'tmdbLists', 'tmdb.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.channels') == True:
             self.addDirectoryItem(32642, 'channels', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.morestuff') == True:
@@ -58,7 +58,7 @@ class navigator:
         self.endDirectory()
 
 
-    def movies(self, lite=False):
+    def movies(self):
         if self.getMenuEnabled('navi.moviegenre') == True:
             self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movieyears') == True:
@@ -69,9 +69,6 @@ class navigator:
             self.addDirectoryItem(32014, 'movieLanguages', 'languages.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviecerts') == True:
             self.addDirectoryItem(32015, 'movieCertificates', 'certificates.png', 'DefaultMovies.png')
-        if self.getMenuEnabled('navi.movieboxes') == True:
-            self.addDirectoryItem(42008, 'boxesNavigator', 'tmdb.png', 'DefaultVideoPlaylists.png')
-            self.addDirectoryItem('Kids BoxSets', 'collectionBoxsetKids', 'tmdb.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.movieMosts') == True:
             self.addDirectoryItem(42009, 'movieMosts', 'people-watching.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviefeat') == True:
@@ -98,14 +95,10 @@ class navigator:
             self.addDirectoryItem(42016, 'movies2&url=theaters', 'movies.png', 'DefaultRecentlyAddedMovies.png')
         if self.getMenuEnabled('navi.movieoscars') == True:
             self.addDirectoryItem(32021, 'movies&url=oscars', 'oscar-winners.png', 'DefaultMovies.png')
-        if lite == False:
-            if not control.setting('lists.widget') == '0':
-                self.addDirectoryItem(32003, 'mymovieliteNavigator', 'mymovies.png', 'DefaultVideoPlaylists.png')
-            self.addDirectoryItem(42006, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.endDirectory()
 
 
-    def mymovies(self, lite=False):
+    def mymovies(self):
         self.accountCheck()
         if traktCredentials == True and imdbCredentials == True:
             self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
@@ -122,9 +115,6 @@ class navigator:
             self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultMovies.png', queue=True)
             self.addDirectoryItem('Trakt OnDeck', 'movies&url=onDeckMovies', 'trakt.png', 'DefaultMovies.png', queue=True)
         self.addDirectoryItem(32039, 'movieUserlists', 'userlists.png', 'DefaultMovies.png')
-        if lite == False:
-            self.addDirectoryItem(32031, 'movieliteNavigator', 'movies.png', 'DefaultMovies.png')
-            self.addDirectoryItem(42006, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.endDirectory()
 
 
@@ -144,7 +134,7 @@ class navigator:
 		self.endDirectory()	
 
 
-    def tvshows(self, lite=False):
+    def tvshows(self):
         if self.getMenuEnabled('navi.tvGenres') == True:
             self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tvNetworks') == True:
@@ -185,14 +175,10 @@ class navigator:
             self.addDirectoryItem(32006, 'calendar&url=added', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
         if self.getMenuEnabled('navi.tvCalendar') == True:
             self.addDirectoryItem(32027, 'calendars', 'calendar.png', 'DefaultRecentlyAddedEpisodes.png')
-        if lite == False:
-            if not control.setting('lists.widget') == '0':
-                self.addDirectoryItem(32004, 'mytvliteNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
-            self.addDirectoryItem(42006, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.endDirectory()
 
 
-    def mytvshows(self, lite=False):
+    def mytvshows(self):
         self.accountCheck()
         if traktCredentials == True and imdbCredentials == True:
             self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
@@ -213,9 +199,6 @@ class navigator:
         if traktCredentials == True:
             self.addDirectoryItem(32041, 'episodeUserlists', 'userlists.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultTVShows.png')
-        if lite == False:
-            self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'DefaultTVShows.png')
-            self.addDirectoryItem(42006, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.endDirectory()
 
 
@@ -255,9 +238,26 @@ class navigator:
         self.endDirectory()
 
 
+    def tmdbLists(self):
+        self.addDirectoryItem('Actor Collections(Movies)', 'tmdbActorCollections', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('DC vs Marvel(Movies)', 'tmdbDCvsMarvel', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Holidays(Movies)', 'tmdbHolidays', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Assortment of Lists(Movies)', 'tmdbAssortment', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Collections(Movies)', 'tmdbCollections', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Collections Dupes(Movies)', 'tmdbCollectionsDupes', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('TV Show Lists(TV Shows)', 'tmdbUserLists', 'tmdb.png', 'DefaultTVShows.png')
+        self.addDirectoryItem('Hulu Originals(TV Shows)', 'tvshows2&url=tmdbhuluorig', 'tmdb.png', 'DefaultTVShows.png')
+        self.addDirectoryItem('Netflix Originals(TV Shows)', 'tvshows2&url=tmdbnetflixorig', 'tmdb.png', 'DefaultTVShows.png')
+        self.addDirectoryItem('Amazon Originals(TV Shows)', 'tvshows2&url=tmdbamazonorig', 'tmdb.png', 'DefaultTVShows.png')
+        self.addDirectoryItem('Jew Movies', 'movies2&url=tmdbjewmovies', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Jew Top 250 TV Shows', 'tvshows2&url=tmdbjew250tv', 'tmdb.png', 'DefaultTVShows.png')
+        self.endDirectory()
+
+
     def moreplugs(self):
         self.addDirectoryItem('AcronaiTV',  'acronaitv_menu',  'channels.png',  'DefaultTVShows.png')
         self.addDirectoryItem('usTVgo', 'ustvgoNavigator', 'channels.png', 'DefaultTVShows.png')
+        self.addDirectoryItem('StreamLive', 'streamliveNavigator', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.customList') == True:
             self.addDirectoryItem('Custom List', 'navCustom', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.iptvChannels') == True:
@@ -266,6 +266,7 @@ class navigator:
             self.addDirectoryItem(42024, 'jewMC', 'highly-rated.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.radio') == True:
             self.addDirectoryItem(42025, 'radioNavigator', 'highly-rated.png', 'DefaultVideoPlaylists.png')
+        self.addDirectoryItem('High Times', 'hightimesNavigator', 'highly-rated.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.tvReviews') == True:
             self.addDirectoryItem(326232, 'tvReviews', 'highly-rated.png', 'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.movieReviews') == True:
@@ -290,7 +291,7 @@ class navigator:
         self.addDirectoryItem(32047, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32641, 'openSettings&query=7.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32613, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
@@ -307,6 +308,7 @@ class navigator:
 
 
     def devtools(self):
+        #self.addDirectoryItem('Dev_Test', 'myDevTest', 'tools.png', 'DefaultMovies.png')
         #self.addDirectoryItem('ToonNavigator', 'toonNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem('Test Movies(TMDB)', 'movies2&url=tmdbjewtestmovies', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem('Test Shows(TMDB)', 'tvshows2&url=tmdbjewtestshows', 'tvshows.png', 'DefaultTVShows.png')

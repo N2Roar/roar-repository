@@ -1,18 +1,20 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # -Update by Tempest (Pulls links for RD users)
 
 import re,urllib,urlparse
-from resources.lib.modules import cleantitle,debrid
-from resources.lib.modules import source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['ganool.ws', 'ganol.si', 'ganool123.com']
-        self.base_link = 'https://www1.ganool.ws'
+        self.domains = ['ganool.bz', 'ganool.ws', 'ganol.si', 'ganool123.com']
+        self.base_link = 'https://www1.ganool.bz'
         self.search_link = '/search/?q=%s'
         self.scraper = cfscrape.create_scraper()
 
@@ -44,7 +46,7 @@ class source:
                 if t not in check:
                     raise Exception()
                 key = url.split('-hd')[1]
-                r = self.scraper.get('https://ganool.ws/moviedownload.php?q=' + key).content
+                r = self.scraper.get(self.base_link + '/moviedownload.php?q=' + key).content
                 r = re.compile('<a rel=".+?" href="(.+?)" target=".+?">').findall(r)
                 for url in r:
                     if any(x in url for x in ['.rar']):

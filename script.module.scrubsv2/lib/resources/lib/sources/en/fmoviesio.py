@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urlparse
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -22,7 +24,7 @@ class source:
             search_results = client.request(url)
             match = re.compile('<a href="/watch/(.+?)" title="(.+?)">',re.DOTALL).findall(search_results)
             for row_url, row_title in match:
-                row_url = 'https://fmoviesto.to/watch/%s' % row_url
+                row_url = self.base_link + '/watch/%s' % row_url
                 if cleantitle.get(title) in cleantitle.get(row_title):
                     return row_url
             return
@@ -54,5 +56,9 @@ class source:
 
 
     def resolve(self, url):
+        if 'vidcloud' in url:
+            r = client.request(url)
+            url = re.compile('(?:file|source)(?:\:)\s*(?:\"|\')(.+?)(?:\"|\')').findall(r)[0]
         return url
+
 

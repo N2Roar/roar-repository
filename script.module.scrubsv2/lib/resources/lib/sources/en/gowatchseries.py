@@ -1,16 +1,19 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,json
-from resources.lib.modules import client,cleantitle,source_utils,log_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import more_sources
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['gowatchseries.tv', 'gowatchseries.co', 'gowatchseries.io']
-        self.base_link = 'https://gowatchseries.tv'
+        self.domains = ['gowatchseries.video', 'gowatchseries.tv', 'gowatchseries.co', 'gowatchseries.io']
+        self.base_link = 'https://gowatchseries.video'
         self.search_link = '/ajax-search.html?keyword=%s&id=-1'
         self.search_link2 = '/search.html?keyword=%s'
 
@@ -90,13 +93,9 @@ class source:
                     slinks = client.parseDOM(slinks, 'li', ret='data-video')
                 for slink in slinks:
                     try:
-                        if 'vidnode.net/streaming.php' in slink:
-                            r = client.request('https:%s'%slink, headers=headers)
-                            clinks = re.findall(r'sources:\[(.*?)\]',r)[0]
-                            clinks = re.findall(r'file:\s*\'(http[^\']+)\',label:\s*\'(\d+)', clinks)
-                            for clink in clinks:
-                                q = source_utils.label_to_quality(clink[1])
-                                sources.append({'source': 'cdn', 'quality': q, 'language': 'en', 'url': clink[0], 'direct': True, 'debridonly': False})
+                        if 'vidnode.net' in slink:
+                            for source in more_sources.more_vidnode(slink, hostDict):
+                                sources.append(source)
                         else:
                             quality = source_utils.check_url(slink)
                             valid, hoster = source_utils.is_host_valid(slink, hostDict)

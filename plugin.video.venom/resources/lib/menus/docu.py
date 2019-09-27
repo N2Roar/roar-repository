@@ -182,7 +182,7 @@ class documentary:
 
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)
-		item.setArt({'icon': thumb, 'thumb': thumb})
+		item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
 		# if addonFanart is not None:
 			# item.setProperty('Fanart_Image', addonFanart)
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
@@ -236,7 +236,7 @@ class documentary:
 					item.setInfo("mediatype", "video")
 					item.setInfo("audio", '')
 
-				item.setArt({'icon': thumb, 'thumb': thumb})
+				item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
 				# if addonFanart is not None:
 					# item.setProperty('Fanart_Image', addonFanart)
 

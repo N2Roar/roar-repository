@@ -4,8 +4,9 @@
 	Venom Add-on
 '''
 
-import os, sys, re, json, zipfile
-import StringIO, urllib, urllib2, urlparse, datetime
+import sys, re, json, zipfile
+import StringIO, urllib, urllib2, urlparse
+import datetime
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
@@ -18,7 +19,6 @@ from resources.lib.modules import views
 
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
-
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -53,11 +53,8 @@ class Seasons:
 		self.traktlist_link = 'http://api-v2launch.trakt.tv/users/%s/lists/%s/items'
 		self.traktlists_link = 'http://api-v2launch.trakt.tv/users/me/lists'
 
-
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
-		if self.unairedcolor == '':
-			self.unairedcolor = 'red'
 		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
 
 
@@ -71,8 +68,14 @@ class Seasons:
 		elif n == '6': n = 'gold'
 		elif n == '7': n = 'magenta'
 		elif n == '8': n = 'yellowgreen'
-		elif n == '9': n = 'nocolor'
-		else: n == 'blue'
+		elif n == '9': n = 'skyblue'
+		elif n == '10': n = 'lime'
+		elif n == '11': n = 'limegreen'
+		elif n == '12': n = 'deepskyblue'
+		elif n == '13': n = 'white'
+		elif n == '14': n = 'whitesmoke'
+		elif n == '15': n = 'nocolor'
+		else: n == 'skyblue'
 		return n
 
 
@@ -517,10 +520,10 @@ class Seasons:
 					seasoncount = None
 
 				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year,
-								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
-								'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
-								'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
-								'thumb': thumb, 'unaired': unaired})
+											'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
+											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
+											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
+											'thumb': thumb, 'unaired': unaired})
 
 			except:
 				pass
@@ -785,6 +788,15 @@ class Seasons:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
+		try:
+			indicators = playcount.getSeasonIndicators(items[0]['imdb'])
+		except :
+			pass
+
+		unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
+		unwatchedLimit = False
+		seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
+
 		if trakt.getTraktIndicatorsInfo() is True:
 			watchedMenu = control.lang(32068).encode('utf-8')
 			unwatchedMenu = control.lang(32069).encode('utf-8')
@@ -928,7 +940,6 @@ class Seasons:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, sysname, imdb, tvdb, season)))
 
 				try:
-					indicators = playcount.getSeasonIndicators(imdb)
 					overlay = int(playcount.getSeasonOverlay(indicators, imdb, tvdb, season))
 					watched = overlay == 7
 					if watched:
@@ -959,9 +970,11 @@ class Seasons:
 
 				item = control.item(label = label)
 
-				unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
-				unwatchedLimit = False
-				seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
+				if 'castandart' in i:
+					item.setCast(i['castandart'])
+
+				if 'episodeIDS' in i:
+					item.setUniqueIDs(i['episodeIDS'])
 
 				if unwatchedEnabled == 'true':
 					count = playcount.getSeasonCount(imdb, season, self.season_special, unwatchedLimit)
@@ -979,16 +992,8 @@ class Seasons:
 							# total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
 
-				if 'episodeIDS' in i:
-					item.setUniqueIDs(i['episodeIDS'])
-
-				if 'castandart' in i:
-					item.setCast(i['castandart'])
-
-				# if fanart != '0' and fanart is not None:
-					# item.setProperty('Fanart_Image', fanart)
-
 				item.setArt(art)
+				item.setProperty('IsPlayable', 'false')
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				item.addContextMenuItems(cm)
 				video_streaminfo = {'codec': 'h264'}

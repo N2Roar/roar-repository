@@ -14,7 +14,7 @@ import urllib
 import urlparse
 import xbmc
 
-from resources.lib.modules import control
+from resources.lib.modules import control, log_utils
 from resources.lib.modules import cleantitle
 
 
@@ -329,9 +329,11 @@ class libtvshows:
 			self.silentDialog = True
 
 		from resources.lib.menus import tvshows
-		items = tvshows.TVshows().get(url, idx = False)
+		items = tvshows.TVshows().get(url, idx=False)
 
-		if items is None: items = []
+		if items is None:
+			items = []
+
 		for i in items:
 			try:
 				if xbmc.abortRequested is True: return sys.exit()
@@ -357,7 +359,7 @@ class libtvshows:
 
 		from resources.lib.menus import tvshows
 
-		items = tvshows.TVshows().get(url, idx = False)
+		items = tvshows.TVshows().get(url, idx=False)
 
 		if items is None:
 			items = []
@@ -481,9 +483,9 @@ class libepisodes:
 
 		try:
 			lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"properties" : ["imdbnumber", "title", "year"]}, "id": 1}')
-			# log_utils.log('lib = %s' % str(lib), __name__, log_utils.LOGDEBUG)
+			log_utils.log('lib = %s' % str(lib), __name__, log_utils.LOGDEBUG)
 			lib = unicode(lib, 'utf-8', errors = 'ignore')
-			# log_utils.log('lib = %s' % str(lib), __name__, log_utils.LOGDEBUG)
+			log_utils.log('lib = %s' % str(lib), __name__, log_utils.LOGDEBUG)
 			lib = json.loads(lib)['result']['tvshows']
 		except:
 			import traceback

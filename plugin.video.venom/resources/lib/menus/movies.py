@@ -18,7 +18,6 @@ from resources.lib.modules import workers
 from resources.lib.modules import views
 # from resources.lib.modules import utils
 from resources.lib.menus import navigator
-# import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -27,8 +26,6 @@ action = params.get('action')
 class Movies:
 	def __init__(self, type='movie', notifications=True):
 		self.count = int(control.setting('page.item.limit'))
-		# if type(self.count) is not int:
-			# self.count = 40
 		self.type = type
 		self.notifications = notifications
 		self.list = []
@@ -59,11 +56,13 @@ class Movies:
 		self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
 
 		self.tmdb_link = 'http://api.themoviedb.org'
-		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
 		self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
+
+		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
+		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
 		self.imdb_link = 'https://www.imdb.com'
 		self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
@@ -104,20 +103,24 @@ class Movies:
 		self.search_link = 'http://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
 		self.traktlistsearch_link = 'http://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
 
+		# self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies?limit=%d&page=1' % ('%s', '%s', self.count)
+		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies?page=1&limit=%d' % ('%s', '%s', self.count)
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies?page=1&limit=%d' % self.count
-		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?page=1&limit=%d' % self.count
-		# self.progress_link = 'http://api.trakt.tv/users/me/watched/movies'
+
+		# self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies?limit=%d&page=1' % self.count
+		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
+		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
+		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=%d&page=1' % self.count
+		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
 		self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
-		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?page=1&limit=%d' % self.count 
-		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?page=1&limit=%d' % self.count
-		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?page=1&limit=%d' % self.count
+
+		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
+		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
 		self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
-		self.traktpopular_link = 'http://api.trakt.tv/movies/popular?page=1&limit=%d' % self.count
+		self.traktpopular_link = 'http://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
+		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=%d&page=1' % self.count
 
 
 	def get(self, url, idx=True):
@@ -137,9 +140,9 @@ class Movies:
 						raise Exception()
 					if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
 						raise Exception()
-					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
 				except:
-					self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
 
 				# if '/users/me/' in url and '/collection/' in url:
 				# self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -163,7 +166,7 @@ class Movies:
 					self.worker()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 3, url)
+				self.list = cache.get(self.imdb_list, 0, url)
 				self.sort()
 				if idx is True: self.worker()
 
@@ -186,6 +189,32 @@ class Movies:
 				control.idle()
 				if self.notifications:
 					control.notification(title = 32001, message = 33049, icon = 'INFO')
+
+
+	# def unfinished(self):
+		# try:
+			# try:
+				# activity = trakt.getWatchedActivity()
+				# if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user, False):
+					# raise Exception()
+				# self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user, False)
+			# except:
+				# self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user, False)
+			# self.sort()
+			# if idx is True:
+				# self.worker(level=0)
+				# self.movieDirectory(self.list)
+		# except:
+			# import traceback
+			# traceback.print_exc()
+			# try:
+				# invalid = (self.list is None or len(self.list) == 0)
+			# except:
+				# invalid = True
+			# if invalid:
+				# control.idle()
+					# if self.notifications:
+					# control.notification(title=32326, message=33049, icon='INFO')
 
 
 	def getTMDb(self, url, idx=True):
@@ -536,6 +565,7 @@ class Movies:
 				items = result
 		except:
 			return
+
 		try:
 			q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
 			if int(q['limit']) != len(items):
@@ -549,7 +579,6 @@ class Movies:
 
 		for item in items:
 			try:
-
 				try:
 					title = (item.get('title')).encode('utf-8')
 				except:
@@ -591,6 +620,8 @@ class Movies:
 					mpaa = '0'
 
 				plot = item.get('overview')
+				try: plot = plot.encode('utf-8')
+				except: pass
 
 				tagline = item.get('tagline', '0')
 
@@ -641,7 +672,6 @@ class Movies:
 				# return client.parseDOM(client.request(url), 'meta', ret='content', attrs = {'property': 'pageId'})[0]
 				return client.parseDOM(client.request(url).decode('iso-8859-1').encode('utf-8'), 'meta', ret='content', attrs = {'property': 'pageId'})[0]
 
-
 			if url == self.imdbwatchlist_link:
 				url = cache.get(imdb_watchlist_id, 8640, url)
 				url = self.imdblist_link % url
@@ -663,7 +693,6 @@ class Movies:
 			# HTML syntax error, " directly followed by attribute name. Insert space in between. parseDOM can otherwise not handle it.
 			result = result.replace('"class="lister-page-next', '" class="lister-page-next')
 			next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.*?lister-page-next.*?'})
-
 
 			if len(next) == 0:
 				next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
@@ -771,17 +800,6 @@ class Movies:
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
-				# try:
-					# cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-				# except:
-					# cast = '0'
-				# cast = client.replaceHTMLCodes(cast)
-				# cast = cast.encode('utf-8')
-				# cast = client.parseDOM(cast, 'a')
-				# if cast == []:
-					# cast = '0'
-				cast = '0'
-
 				plot = '0'
 				try:
 					plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
@@ -808,8 +826,8 @@ class Movies:
 				plot = plot.encode('utf-8')
 
 				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
-											'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'cast': cast, 'plot': plot, 'imdb': imdb,
-											'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
+									'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'plot': plot, 'imdb': imdb,
+									'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
 				pass
 
@@ -901,7 +919,7 @@ class Movies:
 				threads = []
 				for i in range(r, r + 40):
 					if i <= total:
-						threads.append(workers.Thread(self.super_info, i, total))
+						threads.append(workers.Thread(self.super_info, i))
 				[i.start() for i in threads]
 				[i.join() for i in threads]
 
@@ -920,7 +938,7 @@ class Movies:
 		return self.list[0]
 
 
-	def super_info(self, i, total):
+	def super_info(self, i):
 		try:
 			if self.list[i]['metacache'] is True:
 				raise Exception()
@@ -955,7 +973,6 @@ class Movies:
 			duration = str(item.get('runtime', '0'))
 
 			rating = str(item.get('rating', '0'))
-
 			votes = str(format(int(item.get('votes', '0')),',d'))
 
 			mpaa = item.get('certification', '0')
@@ -967,23 +984,24 @@ class Movies:
 			plot = item.get('overview', '0')
 
 			from resources.lib.indexers.tmdb import Movies
-			# credits = Movies().tmdb_people(tmdb)
-			credits = cache.get(Movies().tmdb_people, 168, tmdb)
+			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb)
 
 			castandart = []
-			for person in credits['cast']:
+			for person in tmdb_Item['credits']['cast']:
 				try:
 					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
 					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 			director = writer = '0'
-			for person in credits['crew']:
+			for person in tmdb_Item['credits']['crew']:
 				if 'Director' in person['job']:
-					director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
-
+					director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
 				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-					writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+			poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
+			fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
 
 			try:
 				if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
@@ -998,33 +1016,23 @@ class Movies:
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-						'writer': writer, 'cast': '0', 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
-						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+						'writer': writer, 'cast': '0', 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
+						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
 						'discart': '0', 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
-			# fanart_thread = threading.Thread
-			if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0' and total > 40) or (self.disable_fanarttv != 'true'):
+			if self.disable_fanarttv != 'true':
 				from resources.lib.indexers import fanarttv
-				# extended_art = fanarttv.get_movie_art(imdb, tmdb)
 				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 				if extended_art is not None:
 					item.update(extended_art)
 					meta.update(item)
 
-			if (self.disable_fanarttv == 'true' and (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0')) or (
-					self.disable_fanarttv != 'true' and ((self.list[i]['poster'] == '0' and item.get('poster2') == '0') or (
-					self.list[i]['fanart'] == '0' and item.get('fanart2') == '0'))):
-				# if total <= 40:
-				from resources.lib.indexers.tmdb import Movies
-				# tmdb_art = Movies().tmdb_art(tmdb)
-				tmdb_art = cache.get(Movies().tmdb_art, 168, tmdb)
-				item.update(tmdb_art)
-				if item.get('landscape', '0') == '0':
-					landscape = item.get('fanart3', '0')
-					item.update({'landscape': landscape})
+			if item.get('landscape', '0') == '0':
+				item.update({'landscape': fanart3})
 				meta.update(item)
+
 			item = dict((k,v) for k, v in item.iteritems() if v != '0')
 			# item = dict((k,v) for k, v in item.iteritems())
 			self.list[i].update(item)
@@ -1046,6 +1054,7 @@ class Movies:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
+		indicators = playcount.getMovieIndicators()
 		isPlayable = 'true' if 'plugin' not in control.infoLabel('Container.PluginName') else 'false'
 
 		if control.setting('hosts.mode') == '2':
@@ -1193,7 +1202,6 @@ class Movies:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
 				try:
-					indicators = playcount.getMovieIndicators()
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
 					if overlay == 7:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
@@ -1222,12 +1230,10 @@ class Movies:
 ####################################
 
 				item = control.item(label=labelProgress)
-
+				# item = control.item(label=labelProgress, offscreen=True)
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 
-				# if fanart != '0' and fanart is not None:
-					# item.setProperty('Fanart_Image', fanart)
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1253,8 +1259,6 @@ class Movies:
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
 				pass
@@ -1313,10 +1317,10 @@ class Movies:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 				item = control.item(label = name)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-				if addonFanart is not None:
-					item.setProperty('Fanart_Image', addonFanart)
+				# if addonFanart is not None:
+					# item.setProperty('Fanart_Image', addonFanart)
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

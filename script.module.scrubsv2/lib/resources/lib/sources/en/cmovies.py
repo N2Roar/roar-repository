@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urlparse
-from resources.lib.modules import client,cleantitle,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -41,10 +43,18 @@ class source:
             for link in links:
                 if not link.startswith('http'):
                     link =  "https:" + link
-                host = link.split('//')[1].replace('www.','')
-                host = host.split('/')[0].split('.')[0].title()
+                valid, host = source_utils.is_host_valid(link, hostDict)
                 quality,info = source_utils.get_release_quality(link, link)
                 sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': False})
+            links2 = re.compile('<li><a href="//(.+?)"',re.DOTALL).findall(html)
+            for link2 in links2:
+                if 'watchseriestv.tv' in link2 or 'watchlivesport.ws' in link2:
+                    continue
+                link2 =  "https://" + link2
+                valid, host = source_utils.is_host_valid(link2, hostDict)
+                if valid:
+                    quality,info = source_utils.get_release_quality(link2, link2)
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': link2, 'info': info, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources

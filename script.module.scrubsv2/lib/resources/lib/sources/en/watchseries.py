@@ -1,24 +1,28 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import cleantitle,client,dom_parser,source_utils
+import re,requests,urllib,urlparse
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import dom_parser
+from resources.lib.modules import getSum
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['watch-series.live', 'watch-series.co'] # Old  watch-series.ru
-        self.base_link = 'https://www2.watch-series.live'
+        self.language = ['en']  # Old  watch-series.co  watch-series.ru  watch-series.live
+        self.domains = ['watchseries.fm']
+        self.base_link = 'https://www1.watchseries.fm'
         self.search_link = '/search.html?keyword=%s'
-# https://ww4.watch-series.co/
-# https://www2.watch-series.live/series/the-code-season-1-episode-10
 
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            url = cleantitle.geturl(tvshowtitle)
+            url = urlparse.urljoin(self.base_link, self.search_link % urllib.quote_plus(cleantitle.query(tvshowtitle)))
+            url = url + '$$$' + tvshowtitle
             return url
         except:
             return
@@ -26,9 +30,20 @@ class source:
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         try:
-            if not url:
+            if url == None:
                 return
-            url = self.base_link + '/series/' + url + '-season-' + season + '-episode-' + episode
+            tvshowtitle = url.split('$$$')[1]
+            url = url.split('$$$')[0]
+            result = client.request(url)
+            express = '''<a\s*href="([^"]+)"\s*class="videoHname\s*title"\s*title="%s - Season %s''' % (tvshowtitle, season)
+            get_season = re.findall(express, result, flags=re.I)[0]
+            url = urlparse.urljoin(self.base_link, get_season + '/season')
+            result = client.request(url)
+            express = '''<div class="vid_info"><span><a href="([^"]+)" title="([^"]+)" class="videoHname">'''
+            get_ep = re.findall(express, result, flags=re.I)
+            epi = [i[0] for i in get_ep if title.lower() in i[1].lower()]
+            get_ep = urlparse.urljoin(self.base_link, epi[0])
+            url = get_ep.encode('utf-8')
             return url
         except:
             return
@@ -45,7 +60,17 @@ class source:
             urls = [i.attrs['data-video'] if i.attrs['data-video'].startswith('http') else 'https:' + i.attrs['data-video'] for i in dom]
             for url in urls:
                 dom = []
-                if 'vidnode.net' in url:
+                if 'vidcloud' in url:
+                    result = client.request(url, timeout=10)
+                    match = getSum.findSum(result)
+                    for url in match:
+                        url = "https:" + url if not url.startswith('http') else url
+                        url = requests.get(url).url if 'vidnode' in url else url
+                        valid, host = source_utils.is_host_valid(url, hostDict)
+                        if valid:
+                            quality, info = source_utils.get_release_quality(url, url)
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                elif 'vidnode.net' in url:
                     result = client.request(url, timeout=10)
                     dom = dom_parser.parse_dom(result, 'source', req=['src','label'])
                     dom = [(i.attrs['src'] if i.attrs['src'].startswith('http') else 'https:' + i.attrs['src'], i.attrs['label']) for i in dom if i]
@@ -88,36 +113,14 @@ class source:
 
 
     def resolve(self, url):
-        return url
-
-
-""" Old Code Saved while search is down.
-
-    def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
-        try:
-            url = urlparse.urljoin(self.base_link, self.search_link % urllib.quote_plus(cleantitle.query(tvshowtitle)))
-            self.tvshowtitle = tvshowtitle
+        if "google" in url:
+            return directstream.googlepass(url)
+        elif 'vidcloud' in url:
+            r = client.request(url)
+            url = re.findall("file: '(.+?)'", r)[0]
             return url
-        except:
-            return
-
-
-    def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-        try:
-            if url == None:
-                return
-            result = client.request(url)
-            express = '''<a\s*href="([^"]+)"\s*class="videoHname\s*title"\s*title="%s - Season %s''' % (self.tvshowtitle, season)
-            get_season = re.findall(express, result, flags=re.I)[0]
-            url = urlparse.urljoin(self.base_link, get_season + '/season')
-            result = client.request(url)
-            express = '''<div class="vid_info"><span><a href="([^"]+)" title="([^"]+)" class="videoHname">'''
-            get_ep = re.findall(express, result, flags=re.I)
-            epi = [i[0] for i in get_ep if title.lower() in i[1].lower()]
-            get_ep = urlparse.urljoin(self.base_link, epi[0])
-            url = get_ep.encode('utf-8')
+        else:
             return url
-        except:
-            return
 
-"""
+
+

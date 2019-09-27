@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
 # Old Yoda scraper mixed with a Fix By Shellc0de or Muad
 # Added spare domains and swapped baseLink to reduce traffic.
 
@@ -33,6 +33,7 @@ class source:
             sources = []
             if url == None:
                 return sources
+            hostDict = hostDict + hostprDict
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
             title = data['title']

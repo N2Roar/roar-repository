@@ -4,7 +4,6 @@
 
 from resources.lib.modules import control
 
-
 colorChart = ['none', 'aliceblue', 'aqua', 
             'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 
             'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 

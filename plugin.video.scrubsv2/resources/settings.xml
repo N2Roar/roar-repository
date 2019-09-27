@@ -47,7 +47,6 @@
         <setting id="navi.moviepersons" type="bool" label="32013" default="true" />
         <setting id="navi.movielanguages" type="bool" label="32014" default="true" />
         <setting id="navi.moviecerts" type="bool" label="32015" default="true" />
-        <setting id="navi.movieboxes" type="bool" label="42008" default="true" />
         <setting id="navi.movieMosts" type="bool" label="42009" default="true" />
         <setting id="navi.moviefeat" type="bool" label="32035" default="true" />
         <setting id="navi.movietrending" type="bool" label="32017" default="true" />
@@ -249,6 +248,7 @@
         <setting id="provider.toonget" type="bool" label="provider.toonget" default="false" />
         <setting id="provider.toonova" type="bool" label="provider.toonova" default="false" />
         <setting id="provider.watch32hd" type="bool" label="provider.watch32hd" default="false" />
+        <setting id="provider.watchseries4k" type="bool" label="provider.watchseries4k" default="false" />
         <setting id="provider.watchseriessto" type="bool" label="provider.watchseriessto" default="false" />
         <setting id="provider.wsunblock" type="bool" label="provider.wsunblock" default="false" />
         <setting id="provider.zmovies" type="bool" label="provider.zmovies" default="false" />

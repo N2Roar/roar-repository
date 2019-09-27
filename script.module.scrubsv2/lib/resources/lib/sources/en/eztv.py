@@ -1,26 +1,30 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Get more domains @ https://eztvstatus.com/
 
 import re,urllib,urlparse
-from resources.lib.modules import cleantitle,cache,client,control,debrid,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import cache
+from resources.lib.modules import control
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']
-        self.domains = ['eztv.io', 'eztv.yt']
-        self._base_link = None # Old 'eztv.re', 'eztv.ag', 'eztv.it', 'eztv.ch'
+        self.domains = ['eztv.io', 'eztv.yt', 'eztv.tf']
+        self._base_link = None # Old  eztv.re  eztv.ag  eztv.it  eztv.ch  eztv.wf
         self.search_link = '/search/%s'
         self.min_seeders = int(control.setting('torrent.min.seeders'))
-        # Down  eztv.wf  eztv.tf
-
+        
 
     @property
     def base_link(self):
         if not self._base_link:
-            self._base_link = cache.get(self.__get_base_url, 120, 'http://%s' % self.domains[0])
+            self._base_link = cache.get(self.__get_base_url, 120, 'https://%s' % self.domains[0])
         return self._base_link
 
 
@@ -124,7 +128,7 @@ class source:
         try:
             for domain in self.domains:
                 try:
-                    url = 'http://%s' % domain
+                    url = 'https://%s' % domain
                     result = client.request(url, limit=1, timeout='5')
                     result = re.findall('<meta property="og:title" content="(.+?)"', result, re.DOTALL)[0]
                     if result and 'EZTV' in result:

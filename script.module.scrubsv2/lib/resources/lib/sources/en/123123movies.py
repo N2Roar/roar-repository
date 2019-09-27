@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,json
-from resources.lib.modules import cleantitle,dom_parser2,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import dom_parser2
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -62,16 +65,13 @@ class source:
             r = self.scraper.get(url).content
             qual = re.findall(">(\w+)<\/p", r)
             for i in qual:
-                quality = source_utils.check_url(i)
-                info = i
+                quality, info = source_utils.get_release_quality(i, i)
             r = dom_parser2.parse_dom(r, 'div', {'id': 'servers-list'})
             r = [dom_parser2.parse_dom(i, 'a', req=['href']) for i in r if i]
             for i in r[0]:
                 url = {'url': i.attrs['href'], 'data-film': i.attrs['data-film'], 'data-server': i.attrs['data-server'], 'data-name': i.attrs['data-name']}
                 url = urllib.urlencode(url)
                 valid, host = source_utils.is_host_valid(i.content, hostDict)
-                if source_utils.limit_hosts() is True and host in str(sources):
-                    continue
                 if valid:
                     sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
             return sources

@@ -49,7 +49,7 @@ def list_trakt_tvshows(results, pages, page):
 		args['confirm'] = 'yes'
 		items.append(
 			{
-				'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, pages + 1),
+				'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, pages + 1),
 				'path': plugin.url_for(nav_base.caller_name(), **args),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()
@@ -94,7 +94,7 @@ def tv_trakt_popular(page, raw=False):
 		if pages > 1:
 			items.append(
 				{
-					'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, pages + 1),
+					'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, pages + 1),
 					'path': plugin.url_for('tv_trakt_popular', page=page + 1),
 					'thumbnail': plugin.get_media_icon('item_next'),
 					'fanart': plugin.get_addon_fanart()
@@ -130,7 +130,7 @@ def list_trakt_search_items(results, pages, page):
 		args['page'] = page + 1
 		items.append(
 			{
-				'label': '%s/%s  [I]Next page[/I]  >>' % (nextpage, pages),
+				'label': '%s/%s	 [I]Next page[/I]  >>' % (nextpage, pages),
 				'path': plugin.url_for(nav_base.caller_name(), **args),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()
@@ -376,7 +376,7 @@ def list_tvshows(response):
 			args['page'] = str(page + 1)
 			items.append(
 				{
-					'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, response['total_pages']),
+					'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, response['total_pages']),
 					'path': plugin.url_for(nav_base.caller_name(), **args),
 					'thumbnail': plugin.get_media_icon('item_next'),
 					'fanart': plugin.get_addon_fanart()
@@ -430,7 +430,7 @@ def list_trakt_episodes(result):
 		episode_info['title'] = '%s (%02dx%02d): %s' % (tvshow_title, season_num, episode_num, episode_title)
 		context_menu = []
 		showdata = TVDB[int(show_id)]
-		extradata = play_tvshows.get_episode_parameters(showdata, season_num, episode_num)
+		# extradata = play_tvshows.get_episode_parameters(showdata, season_num, episode_num)
 		properties = {}
 		try:
 			if traktenabled and countenabled:
@@ -454,8 +454,8 @@ def list_trakt_episodes(result):
 				'info_type': 'video',
 				'stream_info': {'video': {}},
 				'properties': properties,
-				'thumbnail': extradata['thumbnail'],
-				'poster': extradata['poster'],
+				# 'thumbnail': extradata['thumbnail'],
+				# 'poster': extradata['poster'],
 				'fanart': episode_info['fanart']
 			}
 
@@ -746,7 +746,9 @@ def trakt_tv_next_episodes(raw=False):
 	for episode in result:
 		trakt_id = episode['show']['ids']['trakt']
 		episode_info = Trakt.get_episode(trakt_id, episode['season'], episode['number'])
-		first_aired_string = episode_info['first_aired']
+		first_aired_string = episode_info.get('first_aired', '')
+		if not first_aired_string:
+			continue
 		episode['first_aired'] = first_aired_string
 		if int(first_aired_string[:4]) < 1970:
 			items.append(episode)
@@ -812,7 +814,7 @@ def lists_trakt_liked_tv_lists(page):
 	if pages > page:
 		items.append(
 			{
-				'label': '%s/%s  [I]Next page[/I]  >>' % (nextpage, pages),
+				'label': '%s/%s	 [I]Next page[/I]  >>' % (nextpage, pages),
 				'path': plugin.url_for('lists_trakt_liked_tv_lists', page=int(page) + 1),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()

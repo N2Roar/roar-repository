@@ -10,7 +10,7 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['putlockerfree.sc']
-        self.base_link = 'https://ww2.putlockerfree.sc'
+        self.base_link = 'https://www3.putlockerfree.sc'
         self.search_link = '/search-query/%s+%s'
 
 

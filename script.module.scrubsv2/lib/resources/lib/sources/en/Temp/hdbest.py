@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-18-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,requests
-from resources.lib.modules import cleantitle,directstream
-from resources.lib.modules import getSum,source_utils
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import getSum
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -12,16 +14,22 @@ class source:
         self.language = ['en']
         self.domains = ['hdbest.net']
         self.base_link = 'https://hdbest.net'
-        self.movie_link = '/watch/%s-%s.html'
+        self.search_link = '/?q=%s+%s'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
         self.session = requests.Session()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            mtitle = cleantitle.geturl(title)
-            url = self.base_link + self.movie_link % (mtitle, year)
-            return url
+            searchName = cleantitle.getsearch(title)
+            searchURL = self.base_link + self.search_link % (searchName.replace(':', ' ').replace(' ', '+'), year)
+            searchPage = self.session.get(searchURL, headers=self.headers).content
+            results = re.compile('<a class="clip-link".+?title="(.+?)" href="(.+?)">',re.DOTALL).findall(searchPage)
+            for zName, url in results:
+                if cleantitle.geturl(title).lower() in cleantitle.geturl(zName).lower():
+                    if year in str(zName):
+                        return url
+            return
         except:
             return
 

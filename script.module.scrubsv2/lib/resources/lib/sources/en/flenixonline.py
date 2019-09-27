@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-25-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
@@ -11,8 +11,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['flenix.online', 'flenix-hd.online']
-        self.base_link = 'http://flenix.online'
+        self.domains = ['new123movies.co', 'flenix.online', 'flenix-hd.online']
+        self.base_link = 'http://new123movies.co'
         self.search_link = '/?s=%s+%s'
         self.scraper = cfscrape.create_scraper()
 
@@ -43,9 +43,10 @@ class source:
             sourcesPage = self.scraper.get(url).content
             results = re.compile('<iframe.+?src="(.+?)"').findall(sourcesPage)
             for url in results:
-                quality, info = source_utils.get_release_quality(url, url)
                 valid, host = source_utils.is_host_valid(url, hostDict)
-                sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
+                if valid:
+                    quality, info = source_utils.get_release_quality(url, url)
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources

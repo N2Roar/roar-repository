@@ -59,6 +59,7 @@ def addView(content):
 		record = (skin, content, str(control.getCurrentViewId()))
 
 		control.makeFile(control.dataPath)
+
 		dbcon = database.connect(control.viewsFile)
 		dbcur = dbcon.cursor()
 		dbcur.execute("CREATE TABLE IF NOT EXISTS views (""skin TEXT, ""view_type TEXT, ""view_id TEXT, ""UNIQUE(skin, view_type)"");")

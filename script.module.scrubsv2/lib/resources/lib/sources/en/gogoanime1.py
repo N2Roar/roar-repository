@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-08-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
-from resources.lib.modules import source_tools,tvmaze
+from resources.lib.modules import source_tools
+from resources.lib.modules import tvmaze
 
 
 class source:
@@ -57,6 +59,8 @@ class source:
             r = getSum.get(url)
             match = getSum.findSum(r)
             for url in match:
+                if 'steepto.com' in url:
+                    continue
                 url = url.encode('utf-8')
                 info = source_tools.get_info(url)
                 quality = source_tools.get_quality(url)

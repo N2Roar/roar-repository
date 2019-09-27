@@ -1,16 +1,20 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import client,cleantitle,directstream
+import re,requests,urllib,urlparse
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import getSum
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['seriesonline8.co']
-        self.base_link = 'https://www2.seriesonline8.co'
+        self.domains = ['123movieshub.gg', 'seriesonline8.co']
+        self.base_link = 'https://www2.123movieshub.gg'
         self.search_link = '/movie/search/%s'
 
 
@@ -123,15 +127,22 @@ class source:
             else:
                 links = client.parseDOM(r, 'a', ret='player-data')
             for link in links:
-                try:
-                    host = re.findall('([\w]+[.][\w]+)$', urlparse.urlparse(link.strip().lower()).netloc)[0]
-                    if not host in hostDict:
-                        raise Exception()
-                    host = client.replaceHTMLCodes(host)
-                    host = host.encode('utf-8')
-                    sources.append({'source': host, 'quality': '720p', 'language': 'en', 'url': link, 'direct': False, 'debridonly': False})
-                except:
-                    pass
+                link = "https:" + link if not link.startswith('http') else link
+                if 'vidcloud' in link:
+                    r = client.request(link, timeout='10')
+                    match = getSum.findSum(r)
+                    for url in match:
+                        url = "https:" + url if not url.startswith('http') else url
+                        url = requests.get(url).url if 'api.vidnode' in url else url
+                        valid, host = source_utils.is_host_valid(url, hostDict)
+                        if valid:
+                            quality, info = source_utils.get_release_quality(url, url)
+                            sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
+                else:
+                    valid, host = source_utils.is_host_valid(link, hostDict)
+                    if valid:
+                        quality, info = source_utils.get_release_quality(link, link)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources
@@ -140,6 +151,10 @@ class source:
     def resolve(self, url):
         if "google" in url:
             return directstream.googlepass(url)
+        elif 'vidcloud' in url:
+            r = client.request(url)
+            url = re.findall("file: '(.+?)'", r)[0]
+            return url
         else:
             return url
 

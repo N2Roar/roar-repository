@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
 # Made By Shellc0de or Muad
 
 import re,requests,urlparse
-from resources.lib.modules import cleantitle,source_utils
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -15,7 +17,7 @@ class source:
         self.search_link = '/?s=%s'
         self.ajax_link = '/wp-admin/admin-ajax.php'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
-        self.session = requests.Session()
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -23,7 +25,7 @@ class source:
             search = cleantitle.getsearch(title)
             url = urlparse.urljoin(self.base_link, self.search_link)
             url = url % (search.replace(':', ' ').replace(' ', '+'))
-            r = self.session.get(url, headers=self.headers).content
+            r = self.scraper.get(url, headers=self.headers).content
             movie_scrape = re.compile('<div class="title".+?href="(.+?)">(.+?)</a>.+?class="year">(.+?)</span>', re.DOTALL).findall(r)
             for movie_url, movie_title, movie_year in movie_scrape:
                 if cleantitle.get(title) in cleantitle.get(movie_title):
@@ -38,7 +40,7 @@ class source:
             search = cleantitle.getsearch(tvshowtitle)
             url = urlparse.urljoin(self.base_link, self.search_link)
             url = url % (search.replace(':', ' ').replace(' ', '+'))
-            r = self.session.get(url, headers=self.headers).content
+            r = self.scraper.get(url, headers=self.headers).content
             tv_scrape = re.compile('<div class="title".+?href="(.+?)">(.+?)</a>.+?class="year">(.+?)</span>', re.DOTALL).findall(r)
             for tv_url, tv_title, tv_year in tv_scrape:
                 if cleantitle.get(tvshowtitle) in cleantitle.get(tv_title):
@@ -66,7 +68,7 @@ class source:
             if url is None:
                 return sources
             hostDict = hostprDict + hostDict
-            r = self.session.get(url, headers=self.headers).content
+            r = self.scraper.get(url, headers=self.headers).content
             regex = re.compile("data-type='(.+?)' data-post='(.+?)' data-nume='(\d+)'>", re.DOTALL).findall(r)
             for data_type, post, nume in regex:
                 customheaders = {
@@ -81,7 +83,7 @@ class source:
                 }
                 post_link = urlparse.urljoin(self.base_link, self.ajax_link)
                 payload = {'action': 'doo_player_ajax', 'post': post, 'nume': nume, 'type': data_type}
-                r = self.session.post(post_link, headers=customheaders, data=payload)
+                r = self.scraper.post(post_link, headers=customheaders, data=payload)
                 i = r.content
                 p = re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(i)
                 for url in p:

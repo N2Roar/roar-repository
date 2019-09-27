@@ -12,19 +12,16 @@ from resources.lib.modules import log_utils
 # from resolveurl.resolver import ResolveUrl, ResolverError
 
 try:
-    from resolveurl.plugins.premiumize_me import PremiumizeMeResolver
-    token = PremiumizeMeResolver.get_setting('token')
+	from resolveurl.plugins.premiumize_me import PremiumizeMeResolver
+	token = PremiumizeMeResolver.get_setting('token')
 except:
-    pass
-
-
+	pass
 
 CLIENT_ID = '522962560'
 USER_AGENT = 'ResolveURL for Kodi/%s' % control.getKodiVersion()
 
 # Supported video formats
 FORMATS = ['.aac', '.asf', '.avi', '.flv', '.m4a', '.m4v', '.mka', '.mkv', '.mp4', '.mpeg', '.nut', '.ogg']
-
 
 BaseUrl = "https://www.premiumize.me/api"
 DirectDownload = '%s/transfer/directdl' % BaseUrl
@@ -35,7 +32,6 @@ TransferList = "%s/transfer/list" % BaseUrl
 TransferCreate = "%s/transfer/create" % BaseUrl
 TransferDelete = "%s/transfer/delete" % BaseUrl
 CacheCheck = '%s/cache/check' % BaseUrl
-
 
 
 class PremiumizeMe:
@@ -51,7 +47,7 @@ class PremiumizeMe:
 		media_id_lc = media_id.lower()
 
 		if cached:
-			logger.log_debug('Premiumize.me: %s is readily available to stream' % media_id)
+			log_utils.log('Premiumize.me: %s is readily available to stream' % media_id, log_utils.LOGDEBUG)
 			if media_id_lc.endswith('.torrent') or media_id_lc.startswith('magnet:'):
 				torrent = True
 		elif media_id_lc.endswith('.torrent') or media_id_lc.startswith('magnet:'):
@@ -59,14 +55,14 @@ class PremiumizeMe:
 				raise ResolverError('Premiumize.me: Cached torrents only allowed to be initiated')
 
 			torrent = True
-			logger.log_debug('Premiumize.me: initiating transfer to cloud for %s' % media_id)
+			log_utils.log('Premiumize.me: initiating transfer to cloud for %s' % media_id, log_utils.LOGDEBUG)
 			self.__initiate_transfer(media_id)
 			self.__clear_finished()
 			# self.__delete_folder()
 
 		link = self.__direct_dl(media_id, torrent=torrent)
 		if link is not None:
-			logger.log_debug('Premiumize.me: Resolved to %s' % link)
+			log_utils.log('Premiumize.me: Resolved to %s' % link, log_utils.LOGDEBUG)
 			return link + self.append_headers(self.headers)
 		raise ResolverError('Link Not Found')
 
@@ -103,16 +99,13 @@ class PremiumizeMe:
 					try:
 						regex_list.append(re.compile(regex))
 					except:
-						# common.logger.log_warning('Throwing out bad Premiumize regex: %s' % regex)
-
 						log_utils.log('Throwing out bad Premiumize regex: %s' % regex, log_utils.LOGDEBUG)
 
-			# logger.log_debug('Premiumize.me patterns: %s regex: (%d) hosts: %s' % (patterns, len(regex_list), tldlist))
 			log_utils.log('Premiumize.me patterns: %s regex: (%d) hosts: %s' % (patterns, len(regex_list), tldlist), log_utils.LOGDEBUG)
 
 			return tldlist, regex_list
 		except Exception as e:
-			logger.log_error('Error getting Premiumize hosts: %s' % e)
+			log_utils.log('Error getting Premiumize hosts: %s' % e, log_utils.LOGDEBUG)
 		return [], []
 
 
@@ -149,7 +142,7 @@ class PremiumizeMe:
 			# log_utils.log('result = %s' % result, log_utils.LOGDEBUG)
 			# log_utils.log('result = %s' % result.txt, log_utils.LOGDEBUG)
 			result = json.loads(result)
-			log_utils.log('result = %s' % result, log_utils.LOGDEBUG)
+			# log_utils.log('result = %s' % result, log_utils.LOGDEBUG)
 			if 'status' in result:
 				if result.get('status') == 'success':
 					response = result.get('response', False)
@@ -175,7 +168,7 @@ class PremiumizeMe:
 				result = json.loads(response)
 				if 'status' in result:
 					if result.get('status') == 'success':
-						logger.log_debug('Transfer successfully started to the Premiumize.me cloud')
+						log_utils.log('Transfer successfully started to the Premiumize.me cloud', log_utils.LOGDEBUG)
 						return result.get('id', "")
 			except:
 				pass

@@ -17,7 +17,7 @@ def sources():
                     module = loader.find_module(module_name).load_module(module_name)
                     sourceDict.append((module_name, module.source()))
                 except Exception as e:
-                    log_utils.log('Could not load "%s": %s' % (module_name, e), log_utils.LOGDEBUG)
+                    log_utils.log('Provider loading Error - "%s" : %s' % (module_name, e), log_utils.LOGDEBUG)
         return sourceDict
     except:
         return []

@@ -1,18 +1,18 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse,base64
-from resources.lib.modules import cleantitle,source_utils,cfscrape
-import traceback
-from resources.lib.modules import log_utils
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['extramovies.trade', 'extramovies.guru', 'extramovies.wiki'] # http://extramovies.ind.in/
-        self.base_link = 'http://extramovies.wiki' # Dead  extramovies.host
+        self.domains = ['extramovies.today', 'extramovies.trade', 'extramovies.guru', 'extramovies.wiki'] # http://extramovies.ind.in/
+        self.base_link = 'http://extramovies.today' # Dead  extramovies.host
         self.search_link = '/?s=%s'
         self.scraper = cfscrape.create_scraper()
 
@@ -53,10 +53,17 @@ class source:
                             valid, host = source_utils.is_host_valid(link, self.hostDict)
                             if valid:
                                 sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
+                    regexALT1 = re.compile('play.png" /> <a href="(.+?)"', re.DOTALL | re.IGNORECASE).findall(result)
+                    for urlALT in regexALT1:
+                        urlALT = self.base_link + urlALT
+                        resultALT = self.scraper.get(urlALT).content
+                        regexALT2 = re.compile('<IFRAME SRC="(.+?)"', re.DOTALL | re.IGNORECASE).findall(resultALT)
+                        for link in regexALT2:
+                            valid, host = source_utils.is_host_valid(link, self.hostDict)
+                            if valid:
+                                sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': link, 'direct': False, 'debridonly': False})
             return sources
-        except Exception:
-            failure = traceback.format_exc()
-            log_utils.log('---ExtraMovies Testing - Exception: \n' + str(failure))
+        except:
             return sources
 
 

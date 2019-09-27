@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-19-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import getSum
@@ -41,7 +41,7 @@ class source:
                 return sources
             hostDict = hostprDict + hostDict
             page = getSum.get(url)
-            match = getSum.findEm(page, '<a class="linkdomx w3-button w3-blue w3-center" rel="nofollow" title="(.+?)" target="_blank" href="(.+?)"')
+            match = getSum.findEm(page, 'title="(.+?)" target="_blank" href="(.+?)"')
             if match:
                 for hoster, url in match:
                     url = self.base_link + url

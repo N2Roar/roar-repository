@@ -176,6 +176,17 @@ class tvshows:
         self.persons(url)
 
 
+    def persons(self, url):
+        if url == None:
+            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
+        else:
+            self.list = cache.get(self.imdb_person_list, 1, url)
+        for i in range(0, len(self.list)):
+            self.list[i].update({'action': 'tvshows'})
+        self.addDirectory(self.list)
+        return self.list
+
+
     def genres(self):
         genres = [
             ('Action', 'action', True),
@@ -626,17 +637,6 @@ class tvshows:
         certificates = ['TV-G', 'TV-PG', 'TV-14', 'TV-MA']
         for i in certificates:
             self.list.append({'name': str(i), 'url': self.certification_link % str(i).replace('-', '-'), 'image': 'certificates.png', 'action': 'tvshows'})
-        self.addDirectory(self.list)
-        return self.list
-
-
-    def persons(self, url):
-        if url == None:
-            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
-        else:
-            self.list = cache.get(self.imdb_person_list, 1, url)
-        for i in range(0, len(self.list)):
-            self.list[i].update({'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 

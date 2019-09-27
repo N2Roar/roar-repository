@@ -1,12 +1,39 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
 
-- Made a new Plugin called ArconaiTV.(from a Old IPTV addon.)
-- Updated the usTVgo plugin.(Mostly by Tempest.)
-(Might of done some other changes but dont recall lol.)
+- Updated a bit of the IPTV sections/plugins.
+- Removed all the 'Lite' features for the nav menu. (Wasted Space and Unused.)
+- Updated some random modules and providers.
+- Fixed/Rewrote/Updated TMDb Userlists for Movies and TV Shows. (Now using v4 API.)
+(I didnt do a full update for all its code so there may be little issues i havent found yet.)
+(Notice for any further boxset searching that section is now Collections and found in TMDb Lists.)
 
 [B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
 [B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.5.8 [/COLOR][/B]
+- Did a quick Provider check/cleanup just to make sure i dont skip over any poop.
+- Made another new Provider on accident and added it in anyways lol. (watchseries4k)
+- Made a new indexer for stoners called HighTimes, as of now its just a podcast.
+(Its a work in progress so theres alot more to come, feel free to send me stuff to add.)
+- Updated a few Providers randomly to scrape a few more "proxy hosts" further.
+(Also added some resolve code for a few like api.vidnode needing redirects and so on.)
+- Added a couple more dead Resolvers/Hosts to the block list so they dont tease.
+- Updated some play code for the player module again. (Thanks to host505.)
+(Should fix a couple odd random issues ive been hunting and any resume shit.)
+- Fixed a selfmade viewtype option issue. (Thanks for pointing it out to me "Fellow Users".)
+
+[B][COLOR purple] v4.5.7 [/COLOR][/B]
+- Full en Provider check and cleanup.
+(Also moved/removed the NoJoys to the Temp Folder.)
+- Few code/module updates most likely lol.
+- Updated/Fixed/Rewrote/CleanedUp all the Providers that needed it.
+(besides a few in the Temp Folder.)
+
+[B][COLOR purple] v4.5.6 [/COLOR][/B]
+- Made a new Plugin called ArconaiTV.(from a Old IPTV addon.)
+- Updated the usTVgo plugin.(Mostly by Tempest.)
+(Might of done some other changes but dont recall lol.)
 
 [B][COLOR purple] v4.5.5 [/COLOR][/B]
 - Added youtube to the blocked hosts list so it doesnt sneak up anymore.

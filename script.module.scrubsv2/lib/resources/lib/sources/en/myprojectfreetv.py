@@ -1,16 +1,18 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['project-free-tv.ag', 'my-project-free.tv']
-        self.base_link = 'https://www9.project-free-tv.ag'
+        self.domains = ['projectfreetv.ag', 'project-free-tv.ag', 'my-project-free.tv']
+        self.base_link = 'http://www1.projectfreetv.ag'
         self.search_link = '/episode/%s-season-%s-episode-%s'
         self.scraper = cfscrape.create_scraper()
 
@@ -52,7 +54,7 @@ class source:
                 if valid:
                     sources.append({ 'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False })
             return sources
-        except Exception:
+        except:
             return sources
 
 

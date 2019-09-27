@@ -4,11 +4,10 @@
 	Venom Add-on
 '''
 
-import os, sys, xbmc
+import os, sys
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
-from resources.lib.modules import cache
 
 try:
 	sysaddon = sys.argv[0]
@@ -282,7 +281,7 @@ class Navigator:
 		self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		#-- Subtitles - 11
 		self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
-		self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
+		self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png')
 		self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonService.png')
 		self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonService.png', isFolder=False)
@@ -346,14 +345,16 @@ class Navigator:
 			content = items[select][1]
 
 			title = control.lang(32059).encode('utf-8')
+
 			url = '%s?action=addView&content=%s' % (sys.argv[0], content)
 
 			poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
 
 			item = control.item(label=title)
 			item.setInfo(type='video', infoLabels = {'title': title})
-			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
-			item.setProperty('Fanart_Image', fanart)
+			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'fanart': fanart, 'banner': banner})
+			# item.setProperty('Fanart_Image', fanart)
+			item.setProperty('IsPlayable', 'false')
 
 			control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
 			control.content(int(sys.argv[1]), content)
@@ -517,10 +518,10 @@ class Navigator:
 			item.setProperty('IsPlayable', 'true')
 		else:
 			item.setProperty('IsPlayable', 'false')
-		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-		if addonFanart is not None:
-			item.setProperty('Fanart_Image', addonFanart)
+		# if addonFanart is not None:
+			# item.setProperty('Fanart_Image', addonFanart)
 
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder= isFolder)
 

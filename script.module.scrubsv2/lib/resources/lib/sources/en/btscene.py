@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-**Created by Tempest**
-"""
+# -*- coding: UTF-8 -*-
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# Created by Tempest
 
-import re, urllib, urlparse
-from resources.lib.modules import cleantitle, debrid, source_utils
+import re,urllib,urlparse
 from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -16,6 +17,7 @@ class source:
         self.base_link = 'http://btscene.today/'
         self.search_link = 'search?q=%s'
 
+
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             url = {'imdb': imdb, 'title': title, 'year': year}
@@ -24,6 +26,7 @@ class source:
         except:
             return
 
+
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
             url = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year}
@@ -31,6 +34,7 @@ class source:
             return url
         except:
             return
+
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         try:
@@ -44,6 +48,7 @@ class source:
         except:
             return
 
+
     def sources(self, url, hostDict, hostprDict):
         sources = []
         try:
@@ -55,19 +60,13 @@ class source:
                 raise Exception()
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
-
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
-
             hdlr = 'S%02dE%02d' % (int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else data['year']
-
-            query = '%s s%02de%02d' % (
-            data['tvshowtitle'], int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else '%s %s' % (
-            data['title'], data['year'])
+            query = '%s s%02de%02d' % (data['tvshowtitle'], int(data['season']), int(data['episode'])) \
+                if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|\'|<|>|\|)', ' ', query)
-
             url = self.search_link % urllib.quote_plus(query)
             url = urlparse.urljoin(self.base_link, url)
-
             try:
                 r = client.request(url)
                 posts = client.parseDOM(r, 'tr')
@@ -89,14 +88,15 @@ class source:
                             continue
                         info.append(size)
                         info = ' | '.join(info)
-                        sources.append(
-                            {'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info,
-                             'direct': False, 'debridonly': True})
+                        sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
             except:
                 return
             return sources
         except:
             return sources
 
+
     def resolve(self, url):
         return url
+
+

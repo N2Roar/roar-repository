@@ -1,9 +1,14 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Site to get more urls to use.  https://piratebayproxy.info/  or  https://proxybay.app/
 
 import re,urllib,urlparse
-from resources.lib.modules import cache,cleantitle,client,control,debrid,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import cache
+from resources.lib.modules import control
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -28,7 +33,7 @@ class source:
             url = {'imdb': imdb, 'title': title, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except Exception:
+        except:
             return
 
 
@@ -37,7 +42,7 @@ class source:
             url = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except Exception:
+        except:
             return
 
 
@@ -50,7 +55,7 @@ class source:
             url['title'], url['premiered'], url['season'], url['episode'] = title, premiered, season, episode
             url = urllib.urlencode(url)
             return url
-        except Exception:
+        except:
             return
 
 
@@ -137,9 +142,9 @@ class source:
                     result = re.findall('<input type="submit" title="(.+?)"', result, re.DOTALL)[0]
                     if result and 'Pirate Search' in result:
                         return url
-                except Exception:
+                except:
                     pass
-        except Exception:
+        except:
             pass
         return fallback
 

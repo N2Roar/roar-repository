@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-23-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,requests
 from resources.lib.modules import control
@@ -46,13 +46,13 @@ class source:
             sources = []
             if url == None:
                 return sources
-            url = url.replace(' ','-')  # Probably overkill but better safe while high lol.
+            url = url.replace(' ','-')
             r = self.session.get(url, headers=self.headers).content
             match = re.compile('<li class="playlist_entry " id="(.+?)"><a><div class="list_number">.+?</div>(.+?)<span>></span></a></li>',re.DOTALL).findall(r)
             for id, host in match:
                 url = self.base_link + '/embed/' + id
                 valid, host = source_utils.is_host_valid(host, hostDict)
-                if valid:  # Make sure your craptcha setting is disabled when trying to test this valid check lmao. saves a hour.
+                if valid:
                     sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
             return sources
         except:
@@ -60,9 +60,12 @@ class source:
 
 
     def resolve(self, url):
-        r = self.session.get(url, headers=self.headers).content
-        url = re.compile('<iframe.+?src="(.+?)"').findall(r)[0]
-        return url
+        try:
+            r = self.session.get(url, headers=self.headers).content
+            url = re.compile('<iframe.+?src="(.+?)"').findall(r)[0]
+            return url
+        except:
+            return url
 
 
 

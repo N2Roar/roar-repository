@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re,urllib,urlparse
-from resources.lib.modules import cleantitle,debrid,source_utils,workers
-from resources.lib.modules import client2 as client
-
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+from resources.lib.modules import source_utils
+from resources.lib.modules import workers
+from resources.lib.modules import client
+#from resources.lib.modules import client2 as client
 
 class source:
     def __init__(self):
@@ -20,7 +23,7 @@ class source:
             url = {'imdb': imdb, 'title': title, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -29,7 +32,7 @@ class source:
             url = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -42,7 +45,7 @@ class source:
             url['title'], url['premiered'], url['season'], url['episode'] = title, premiered, season, episode
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 
@@ -75,7 +78,7 @@ class source:
             [i.start() for i in threads]
             [i.join() for i in threads]
             return self._sources
-        except BaseException:
+        except:
             return self._sources
 
 
@@ -89,13 +92,13 @@ class source:
             t = name.split(self.hdlr)[0]
             try:
                 y = re.findall(r'[\.|\(|\[|\s|\_|\-](S\d+E\d+|S\d+)[\.|\)|\]|\s|\_|\-]', name, re.I)[-1].upper()
-            except BaseException:
+            except:
                 y = re.findall(r'[\.|\(|\[|\s\_|\-](\d{4})[\.|\)|\]|\s\_|\-]', name, re.I)[-1].upper()
             try:
                 div = 1000 ** 3
                 size = float(size) / div
                 size = '%.2f GB' % size
-            except BaseException:
+            except:
                 size = '0'
             quality, info = source_utils.get_release_quality(name, name)
             info.append(size)
@@ -104,7 +107,7 @@ class source:
                 if cleantitle.get(re.sub('(|)', '', t)) == cleantitle.get(self.title):
                     if y == self.hdlr:
                         self._sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
-        except BaseException:
+        except:
             pass
 
 

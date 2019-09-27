@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import cleantitle,source_utils,cfscrape
-
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 class source:
     def __init__(self):
@@ -51,19 +52,16 @@ class source:
             hostDict = hostprDict + hostDict
             scraper = cfscrape.create_scraper()
             r = scraper.get(url).content
-            try:
-                match = re.compile('<iframe.+?src="(.+?)://(.+?)/(.+?)"').findall(r)
-                for http, host, url in match:
-                    host = host.replace('www.', '')
-                    url = '%s://%s/%s' % (http, host, url)
-                    valid, host = source_utils.is_host_valid(url, hostDict)
-                    if valid: 
-                        sources.append({'source': host, 'quality': '720p', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
-            except:
-                return
+            match = re.compile('<iframe.+?src="(.+?)://(.+?)/(.+?)"').findall(r)
+            for http, host, url in match:
+                host = host.replace('www.', '')
+                url = '%s://%s/%s' % (http, host, url)
+                valid, host = source_utils.is_host_valid(url, hostDict)
+                if valid:
+                    sources.append({'source': host, 'quality': '720p', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
+            return sources
         except Exception:
-            return
-        return sources
+            return sources
 
 
     def resolve(self, url):

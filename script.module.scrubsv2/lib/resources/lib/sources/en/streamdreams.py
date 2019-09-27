@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
-from resources.lib.modules import client,cleantitle
-from resources.lib.modules import source_utils,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -12,8 +14,8 @@ class source:
         self.language = ['en']
         self.domains = ['streamdreams.org']
         self.base_link = 'https://streamdreams.org'
-        self.search_movie = '/movies/!!-%s/'
-        self.search_tv = '/shows/!!-%s/'
+        self.search_movie = '/movies/!!!-%s/'
+        self.search_tv = '/shows/!!!-%s/'
         self.scraper = cfscrape.create_scraper()
 
 
@@ -59,11 +61,11 @@ class source:
                 for url in match:
                     if url in str(sources):
                         continue
-                    quality, info = source_utils.get_release_quality(url, url)
                     valid, host = source_utils.is_host_valid(url, hostDict)
-                    if source_utils.limit_hosts() is True and host in str(sources):
-                        continue
                     if valid:
+                        quality, info = source_utils.get_release_quality(url, url)
+                        if source_utils.limit_hosts() is True and host in str(sources):
+                            continue
                         sources.append({'source': host, 'quality': quality, 'language': 'en', 'info': info, 'url': url, 'direct': False, 'debridonly': False})
             return sources
         except:

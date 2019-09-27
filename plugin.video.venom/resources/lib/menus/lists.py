@@ -977,13 +977,16 @@ class indexer:
 
                 item = control.item(label=name, iconImage=poster, thumbnailImage=poster)
 
-                try: item.setArt({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'banner': banner, 'tvshow.banner': banner, 'season.banner': banner})
+                if fanart == '0':
+                    fanart = addonFanart
+
+                try: item.setArt({'poster': poster, 'fanart': fanart, 'tvshow.poster': poster, 'season.poster': poster, 'banner': banner, 'tvshow.banner': banner, 'season.banner': banner})
                 except: pass
 
-                if not fanart == '0':
-                    item.setProperty('Fanart_Image', fanart)
-                elif not addonFanart == None:
-                    item.setProperty('Fanart_Image', addonFanart)
+                # if not fanart == '0':
+                    # item.setProperty('Fanart_Image', fanart)
+                # elif not addonFanart == None:
+                    # item.setProperty('Fanart_Image', addonFanart)
 
                 if queue == False:
                     item.setInfo(type='Video', infoLabels = meta)
@@ -1003,8 +1006,8 @@ class indexer:
             if i['next'] == '': raise Exception()
             url = '%s?action=%s&url=%s' % (sysaddon, i['nextaction'], urllib.quote_plus(i['next']))
             item = control.item(label=control.lang(30500).encode('utf-8'))
-            item.setArt({'addonPoster': addonPoster, 'thumb': addonPoster, 'poster': addonPoster, 'tvshow.poster': addonPoster, 'season.poster': addonPoster, 'banner': addonPoster, 'tvshow.banner': addonPoster, 'season.banner': addonPoster})
-            item.setProperty('addonFanart_Image', addonFanart)
+            item.setArt({'addonPoster': addonPoster, 'thumb': addonPoster, 'poster': addonPoster, 'fanart': addonFanart, 'tvshow.poster': addonPoster, 'season.poster': addonPoster, 'banner': addonPoster, 'tvshow.banner': addonPoster, 'season.banner': addonPoster})
+            # item.setProperty('addonFanart_Image', addonFanart)
             control.addItem(handle=int(sys.argv[1]), url=url, listitem=item, isFolder=True)
         except:
             pass

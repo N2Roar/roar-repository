@@ -8,7 +8,8 @@ re_type = type(re.compile(''))
 
 
 def __get_dom_content(html, name, match):
-	if match.endswith('/>'): return ''
+	if match.endswith('/>'):
+		return ''
 
 	# override tag name with tag from match if possible
 	tag = re.match('<([^\s/>]+)', match)

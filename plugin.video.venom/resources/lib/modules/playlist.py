@@ -7,7 +7,6 @@
 import json, xbmcgui, xbmc
 
 from resources.lib.modules import control, cleantitle
-from resources.lib.extensions import tools
 
 Id = xbmc.PLAYLIST_VIDEO
 videoplaylist = 10028
