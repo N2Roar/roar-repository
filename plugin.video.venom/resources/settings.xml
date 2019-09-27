@@ -12,6 +12,7 @@
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="disable.fanarttv" type="bool" label="32012" default="false" />
 		<setting id="disable.fanarttv.notice" type="text" label="  Clear Metadata cache if changed" default="" enable="false" />
+		<setting id="disable.player.art" type="bool" label="Disable clearart, clearlogo, and discart in player" default="false" />
 		<setting id="hidecinema" type="bool" label="32571" default="false" />
 		<setting id="hidecinema.rollback" type="slider" label="40063" enable="eq(-1,true)" default="6" range="1,12" option="int" />
 		<setting id="newmovies.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />

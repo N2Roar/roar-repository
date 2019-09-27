@@ -679,8 +679,8 @@ class Episodes:
 						raise Exception()
 
 				title = client.parseDOM(item, 'EpisodeName')[0]
-				try: title = title.encode('utf-8')
-				except: pass
+				title = client.replaceHTMLCodes(title)
+				title = title.encode('utf-8')
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -767,10 +767,12 @@ class Episodes:
 				director = client.parseDOM(item, 'Director')[0]
 				director = [x for x in director.split('|') if x != '']
 				director = (' / '.join(director)).encode('utf-8')
+				director = client.replaceHTMLCodes(director)
 
 				writer = client.parseDOM(item, 'Writer')[0]
 				writer = [x for x in writer.split('|') if x != '']
 				writer = (' / '.join(writer)).encode('utf-8')
+				writer = client.replaceHTMLCodes(writer)
 
 				import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
@@ -780,7 +782,11 @@ class Episodes:
 					person = [name.text for name in actor]
 					image = person[1]
 					name = person[2]
+					try: name = client.replaceHTMLCodes(person[2])
+					except: pass
 					role = person[3]
+					try: role = client.replaceHTMLCodes(person[3])
+					except: pass
 					try:
 						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
@@ -863,8 +869,7 @@ class Episodes:
 
 				title = client.parseDOM(item, 'EpisodeName')[0]
 				title = client.replaceHTMLCodes(title)
-				try: title = title.encode('utf-8')
-				except: pass
+				title = title.encode('utf-8')
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -957,10 +962,12 @@ class Episodes:
 				director = client.parseDOM(item, 'Director')[0]
 				director = [x for x in director.split('|') if x != '']
 				director = (' / '.join(director)).encode('utf-8')
+				director = client.replaceHTMLCodes(director)
 
 				writer = client.parseDOM(item, 'Writer')[0]
 				writer = [x for x in writer.split('|') if x != '']
 				writer = (' / '.join(writer)).encode('utf-8')
+				writer = client.replaceHTMLCodes(writer)
 
 				import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
@@ -970,7 +977,11 @@ class Episodes:
 					person = [name.text for name in actor]
 					image = person[1]
 					name = person[2]
+					try: name = client.replaceHTMLCodes(person[2])
+					except: pass
 					role = person[3]
+					try: role = client.replaceHTMLCodes(person[3])
+					except: pass
 					try:
 						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
@@ -1321,13 +1332,12 @@ class Episodes:
 				except:
 					seasoncount = None
 
-				# UpNext requires all data passed even if 0
-				# meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0' and v != '')
 				# meta = dict((k, v) for k, v in i.iteritems())
 				meta.update({'mediatype': 'episode'})
 				meta.update({'trailer': '%s?action=trailer&name=%s&imdb=%s' % (sysaddon, systvshowtitle, imdb)})
 
+				# Some descriptions have a link at the end that. Remove it.
 				try:
 					plot = meta['plot']
 					index = plot.rfind('See full summary')
@@ -1340,18 +1350,15 @@ class Episodes:
 				except:
 					pass
 
-				try:
-					meta.update({'duration': str(int(meta['duration']) * 60)})
+				try: meta.update({'duration': str(int(meta['duration']) * 60)})
 				except: pass
-				try:
-					meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
+				try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
 				except: pass
-				try:
-					meta.update({'title': i['label']})
+				try: meta.update({'title': i['label']})
 				except: pass
-				try:
-					meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
+				try: meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
 				except: pass
+
 				try:
 					# Kodi uses the year (the year the show started) as the year for the episode. Change it from the premiered date.
 					meta.update({'tvshowyear': i['year']})
@@ -1410,64 +1417,33 @@ class Episodes:
 						elif airLocation == '3':
 							meta['plot'] = '%s\r\n%s%s' % (meta['plot'], airLabel, air)
 
-				poster = '0'
-				if poster == '0' and 'poster3' in i: poster = i['poster3']
-				if poster == '0' and 'poster2' in i: poster = i['poster2']
-				if poster == '0' and 'poster' in i: poster = i['poster']
-
-				icon = '0'
-				if icon == '0' and 'icon3' in i: icon = i['icon3']
-				if icon == '0' and 'icon2' in i: icon = i['icon2']
-				if icon == '0' and 'icon' in i: icon = i['icon']
-
-				thumb = '0'
-				if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
-				if thumb == '0' and 'thumb2' in i: thumb = i['thumb2']
-				if thumb == '0' and 'thumb' in i: thumb = i['thumb']
-
-				banner = '0'
-				if banner == '0' and 'banner3' in i: banner = i['banner3']
-				if banner == '0' and 'banner2' in i: banner = i['banner2']
-				if banner == '0' and 'banner' in i: banner = i['banner']
+				poster1 = meta.get('poster')
+				poster2 = meta.get('poster2')
+				poster3 = meta.get('poster3')
+				poster = poster3 or poster2 or poster1 or control.addonPoster()
 
 				fanart = '0'
 				if settingFanart:
-					if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
-					if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
-					if fanart == '0' and 'fanart' in i: fanart = i['fanart']
+					fanart1 = meta.get('fanart')
+					fanart2 = meta.get('fanart2')
+					fanart3 = meta.get('fanart3')
+					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 
-				clearlogo = '0'
-				if clearlogo == '0' and 'clearlogo' in i: clearlogo = i['clearlogo']
+				landscape = meta.get('landscape')
+				thumb = meta.get('thumb') or poster or landscape
+				icon = meta.get('icon') or poster
 
-				clearart = '0'
-				if clearart == '0' and 'clearart' in i: clearart = i['clearart']
+				banner1 = meta.get('banner')
+				banner2 = meta.get('banner2')
+				banner3 = meta.get('banner3')
+				banner = banner3 or banner2 or banner1 or control.addonBanner()
 
-				landscape = '0'
-				if landscape == '0' and 'landscape' in i: landscape = i['landscape']
-
-				if poster == '0': poster = addonPoster
-				if icon == '0': icon = poster
-				if thumb == '0': thumb = poster
-				if banner == '0': banner = addonBanner
-				if fanart == '0': fanart = addonFanart
+				clearlogo = meta.get('clearlogo')
+				clearart = meta.get('clearart')
 
 				art = {}
-				if poster != '0' and not poster is None:
-					art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-				if fanart != '0' and not fanart is None:
-					art.update({'fanart': fanart})
-				if icon != '0' and not icon is None:
-					art.update({'icon': icon})
-				if thumb != '0' and not thumb is None:
-					art.update({'thumb': thumb})
-				if banner != '0' and not banner is None:
-					art.update({'banner': banner})
-				if clearlogo != '0' and not clearlogo is None:
-					art.update({'clearlogo': clearlogo})
-				if clearart != '0' and not clearart is None:
-					art.update({'clearart': clearart})
-				if landscape != '0' and not landscape is None:
-					art.update({'landscape': landscape})
+				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
+									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
 
 ####-Context Menu and Overlays-####
 				cm = []

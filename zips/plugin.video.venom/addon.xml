@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.2.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,24 +36,16 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.0 - Sept 22, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] changed clearlogo and clearart to
-    tvshow.clearart and tvshow.clearlogo to
-    fix skin issue seen in Estuary.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed Trakt lists not updating for changes
-    until 1hr passed due to cache duration.
-    Now if Trakt activity is newer than cache
-    write date the new data will be fetched[/I]
-[COLOR yellow]--[/COLOR][I] Fixed Trakt lists sort by Title to ignore
-    articles (the, and, an).[/I]
-[COLOR yellow]--[/COLOR][I] Reworked multiline source list. There is
-    now a 2nd line color choice option in
-    settings. Switched formatting of 2nd line
-    to Italic. Removed occasional 0 values.[/I]
-[COLOR yellow]--[/COLOR][I] Added color choice options for progress
-    dialog premium and free lines.[/I]
-[COLOR yellow]--[/COLOR][I] Added a few new colors to various options
-    in settings.[/I]
+[B][COLOR red]Update - v3.2.1 - Sept 26, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added setting option to disable player
+    clearart, clearlogo, and discart.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed html code issue effecting some
+    tvshows.[/I]
+[COLOR yellow]--[/COLOR][I] Reworked directory list builders to
+    reduce processing time.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed random TMDb artwork not retrieved
+    due to incorect tmdb_id in Trakt api. Now both tmdb_id and
+    imdb_id checked.[/I]
 		</news>
 	</extension>
 </addon>

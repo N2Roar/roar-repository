@@ -7,7 +7,7 @@
 import json
 
 from resources.lib.modules import client
-from resources.lib.modules import control, log_utils
+from resources.lib.modules import control
 
 user = control.setting('fanart.tv.user')
 if user == '' or user is None:

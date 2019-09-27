@@ -16,7 +16,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -825,7 +825,7 @@ class TVshows:
 					director = '0'
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
-				# log_utils.log('director = %s for title = %s' % director, __name__, log_utils.LOGDEBUG)
+				# log_utils.log('director = %s' % director, __name__, log_utils.LOGDEBUG)
 
 				plot = '0'
 				try:
@@ -1031,6 +1031,8 @@ class TVshows:
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
 			item = client.request(url, timeout='10', error = True)
+			# log_utils.log('item = %s' % item, __name__, log_utils.LOGDEBUG)
+
 			if item is None:
 				raise Exception()
 
@@ -1041,8 +1043,8 @@ class TVshows:
 					pass
 
 			title = client.parseDOM(item, 'SeriesName')[0]
-			try: title = title.encode('utf-8')
-			except: pass
+			title = client.replaceHTMLCodes(title)
+			title = title.encode('utf-8')
 
 			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
 				year = client.parseDOM(item, 'FirstAired')[0]
@@ -1090,6 +1092,7 @@ class TVshows:
 			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == '0':
 				url2 = self.tvdb_info_link % (tvdb, 'actors')
 				actors = client.request(url2, timeout='10', error=True)
+				log_utils.log('actors = %s' % actors, __name__, log_utils.LOGDEBUG)
 				castandart = []
 				if actors is not None:
 					import xml.etree.ElementTree as ET
@@ -1099,7 +1102,11 @@ class TVshows:
 						person = [name.text for name in actor]
 						image = person[1]
 						name = person[2]
+						try: name = client.replaceHTMLCodes(person[2])
+						except: pass
 						role = person[3]
+						try: role = client.replaceHTMLCodes(person[3])
+						except: pass
 						try:
 							castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 						except:
@@ -1108,8 +1115,7 @@ class TVshows:
 			if 'plot' not in self.list[i] and self.list[i]['plot'] == '0':
 				plot = client.parseDOM(item, 'Overview')[0]
 				plot = client.replaceHTMLCodes(plot)
-				try:
-					plot = plot.encode('utf-8')
+				try: plot = plot.encode('utf-8')
 				except: pass
 			else:
 				plot = self.list[i]['plot']
@@ -1139,12 +1145,9 @@ class TVshows:
 			else:
 				fanart = self.list[i]['fanart']
 
-			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
-						'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
-						'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot,
-						'status': status, 'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner,
-						'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0',
-						'clearart': '0', 'landscape': fanart, 'metacache': False}
+			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
+						'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'status': status, 'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner,
+						'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
@@ -1224,12 +1227,12 @@ class TVshows:
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				# meta.update({'tmdb_id': tmdb})
 				meta.update({'tvdb_id': tvdb})
 				meta.update({'mediatype': 'tvshow'})
 				meta.update({'tvshowtitle': label})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
+				# Some descriptions have a link at the end that. Remove it.
 				try:
 					plot = meta['plot']
 					index = plot.rfind('See full summary')
@@ -1249,65 +1252,33 @@ class TVshows:
 				except:
 					pass
 
-				poster = '0'
-				if poster == '0' and 'poster3' in i: poster = i['poster3']
-				if poster == '0' and 'poster2' in i: poster = i['poster2']
-				if poster == '0' and 'poster' in i: poster = i['poster']
+				poster1 = meta.get('poster')
+				poster2 = meta.get('poster2')
+				poster3 = meta.get('poster3')
+				poster = poster3 or poster2 or poster1 or control.addonPoster()
 
-				icon = '0'
-				if icon == '0' and 'icon3' in i: icon = i['icon3']
-				if icon == '0' and 'icon2' in i: icon = i['icon2']
-				if icon == '0' and 'icon' in i: icon = i['icon']
-
-				thumb = '0'
-				if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
-				if thumb == '0' and 'thumb2' in i: thumb = i['thumb2']
-				if thumb == '0' and 'thumb' in i: thumb = i['thumb']
-
-				fanart = '0'
+				fanart = ''
 				if settingFanart:
-					if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
-					if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
-					if fanart == '0' and 'fanart' in i: fanart = i['fanart']
+					fanart1 = meta.get('fanart')
+					fanart2 = meta.get('fanart2')
+					fanart3 = meta.get('fanart3')
+					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 
-				banner = '0'
-				if banner == '0' and 'banner3' in i: banner = i['banner3']
-				if banner == '0' and 'banner2' in i: banner = i['banner2']
-				if banner == '0' and 'banner' in i: banner = i['banner']
-				if banner == '0': banner = fanart
+				landscape = meta.get('landscape')
+				thumb = meta.get('thumb') or poster or landscape
+				icon = meta.get('icon') or poster
 
-				clearlogo = '0'
-				if clearlogo == '0' and 'clearlogo' in i: clearlogo = i['clearlogo']
+				banner1 = meta.get('banner')
+				banner2 = meta.get('banner2')
+				banner3 = meta.get('banner3')
+				banner = banner3 or banner2 or banner1 or control.addonBanner()
 
-				clearart = '0'
-				if clearart == '0' and 'clearart' in i: clearart = i['clearart']
-
-				landscape = '0'
-				if landscape == '0' and 'landscape' in i: landscape = i['landscape']
-
-				if poster == '0': poster = addonPoster
-				if icon == '0': icon = poster
-				if thumb == '0': thumb = poster
-				if banner == '0': banner = addonBanner
-				if fanart == '0': fanart = addonFanart
+				clearlogo = meta.get('clearlogo')
+				clearart = meta.get('clearart')
 
 				art = {}
-				if poster != '0' and poster is not None:
-					art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-				if fanart != '0' and fanart is not None:
-					art.update({'fanart': fanart})
-				if icon != '0' and icon is not None:
-					art.update({'icon': icon})
-				if thumb != '0' and thumb is not None:
-					art.update({'thumb': thumb})
-				if banner != '0' and banner is not None:
-					art.update({'banner': banner})
-				if clearlogo != '0' and clearlogo is not None:
-					art.update({'clearlogo': clearlogo})
-				if clearart != '0' and clearart is not None:
-					art.update({'clearart': clearart})
-				if landscape != '0' and landscape is not None:
-					art.update({'landscape': landscape})
+				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
+									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
 
 				if flatten is True:
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)

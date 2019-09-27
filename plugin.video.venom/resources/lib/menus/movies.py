@@ -61,6 +61,9 @@ class Movies:
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
 		self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
+		# url for TMDb user lists-needs session_id
+		# https://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1
+
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
@@ -79,6 +82,7 @@ class Movies:
 			self.mostvoted_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=num_votes,desc&count=%d&start=1' % (self.hidecinema_date, self.count )
 			self.featured_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=moviemeter,asc&count=%d&start=1' % (self.hidecinema_date, self.count )
 			self.genre_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&release_date=,%s&genres=%s&sort=moviemeter,asc&count=%d&start=1' % (self.hidecinema_date, '%s', self.count)
+
 			self.language_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&release_date=,%s&count=%d&start=1' % ('%s', self.hidecinema_date, self.count)
 			self.certification_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=%s&sort=moviemeter,asc&release_date=,%s&count=%d&start=1' % ('%s', self.hidecinema_date, self.count)
 			self.imdbboxoffice_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&release_date=,%s&count=%d&start=1' % (self.hidecinema_date, self.count)
@@ -86,7 +90,7 @@ class Movies:
 			self.mostpopular_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&sort=moviemeter,asc&count=%d&start=1' % self.count
 			self.mostvoted_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=num_votes,desc&count=%d&start=1' % self.count
 			self.featured_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=moviemeter,asc&count=%d&start=1' % self.count
-			self.genre_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&genres=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
+			self.genre_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&release_date=,date[0]&genres=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 			self.language_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 			self.certification_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 			self.imdbboxoffice_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&count=%d&start=1' % self.count
@@ -682,6 +686,7 @@ class Movies:
 			result = client.request(url, error=True)
 			# result = client.request(url, output = 'extended', error = True)
 			result = result.replace('\n', ' ')
+			# result = result[0].replace('\n','')
 			result = result.decode('iso-8859-1').encode('utf-8')
 
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
@@ -944,7 +949,6 @@ class Movies:
 				raise Exception()
 
 			imdb = self.list[i]['imdb']
-
 			item = trakt.getMovieSummary(id=imdb)
 
 			title = item.get('title')
@@ -984,7 +988,7 @@ class Movies:
 			plot = item.get('overview', '0')
 
 			from resources.lib.indexers.tmdb import Movies
-			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb)
+			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb, imdb)
 
 			castandart = []
 			for person in tmdb_Item['credits']['cast']:
@@ -1033,8 +1037,7 @@ class Movies:
 				item.update({'landscape': fanart3})
 				meta.update(item)
 
-			item = dict((k,v) for k, v in item.iteritems() if v != '0')
-			# item = dict((k,v) for k, v in item.iteritems())
+			item = dict((k, v) for k, v in item.iteritems() if v != '0')
 			self.list[i].update(item)
 
 			self.meta.append(meta)
@@ -1095,7 +1098,6 @@ class Movies:
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tmdb_id': tmdb})
 				meta.update({'mediatype': 'movie'})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
@@ -1112,89 +1114,41 @@ class Movies:
 				except:
 					pass
 
-				try:
-					meta.update({'duration': str(int(meta['duration']) * 60)})
-				except:
-					pass
-				try:
-					meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
-				except:
-					pass
-				try:
-					meta.update({'year': int(meta['year'])})
-				except:
-					pass
+				try: meta.update({'duration': str(int(meta['duration']) * 60)})
+				except: pass
+				try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
+				except: pass
+				try: meta.update({'year': int(meta['year'])})
+				except: pass
 
-				poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
-				poster = poster[0] if poster else addonPoster
-				meta.update({'poster': poster})
+				poster1 = meta.get('poster')
+				poster2 = meta.get('poster2')
+				poster3 = meta.get('poster3')
+				poster = poster3 or poster2 or poster1 or control.addonPoster()
 
-				poster = '0'
-				if poster == '0' and 'poster3' in i: poster = i['poster3']
-				if poster == '0' and 'poster2' in i: poster = i['poster2']
-				if poster == '0' and 'poster' in i: poster = i['poster']
-
-				icon = '0'
-				if icon == '0' and 'icon' in i: icon = i['icon']
-
-				thumb = '0'
-				if thumb == '0' and 'thumb' in i: thumb = i['thumb']
-
-				# thumb = '0'
-				# if thumb == '0' and 'landscape' in i: thumb = i['landscape']
-
-				banner = '0'
-				if banner == '0' and 'banner3' in i: banner = i['banner3']
-				if banner == '0' and 'banner2' in i: banner = i['banner2']
-				if banner == '0' and 'banner' in i: banner = i['banner']
-
-				fanart = '0'
+				fanart = ''
 				if settingFanart:
-					if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
-					if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
-					if fanart == '0' and 'fanart' in i: fanart = i['fanart']
+					fanart1 = meta.get('fanart')
+					fanart2 = meta.get('fanart2')
+					fanart3 = meta.get('fanart3')
+					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 
-				clearlogo = '0'
-				if clearlogo == '0' and 'clearlogo' in i:
-					clearlogo = i['clearlogo']
+				landscape = meta.get('landscape')
+				thumb = meta.get('thumb') or poster or landscape
+				icon = meta.get('icon') or poster
 
-				clearart = '0'
-				if clearart == '0' and 'clearart' in i:
-					clearart = i['clearart']
+				banner1 = meta.get('banner')
+				banner2 = meta.get('banner2')
+				banner3 = meta.get('banner3')
+				banner = banner3 or banner2 or banner1 or control.addonBanner()
 
-				landscape = '0'
-				if landscape == '0' and 'landscape' in i:
-					landscape = i['landscape']
-
-				discart = '0'
-				if discart == '0' and 'discart' in i:
-					discart = i['discart']
-
-				if poster == '0': poster = addonPoster
-				if icon == '0': icon = poster
-				if thumb == '0': thumb = poster
-				if banner == '0': banner = addonBanner
-				if fanart == '0': fanart = addonFanart
+				clearlogo = meta.get('clearlogo')
+				clearart = meta.get('clearart')
+				discart = meta.get('discart')
 
 				art = {}
-				if icon != '0' and icon is not None:
-					art.update({'icon': icon})
-				if thumb != '0' and thumb is not None:
-					art.update({'thumb': thumb})
-				if banner != '0' and banner is not None:
-					art.update({'banner': banner})
-				if poster != '0' and poster is not None:
-					art.update({'poster': poster})
-				if fanart != '0' and fanart is not None:
-					art.update({'fanart': fanart})
-				if clearlogo != '0' and clearlogo is not None:
-					art.update({'clearlogo': clearlogo})
-				if clearart != '0' and clearart is not None:
-					art.update({'clearart': clearart})
-				if landscape != '0' and landscape is not None:
-					art.update({'landscape': landscape})
-				if discart != '0' and discart is not None:
-					art.update({'discart': discart})
+				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
+							'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
 ####-Context Menu and Overlays-####
 				cm = []
@@ -1318,9 +1272,6 @@ class Movies:
 
 				item = control.item(label = name)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

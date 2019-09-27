@@ -71,9 +71,15 @@ class Player(xbmc.Player):
 			item = control.item(path=url)
 
 			if self.media_type == 'episode':
-				item.setArt({'tvshow.clearlogo': clearlogo, 'tvshow.clearart': clearart, 'tvshow.discart': discart, 'tvshow.banner': banner, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'tvshow.fanart': fanart})
+				if control.setting('disable.player.art') == 'true':
+					item.setArt({'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'tvshow.fanart': fanart})
+				else:
+					item.setArt({'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo, 'tvshow.discart': discart, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'tvshow.fanart': fanart})
 			else:
-				item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
+				if control.setting('disable.player.art') == 'true':
+					item.setArt({'thumb': thumb, 'poster': poster, 'fanart': fanart})
+				else:
+					item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
 
 			if self.media_type == 'episode':
 				self.episodeIDS = meta.get('episodeIDS', '0')
@@ -82,10 +88,10 @@ class Player(xbmc.Player):
 				item.setUniqueIDs(self.ids)
 
 			item.setInfo(type='video', infoLabels=control.metadataClean(meta))
-
 			if 'plugin' in control.infoLabel('Container.PluginName'):
 				control.closeAll()
 				control.player.play(url, item)
+
 				xbmc.sleep(2000)
 
 			if 'plugin' not in control.infoLabel('Container.PluginName'):
@@ -119,37 +125,23 @@ class Player(xbmc.Player):
 
 	def getMeta(self, meta):
 		try:
-			poster = '0'
-			if 'poster3' in meta: poster = meta.get('poster3')
-			elif 'poster2' in meta: poster = meta.get('poster2')
-			elif 'poster' in meta: poster = meta.get('poster')
+			poster1 = meta.get('poster')
+			poster2 = meta.get('poster2')
+			poster3 = meta.get('poster3')
+			poster = poster3 or poster2 or poster1 or control.addonPoster()
 
-			thumb = '0'
-			if 'thumb3' in meta: thumb = meta.get('thumb3')
-			elif 'thumb2' in meta: thumb = meta.get('thumb2')
-			elif 'thumb' in meta: thumb = meta.get('thumb')
+			thumb = meta.get('thumb')
+			thumb = thumb or poster or control.addonThumb()
 
-			fanart = '0'
-			if 'fanart3' in meta: fanart = meta.get('fanart3')
-			elif 'fanart2' in meta: fanart = meta.get('fanart2')
-			elif 'fanart' in meta: fanart = meta.get('fanart')
+			fanart1 = meta.get('fanart')
+			fanart2 = meta.get('fanart2')
+			fanart3 = meta.get('fanart3')
+			fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 
-			banner = '0'
-			if 'banner' in meta: banner = meta.get('banner')
-			# if banner == '0': banner = poster
-
-			clearart = '0'
-			if 'clearart' in meta: clearart = meta.get('clearart')
-
-			clearlogo = '0'
-			if 'clearlogo' in meta: clearlogo = meta.get('clearlogo')
-
-			discart = '0'
-			if 'discart' in meta: discart = meta.get('discart')
-
-			if poster == '0': poster = control.addonPoster()
-			if thumb == '0': thumb = control.addonThumb()
-			if fanart == '0': fanart = control.addonFanart()
+			banner = meta.get('banner')
+			clearart = meta.get('clearart')
+			clearlogo = meta.get('clearlogo')
+			discart = meta.get('discart')
 
 			if 'mediatype' not in meta:
 				meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})

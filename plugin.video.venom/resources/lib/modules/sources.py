@@ -126,45 +126,29 @@ class Sources:
 		elif 'year' in meta:
 			sysname += urllib.quote_plus(' (%s)' % meta['year'])
 
-		poster = '0'
-		if 'poster3' in meta:
-			poster = meta.get('poster3')
-		elif 'poster2' in meta:
-			poster = meta.get('poster2')
-		elif 'poster' in meta:
-			poster = meta.get('poster')
+		poster1 = meta.get('poster')
+		poster2 = meta.get('poster2')
+		poster3 = meta.get('poster3')
+		poster = poster3 or poster2 or poster1 or control.addonPoster()
 
-		fanart = '0'
-		if 'fanart3' in meta:
-			fanart = meta.get('fanart3')
-		elif 'fanart2' in meta:
-			fanart = meta.get('fanart2')
-		elif 'fanart' in meta:
-			fanart = meta.get('fanart')
-
-		thumb = '0'
-		if 'thumb' in meta:
-			thumb = meta.get('thumb')
-		if thumb == '0':
-			thumb = poster
-		if thumb == '0':
-			thumb = fanart
-
-		if poster == '0' or poster is None:
-			poster = control.addonPoster()
+		fanart1 = meta.get('fanart')
+		fanart2 = meta.get('fanart2')
+		fanart3 = meta.get('fanart3')
+		fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 		if control.setting('fanart') != 'true':
 			fanart = '0'
-		if fanart == '0' or fanart is None:
-			fanart = control.addonFanart()
-		if thumb == '0' or thumb is None:
-			thumb = control.addonFanart()
+
+		thumb = meta.get('thumb')
+		thumb = thumb or poster or fanart or control.addonThumb()
 
 		sysimage = urllib.quote_plus(poster.encode('utf-8'))
 		downloadMenu = control.lang(32403).encode('utf-8')
 
+		multiline = control.setting('sourcelist.multiline')
+
 		for i in range(len(items)):
 			try:
-				if control.setting('sourcelist.multiline') == 'true':
+				if multiline == 'true':
 					label = str(items[i]['multiline_label'])
 				else:
 					label = str(items[i]['label'])
@@ -280,7 +264,6 @@ class Sources:
 						offset = 0
 
 					m = ''
-
 					for x in range(3600):
 						try:
 							if xbmc.abortRequested is True:

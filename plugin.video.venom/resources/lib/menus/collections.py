@@ -1009,7 +1009,7 @@ class Collections:
 			plot = item.get('overview')
 
 			from resources.lib.indexers.tmdb import Movies
-			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb)
+			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb, imdb)
 
 			castandart = []
 			for person in tmdb_Item['credits']['cast']:
@@ -1112,7 +1112,6 @@ class Collections:
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tmdb_id': tmdb})
 				meta.update({'mediatype': 'movie'})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
@@ -1135,67 +1134,34 @@ class Collections:
 				try: meta.update({'year': int(meta['year'])})
 				except: pass
 
-				poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
-				poster = poster[0] if poster else addonPoster
-				meta.update({'poster': poster})
+				poster1 = meta.get('poster')
+				poster2 = meta.get('poster2')
+				poster3 = meta.get('poster3')
+				poster = poster3 or poster2 or poster1 or control.addonPoster()
 
-				icon = '0'
-				if icon == '0' and 'icon' in i: icon = i['icon']
-
-				thumb = '0'
-				if thumb == '0' and 'thumb' in i: thumb = i['thumb']
-
-				banner = '0'
-				if banner == '0' and 'banner' in i: banner = i['banner']
-
-				poster = '0'
-				if poster == '0' and 'poster3' in i: poster = i['poster3']
-				if poster == '0' and 'poster2' in i: poster = i['poster2']
-				if poster == '0' and 'poster' in i: poster = i['poster']
-
-				fanart = '0'
+				fanart = ''
 				if settingFanart:
-					if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
-					if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
-					if fanart == '0' and 'fanart' in i: fanart = i['fanart']
+					fanart1 = meta.get('fanart')
+					fanart2 = meta.get('fanart2')
+					fanart3 = meta.get('fanart3')
+					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
 
-				clearlogo = '0'
-				if clearlogo == '0' and 'clearlogo' in i: clearlogo = i['clearlogo']
+				landscape = meta.get('landscape')
+				thumb = meta.get('thumb') or poster or landscape
+				icon = meta.get('icon') or poster
 
-				clearart = '0'
-				if clearart == '0' and 'clearart' in i: clearart = i['clearart']
+				banner1 = meta.get('banner')
+				banner2 = meta.get('banner2')
+				banner3 = meta.get('banner3')
+				banner = banner3 or banner2 or banner1 or control.addonBanner()
 
-				landscape = '0'
-				if landscape == '0' and 'landscape' in i: landscape = i['landscape']
-
-				discart = '0'
-				if discart == '0' and 'discart' in i: discart = i['discart']
-
-				if poster == '0': poster = addonPoster
-				if icon == '0': icon = poster
-				if thumb == '0': thumb = poster
-				if banner == '0': banner = addonBanner
-				if fanart == '0': fanart = addonFanart
+				clearlogo = meta.get('clearlogo')
+				clearart = meta.get('clearart')
+				discart = meta.get('discart')
 
 				art = {}
-				if icon != '0' and not icon is None:
-					art.update({'icon': icon})
-				if thumb != '0' and not thumb is None:
-					art.update({'thumb': thumb})
-				if banner != '0' and not banner is None:
-					art.update({'banner': banner})
-				if poster != '0' and not poster is None:
-					art.update({'poster': poster})
-				if fanart != '0' and not fanart is None:
-					art.update({'fanart': fanart})
-				if clearlogo != '0' and not clearlogo is None:
-					art.update({'clearlogo': clearlogo})
-				if clearart != '0' and not clearart is None:
-					art.update({'clearart': clearart})
-				if landscape != '0' and not landscape is None:
-					art.update({'landscape': landscape})
-				if discart != '0' and not discart is None:
-					art.update({'discart': discart})
+				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
+								'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
 ####-Context Menu and Overlays-####
 				cm = []
