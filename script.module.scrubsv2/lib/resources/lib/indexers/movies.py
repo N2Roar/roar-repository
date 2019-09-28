@@ -272,6 +272,51 @@ class movies:
         return self.list
 
 
+    def my_imdbUserLists(self):
+        movielist1 = control.setting('imdb.movielist_name1')
+        movielist1_link = control.setting('imdb.movielist_id1')
+        if movielist1:
+            self.list.append({'name': movielist1, 'url': self.imdbUserLists_link % movielist1_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist2 = control.setting('imdb.movielist_name2')
+        movielist2_link = control.setting('imdb.movielist_id2')
+        if movielist2:
+            self.list.append({'name': movielist2, 'url': self.imdbUserLists_link % movielist2_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist3 = control.setting('imdb.movielist_name3')
+        movielist3_link = control.setting('imdb.movielist_id3')
+        if movielist3:
+            self.list.append({'name': movielist3, 'url': self.imdbUserLists_link % movielist3_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist4 = control.setting('imdb.movielist_name4')
+        movielist4_link = control.setting('imdb.movielist_id4')
+        if movielist4:
+            self.list.append({'name': movielist4, 'url': self.imdbUserLists_link % movielist4_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist5 = control.setting('imdb.movielist_name5')
+        movielist5_link = control.setting('imdb.movielist_id5')
+        if movielist5:
+            self.list.append({'name': movielist5, 'url': self.imdbUserLists_link % movielist5_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist6 = control.setting('imdb.movielist_name6')
+        movielist6_link = control.setting('imdb.movielist_id6')
+        if movielist6:
+            self.list.append({'name': movielist6, 'url': self.imdbUserLists_link % movielist6_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist7 = control.setting('imdb.movielist_name7')
+        movielist7_link = control.setting('imdb.movielist_id7')
+        if movielist7:
+            self.list.append({'name': movielist7, 'url': self.imdbUserLists_link % movielist7_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist8 = control.setting('imdb.movielist_name8')
+        movielist8_link = control.setting('imdb.movielist_id8')
+        if movielist8:
+            self.list.append({'name': movielist8, 'url': self.imdbUserLists_link % movielist8_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist9 = control.setting('imdb.movielist_name9')
+        movielist9_link = control.setting('imdb.movielist_id9')
+        if movielist9:
+            self.list.append({'name': movielist9, 'url': self.imdbUserLists_link % movielist9_link, 'image': 'imdb.png', 'action': 'movies'})
+        movielist10 = control.setting('imdb.movielist_name10')
+        movielist10_link = control.setting('imdb.movielist_id10')
+        if movielist10:
+            self.list.append({'name': movielist10, 'url': self.imdbUserLists_link % movielist10_link, 'image': 'imdb.png', 'action': 'movies'})
+        self.addDirectory(self.list)
+        return self.list
+
+
     def imdbUserLists(self):
         self.list.append({'name': 'IMDb Top1000 (2000 - 2019)', 'url': self.imdbTop1000y00to19_link, 'image': 'imdb.png', 'action': 'movies'})
         self.list.append({'name': 'IMDb Top1000 (1990 - 1999)', 'url': self.imdbTop1000y90to99_link, 'image': 'imdb.png', 'action': 'movies'})

@@ -16,7 +16,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -743,7 +743,7 @@ class TVshows:
 				year = re.findall('(\d{4})', year[0])[0]
 				year = year.encode('utf-8')
 
-				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+				if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
 				imdb = client.parseDOM(item, 'a', ret='href')[0]
 				imdb = re.findall('(tt\d*)', imdb)[0]
@@ -1031,7 +1031,6 @@ class TVshows:
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
 			item = client.request(url, timeout='10', error = True)
-			# log_utils.log('item = %s' % item, __name__, log_utils.LOGDEBUG)
 
 			if item is None:
 				raise Exception()
@@ -1042,9 +1041,12 @@ class TVshows:
 				except:
 					pass
 
-			title = client.parseDOM(item, 'SeriesName')[0]
-			title = client.replaceHTMLCodes(title)
-			title = title.encode('utf-8')
+			if 'title' not in self.list[i] or self.list[i]['title'] == '0':
+				title = client.parseDOM(item, 'SeriesName')[0]
+				title = client.replaceHTMLCodes(title)
+				title = title.encode('utf-8')
+			else:
+				title = self.list[i]['title']
 
 			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
 				year = client.parseDOM(item, 'FirstAired')[0]
@@ -1092,7 +1094,6 @@ class TVshows:
 			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == '0':
 				url2 = self.tvdb_info_link % (tvdb, 'actors')
 				actors = client.request(url2, timeout='10', error=True)
-				log_utils.log('actors = %s' % actors, __name__, log_utils.LOGDEBUG)
 				castandart = []
 				if actors is not None:
 					import xml.etree.ElementTree as ET
@@ -1220,16 +1221,16 @@ class TVshows:
 			try:
 				imdb, tmdb, tvdb, year = i['imdb'], i['tmdb'], i['tvdb'], i['year']
 
-				label = i['title']
+				try: title = i['originaltitle']
+				except: title = i['title']
+				label = title
 
-				systitle = sysname = urllib.quote_plus(i['originaltitle'])
-				sysimage = urllib.quote_plus(i['poster'])
+				systitle = urllib.quote_plus(title)
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
 				meta.update({'tvdb_id': tvdb})
 				meta.update({'mediatype': 'tvshow'})
-				meta.update({'tvshowtitle': label})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
 				# Some descriptions have a link at the end that. Remove it.
@@ -1251,6 +1252,13 @@ class TVshows:
 					meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
 				except:
 					pass
+
+				try:
+					if not 'tvshowtitle' in meta: meta.update({'tvshowtitle': title})
+				except: pass
+				try:
+					if not 'tvshowyear' in meta: meta.update({'tvshowyear': year})
+				except: pass
 
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
@@ -1288,7 +1296,8 @@ class TVshows:
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
-					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
+					# cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
+					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, imdb, tvdb)))
 
 				try:
 					overlay = int(playcount.getTVShowOverlay(indicators, imdb, tvdb))

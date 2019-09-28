@@ -16,6 +16,54 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 
+msgctxt "#30702"
+msgid ""
+msgstr ""
+
+msgctxt "#30703"
+msgid "Clear History"
+msgstr ""
+
+msgctxt "#30705"
+msgid "Unplayable stream"
+msgstr ""
+
+msgctxt "#30707"
+msgid "Trailer"
+msgstr ""
+
+msgctxt "#30708"
+msgid "Information"
+msgstr ""
+
+msgctxt "#30711"
+msgid "Set Movies view"
+msgstr ""
+
+msgctxt "#30712"
+msgid "Set TV Shows view"
+msgstr ""
+
+msgctxt "#30713"
+msgid "Set Seasons view"
+msgstr ""
+
+msgctxt "#30714"
+msgid "Set Episodes view"
+msgstr ""
+
+msgctxt "#30722"
+msgid "Download item"
+msgstr ""
+
+msgctxt "#30726"
+msgid "Opening stream"
+msgstr ""
+
+msgctxt "#30731"
+msgid "Please wait..."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Movies"
 msgstr ""
@@ -33,15 +81,15 @@ msgid "My TV Shows"
 msgstr ""
 
 msgctxt "#32005"
-msgid "New Movies"
+msgid "Movies Widget"
 msgstr ""
 
 msgctxt "#32006"
-msgid "New Episodes"
+msgid "TV Shows Widget"
 msgstr ""
 
 msgctxt "#32007"
-msgid "Channels"
+msgid "Dev Menu"
 msgstr ""
 
 msgctxt "#32008"
@@ -125,7 +173,7 @@ msgid "TV Calendar"
 msgstr ""
 
 msgctxt "#32028"
-msgid "People Search"
+msgid "Trakt OnDeck"
 msgstr ""
 
 msgctxt "#32029"
@@ -137,7 +185,7 @@ msgid "People (TV)"
 msgstr ""
 
 msgctxt "#32031"
-msgid "Discover"
+msgid "New Episodes"
 msgstr ""
 
 msgctxt "#32032"
@@ -146,10 +194,6 @@ msgstr ""
 
 msgctxt "#32033"
 msgid "Watchlist"
-msgstr ""
-
-msgctxt "#32034"
-msgid "IMDb"
 msgstr ""
 
 msgctxt "#32035"
@@ -185,43 +229,27 @@ msgid "No Trakt or IMDb account found."
 msgstr ""
 
 msgctxt "#32043"
-msgid "[B]SETTINGS[/B] : General"
-msgstr ""
-
-msgctxt "#32044"
-msgid "[B]SETTINGS[/B] : Accounts"
-msgstr ""
-
-msgctxt "#32045"
-msgid "[B]SETTINGS[/B] : Playback"
-msgstr ""
-
-msgctxt "#32046"
-msgid "[B]SETTINGS[/B] : Subtitles"
+msgid "General Settings"
 msgstr ""
 
 msgctxt "#32047"
-msgid "[B]SETTINGS[/B] : Providers"
-msgstr ""
-
-msgctxt "#32048"
-msgid "[B]Scrubs[/B] : Downloads"
+msgid "Provider Settings"
 msgstr ""
 
 msgctxt "#32049"
-msgid "[B]Scrubs[/B] : Viewtypes"
+msgid "Setup ViewTypes"
 msgstr ""
 
 msgctxt "#32050"
-msgid "[B]Scrubs[/B] : Clear providers..."
+msgid "[B]Clear Providers[/B]"
 msgstr ""
 
 msgctxt "#32051"
-msgid "[B]Scrubs[/B] : Clear metadata..."
+msgid "[B]Clear ResolveURL Cache[/B]"
 msgstr ""
 
 msgctxt "#32052"
-msgid "[B]Scrubs[/B] : Clear cache..."
+msgid "[B]Clear Cache[/B]"
 msgstr ""
 
 msgctxt "#32053"
@@ -242,10 +270,6 @@ msgstr ""
 
 msgctxt "#32057"
 msgid "Process Complete"
-msgstr ""
-
-msgctxt "#32058"
-msgid "This will slow down things until they are re-cached!"
 msgstr ""
 
 msgctxt "#32059"
@@ -305,7 +329,7 @@ msgid "Refresh"
 msgstr ""
 
 msgctxt "#32073"
-msgid "[B]TRAKT[/B] : Authorize"
+msgid "Authorize Trakt"
 msgstr ""
 
 msgctxt "#32074"
@@ -325,11 +349,11 @@ msgid "User"
 msgstr ""
 
 msgctxt "#32304"
-msgid "Email"
+msgid "Pre-Emptive Termination"
 msgstr ""
 
 msgctxt "#32305"
-msgid "ID"
+msgid "Enable Results Dupe Checker"
 msgstr ""
 
 msgctxt "#32306"
@@ -337,11 +361,11 @@ msgid "Authorization..."
 msgstr ""
 
 msgctxt "#32307"
-msgid "Password"
+msgid "Enable Host Limit (Used in Bulky Providers.)"
 msgstr ""
 
 msgctxt "#32308"
-msgid "PIN"
+msgid "Allow RapidGator Results"
 msgstr ""
 
 msgctxt "#32309"
@@ -385,35 +409,35 @@ msgid "Enable Fanart"
 msgstr ""
 
 msgctxt "#32319"
-msgid "Menu"
+msgid "Show Premium Sources/Results Only"
 msgstr ""
 
 msgctxt "#32320"
-msgid "New Movies"
+msgid "Providers 2"
 msgstr ""
 
 msgctxt "#32321"
-msgid "Featured"
+msgid "Special Settings"
 msgstr ""
 
 msgctxt "#32322"
-msgid "People Watching"
+msgid "Anticipated"
 msgstr ""
 
 msgctxt "#32323"
-msgid "Most Popular"
+msgid "Popular"
 msgstr ""
 
 msgctxt "#32324"
-msgid "In Theaters"
+msgid "Pre-Emptive Limit"
 msgstr ""
 
 msgctxt "#32325"
-msgid "New Episodes"
+msgid "Warning: Pre-Emptive options might have bugs."
 msgstr ""
 
 msgctxt "#32326"
-msgid "Episodes"
+msgid "Auto Resume"
 msgstr ""
 
 msgctxt "#32327"
@@ -425,7 +449,7 @@ msgid "Trakt Episodes"
 msgstr ""
 
 msgctxt "#32329"
-msgid "My Lists"
+msgid "My Stuff"
 msgstr ""
 
 msgctxt "#32330"
@@ -445,7 +469,7 @@ msgid "Directory"
 msgstr ""
 
 msgctxt "#32334"
-msgid "Auto Play"
+msgid "Help/About"
 msgstr ""
 
 msgctxt "#32335"
@@ -461,7 +485,7 @@ msgid "Background"
 msgstr ""
 
 msgctxt "#32338"
-msgid "File Hosting Filters"
+msgid "Foreign Providers"
 msgstr ""
 
 msgctxt "#32339"
@@ -497,7 +521,7 @@ msgid "Accounts"
 msgstr ""
 
 msgctxt "#32347"
-msgid "Downloads"
+msgid "Foreign Providers 2"
 msgstr ""
 
 msgctxt "#32348"
@@ -505,7 +529,7 @@ msgid "Enable downloads"
 msgstr ""
 
 msgctxt "#32349"
-msgid "Movies"
+msgid "Wait 24 HR's before import"
 msgstr ""
 
 msgctxt "#32350"
@@ -569,7 +593,7 @@ msgid "Enable Debug"
 msgstr ""
 
 msgctxt "#32375"
-msgid "News and Updates"
+msgid "Enable Debug Time"
 msgstr ""
 
 msgctxt "#32401"
@@ -577,7 +601,7 @@ msgid "No stream available"
 msgstr ""
 
 msgctxt "#32402"
-msgid "Playback outside Scrubs is not allowed"
+msgid "Debugger of Errors"
 msgstr ""
 
 msgctxt "#32403"
@@ -597,11 +621,11 @@ msgid "Remaining providers: %s"
 msgstr ""
 
 msgctxt "#32407"
-msgid "Are you sure?"
+msgid "Enable Debug Spacers(Makes Log Big.)"
 msgstr ""
 
 msgctxt "#32408"
-msgid "Process Complete"
+msgid "Get 1 Free @ http://www.omdbapi.com/apikey.aspx"
 msgstr ""
 
 msgctxt "#32501"
@@ -632,10 +656,6 @@ msgctxt "#32514"
 msgid "2) When prompted enter : [COLOR orange]%s[/COLOR]"
 msgstr ""
 
-msgctxt "#32515"
-msgid "Trakt Manager"
-msgstr ""
-
 msgctxt "#32516"
 msgid "Add to [B]Collection[/B]"
 msgstr ""
@@ -664,22 +684,6 @@ msgctxt "#32522"
 msgid "Remove from [B]%s[/B]"
 msgstr ""
 
-msgctxt "#32531"
-msgid "An account already exists."
-msgstr ""
-
-msgctxt "#32532"
-msgid "Do you want to reset?"
-msgstr ""
-
-msgctxt "#32533"
-msgid "1) Visit : [COLOR orange]%s[/COLOR]"
-msgstr ""
-
-msgctxt "#32534"
-msgid "2) When prompted enter : [COLOR orange]%s[/COLOR]"
-msgstr ""
-
 msgctxt "#32535"
 msgid "Play Random"
 msgstr ""
@@ -690,10 +694,6 @@ msgstr ""
 
 msgctxt "#32537"
 msgid "Nothing found to play"
-msgstr ""
-
-msgctxt "#32538"
-msgid "DEBRID-SERVICE"
 msgstr ""
 
 msgctxt "#32539"
@@ -710,14 +710,6 @@ msgstr ""
 
 msgctxt "#32542"
 msgid "Folders will be imported to library if they are added to media sources."
-msgstr ""
-
-msgctxt "#32543"
-msgid "Movies"
-msgstr ""
-
-msgctxt "#32544"
-msgid "TV"
 msgstr ""
 
 msgctxt "#32545"
@@ -749,28 +741,24 @@ msgid "Add to Library"
 msgstr ""
 
 msgctxt "#32552"
-msgid "Adding to library..."
+msgid "Adding to Library..."
 msgstr ""
 
 msgctxt "#32553"
-msgid "Updating TV shows..."
+msgid "Updating TV Shows..."
 msgstr ""
 
-msgctxt "#32554"
-msgid "Process Complete"
-msgstr ""
 
-msgctxt "#32555"
-msgid "Are you sure?"
-msgstr ""
 
-msgctxt "#32556"
+msgctxt "#32556"  #  Ditch?
 msgid "[B]Scrubs[/B] : Library"
 msgstr ""
 
-msgctxt "#32557"
+msgctxt "#32557"  #  Ditch?
 msgid "[B]LIBRARY[/B] : Settings"
 msgstr ""
+
+
 
 msgctxt "#32558"
 msgid "[B]Scrubs[/B] : Update library..."
@@ -812,24 +800,12 @@ msgctxt "#32571"
 msgid "Hide movies in cinema"
 msgstr ""
 
-msgctxt "#32572"
-msgid "Protected Link. Please enter account credentials in the settings."
-msgstr ""
-
 msgctxt "#32580"
 msgid "Films/TV Movies"
 msgstr ""
 
-msgctxt "#32581"
-msgid "Results Limit"
-msgstr ""
-
 msgctxt "#32582"
 msgid "Personal API keys provide quicker API responses."
-msgstr ""
-
-msgctxt "#32583"
-msgid "Become a VIP member for many benefits at: https://fanart.tv/vip"
 msgstr ""
 
 msgctxt "#32584"
@@ -852,48 +828,12 @@ msgctxt "#32588"
 msgid "Premium Source Identifier Color"
 msgstr ""
 
-msgctxt "#32589"
-msgid "Blue"
-msgstr ""
-
-msgctxt "#32590"
-msgid "Red"
-msgstr ""
-
-msgctxt "#32591"
-msgid "Yellow"
-msgstr ""
-
-msgctxt "#32592"
-msgid "Deep Pink"
-msgstr ""
-
-msgctxt "#32593"
-msgid "Cyan"
-msgstr ""
-
-msgctxt "#32594"
-msgid "Lawn Green"
-msgstr ""
-
-msgctxt "#32595"
-msgid "Gold"
-msgstr ""
-
-msgctxt "#32596"
-msgid "Magenta"
-msgstr ""
-
-msgctxt "#32597"
-msgid "Yellow Green"
-msgstr ""
-
 msgctxt "#32598"
-msgid "No Color"
+msgid "Radio Station Entries:"
 msgstr ""
 
 msgctxt "#32599"
-msgid "Getting genre information from Trakt"
+msgid "Radio Country:"
 msgstr ""
 
 msgctxt "#32600"
@@ -913,7 +853,7 @@ msgid "New search..."
 msgstr ""
 
 msgctxt "#32604"
-msgid "[B]Scrubs[/B] : Clear search history..."
+msgid "[B]Clear Search History[/B]"
 msgstr ""
 
 msgctxt "#32605"
@@ -921,15 +861,11 @@ msgid "Click to clear search history"
 msgstr ""
 
 msgctxt "#32606"
-msgid "[COLOR=yellow]Paid[/COLOR]"
+msgid "[COLOR=yellow]Dbird[/COLOR]"
 msgstr ""
 
 msgctxt "#32607"
-msgid "[COLOR=orange]Free[/COLOR]"
-msgstr ""
-
-msgctxt "#32632"
-msgid "Unaired Season/Episode Color"
+msgid "[COLOR=orange]Normal[/COLOR]"
 msgstr ""
 
 msgctxt "#32608"
@@ -937,7 +873,7 @@ msgid "Auto Syncing Trakt Library"
 msgstr ""
 
 msgctxt "#32609"
-msgid "ResolveUrl Settings"
+msgid "Radio Plugin Settings"
 msgstr ""
 
 msgctxt "#32610"
@@ -953,15 +889,15 @@ msgid "Legends of Music"
 msgstr ""
 
 msgctxt "#32613"
-msgid "[B]Scrubs[/B] : Clear All Cache..."
+msgid "[B]Clear All Cache[/B]"
 msgstr ""
 
 msgctxt "#32614"
-msgid "[B]Scrubs[/B] : Clear Meta Cache..."
+msgid "[B]Clear Meta Cache[/B]"
 msgstr ""
 
 msgctxt "#32615"
-msgid "Check Host for Valid URL"
+msgid "0 Value Disables Scheduling"
 msgstr ""
 
 msgctxt "#32616"
@@ -996,10 +932,6 @@ msgctxt "#32623"
 msgid "Movie Reviews and Trailers"
 msgstr ""
 
-msgctxt "#326232"
-msgid "TV Reviews and Trailers"
-msgstr ""
-
 msgctxt "#32624"
 msgid "PodcastOne"
 msgstr ""
@@ -1017,7 +949,7 @@ msgid "Categories"
 msgstr ""
 
 msgctxt "#32628"
-msgid "[B]SETTINGS[/B] : Navigation"
+msgid "Schedule Updates Every - Hour/s"
 msgstr ""
 
 msgctxt "#32629"
@@ -1025,11 +957,55 @@ msgid "PodBay"
 msgstr ""
 
 msgctxt "#32630"
-msgid "Show Season 0 in Browse Seasons"
+msgid "Sync on Kodi Start"
 msgstr ""
 
 msgctxt "#32631"
 msgid "Documentaries"
+msgstr ""
+
+msgctxt "#32632"
+msgid "Unaired Season/Episode Color"
+msgstr ""
+
+msgctxt "#32634"
+msgid "Torrent Source Identifier Color"
+msgstr ""
+
+msgctxt "#32635"
+msgid "Torrent Support"
+msgstr ""
+
+msgctxt "#32636"
+msgid "Enable Torrents Scraping"
+msgstr ""
+
+msgctxt "#32637"
+msgid "Real-Debrid Torrent Settings"
+msgstr ""
+
+msgctxt "#32638"
+msgid "Minimum Seeders"
+msgstr ""
+
+msgctxt "#32639"
+msgid "Sort By Torrent/Premium"
+msgstr ""
+
+msgctxt "#32640"
+msgid "Premiumize.me Torrent Settings"
+msgstr ""
+
+msgctxt "#32641"
+msgid "Torrent Settings"
+msgstr ""
+
+msgctxt "#32642"
+msgid "Sky Channels"
+msgstr ""
+
+msgctxt "#32643"
+msgid "Hide movies in cinema: Months to Rollback"
 msgstr ""
 
 msgctxt "#42001"
@@ -1037,7 +1013,7 @@ msgid "TMDB Lists"
 msgstr ""
 
 msgctxt "#42002"
-msgid "Her Soaps"
+msgid "Auto Trakt Collections Syncing"
 msgstr ""
 
 msgctxt "#42003"
@@ -1049,7 +1025,7 @@ msgid "More Stuff"
 msgstr ""
 
 msgctxt "#42005"
-msgid "--The End--"
+msgid "Include Special Episodes"
 msgstr ""
 
 msgctxt "#42006"
@@ -1061,7 +1037,7 @@ msgid "Show Changelog"
 msgstr ""
 
 msgctxt "#42008"
-msgid "BoxSets"
+msgid "Trakt User:"
 msgstr ""
 
 msgctxt "#42009"
@@ -1144,100 +1120,8 @@ msgctxt "#101011"
 msgid "Under Construction!"
 msgstr ""
 
-msgctxt "#32634"
-msgid "Torrent Source Identifier Color"
-msgstr ""
-
-msgctxt "#32635"
-msgid "Torrent Support"
-msgstr ""
-
-msgctxt "#32636"
-msgid "Enable Torrents Scraping"
-msgstr ""
-
-msgctxt "#32637"
-msgid "Real-Debrid Torrent Settings"
-msgstr ""
-
-msgctxt "#32638"
-msgid "Minimum Seeders"
-msgstr ""
-
-msgctxt "#32639"
-msgid "Sort By Torrent/Premium"
-msgstr ""
-
-msgctxt "#32640"
-msgid "Premiumize.me Torrent Settings"
-msgstr ""
-
-msgctxt "#32641"
-msgid "[B]SETTINGS[/B] : Torrent Support"
-msgstr ""
-
-msgctxt "#32642"
-msgid "Sky Channels"
-msgstr ""
-
-msgctxt "#32643"
-msgid "Hide movies in cinema: Months to Rollback"
-msgstr ""
-
-msgctxt "#30731"
-msgid "Please wait..."
-msgstr ""
-
-msgctxt "#30726"
-msgid "Opening stream"
-msgstr ""
-
-msgctxt "#30711"
-msgid "Set Movies view"
-msgstr ""
-
-msgctxt "#30712"
-msgid "Set TV Shows view"
-msgstr ""
-
-msgctxt "#30713"
-msgid "Set Seasons view"
-msgstr ""
-
-msgctxt "#30714"
-msgid "Set Episodes view"
-msgstr ""
-
-msgctxt "#30500"
-msgid "[I]Next Page[/I]"
-msgstr ""
-
-msgctxt "#30722"
-msgid "Download item"
-msgstr ""
-
-msgctxt "#30723"
-msgid "Queue item"
-msgstr ""
-
-msgctxt "#30702"
-msgid "Search"
-msgstr ""
-
-msgctxt "#30703"
-msgid "Clear History"
-msgstr ""
-
-msgctxt "#30707"
-msgid "Trailer"
-msgstr ""
-
-msgctxt "#30708"
-msgid "Information"
-msgstr ""
-
-msgctxt "#30705"
-msgid "Unplayable stream"
+msgctxt "#326232"
+msgid "TV Reviews and Trailers"
 msgstr ""
 
 

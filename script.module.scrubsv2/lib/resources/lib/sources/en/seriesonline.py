@@ -14,7 +14,7 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['123movieshub.gg', 'seriesonline8.co']
-        self.base_link = 'https://www2.123movieshub.gg'
+        self.base_link = 'https://www3.123movieshub.gg'
         self.search_link = '/movie/search/%s'
 
 

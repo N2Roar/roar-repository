@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.2.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,16 +36,14 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.1 - Sept 26, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added setting option to disable player
-    clearart, clearlogo, and discart.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed html code issue effecting some
-    tvshows.[/I]
-[COLOR yellow]--[/COLOR][I] Reworked directory list builders to
-    reduce processing time.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed random TMDb artwork not retrieved
-    due to incorect tmdb_id in Trakt api. Now both tmdb_id and
-    imdb_id checked.[/I]
+[B][COLOR red]Update - v3.2.2 - Sept 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed occasional next page indicator
+    appearing for Trakt lists.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed occasional TVShows title missing
+    from infoLabels.[/I]
+[COLOR yellow]--[/COLOR][I] Removed unnecessary artwork from
+    source directory list, improves list load
+    time. Thank you host505!!![/I]
 		</news>
 	</extension>
 </addon>

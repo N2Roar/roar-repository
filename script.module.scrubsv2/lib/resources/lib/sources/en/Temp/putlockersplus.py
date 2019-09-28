@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
 # -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
 
-import re,base64
-from resources.lib.modules import cleantitle,source_utils,cfscrape
+import re, base64
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_utils
 
 
 class source:

@@ -122,7 +122,8 @@ def more_rapidvideo(link, hostDict, lang, info):
             return sources
         except:
             return sources
-    return []
+    else:
+        return []
 
 
 def more_cdapl(link, hostDict, lang, info):
@@ -141,8 +142,9 @@ def more_cdapl(link, hostDict, lang, info):
                     sources.append({'source': 'CDA', 'quality': q, 'language': lang, 'url': direct, 'info': info, 'direct': True, 'debridonly': False})
             return sources
         except:
-            return []
-    return []
+            return sources
+    else:
+        return []
 
 
 

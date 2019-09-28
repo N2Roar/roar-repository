@@ -12,8 +12,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['hdbest.net']
-        self.base_link = 'https://hdbest.net'
+        self.domains = ['vikv.net', 'hdbest.net']
+        self.base_link = 'https://vikv.net'
         self.search_link = '/?q=%s+%s'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
         self.session = requests.Session()

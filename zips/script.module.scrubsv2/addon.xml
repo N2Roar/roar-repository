@@ -1,4 +1,4 @@
-<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.7">
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.8">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.beautifulsoup4" />

@@ -15,7 +15,7 @@ class source:
         self.priority = 1
         self.language = ['en']  # Old  watch-series.co  watch-series.ru  watch-series.live
         self.domains = ['watchseries.fm']
-        self.base_link = 'https://www1.watchseries.fm'
+        self.base_link = 'https://www4.watchseries.fm'
         self.search_link = '/search.html?keyword=%s'
 
 

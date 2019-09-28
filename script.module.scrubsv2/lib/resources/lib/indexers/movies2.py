@@ -2,7 +2,7 @@
 
 import os,sys,re,json,urllib,urlparse,base64,datetime,unicodedata
 from resources.lib.modules import trakt,control,client,cache,metacache
-from resources.lib.modules import playcount,workers,views,favourites
+from resources.lib.modules import playcount,workers,views
 try:
     action = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))['action']
 except:
@@ -30,12 +30,12 @@ class movies:
         self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
         self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.tmdb_lang)
+        self.tmdb_by_query_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ("%s", self.tmdb_key)
         self.imdb_by_query = 'http://www.omdbapi.com/?t=%s&y=%s&apikey=%s' % ("%s", "%s", self.omdb_key)
         self.imdbinfo = 'http://www.omdbapi.com/?i=%s&plot=full&r=json&apikey=%s' % ("%s", self.omdb_key)
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         self.search_link = 'https://api.themoviedb.org/3/search/movie?&api_key=%s&query=%s'
-        self.tmdb_by_query_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ("%s", self.tmdb_key)
 
         self.popular_link = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&page=1' % self.tmdb_key
         self.toprated_link = 'https://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1' % self.tmdb_key
@@ -44,9 +44,100 @@ class movies:
         self.premiere_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&first_air_date.gte=%s&first_air_date.lte=%s&page=1' % (self.tmdb_key, self.year_date, self.today_date)
 
         self.tmdbUserLists_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s' % ("%s", self.tmdb_key)
-
-        self.tmdbjewmovies_link = self.tmdbUserLists_link % ('86696')
         self.tmdbjewtestmovies_link = self.tmdbUserLists_link % ('97123')
+        self.tmdbjewmovies_link = self.tmdbUserLists_link % ('86696')
+
+
+    def get(self, url, idx=True):
+        try:
+            try:
+                url = getattr(self, url + '_link')
+            except:
+                pass
+            try:
+                u = urlparse.urlparse(url).netloc.lower()
+            except:
+                pass
+            if u in self.tmdb_link:
+                self.list = cache.get(self.tmdb_list, 24, url)
+                self.worker()
+            elif u in self.trakt_link and '/users/' in url:
+                try:
+                    if url == self.trakthistory_link:
+                        raise Exception()
+                    if not '/%s/' % self.trakt_user in url:
+                        raise Exception()
+                    if trakt.getActivity() > cache.timeout(self.trakt_list, url):
+                        raise Exception()
+                    self.list = cache.get(self.trakt_list, 720, url)
+                except:
+                    self.list = cache.get(self.trakt_list, 0, url)
+                if '/%s/' % self.trakt_user in url:
+                    self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a )', '', k['title'].lower()))
+                if idx == True:
+                    self.worker()
+            elif u in self.trakt_link:
+                self.list = cache.get(self.trakt_list, 24, url)
+                if idx == True:
+                    self.worker()
+            elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
+                self.list = cache.get(self.imdb_list, 0, url)
+                if idx == True:
+                    self.worker()
+            elif u in self.imdb_link:
+                self.list = cache.get(self.imdb_list, 24, url)
+                if idx == True:
+                    self.worker()
+            if idx == True:
+                self.movieDirectory(self.list)
+            return self.list
+        except:
+            pass
+
+
+    def my_tmdbUserLists(self):
+        movielist1 = control.setting('tmdb.movielist_name1')
+        movielist1_link = control.setting('tmdb.movielist_id1')
+        if movielist1:
+            self.list.append({'name': movielist1, 'url': self.tmdbUserLists_link % movielist1_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist2 = control.setting('tmdb.movielist_name2')
+        movielist2_link = control.setting('tmdb.movielist_id2')
+        if movielist2:
+            self.list.append({'name': movielist2, 'url': self.tmdbUserLists_link % movielist2_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist3 = control.setting('tmdb.movielist_name3')
+        movielist3_link = control.setting('tmdb.movielist_id3')
+        if movielist3:
+            self.list.append({'name': movielist3, 'url': self.tmdbUserLists_link % movielist3_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist4 = control.setting('tmdb.movielist_name4')
+        movielist4_link = control.setting('tmdb.movielist_id4')
+        if movielist4:
+            self.list.append({'name': movielist4, 'url': self.tmdbUserLists_link % movielist4_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist5 = control.setting('tmdb.movielist_name5')
+        movielist5_link = control.setting('tmdb.movielist_id5')
+        if movielist5:
+            self.list.append({'name': movielist5, 'url': self.tmdbUserLists_link % movielist5_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist6 = control.setting('tmdb.movielist_name6')
+        movielist6_link = control.setting('tmdb.movielist_id6')
+        if movielist6:
+            self.list.append({'name': movielist6, 'url': self.tmdbUserLists_link % movielist6_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist7 = control.setting('tmdb.movielist_name7')
+        movielist7_link = control.setting('tmdb.movielist_id7')
+        if movielist7:
+            self.list.append({'name': movielist7, 'url': self.tmdbUserLists_link % movielist7_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist8 = control.setting('tmdb.movielist_name8')
+        movielist8_link = control.setting('tmdb.movielist_id8')
+        if movielist8:
+            self.list.append({'name': movielist8, 'url': self.tmdbUserLists_link % movielist8_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist9 = control.setting('tmdb.movielist_name9')
+        movielist9_link = control.setting('tmdb.movielist_id9')
+        if movielist9:
+            self.list.append({'name': movielist9, 'url': self.tmdbUserLists_link % movielist9_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        movielist10 = control.setting('tmdb.movielist_name10')
+        movielist10_link = control.setting('tmdb.movielist_id10')
+        if movielist10:
+            self.list.append({'name': movielist10, 'url': self.tmdbUserLists_link % movielist10_link, 'image': 'tmdb.png', 'action': 'movies2'})
+        self.addDirectory(self.list)
+        return self.list
 
 
     def tmdbUserLists_ActorCollections(self):
@@ -104,14 +195,17 @@ class movies:
 
     def tmdbUserLists_DCvsMarvel(self):
         theUserLists = [
-            ('DC Comics Collection', '32799'),
-            ('Marvel Collection', '32793'),
-            ('DC Movies', '12725'),
+            ('The Marvel Universe', '1'),
+            ('The DC Comics Universe', '3'),
             ('Marvel Movies', '11332'),
+            ('DC Movies', '12725'),
+            ('Marvel Collection', '32793'),
+            ('DC Comics Collection', '32799'),
             ('DC-Animated Movies', '62764'),
             ('Marvel Animated Movies', '62905'),
-            ('The DC Comics Universe', '3'),
-            ('The Marvel Universe', '1')
+            ('Super Heroes', '13584'),
+            ('Super Heroes Section', '36121'),
+            ('Marvel: The Infinity Saga', '122518')
         ]
         for i in theUserLists:
             self.list.append({'name': i[0], 'url': self.tmdbUserLists_link % i[1], 'image': 'tmdb.png', 'action': 'movies2'})
@@ -207,8 +301,6 @@ class movies:
             ('Stalker Favs', '35869'),
             ('Stand Up', '37533'),
             ('Star Trek', '38386'),
-            ('Super Heroes Section', '36121'),
-            ('Super Heroes', '13584'),
             ('Teen', '35680'),
             ('Toddlers', '35684'),
             ('Urban', '36401'),
@@ -752,54 +844,6 @@ class movies:
         return self.list
 
 
-    def get(self, url, idx=True):
-        try:
-            try:
-                url = getattr(self, url + '_link')
-            except:
-                pass
-            try:
-                u = urlparse.urlparse(url).netloc.lower()
-            except:
-                pass
-            if u in self.tmdb_link:
-                self.list = cache.get(self.tmdb_list, 24, url)
-                self.worker()
-            elif u in self.trakt_link and '/users/' in url:
-                try:
-                    if url == self.trakthistory_link:
-                        raise Exception()
-                    if not '/%s/' % self.trakt_user in url:
-                        raise Exception()
-                    if trakt.getActivity() > cache.timeout(self.trakt_list, url):
-                        raise Exception()
-                    self.list = cache.get(self.trakt_list, 720, url)
-                except:
-                    self.list = cache.get(self.trakt_list, 0, url)
-                if '/%s/' % self.trakt_user in url:
-                    self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a )', '', k['title'].lower()))
-                if idx == True:
-                    self.worker()
-            elif u in self.trakt_link:
-                self.list = cache.get(self.trakt_list, 24, url)
-                if idx == True:
-                    self.worker()
-            elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-                self.list = cache.get(self.imdb_list, 0, url)
-                if idx == True:
-                    self.worker()
-            elif u in self.imdb_link:
-                self.list = cache.get(self.imdb_list, 24, url)
-                if idx == True:
-                    self.worker()
-            if idx == True:
-                self.movieDirectory(self.list)
-            return self.list
-        except:
-            pass
-
-
-
     def tmdb_list(self, url):
         next = url
         try:
@@ -900,11 +944,10 @@ class movies:
     def trakt_list(self, url):
         try:
             q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
-            q.update({'extended': 'full,images'})
+            q.update({'extended': 'full'})
             q = (urllib.urlencode(q)).replace('%2C', ',')
             u = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
-            result = trakt.getTrakt(u)
-            result = json.loads(result)
+            result = trakt.getTraktAsJson(u)
             items = []
             for i in result:
                 try:

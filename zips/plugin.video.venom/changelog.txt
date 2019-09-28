@@ -1,3 +1,12 @@
+[B][COLOR red]Update - v3.2.2 - Sept 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed occasional next page indicator
+    appearing for Trakt lists.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed occasional TVShows title missing
+    from infoLabels.[/I]
+[COLOR yellow]--[/COLOR][I] Removed unnecessary artwork from
+    source directory list, improves list load
+    time. Thank you host505!!![/I]
+
 [B][COLOR red]Update - v3.2.1 - Sept 26, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added setting option to disable player
     clearart, clearlogo, and discart.[/I]
@@ -6,7 +15,7 @@
 [COLOR yellow]--[/COLOR][I] Reworked directory list builders to
     reduce processing time.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed random TMDb artwork not retrieved
-    due to incorect tmdb_id in Trakt api. Now both tmdb_id and
+    due to incorrect tmdb_id in Trakt api. Now both tmdb_id and
     imdb_id checked.[/I]
 
 [B][COLOR red]Update - v3.2.0 - Sept 22, 2019[/COLOR][/B]
@@ -32,7 +41,7 @@
 [COLOR yellow]--[/COLOR][I] Reverted back to Trakt non page lists due
     to issue with api sorting in response.[/I]
 [COLOR yellow]--[/COLOR][I] Removed indicators from "for" loop causing
-    menu slow downs due to unneccessary
+    menu slow downs due to unnecessary
     calls to function.[/I]
 [COLOR yellow]--[/COLOR][I] Added setting option to enable-disable
     duplicate sources returned.[/I]

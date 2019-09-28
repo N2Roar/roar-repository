@@ -105,6 +105,51 @@ class tvshows:
             pass
 
 
+    def my_tmdbUserLists(self):
+        tvlist1 = control.setting('tmdb.tvlist_name1')
+        tvlist1_link = control.setting('tmdb.tvlist_id1')
+        if tvlist1:
+            self.list.append({'name': tvlist1, 'url': self.tmdbUserLists_link % tvlist1_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist2 = control.setting('tmdb.tvlist_name2')
+        tvlist2_link = control.setting('tmdb.tvlist_id2')
+        if tvlist2:
+            self.list.append({'name': tvlist2, 'url': self.tmdbUserLists_link % tvlist2_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist3 = control.setting('tmdb.tvlist_name3')
+        tvlist3_link = control.setting('tmdb.tvlist_id3')
+        if tvlist3:
+            self.list.append({'name': tvlist3, 'url': self.tmdbUserLists_link % tvlist3_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist4 = control.setting('tmdb.tvlist_name4')
+        tvlist4_link = control.setting('tmdb.tvlist_id4')
+        if tvlist4:
+            self.list.append({'name': tvlist4, 'url': self.tmdbUserLists_link % tvlist4_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist5 = control.setting('tmdb.tvlist_name5')
+        tvlist5_link = control.setting('tmdb.tvlist_id5')
+        if tvlist5:
+            self.list.append({'name': tvlist5, 'url': self.tmdbUserLists_link % tvlist5_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist6 = control.setting('tmdb.tvlist_name6')
+        tvlist6_link = control.setting('tmdb.tvlist_id6')
+        if tvlist6:
+            self.list.append({'name': tvlist6, 'url': self.tmdbUserLists_link % tvlist6_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist7 = control.setting('tmdb.tvlist_name7')
+        tvlist7_link = control.setting('tmdb.tvlist_id7')
+        if tvlist7:
+            self.list.append({'name': tvlist7, 'url': self.tmdbUserLists_link % tvlist7_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist8 = control.setting('tmdb.tvlist_name8')
+        tvlist8_link = control.setting('tmdb.tvlist_id8')
+        if tvlist8:
+            self.list.append({'name': tvlist8, 'url': self.tmdbUserLists_link % tvlist8_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist9 = control.setting('tmdb.tvlist_name9')
+        tvlist9_link = control.setting('tmdb.tvlist_id9')
+        if tvlist9:
+            self.list.append({'name': tvlist9, 'url': self.tmdbUserLists_link % tvlist9_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        tvlist10 = control.setting('tmdb.tvlist_name10')
+        tvlist10_link = control.setting('tmdb.tvlist_id10')
+        if tvlist10:
+            self.list.append({'name': tvlist10, 'url': self.tmdbUserLists_link % tvlist10_link, 'image': 'tmdb.png', 'action': 'tvshows2'})
+        self.addDirectory(self.list)
+        return self.list
+
+
     def tmdbUserLists(self):
         theUserLists = [
             ('Adult Animation', '47436'),

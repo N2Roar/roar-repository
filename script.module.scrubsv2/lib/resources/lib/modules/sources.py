@@ -721,7 +721,7 @@ class sources:
     def clearSources(self):
         try:
             control.idle()
-            yes = control.yesnoDialog(control.lang(32407).encode('utf-8'), '', '')
+            yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
             if not yes:
                 return
             control.makeFile(control.dataPath)
@@ -731,7 +731,7 @@ class sources:
             dbcur.execute("DROP TABLE IF EXISTS rel_url")
             dbcur.execute("VACUUM")
             dbcon.commit()
-            control.infoDialog(control.lang(32408).encode('utf-8'), sound=True, icon='INFO')
+            control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
         except:
             pass
 

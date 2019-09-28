@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# --[getSum v1.3]--|--[From JewBMX]--
+# --[getSum v1.4]--|--[From JewBMX]--
 # Lazy Module to make life a little easier.
 
 import re, time, traceback, xbmcgui
@@ -23,7 +23,7 @@ class GetSum(object):
             if not text:
                 return
             if re.search(self._frame_regex, text, re.IGNORECASE) or type == 'iframe':
-                links = self._findSum_iframe(text)
+                links = re.compile(self._frame_regex).findall(text)
                 if links:
                     for link in links:
                         link =  "https:" + link if not link.startswith('http') else link
@@ -31,7 +31,7 @@ class GetSum(object):
                             continue
                         self.links.add(link)
             if re.search(self._datavideo_regex, text, re.IGNORECASE) or type == 'datavideo':
-                links = self._findSum_datavideo(text)
+                links = re.compile(self._datavideo_regex).findall(text)
                 if links:
                     for link in links:
                         link =  "https:" + link if not link.startswith('http') else link
@@ -39,7 +39,7 @@ class GetSum(object):
                             continue
                         self.links.add(link)
             if re.search(self._filesource_regex, text, re.IGNORECASE) or type =='filesource':
-                links = self._findSum_filesource(text)
+                links = re.compile(self._filesource_regex).findall(text)
                 if links:
                     for link in links:
                         link =  "https:" + link if not link.startswith('http') else link
@@ -47,7 +47,7 @@ class GetSum(object):
                             continue
                         self.links.add(link)
             if re.search(self._magnet_regex, text, re.IGNORECASE) or type == 'magnet':
-                links = self._findSum_magnet(text)
+                links = re.compile(self._magnet_regex).findall(text)
                 if links:
                     for link in links:
                         link = str(replaceHTMLCodes(link).encode('utf-8').split('&tr')[0])
@@ -60,28 +60,15 @@ class GetSum(object):
             return self.links
 
 
-    def _findSum_iframe(self, text):
-        results = re.compile(self._frame_regex).findall(text)
-        return results
-
-
-    def _findSum_datavideo(self, text):
-        results = re.compile(self._datavideo_regex).findall(text)
-        return results
-
-
-    def _findSum_filesource(self, text):
-        results = re.compile(self._filesource_regex).findall(text)
-        return results
-
-
-    def _findSum_magnet(self, text):
-        results = re.compile(self._magnet_regex).findall(text)
-        return results
-
-
 ########################################################
 ########################################################
+
+
+def logSum(matches):
+    number = 0
+    for match in matches:
+        log_utils.log('getSum - logSum:  %d  -  %s' %(number, match))
+        number = number + 1
 
 
 # Normal = getSum.get(url)
@@ -116,13 +103,6 @@ def findSum(text, type=None, timeout=10):
         return results
     else:
         return []
-
-
-def logSum(matches):
-    number = 0
-    for match in matches:
-        log_utils.log('getSum - logSum:  %d  -  %s' %(number, match))
-        number = number + 1
 
 
 # results = getSum.findEm(text, '(?:iframe|source).+?(?:src)=(?:\"|\')(.+?)(?:\"|\')')

@@ -9,27 +9,27 @@
         <setting id="api.language" type="select" label="32316" values="AUTO|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|English|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="AUTO" />
         <setting id="providers.lang" type="select" label="32360" values="English|German|German+English|French|French+English|Polish|Polish+English|Korean|Korean+English|Russian|Russian+English|Spanish|Spanish+English|Greek|Greek+English" default="English" visible="true" />
         <setting id="scrapers.timeout.1" type="slider" label="32312" default="60" range="10,60" option="int" />
-        <setting id="trakt.user" type="text" default="" label="Trakt User:" enable="false" visible="true" />
+        <setting id="trakt.user" type="text" default="" label="42008" enable="false" visible="true" />
         <setting id="indicators.alt" type="select" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="select" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
         <setting id="lists.widget" type="select" label="32329" lvalues="32302|32301" default="1" />
-        <setting id="movie.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="1" />
-        <setting id="tv.widget.alt" type="select" label="32325" lvalues="32302|32326|32327|32328" default="2" visible="!eq(-5,)" />
-        <setting id="tv.widget" type="select" label="32325" lvalues="32302|32326" default="1" visible="eq(-6,)" />
+        <setting id="movie.widget" type="select" label="32005" lvalues="32302|32035|32017|32018|32022|32580" default="1" />
+        <setting id="tv.widget.alt" type="select" label="32006" lvalues="32302|32038|32327|32328" default="2" visible="!eq(-5,)" />
+        <setting id="tv.widget" type="select" label="32006" lvalues="32302|32038" default="1" visible="eq(-6,)" />
         <setting id="prgr.sortorder" type="select" label="32584" lvalues="32585|32586" default="1" visible="!eq(-7,)" />
         <setting id="showunaired" type="bool" label="32570" default="true" />
         <setting id="unaired.identify" type="action" label="32632" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?action=colorChoiceUI)" default="darkred" />
-        <setting id="tv.specials" type="bool" label="Include Special Episodes" default="true" />
+        <setting id="tv.specials" type="bool" label="42005" default="true" />
         <setting id="flatten.tvshows" type="bool" label="32317" default="false" />
         <setting id="hidecinema" type="bool" label="32571" default="false" />
         <setting id="hidecinema.rollback" type="slider" label="32643" enable="eq(-1,true)" default="6" range="1,12" option="int" />
-        <setting type="lsep" label="Auto Trakt Collections Syncing" />
-        <setting id="autoTraktOnStart" type="bool" label="Sync on Kodi Start" default="false" enable="!eq(-15,false)" />
-        <setting id="schedTraktTime" type="slider" label="Schedule Updates Every - Hour/s" default="0" range="0,24" option="int" enable="!eq(-16,false)" />
-        <setting type="text" label="0 Value Disables Scheduling" enable="false" />
-        <setting type="lsep" label="Radio Plugin Settings" />
-        <setting id="radio.country" type="select" label="Radio Country:" values="Austria|Brazil|Columbia|Denmark|France|Germany|Italy|Mexico|Poland|Portugal|Spain|Sweden|USA" default="USA" />
-        <setting id="radio.count" type="slider" label="Radio Station Entries:" default="50" range="25,5,50" visible="true" />
+        <setting type="lsep" label="42002" />
+        <setting id="autoTraktOnStart" type="bool" label="32630" default="false" enable="!eq(-15,false)" />
+        <setting id="schedTraktTime" type="slider" label="32628" default="0" range="0,24" option="int" enable="!eq(-16,false)" />
+        <setting type="text" label="32615" enable="false" />
+        <setting type="lsep" label="32609" />
+        <setting id="radio.country" type="select" label="32599" values="Austria|Brazil|Columbia|Denmark|France|Germany|Italy|Mexico|Poland|Portugal|Spain|Sweden|USA" default="USA" />
+        <setting id="radio.count" type="slider" label="32598" default="50" range="25,5,50" visible="true" />
         <setting type="sep" />
     </category>
 
@@ -39,7 +39,7 @@
         <setting id="navi.userlists2" type="bool" label="42001" default="true" />
         <setting id="navi.channels" type="bool" label="32642" default="true" />
         <setting id="navi.morestuff" type="bool" label="42004" default="true" />
-        <setting id="navi.changeLog" type="bool" label="Changelog" default="true" />
+        <setting id="navi.changeLog" type="bool" label="42007" default="true" />
         <setting id="navi.dev" type="bool" label="010010" default="false" />
         <setting type="lsep" label="32001" />
         <setting id="navi.moviegenre" type="bool" label="32011" default="true" />
@@ -69,9 +69,9 @@
         <setting id="navi.tvshowMosts" type="bool" label="42019" default="true" />
         <setting id="navi.tvAiring" type="bool" label="32024" default="true" />
         <setting id="navi.tvActive" type="bool" label="32025" default="true" />
-        <setting id="navi.tvAnticipated" type="bool" label="Anticipated" default="true" />
+        <setting id="navi.tvAnticipated" type="bool" label="32322" default="true" />
         <setting id="navi.tvPremier" type="bool" label="32026" default="true" />
-        <setting id="navi.tvAdded" type="bool" label="32006" default="true" />
+        <setting id="navi.tvAdded" type="bool" label="32031" default="true" />
         <setting id="navi.tvCalendar" type="bool" label="32027" default="true" />
         <setting type="lsep" label="42004" />
         <setting id="navi.iptvChannels" type="bool" label="42023" default="true" />
@@ -90,25 +90,25 @@
 
     <category label="32330">
         <setting type="lsep" label="32330" />
-        <setting id="hosts.mode" type="select" label="32331" lvalues="32332|32333|32334" default="1" />
+        <setting id="hosts.mode" type="select" label="32331" lvalues="32332|32333|32064" default="1" />
         <setting id="progress.dialog" type="select" label="32335" lvalues="32336|32337" default="0" />
         <setting id="prem.identify" type="action" label="32588" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?action=colorChoicePI)" default="darkmagenta" />
         <setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
-        <setting id="debrid.only" type="bool" label="Show Premium Sources/Results Only" default="false" />
+        <setting id="debrid.only" type="bool" label="32319" default="false" />
         <setting id="autoplay.sd" type="bool" label="32340" default="true" />
         <setting id="sources.extrainfo" type="bool" label="32587" default="true" />
         <setting id="HEVC" type="bool" label="32363" default="true" />
         <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
-        <setting id="showRapGat" type="bool" label="Allow RapidGator Results" default="false" />
-        <setting id="limit_hosts" type="bool" label="Enable Host Limit Code (Used in Bulky Providers.)" default="true" />
-        <setting id="remove.dupes" type="bool" label="Enable Results Dupe Checker" default="false" />
+        <setting id="showRapGat" type="bool" label="32308" default="false" />
+        <setting id="limit_hosts" type="bool" label="32307" default="true" />
+        <setting id="remove.dupes" type="bool" label="32305" default="false" />
         <setting id="hosts.captcha" type="bool" label="32341" default="false" />
-        <setting id="preemptive.termination" type="bool" label="Pre-Emptive Termination" default="false" />
-        <setting id="preemptive.limit" type="slider" label="Pre-Emptive Limit" default="10" range="1,50" option="int" enable="!eq(-1,false)"/>
-        <setting type="text" label="Warning: Pre-Emptive options might have bugs." enable="false" />
+        <setting id="preemptive.termination" type="bool" label="32304" default="false" />
+        <setting id="preemptive.limit" type="slider" label="32324" default="10" range="1,50" option="int" enable="!eq(-1,false)"/>
+        <setting type="text" label="32325" enable="false" />
         <setting type="lsep" label="32343" />
         <setting id="bookmarks" type="bool" label="32344" default="true" />
-        <setting id="bookmarks.auto" type="bool" label="Auto Resume" default="false" enable="!eq(-1,false)" />
+        <setting id="bookmarks.auto" type="bool" label="32326" default="false" enable="!eq(-1,false)" />
         <setting type="lsep" label="32372" />
         <setting id="crefresh" type="bool" label="32373" default="false" />
         <setting type="sep" />
@@ -180,7 +180,7 @@
         <setting type="sep" />
     </category>
 
-    <category label="Providers 2">
+    <category label="32320">
         <setting label="Local---Unused (Not Required)" type="lsep" />
         <setting id="provider.library" type="bool" label="provider.library" default="false" />
         <setting id="provider.videoscraper" type="bool" label="provider.videoscraper(127.0.0.1:16735)" default="false" />
@@ -255,7 +255,7 @@
         <setting type="sep" />
     </category>
 
-    <category label="Foreign Providers">
+    <category label="32338">
         <setting label="French" type="lsep" />
         <setting id="provider.cinemay" type="bool" label="provider.cinemay" default="true" />
         <setting id="provider.dadyflix" type="bool" label="provider.dadyflix" default="true" />
@@ -301,7 +301,7 @@
         <setting type="sep" />
     </category>
 
-    <category label="Foreign Providers 2">
+    <category label="32347">
         <setting label="Korean" type="lsep" />
         <setting id="provider.dramabus" type="bool" label="provider.dramabus" default="true" />
         <setting id="provider.iheartdrama" type="bool" label="provider.iheartdrama" default="true" />
@@ -356,7 +356,6 @@
         <setting label="Torrent Providers" type="lsep" />
         <setting label="Disable All Torrent Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?mode=toggleAllTorrent&amp;setting=false&amp;openSettings&amp;query=7.0)"/>
         <setting label="Enable All Torrent Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?mode=toggleAllTorrent&amp;setting=true&amp;openSettings&amp;query=7.0)"/>
-        <setting id="provider.111ys" type="bool" label="provider.111ys" default="false" />
         <setting id="provider.1337x" type="bool" label="provider.1337x" default="false" />
         <setting id="provider.btscene" type="bool" label="provider.btscene" default="false" />
         <setting id="provider.doublr" type="bool" label="provider.doublr" default="false" />
@@ -385,7 +384,7 @@
         <setting id="AllDebridResolver_auth" type="action" label="(AllDebrid)Authorize My Account" action="RunPlugin(plugin://script.module.resolveurl/?mode=auth_ad)"/>
         <setting id="PremiumizeMeResolver_auth" type="action" label="(PremiumizeMe)Authorize My Account" action="RunPlugin(plugin://script.module.resolveurl/?mode=auth_pm)"/>
         <setting type="lsep" label="Trakt" />
-        <setting id="trakt.user2" type="text" default="" label="Trakt User:" enable="false" visible="true" />
+        <setting id="trakt.user2" type="text" default="" label="42008" enable="false" visible="true" />
         <setting id="trakt.auth" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?action=authTrakt)" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
@@ -395,32 +394,32 @@
         <setting id="tm.user" type="text" option="hidden" label="32309" default="c8b7db701bac0b26edfcc93b39858972" />
         <setting type="lsep" label="OMDb" />
         <setting id="omdb.key" type="text" option="hidden" label="32309" default="74703860" />
-        <setting type="text" label="Get 1 Free @ http://www.omdbapi.com/apikey.aspx" enable="false" />
+        <setting type="text" label="32408" enable="false" />
         <setting type="lsep" label="FanArt.tv" />
         <setting id="fanart.tv.user" type="text" option="hidden" label="32309" default="ea89e598e77bbe257990f630076395bb" />
         <setting type="text" label="32582" default="" enable="false" />
         <setting type="sep" />
     </category>
 
-    <category label="Special Settings">
+    <category label="32321">
         <setting label="Custom List location." type="lsep" />
         <setting id="navi.customList" type="bool" label="Custom List(Found in More Stuff)" default="false" />
-        <setting id="customList" type="text" label="Custom URL" enable="!eq(-1,false)" default="https://" />
+        <setting id="customList" type="text" label="Custom List URL" enable="!eq(-1,false)" default="https://" />
         <setting label="32541" type="lsep" />
-        <setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.scrubsv2/Movies" />
-        <setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.scrubsv2/TVShows" />
+        <setting id="library.movie" type="folder" label="32001" default="special://userdata/addon_data/plugin.video.scrubsv2/Movies" />
+        <setting id="library.tv" type="folder" label="32350" default="special://userdata/addon_data/plugin.video.scrubsv2/TVShows" />
         <setting type="text" label="32542" enable="false" />
         <setting id="library.service.update" type="bool" label="32545" default="true" />
         <setting id="library.service.notification" type="bool" label="32546" default="true" />
         <setting id="library.update" type="bool" label="32547" default="true" />
         <setting id="library.check" type="bool" label="32548" default="true" />
-        <setting id="library.importdelay" type="bool" label="$NUMBER[24]HR delay before import" default="true" />
+        <setting id="library.importdelay" type="bool" label="32349" default="true" />
         <setting id="library.check_movie" type="bool" label="32549" default="false" />
         <setting id="library.check_episode" type="bool" label="32550" default="false" />
         <setting id="library.include_unknown" type="bool" label="32565" default="true" />
-        <setting label="32347" type="lsep" />
+        <setting label="32009" type="lsep" />
         <setting id="downloads" type="bool" label="32348" default="false" />
-        <setting id="movie.download.path" type="folder" label="32349" enable="!eq(-1,false)" default="" />
+        <setting id="movie.download.path" type="folder" label="32001" enable="!eq(-1,false)" default="" />
         <setting id="tv.download.path" type="folder" label="32350" enable="!eq(-2,false)" default="" />
         <setting type="text" label="32351" enable="false" />
         <setting type="text" label="32352" enable="false" />
@@ -434,11 +433,147 @@
         <setting type="sep" />
     </category>
 
+    <category label="IMDb Movie Lists">
+        <setting type="text" label="example ID: https://m.imdb.com/list/[B]ls002448041[/B]/ (ls002448041)" enable="false" />
+        <setting type="lsep" label="List 1"/>
+        <setting id="imdb.movielist_name1" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id1" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 2"/>
+        <setting id="imdb.movielist_name2" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id2" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 3"/>
+        <setting id="imdb.movielist_name3" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id3" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 4"/>
+        <setting id="imdb.movielist_name4" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id4" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 5"/>
+        <setting id="imdb.movielist_name5" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id5" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 6"/>
+        <setting id="imdb.movielist_name6" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id6" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 7"/>
+        <setting id="imdb.movielist_name7" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id7" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 8"/>
+        <setting id="imdb.movielist_name8" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id8" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 9"/>
+        <setting id="imdb.movielist_name9" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id9" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 10"/>
+        <setting id="imdb.movielist_name10" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.movielist_id10" type="text" label="List ID" default="" visible="true"/>
+    </category>
+
+    <category label="IMDb TV Lists">
+        <setting type="text" label="example ID: https://m.imdb.com/list/[B]ls002448041[/B]/ (ls002448041)" enable="false" />
+        <setting type="lsep" label="List 1"/>
+        <setting id="imdb.tvlist_name1" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id1" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 2"/>
+        <setting id="imdb.tvlist_name2" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id2" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 3"/>
+        <setting id="imdb.tvlist_name3" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id3" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 4"/>
+        <setting id="imdb.tvlist_name4" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id4" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 5"/>
+        <setting id="imdb.tvlist_name5" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id5" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 6"/>
+        <setting id="imdb.tvlist_name6" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id6" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 7"/>
+        <setting id="imdb.tvlist_name7" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id7" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 8"/>
+        <setting id="imdb.tvlist_name8" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id8" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 9"/>
+        <setting id="imdb.tvlist_name9" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id9" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 10"/>
+        <setting id="imdb.tvlist_name10" type="text" label="List Name" default="" visible="true"/>
+        <setting id="imdb.tvlist_id10" type="text" label="List ID" default="" visible="true"/>
+    </category>
+
+    <category label="TMDb Movie Lists">
+        <setting type="text" label="example ID: https://www.themoviedb.org/list/[B]86558[/B]/ (86558)" enable="false" />
+        <setting type="lsep" label="List 1"/>
+        <setting id="tmdb.movielist_name1" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id1" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 2"/>
+        <setting id="tmdb.movielist_name2" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id2" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 3"/>
+        <setting id="tmdb.movielist_name3" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id3" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 4"/>
+        <setting id="tmdb.movielist_name4" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id4" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 5"/>
+        <setting id="tmdb.movielist_name5" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id5" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 6"/>
+        <setting id="tmdb.movielist_name6" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id6" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 7"/>
+        <setting id="tmdb.movielist_name7" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id7" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 8"/>
+        <setting id="tmdb.movielist_name8" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id8" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 9"/>
+        <setting id="tmdb.movielist_name9" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id9" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 10"/>
+        <setting id="tmdb.movielist_name10" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.movielist_id10" type="text" label="List ID" default="" visible="true"/>
+    </category>
+
+    <category label="TMDb TV Lists">
+        <setting type="text" label="example ID: https://www.themoviedb.org/list/[B]86558[/B]/ (86558)" enable="false" />
+        <setting type="lsep" label="List 1"/>
+        <setting id="tmdb.tvlist_name1" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id1" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 2"/>
+        <setting id="tmdb.tvlist_name2" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id2" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 3"/>
+        <setting id="tmdb.tvlist_name3" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id3" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 4"/>
+        <setting id="tmdb.tvlist_name4" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id4" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 5"/>
+        <setting id="tmdb.tvlist_name5" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id5" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 6"/>
+        <setting id="tmdb.tvlist_name6" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id6" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 7"/>
+        <setting id="tmdb.tvlist_name7" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id7" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 8"/>
+        <setting id="tmdb.tvlist_name8" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id8" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 9"/>
+        <setting id="tmdb.tvlist_name9" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id9" type="text" label="List ID" default="" visible="true"/>
+        <setting type="lsep" label="List 10"/>
+        <setting id="tmdb.tvlist_name10" type="text" label="List Name" default="" visible="true"/>
+        <setting id="tmdb.tvlist_id10" type="text" label="List ID" default="" visible="true"/>
+    </category>
+
     <category label="32616">
-        <setting label="Debugger of Errors" type="lsep" />
-        <setting id="addon_debug" type="bool" label="Enable Debug" default="false" />
-        <setting id="addon_debugtime" type="bool" label="Enable Debug Time" default="false" />
-        <setting id="addon_debugspacer" type="bool" label="Enable Debug Spacers(Makes Log Big.)" default="false" />
+        <setting label="32402" type="lsep" />
+        <setting id="addon_debug" type="bool" label="32374" default="false" />
+        <setting id="addon_debugtime" type="bool" label="32375" default="false" />
+        <setting id="addon_debugspacer" type="bool" label="32407" default="false" />
         <setting id="debug.location" type="select" label="32617" lvalues="32618|32619" default="0" />
         <setting label="(Enabling ALL is NOT Recommended, Just A Lazy Dev Tool.)" type="lsep" />
         <setting id="builtin.providers.enableall" type="action" label="Enable ALL Providers" option="close" action="RunPlugin(plugin://plugin.video.scrubsv2/?action=enableAll)" />
@@ -446,7 +581,7 @@
         <setting type="sep" />
     </category>
 
-    <category label="Help/About">
+    <category label="32334">
         <setting label="About this Addon" type="lsep" />
         <setting type="text" label="This is a fork of a fork of a fork of Cov/Exo." enable="false" />
         <setting type="text" label="Made for Kodi 17.6 and 18 on a S7 Edge Android Phone." enable="false" />

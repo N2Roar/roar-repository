@@ -173,7 +173,7 @@ def manager(name, imdb, tvdb, content):
         for i in range(1, len(lists), 2):
             lists[i] = ((control.lang(32522) % lists[i][0]).encode('utf-8'), '/users/me/lists/%s/items/remove' % lists[i][1])
         items += lists
-        select = control.selectDialog([i[0] for i in items], control.lang(32515).encode('utf-8'))
+        select = control.selectDialog([i[0] for i in items], control.lang(32070).encode('utf-8'))
         if select == -1:
             return
         elif select == 4:
@@ -186,12 +186,12 @@ def manager(name, imdb, tvdb, content):
             try:
                 slug = utils.json_loads_as_str(result)['ids']['slug']
             except:
-                return control.infoDialog(control.lang(32515).encode('utf-8'), heading=str(name), sound=True, icon='ERROR')
+                return control.infoDialog(control.lang(32070).encode('utf-8'), heading=str(name), sound=True, icon='ERROR')
             result = __getTrakt(items[select][1] % slug, post=post)[0]
         else:
             result = __getTrakt(items[select][1], post=post)[0]
         icon = control.infoLabel('ListItem.Icon') if not result == None else 'ERROR'
-        control.infoDialog(control.lang(32515).encode('utf-8'), heading=str(name), sound=True, icon=icon)
+        control.infoDialog(control.lang(32070).encode('utf-8'), heading=str(name), sound=True, icon=icon)
     except:
         return
 

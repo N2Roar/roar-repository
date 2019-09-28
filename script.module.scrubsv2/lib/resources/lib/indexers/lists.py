@@ -30,8 +30,7 @@ class indexer:
     def rootMC(self):
         try:
             regex.clear()
-            url = 'https://textuploader.com/11m10/raw'
-            #url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.txt'
+            url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.xml'
             self.list = self.noname_list(url)
             for i in self.list:
                 i.update({'content': 'addons'})
@@ -168,12 +167,12 @@ class indexer:
         try:
             mark = False
             if (url == None or url == ''):
-                self.list = [{'name': 30702, 'action': 'addSearch'}]
+                self.list = [{'name': 32010, 'action': 'addSearch'}]
                 self.list += [{'name': 30703, 'action': 'delSearch'}]
             else:
                 if '|SECTION|' in url:
                     mark = url.split('|SECTION|')[0]
-                self.list = [{'name': 30702, 'url': url, 'action': 'addSearch'}]
+                self.list = [{'name': 32010, 'url': url, 'action': 'addSearch'}]
                 self.list += [{'name': 30703, 'action': 'delSearch'}]
             try:
                 def search():
@@ -227,7 +226,7 @@ class indexer:
             link = 'http://'
             if skip == 0:
                 if section == 1:
-                    keyboard = control.keyboard('', control.lang(30702).encode('utf-8'))
+                    keyboard = control.keyboard('', control.lang(32010).encode('utf-8'))
                     keyboard.doModal()
                     if not (keyboard.isConfirmed()):
                         return
@@ -235,7 +234,7 @@ class indexer:
                     keep = url + '|SPLITER|' + matcher
                 else:
                     if (url == None or url == ''):
-                        keyboard = control.keyboard('', control.lang(30702).encode('utf-8'))
+                        keyboard = control.keyboard('', control.lang(32010).encode('utf-8'))
                         keyboard.doModal()
                         if not (keyboard.isConfirmed()):
                             return
@@ -849,7 +848,7 @@ class indexer:
                 if content in ['movies', 'tvshows', 'seasons', 'episodes']:
                     cm.append((control.lang(30708).encode('utf-8'), 'XBMC.Action(Info)'))
                 if (folder == False and not '|regex=' in str(i.get('url'))) or (folder == True and content in ['tvshows', 'seasons']):
-                    cm.append((control.lang(30723).encode('utf-8'), 'RunPlugin(%s?action=queueItem)' % sysaddon))
+                    cm.append((control.lang(32065).encode('utf-8'), 'RunPlugin(%s?action=queueItem)' % sysaddon))
                 if content == 'movies':
                     try:
                         dfile = '%s (%s)' % (i['title'], i['year'])
@@ -906,7 +905,7 @@ class indexer:
             if i['next'] == '':
                 raise Exception()
             url = '%s?action=%s&url=%s' % (sysaddon, i['nextaction'], urllib.quote_plus(i['next']))
-            item = control.item(label=control.lang(30500).encode('utf-8'))
+            item = control.item(label=control.lang(32053).encode('utf-8'))
             item.setArt({'addonPoster': addonPoster, 'thumb': addonPoster, 'poster': addonPoster, 'tvshow.poster': addonPoster, 'season.poster': addonPoster, 'banner': addonPoster, 'tvshow.banner': addonPoster, 'season.banner': addonPoster})
             item.setProperty('addonFanart_Image', addonFanart)
             control.addItem(handle=int(sys.argv[1]), url=url, listitem=item, isFolder=True)

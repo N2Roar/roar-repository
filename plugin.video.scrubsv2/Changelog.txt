@@ -1,15 +1,36 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
+[COLOR yellow]If you have any issues from this update try [B]"Kcleaner - Clean All Compact All"[/COLOR][/B]
 
+- Did a quick Provider Checkup and Cleanup.
+- Made "My" TMDb and IMDb List sections for movies and tv shows.(10 each.)
+(Placed in the proper sections, to use them add your custom lists in Settings.)
+- Fixed and/or Updated a couple IPTV indexers.
+- Made a new TMDb List and tossed it in. (Marvel: The Infinity Saga)
+(Got tired of looking for the right movie in the other lists lol. New list is in proper order too.)
+- Updated/Changed a bunch of the Language file and random labels.
+(All Language files are updated but not translated. ask me to translate what ya use.)
+(Otherwise your can translate them yourself on my github page, i made a repo for em.)
+- Swapped the Download notification to show % first then the filename.
+(Also made the time longer so it doesnt go away as fast and gives you time to read.)
+- Changed the main menu and basic nav around a bit.(Changes listed below...)
+-- My Stuff now holds all my list type of stuff spread out into sections.
+(Trakt, IMDb, Downloads, Library, and eventually TMDb too along with other future plans.)
+(All the sections in My Stuff will show up regardless of settings but content wont unless its setup.)
+-- New Movies/TV Shows are now labeled Widget to match the setting and use lol.
+-- Moved/Made a new section for all IPTV content besides music or xxx crap.
+-- Tools section and some other stuff like that have new labels and/or placement.
+
+[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
+[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.5.9 [/COLOR][/B]
 - Updated a bit of the IPTV sections/plugins.
 - Removed all the 'Lite' features for the nav menu. (Wasted Space and Unused.)
 - Updated some random modules and providers.
 - Fixed/Rewrote/Updated TMDb Userlists for Movies and TV Shows. (Now using v4 API.)
 (I didnt do a full update for all its code so there may be little issues i havent found yet.)
 (Notice for any further boxset searching that section is now Collections and found in TMDb Lists.)
-
-[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
-[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
 
 [B][COLOR purple] v4.5.8 [/COLOR][/B]
 - Did a quick Provider check/cleanup just to make sure i dont skip over any poop.

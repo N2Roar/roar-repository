@@ -57,17 +57,29 @@ elif action == 'movieNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().movies()
 
-elif action == 'mymovieNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().mymovies()
-
 elif action == 'tvNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().tvshows()
 
-elif action == 'mytvNavigator':
+elif action == 'mylistsNavigator':
     from resources.lib.indexers import navigator
-    navigator.navigator().mytvshows()
+    navigator.navigator().mylists()
+
+elif action == 'myTraktMoviesNav':
+    from resources.lib.indexers import navigator
+    navigator.navigator().mytraktmovies()
+
+elif action == 'myTraktTvShowsNav':
+    from resources.lib.indexers import navigator
+    navigator.navigator().mytrakttvshows()
+
+elif action == 'myIMDbMoviesNav':
+    from resources.lib.indexers import navigator
+    navigator.navigator().myimdbmovies()
+
+elif action == 'myIMDbTvShowsNav':
+    from resources.lib.indexers import navigator
+    navigator.navigator().myimdbtvshows()
 
 elif action == 'channels':
     from resources.lib.indexers import channels
@@ -92,6 +104,22 @@ elif action == 'imdbLists':
 elif action == 'tmdbLists':
     from resources.lib.indexers import navigator
     navigator.navigator().tmdbLists()
+
+elif action == 'myimdbMovieLists':
+    from resources.lib.indexers import movies
+    movies.movies().my_imdbUserLists()
+
+elif action == 'mytmdbMovieLists':
+    from resources.lib.indexers import movies2
+    movies2.movies().my_tmdbUserLists()
+
+elif action == 'myimdbTvLists':
+    from resources.lib.indexers import tvshows
+    tvshows.tvshows().my_imdbUserLists()
+
+elif action == 'mytmdbTvLists':
+    from resources.lib.indexers import tvshows2
+    tvshows2.tvshows().my_tmdbUserLists()
 
 elif action == 'hellaLifeTimeHallMark':
     from resources.lib.indexers import movies
@@ -477,6 +505,10 @@ elif action == 'podcastOne':
     else:
         podcast.podcast().pco_root()
 
+elif action == 'iptvNavigator':
+    from resources.lib.indexers import navigator
+    navigator.navigator().iptvplug()
+
 elif action == 'acronaitv_menu':
     from resources.lib.indexers import acronaitv
     acronaitv.acronaitv().list_categories()
@@ -794,7 +826,7 @@ if mode == "toggleAllDebrid":
     toggleAll(params['setting'], params['query'], sourcelist)
 
 if mode == "toggleAllTorrent":
-    sourcelist = ['111ys', '1337x', 'btscene', 'doublr', 'eztv', 'glodls', 'kickass2', 'limetorr', 'magnetdl',
+    sourcelist = ['1337x', 'btscene', 'doublr', 'eztv', 'glodls', 'kickass2', 'limetorr', 'magnetdl',
             'mkvcage', 'piratebay', 'skytorrents', 'torrapi', 'torrdown', 'torrentquest', 'xpause', 'yifyddl',
             'ytsam', 'zoogle'
     ]

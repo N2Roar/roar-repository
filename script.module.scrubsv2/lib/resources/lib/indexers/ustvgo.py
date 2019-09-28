@@ -3,7 +3,7 @@
 # IPTV Indexer made just for the one site as of now.
 
 import re, os, sys, urllib
-from resources.lib.modules import client
+from resources.lib.modules import cfscrape
 from resources.lib.modules import control
 
 
@@ -11,6 +11,7 @@ class ustvgo:
     def __init__(self):
         self.list = []
         self.base_link = 'http://ustvgo.tv/%s'
+        self.scraper = cfscrape.create_scraper()
 
 
     def root(self):
@@ -105,7 +106,7 @@ class ustvgo:
 
     def play(self, url):
         try:
-            stream = client.request(url)
+            stream = self.scraper.get(url).content
             url = re.compile("file: '(.+?)',", re.DOTALL).findall(stream)[0]
             control.execute('PlayMedia(%s)' % url)
         except Exception:

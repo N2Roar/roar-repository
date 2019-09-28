@@ -82,7 +82,6 @@ class Movies:
 			self.mostvoted_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=num_votes,desc&count=%d&start=1' % (self.hidecinema_date, self.count )
 			self.featured_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=moviemeter,asc&count=%d&start=1' % (self.hidecinema_date, self.count )
 			self.genre_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&release_date=,%s&genres=%s&sort=moviemeter,asc&count=%d&start=1' % (self.hidecinema_date, '%s', self.count)
-
 			self.language_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&release_date=,%s&count=%d&start=1' % ('%s', self.hidecinema_date, self.count)
 			self.certification_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=%s&sort=moviemeter,asc&release_date=,%s&count=%d&start=1' % ('%s', self.hidecinema_date, self.count)
 			self.imdbboxoffice_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&release_date=,%s&count=%d&start=1' % (self.hidecinema_date, self.count)
@@ -131,10 +130,8 @@ class Movies:
 		try:
 			try: url = getattr(self, url + '_link')
 			except: pass
-
 			try: u = urlparse.urlparse(url).netloc.lower()
 			except: pass
-
 			self.list = []
 			if u in self.trakt_link and '/users/' in url:
 				try:
@@ -172,11 +169,13 @@ class Movies:
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
 				self.list = cache.get(self.imdb_list, 0, url)
 				self.sort()
-				if idx is True: self.worker()
+				if idx is True:
+					self.worker()
 
 			elif u in self.imdb_link:
 				self.list = cache.get(self.imdb_list, 96, url)
-				if idx == True: self.worker()
+				if idx == True:
+					self.worker()
 
 			if self.list is None:
 				self.list = []
@@ -709,7 +708,6 @@ class Movies:
 			next = next.encode('utf-8')
 		except:
 			next = ''
-
 		for item in items:
 			try:
 				title = client.parseDOM(item, 'a')[1]
@@ -720,14 +718,14 @@ class Movies:
 				year = re.findall('(\d{4})', year[0])[0]
 				year = year.encode('utf-8')
 
+				if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+
 				try:
 					show = '–'.decode('utf-8') in str(year).decode('utf-8') or '-'.decode('utf-8') in str(year).decode('utf-8')
 				except:
 					show = False
 				if show:
 					raise Exception() # Some lists contain TV shows.
-
-				if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
 				try: mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
 				except: mpaa = '0'
@@ -756,15 +754,19 @@ class Movies:
 				poster = poster.encode('utf-8')
 				# log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
 
-				try: genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
-				except: genre = '0'
+				try:
+					genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
+				except:
+					genre = '0'
 				genre = ' / '.join([i.strip() for i in genre.split(',')])
 				if genre == '': genre = '0'
 				genre = client.replaceHTMLCodes(genre)
 				genre = genre.encode('utf-8')
 
-				try: duration = re.findall('(\d+?) min(?:s|)', item)[-1]
-				except: duration = '0'
+				try:
+					duration = re.findall('(\d+?) min(?:s|)', item)[-1]
+				except:
+					duration = '0'
 				duration = duration.encode('utf-8')
 
 				rating = '0'
@@ -1045,7 +1047,7 @@ class Movies:
 			pass
 
 
-	def movieDirectory(self, items):
+	def movieDirectory(self, items, next = True):
 		if items is None or len(items) == 0:
 			control.idle()
 			control.notification(title = 32001, message = 33049, icon = 'INFO')
@@ -1086,7 +1088,8 @@ class Movies:
 				except:
 					title = i['title']
 
-				label = '%s (%s)' % (i['title'], i['year'])
+				# label = '%s (%s)' % (i['title'], i['year'])
+				label = '%s (%s)' % (title, year)
 
 				try:
 					labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
@@ -1098,6 +1101,7 @@ class Movies:
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
+				meta.update({'tmdb_id': tmdb})
 				meta.update({'mediatype': 'movie'})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
@@ -1231,7 +1235,10 @@ class Movies:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
+		addonFanart = control.addonFanart()
+		addonThumb = control.addonThumb()
+		artPath = control.artPath()
+
 		queueMenu = control.lang(32065).encode('utf-8')
 		playRandom = control.lang(32535).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
@@ -1272,7 +1279,6 @@ class Movies:
 
 				item = control.item(label = name)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:

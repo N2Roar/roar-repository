@@ -18,6 +18,7 @@ class source:
         self.search_link = '?s=%s'
         self.scraper = cfscrape.create_scraper()
 
+
 # Spare domains found that are most likely new scrapers.
 # https://www.mkvcage.site/
 # https://www.mkvcage.org/

@@ -160,8 +160,7 @@ def addonNext():
 
 
 def metaFile():
-    if condVisibility('System.HasAddon(script.scrubsv2.metadata)'):
-        return os.path.join(xbmcaddon.Addon('script.scrubsv2.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
+    return os.path.join(dataPath, 'meta.5.db')
 
 
 def metadataClean(metadata): # Filter out non-existing/custom keys. Otherise there are tons of errors in Kodi 18 log.
