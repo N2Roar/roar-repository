@@ -49,7 +49,7 @@ def list_trakt_tvshows(results, pages, page):
 		args['confirm'] = 'yes'
 		items.append(
 			{
-				'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, pages + 1),
+				'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, pages + 1),
 				'path': plugin.url_for(nav_base.caller_name(), **args),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()
@@ -94,7 +94,7 @@ def tv_trakt_popular(page, raw=False):
 		if pages > 1:
 			items.append(
 				{
-					'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, pages + 1),
+					'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, pages + 1),
 					'path': plugin.url_for('tv_trakt_popular', page=page + 1),
 					'thumbnail': plugin.get_media_icon('item_next'),
 					'fanart': plugin.get_addon_fanart()
@@ -130,7 +130,7 @@ def list_trakt_search_items(results, pages, page):
 		args['page'] = page + 1
 		items.append(
 			{
-				'label': '%s/%s	 [I]Next page[/I]  >>' % (nextpage, pages),
+				'label': '%s/%s  [I]Next page[/I]  >>' % (nextpage, pages),
 				'path': plugin.url_for(nav_base.caller_name(), **args),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()
@@ -376,7 +376,7 @@ def list_tvshows(response):
 			args['page'] = str(page + 1)
 			items.append(
 				{
-					'label': '%s/%s	 [I]Next page[/I]  >>' % (page + 1, response['total_pages']),
+					'label': '%s/%s  [I]Next page[/I]  >>' % (page + 1, response['total_pages']),
 					'path': plugin.url_for(nav_base.caller_name(), **args),
 					'thumbnail': plugin.get_media_icon('item_next'),
 					'fanart': plugin.get_addon_fanart()
@@ -454,8 +454,8 @@ def list_trakt_episodes(result):
 				'info_type': 'video',
 				'stream_info': {'video': {}},
 				'properties': properties,
-				# 'thumbnail': extradata['thumbnail'],
-				# 'poster': extradata['poster'],
+				'thumbnail': episode_info['fanart'],
+				'poster': episode_info['poster'],
 				'fanart': episode_info['fanart']
 			}
 
@@ -814,7 +814,7 @@ def lists_trakt_liked_tv_lists(page):
 	if pages > page:
 		items.append(
 			{
-				'label': '%s/%s	 [I]Next page[/I]  >>' % (nextpage, pages),
+				'label': '%s/%s  [I]Next page[/I]  >>' % (nextpage, pages),
 				'path': plugin.url_for('lists_trakt_liked_tv_lists', page=int(page) + 1),
 				'thumbnail': plugin.get_media_icon('item_next'),
 				'fanart': plugin.get_addon_fanart()
