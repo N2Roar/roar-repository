@@ -74,7 +74,7 @@ class Movies:
 		self.keyword_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&keywords=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 		self.oscars_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_winners&sort=year,desc&count=%d&start=1' % self.count
 		self.oscarsnominees_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_nominees&sort=year,desc&count=%d&start=1' % self.count
-		self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&groups=now-playing-us&languages=en&sort=release_date,desc&count=%d&start=1' % self.count
+		self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&groups=now-playing-us&countries=us&languages=en&sort=release_date,desc&count=%s&start=1' % str(self.count)
 		self.year_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&year=%s,%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', '%s', self.count)
 
 		if self.hidecinema == 'true':
@@ -132,6 +132,7 @@ class Movies:
 			except: pass
 			try: u = urlparse.urlparse(url).netloc.lower()
 			except: pass
+
 			self.list = []
 			if u in self.trakt_link and '/users/' in url:
 				try:
@@ -145,14 +146,21 @@ class Movies:
 				except:
 					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
 
+					# if trakt.getWatchedActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
+						# raise Exception()
+					# self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
+				# except:
+					# self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+
 				# if '/users/me/' in url and '/collection/' in url:
 				# self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
+
 				self.sort()
 				if idx is True:
 					self.worker()
 
 			elif u in self.trakt_link and self.search_link in url:
-				self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
 				if idx is True:
 					self.worker(level=0)
 
@@ -162,7 +170,7 @@ class Movies:
 					self.worker(level=0)
 
 			elif u in self.trakt_link:
-				self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
+				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
 				if idx is True:
 					self.worker()
 
@@ -174,7 +182,7 @@ class Movies:
 
 			elif u in self.imdb_link:
 				self.list = cache.get(self.imdb_list, 96, url)
-				if idx == True:
+				if idx is True:
 					self.worker()
 
 			if self.list is None:
@@ -182,6 +190,41 @@ class Movies:
 
 			if idx is True:
 				self.movieDirectory(self.list)
+			return self.list
+		except:
+			try:
+				invalid = (self.list is None or len(self.list) == 0)
+			except:
+				invalid = True
+			if invalid:
+				control.idle()
+				if self.notifications:
+					control.notification(title = 32001, message = 33049, icon = 'INFO')
+
+
+	def getTMDb(self, url, idx=True):
+		try:
+			try: url = getattr(self, url + '_link')
+			except: pass
+			try: u = urlparse.urlparse(url).netloc.lower()
+			except: pass
+
+			self.list = []
+			if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
+				from resources.lib.indexers import tmdb
+				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 24, url)
+
+			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
+				from resources.lib.indexers import tmdb
+				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
+
+			if self.list is None: 
+				self.list = []
+				raise Exception()
+
+			if idx is True:
+				self.movieDirectory(self.list)
+
 			return self.list
 		except:
 			try:
@@ -218,41 +261,6 @@ class Movies:
 				# control.idle()
 					# if self.notifications:
 					# control.notification(title=32326, message=33049, icon='INFO')
-
-
-	def getTMDb(self, url, idx=True):
-		try:
-			try:
-				url = getattr(self, url + '_link')
-			except:
-				pass
-			try:
-				u = urlparse.urlparse(url).netloc.lower()
-			except:
-				pass
-
-			if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
-				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 24, url)
-
-			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
-				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
-
-			if self.list is None: 
-				self.list = []
-				raise Exception()
-			if idx is True:
-				self.movieDirectory(self.list)
-			return self.list
-		except:
-			try:
-				invalid = self.list is None or len(self.list) == 0
-			except:
-				invalid = True
-			if invalid:
-				control.idle()
-				if self.notifications: control.notification(title = 32001, message = 33049, icon = 'INFO')
 
 
 	def newMovies(self):
@@ -672,7 +680,6 @@ class Movies:
 				url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
 
 			def imdb_watchlist_id(url):
-				# return client.parseDOM(client.request(url), 'meta', ret='content', attrs = {'property': 'pageId'})[0]
 				return client.parseDOM(client.request(url).decode('iso-8859-1').encode('utf-8'), 'meta', ret='content', attrs = {'property': 'pageId'})[0]
 
 			if url == self.imdbwatchlist_link:
@@ -684,6 +691,7 @@ class Movies:
 
 			result = client.request(url, error=True)
 			# result = client.request(url, output = 'extended', error = True)
+
 			result = result.replace('\n', ' ')
 			# result = result[0].replace('\n','')
 			result = result.decode('iso-8859-1').encode('utf-8')
@@ -693,6 +701,7 @@ class Movies:
 		except:
 			return
 
+		next = ''
 		try:
 			# HTML syntax error, " directly followed by attribute name. Insert space in between. parseDOM can otherwise not handle it.
 			result = result.replace('"class="lister-page-next', '" class="lister-page-next')
@@ -708,6 +717,7 @@ class Movies:
 			next = next.encode('utf-8')
 		except:
 			next = ''
+
 		for item in items:
 			try:
 				title = client.parseDOM(item, 'a')[1]
@@ -930,8 +940,8 @@ class Movies:
 				[i.start() for i in threads]
 				[i.join() for i in threads]
 
-			if self.meta:
-				metacache.insert(self.meta)
+				if self.meta:
+					metacache.insert(self.meta)
 
 			self.list = [i for i in self.list if i['imdb'] != '0']
 		except:
@@ -1041,13 +1051,12 @@ class Movies:
 
 			item = dict((k, v) for k, v in item.iteritems() if v != '0')
 			self.list[i].update(item)
-
 			self.meta.append(meta)
 		except:
 			pass
 
 
-	def movieDirectory(self, items, next = True):
+	def movieDirectory(self, items, next=True):
 		if items is None or len(items) == 0:
 			control.idle()
 			control.notification(title = 32001, message = 33049, icon = 'INFO')
@@ -1056,8 +1065,11 @@ class Movies:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
-		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
+		settingFanart = control.setting('fanart')
+
+		addonPoster = control.addonPoster()
+		addonFanart = control.addonFanart()
+		addonBanner = control.addonBanner()
 
 		indicators = playcount.getMovieIndicators()
 		isPlayable = 'true' if 'plugin' not in control.infoLabel('Container.PluginName') else 'false'
@@ -1082,11 +1094,11 @@ class Movies:
 
 		for i in items:
 			try:
-				imdb, tmdb, year = i['imdb'], i['tmdb'], i['year']
-				try:
-					title = i['originaltitle']
-				except:
-					title = i['title']
+				imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['title'], i['year']
+				# try:
+					# title = i['originaltitle']
+				# except:
+					# title = i['title']
 
 				# label = '%s (%s)' % (i['title'], i['year'])
 				label = '%s (%s)' % (title, year)
@@ -1128,14 +1140,14 @@ class Movies:
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
-				poster = poster3 or poster2 or poster1 or control.addonPoster()
+				poster = poster3 or poster2 or poster1 or addonPoster
 
 				fanart = ''
 				if settingFanart:
 					fanart1 = meta.get('fanart')
 					fanart2 = meta.get('fanart2')
 					fanart3 = meta.get('fanart3')
-					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
 				landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster or landscape
@@ -1144,7 +1156,7 @@ class Movies:
 				banner1 = meta.get('banner')
 				banner2 = meta.get('banner2')
 				banner3 = meta.get('banner3')
-				banner = banner3 or banner2 or banner1 or control.addonBanner()
+				banner = banner3 or banner2 or banner1 or addonBanner
 
 				clearlogo = meta.get('clearlogo')
 				clearart = meta.get('clearart')
@@ -1152,7 +1164,7 @@ class Movies:
 
 				art = {}
 				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
-							'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
+								'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
 ####-Context Menu and Overlays-####
 				cm = []
@@ -1235,7 +1247,6 @@ class Movies:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonFanart = control.addonFanart()
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()
 
@@ -1278,7 +1289,7 @@ class Movies:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 				item = control.item(label = name)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:

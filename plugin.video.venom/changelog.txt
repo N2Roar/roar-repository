@@ -1,3 +1,11 @@
+[B][COLOR red]Update - v3.2.3 - Sept 30, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb occasional title drops
+    due to foreign "originalttiles".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed TVMaze next page issues.[/I]
+[COLOR yellow]--[/COLOR][I] Added next page reset as experimental
+    cure for random incorrect second
+    page IMDb genre loads.[/I]
+
 [B][COLOR red]Update - v3.2.2 - Sept 28, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed occasional next page indicator
     appearing for Trakt lists.[/I]

@@ -4,9 +4,10 @@
 	Venom Add-on
 """
 
-import json, xbmcgui, xbmc
+import json, xbmc
 
-from resources.lib.modules import control, cleantitle
+from resources.lib.modules import control
+# from resources.lib.modules import cleantitle
 
 Id = xbmc.PLAYLIST_VIDEO
 videoplaylist = 10028

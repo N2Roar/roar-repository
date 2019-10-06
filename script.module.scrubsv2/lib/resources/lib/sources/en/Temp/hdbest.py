@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
-import re,requests
+import re, requests
 from resources.lib.modules import cleantitle
 from resources.lib.modules import directstream
 from resources.lib.modules import getSum
@@ -14,7 +14,7 @@ class source:
         self.language = ['en']
         self.domains = ['vikv.net', 'hdbest.net']
         self.base_link = 'https://vikv.net'
-        self.search_link = '/?q=%s+%s'
+        self.search_link = '/?s=%s+%s'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
         self.session = requests.Session()
 

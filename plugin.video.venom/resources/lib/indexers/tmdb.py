@@ -69,7 +69,8 @@ class Movies:
 
 
 	def tmdb_list(self, url):
-		next = url
+		# next = url
+		next = ''
 		try:
 			result = self.get_request(url % self.tmdb_key)
 			items = result['results']
@@ -83,7 +84,8 @@ class Movies:
 				raise Exception()
 			if 'page=' not in url:
 				raise Exception()
-			next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			# next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 		except:
 			next = ''
 
@@ -129,8 +131,8 @@ class Movies:
 			item = self.get_request(url)
 
 			imdb = item.get('imdb_id', '0')
-			# if imdb == '' or imdb is None or imdb == 'None':
-				# imdb = '0'
+			if imdb == '' or imdb is None or imdb == 'None':
+				imdb = '0'
 
 			# try:
 				# studio = item.get('production_companies', None)[0]['name']
@@ -196,7 +198,8 @@ class Movies:
 
 
 	def tmdb_collections_list(self, url):
-		next = url
+		# next = url
+		next = ''
 		try:
 			result = self.get_request(url)
 			if '/3/' in url:
@@ -213,7 +216,8 @@ class Movies:
 				raise Exception()
 			if 'page=' not in url:
 				raise Exception()
-			next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			# next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 		except:
 			next = ''
 
@@ -260,8 +264,8 @@ class Movies:
 			item = self.get_request(url)
 
 			imdb = item.get('imdb_id', '0')
-			# if imdb == '' or imdb is None or imdb == 'None':
-				# imdb = '0'
+			if imdb == '' or imdb is None or imdb == 'None':
+				imdb = '0'
 
 			# try:
 				# studio = item.get('production_companies', None)[0]['name']
@@ -343,7 +347,6 @@ class Movies:
 
 		try:
 			poster3 = art3['posters']
-			log_utils.log('poster3= %s' % str(poster3), __name__, log_utils.LOGDEBUG)
 			poster3 = [(x['width'], x['file_path']) for x in poster3]
 			poster3 = [x[1] for x in poster3]
 			poster3 = self.tmdb_poster + poster3[0]
@@ -428,7 +431,8 @@ class TVshows:
 
 
 	def tmdb_list(self, url):
-		next = url
+		# next = url
+		next = ''
 		try:
 			result = self.get_request(url % self.tmdb_key)
 			items = result['results']
@@ -442,7 +446,8 @@ class TVshows:
 				raise Exception()
 			if 'page=' not in url:
 				raise Exception()
-			next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			# next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+			next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 		except:
 			next = ''
 
@@ -476,12 +481,12 @@ class TVshows:
 				item = self.get_request(url)
 
 				tvdb = str(item.get('external_ids').get('tvdb_id', '0'))
-				# if tvdb == '' or tvdb is None or tvdb == 'None':
-					# tvdb = '0'
+				if tvdb == '' or tvdb is None or tvdb == 'None':
+					tvdb = '0'
 
 				imdb = (item.get('external_ids').get('imdb_id', '0'))
-				# if imdb == '' or imdb is None or imdb == 'None':
-					# imdb = '0'
+				if imdb == '' or imdb is None or imdb == 'None':
+					imdb = '0'
 
 				genre = []
 				for i in item['genres']:
@@ -577,12 +582,12 @@ class TVshows:
 				item = self.get_request(url)
 
 				tvdb = str(item.get('external_ids').get('tvdb_id', '0'))
-				# if tvdb == '' or tvdb is None or tvdb == 'None':
-					# tvdb = '0'
+				if tvdb == '' or tvdb is None or tvdb == 'None':
+					tvdb = '0'
 
 				imdb = (item.get('external_ids').get('imdb_id', '0'))
-				# if imdb == '' or imdb is None or imdb == 'None':
-					# imdb = '0'
+				if imdb == '' or imdb is None or imdb == 'None':
+					imdb = '0'
 
 				genre = []
 				for i in item['genres']:

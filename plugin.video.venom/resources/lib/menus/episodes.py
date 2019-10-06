@@ -16,7 +16,6 @@ from resources.lib.modules import cache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import metacache
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -176,7 +175,7 @@ class Episodes:
 			return self.list
 		except:
 			try:
-				invalid = self.list == None or len(self.list) == 0
+				invalid = (self.list is None) or (len(self.list) == 0)
 			except:
 				invalid = True
 			if invalid:
@@ -1239,8 +1238,12 @@ class Episodes:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
-		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
+		settingFanart = control.setting('fanart')
+
+		addonPoster = control.addonPoster()
+		addonFanart = control.addonFanart()
+		addonBanner = control.addonBanner()
+
 
 		try:
 			multi = [i['tvshowtitle'] for i in items]
@@ -1420,14 +1423,14 @@ class Episodes:
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
-				poster = poster3 or poster2 or poster1 or control.addonPoster()
+				poster = poster3 or poster2 or poster1 or addonPoster
 
 				fanart = '0'
 				if settingFanart:
 					fanart1 = meta.get('fanart')
 					fanart2 = meta.get('fanart2')
 					fanart3 = meta.get('fanart3')
-					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
 				landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster or landscape
@@ -1436,7 +1439,7 @@ class Episodes:
 				banner1 = meta.get('banner')
 				banner2 = meta.get('banner2')
 				banner3 = meta.get('banner3')
-				banner = banner3 or banner2 or banner1 or control.addonBanner()
+				banner = banner3 or banner2 or banner1 or addonBanner
 
 				clearlogo = meta.get('clearlogo')
 				clearart = meta.get('clearart')
@@ -1581,9 +1584,9 @@ class Episodes:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonFanart = control.addonFanart()
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()
+
 		queueMenu = control.lang(32065).encode('utf-8')
 
 		for i in items:
@@ -1614,10 +1617,7 @@ class Episodes:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 				item = control.item(label=name)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

@@ -18,7 +18,6 @@ from resources.lib.modules import workers
 from resources.lib.modules import views
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
-artPath = control.artPath() ; addonFanart = control.addonFanart()
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -957,8 +956,8 @@ class Collections:
 			[i.start() for i in threads]
 			[i.join() for i in threads]
 
-		if self.meta:
-			metacache.insert(self.meta)
+			if self.meta:
+				metacache.insert(self.meta)
 
 		self.list = [i for i in self.list]
 
@@ -1072,8 +1071,11 @@ class Collections:
 			control.notification(title = 32000, message = 33049, icon = 'INFO')
 			sys.exit()
 
-		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
-		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
+		settingFanart = control.setting('fanart')
+
+		addonPoster = control.addonPoster()
+		addonFanart = control.addonFanart()
+		addonBanner = control.addonBanner()
 
 		isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 		indicators = playcount.getMovieIndicators()
@@ -1098,20 +1100,21 @@ class Collections:
 
 		for i in items:
 			try:
-				imdb, tmdb, year = i['imdb'], i['tmdb'], i['year']
+				imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['title'], i['year']
+				# try:
+					# title = i['originaltitle']
+				# except:
+					# title = i['title']
 
-				try:
-					title = i['originaltitle']
-				except:
-					title = i['title']
-
-				label = '%s (%s)' % (i['title'], i['year'])
+				# label = '%s (%s)' % (i['title'], i['year'])
+				label = '%s (%s)' % (title, year)
 
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
+				meta.update({'tmdb_id': tmdb})
 				meta.update({'mediatype': 'movie'})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
@@ -1137,14 +1140,14 @@ class Collections:
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
-				poster = poster3 or poster2 or poster1 or control.addonPoster()
+				poster = poster3 or poster2 or poster1 or addonPoster
 
 				fanart = ''
 				if settingFanart:
 					fanart1 = meta.get('fanart')
 					fanart2 = meta.get('fanart2')
 					fanart3 = meta.get('fanart3')
-					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
 				landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster or landscape
@@ -1153,7 +1156,7 @@ class Collections:
 				banner1 = meta.get('banner')
 				banner2 = meta.get('banner2')
 				banner3 = meta.get('banner3')
-				banner = banner3 or banner2 or banner1 or control.addonBanner()
+				banner = banner3 or banner2 or banner1 or addonBanner
 
 				clearlogo = meta.get('clearlogo')
 				clearart = meta.get('clearart')
@@ -1173,6 +1176,8 @@ class Collections:
 					if overlay == 7:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
 						meta.update({'playcount': 1, 'overlay': 7})
+						# lastplayed = trakt.watchedMoviesTime(imdb)
+						# meta.update({'lastplayed': lastplayed})
 					else:
 						cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
 						meta.update({'playcount': 0, 'overlay': 6})
@@ -1185,6 +1190,7 @@ class Collections:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
+				cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
@@ -1204,7 +1210,6 @@ class Collections:
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)
 				item.addContextMenuItems(cm)
-				# item.IsFolder(False)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
 			except:
 				pass
@@ -1238,6 +1243,7 @@ class Collections:
 
 		url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
+		artPath = control.artPath()
 		thumb = os.path.join(artPath, thumb) if artPath is not None else icon
 
 		cm = []
@@ -1250,10 +1256,7 @@ class Collections:
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 		item = control.item(label=name)
-		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
-		# if addonFanart is not None:
-			# item.setProperty('Fanart_Image', addonFanart)
+		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 
 		item.addContextMenuItems(cm)
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)

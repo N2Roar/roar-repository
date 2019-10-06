@@ -233,7 +233,8 @@ def authTrakt():
 
 		for i in range(0, expires_in):
 			try:
-				if progressDialog.iscanceled(): break
+				if progressDialog.iscanceled():
+					break
 				time.sleep(1)
 				if not float(i) % interval == 0:
 					raise Exception()
@@ -562,6 +563,19 @@ def getWatchedActivity():
 		activity = []
 		activity.append(i['movies']['watched_at'])
 		activity.append(i['episodes']['watched_at'])
+		activity = [int(cleandate.iso_2_utc(i)) for i in activity]
+		activity = sorted(activity, key=int)[-1]
+		return activity
+	except:
+		pass
+
+
+def getCollectedActivity():
+	try:
+		i = getTraktAsJson('/sync/last_activities')
+		activity = []
+		activity.append(i['movies']['collected_at'])
+		activity.append(i['episodes']['collected_at'])
 		activity = [int(cleandate.iso_2_utc(i)) for i in activity]
 		activity = sorted(activity, key=int)[-1]
 		return activity

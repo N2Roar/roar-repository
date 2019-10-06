@@ -2,7 +2,7 @@
 
 import re, os, sys, urllib, urllib2
 import urlparse, json, inspect
-import xbmc, xbmcplugin, xbmcvfs, xbmcgui
+import xbmc, xbmcvfs, xbmcgui
 
 
 def download(name, image, url):

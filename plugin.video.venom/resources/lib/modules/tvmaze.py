@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import urllib, json, base64
-from resources.lib.modules import client, cache
+import urllib
+import json
+# import base64
+
+from resources.lib.modules import client
+from resources.lib.modules import cache
 
 
 class tvMaze:

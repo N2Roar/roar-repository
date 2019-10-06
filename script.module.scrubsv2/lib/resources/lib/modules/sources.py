@@ -1158,8 +1158,8 @@ class sources:
         except:
             self.hostDict = []
         self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
-        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se', 'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
-        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
+        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.stream', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se', 'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
+        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.stream', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
         self.hostblockDict = ['youtube.com', 'hqq.tv', 'waaw.tv', 'netu.tv', 'movdivx.com', 'divxme.com', 'divxstage.eu', 'streamflv.com', 'speedvid.net', 'powvideo.net', 'povvideo.net', 'estream.to']
 
 

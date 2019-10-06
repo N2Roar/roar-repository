@@ -183,8 +183,6 @@ class documentary:
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)
 		item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
-		# if addonFanart is not None:
-			# item.setProperty('Fanart_Image', addonFanart)
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
 
@@ -194,20 +192,19 @@ class documentary:
 
 
 	def addDirectory(self, items, queue=False, isFolder=True):
-		if items is None or len(items) == 0:
+		if items is None or len(items) == 0: 
 			control.idle()
+			control.notification(title = 32002, message = 33049, icon = 'INFO')
 			sys.exit()
 
 		sysaddon = sys.argv[0]
-
 		syshandle = int(sys.argv[1])
 
-		addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
+		addonThumb = control.addonThumb()
+		artPath = control.artPath()
 
 		queueMenu = control.lang(32065).encode('utf-8')
-
 		playRandom = control.lang(32535).encode('utf-8')
-
 		addToLibrary = control.lang(32551).encode('utf-8')
 
 		for i in items:
@@ -236,9 +233,7 @@ class documentary:
 					item.setInfo("mediatype", "video")
 					item.setInfo("audio", '')
 
-				item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
+				item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': control.addonFanart()})
 
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 			except:

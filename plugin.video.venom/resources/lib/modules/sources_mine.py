@@ -29,9 +29,9 @@ class Sources:
 	def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False):
 		try:
 			url = None
-			if rescrape == True:
+			if rescrape is True:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-			if rescrape == False:
+			if rescrape is False:
 				items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
 			if items is None:
@@ -96,7 +96,7 @@ class Sources:
 
 	def addItem(self, title):
 		def sourcesDirMeta(metadata):
-			if metadata == None: return metadata
+			if metadata is None: return metadata
 			allowed = ['poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
 			return {k: v for k, v in metadata.iteritems() if k in allowed}
 

@@ -4,7 +4,7 @@
 	Venom Add-on
 '''
 
-import urlparse, sys, urllib, xbmc
+import urlparse, sys, urllib
 from resources.lib.modules import control
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
@@ -389,28 +389,28 @@ elif action == 'originals':
 ####################################################
 elif action == 'youtube':
 	from resources.lib.menus import youtube
-	if subid == None:
+	if subid is None:
 		youtube.yt_index().root(action)
 	else:
 		youtube.yt_index().get(action, subid)
 
 elif action == 'kidscorner':
     from resources.lib.indexers import youtube
-    if subid == None:
+    if subid is None:
         youtube.yt_index().root(action)
     else:
         youtube.yt_index().get(action, subid)
 
 elif action == 'musicvids':
     from resources.lib.indexers import youtube
-    if subid == None:
+    if subid is None:
         youtube.yt_index().root(action)
     else:
         youtube.yt_index().get(action, subid)
 
 elif action == 'fitness':
     from resources.lib.indexers import youtube
-    if subid == None:
+    if subid is None:
         youtube.yt_index().root(action)
     else:
         youtube.yt_index().get(action, subid)

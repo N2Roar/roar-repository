@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json, sys, xbmc
+import sys, xbmc
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
@@ -179,7 +179,7 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 					result[i]['unwatched'] = min(99, result[i]['unwatched'])
 			return result
 		else:
-			if control.setting('tv.specials') == 'true' and season_special == True:
+			if control.setting('tv.specials') == 'true' and season_special is True:
 				result = result[int(season)]
 			else:
 				result = result[int(season) - 1]
@@ -235,7 +235,7 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 		trakt.cachesyncTVShows()
 
-		# if trakt.getTraktAddonEpisodeInfo() == True:
+		# if trakt.getTraktAddonEpisodeInfo() is True:
 			# log_utils.log('trakt.getTraktAddonEpisodeInfo = True', __name__, log_utils.LOGDEBUG)
 			# trakt.markEpisodeAsNotWatched(imdb, tvdb, season, episode)
 	except:

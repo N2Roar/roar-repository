@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, time, datetime
+import sys, time, datetime
 import xbmc
 import re, urllib, urlparse, random, json
-import openscrapers
+# import openscrapers
 
 from resources.lib.modules import client, cleantitle, control, workers
 from resources.lib.modules import trakt, source_utils, log_utils
@@ -29,9 +29,9 @@ class Sources:
 	def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False):
 		try:
 			url = None
-			if rescrape == True:
+			if rescrape is True:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-			if rescrape == False:
+			if rescrape is False:
 				items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
 			if items is None:
@@ -96,7 +96,8 @@ class Sources:
 
 	def addItem(self, title):
 		def sourcesDirMeta(metadata):
-			if metadata == None: return metadata
+			if metadata is None:
+				return metadata
 			allowed = ['poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
 			return {k: v for k, v in metadata.iteritems() if k in allowed}
 
@@ -436,7 +437,7 @@ class Sources:
 
 		debrid_list = debrid.debrid_resolvers
 		debrid_status = debrid.status()
-		debrid_only = control.setting('debrid.only')
+		# debrid_only = control.setting('debrid.only')
 
 		total_format = '[COLOR %s][B]%s[/B][/COLOR]'
 		pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
@@ -962,7 +963,7 @@ class Sources:
 					# cached = str(premiumize.PremiumizeMe().check_cache(i['url'].lower()))
 					# # log_utils.log('cached = %s - %s - %s - %s' % (cached, i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
 					# log_utils.log('cached = %s - %s - %s' % (cached, i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-					# if cached == 'False' or cached == False:
+					# if cached == 'False' or cached is False:
 						# pm_filter.remove(i) # seems to also be removing from self.sources
 						# # log_utils.log('Removing (%s uncached TORRENT) %s - %s' % (i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
 						# log_utils.log('Removing (PM uncached TORRENT) %s - %s' % (i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
@@ -997,7 +998,7 @@ class Sources:
 			i.update({'language': self._getPrimaryLang() or 'en'})
 		self.sources = [i for i in self.sources if not i in local]
 
-		log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
+		# log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
 
 		# filter = []
 		# filter += [i for i in self.sources if i['direct'] is True]
@@ -1020,7 +1021,7 @@ class Sources:
 			filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] is False]
 		self.sources = filter
 
-		log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
+		# log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
 
 		for i in range(len(self.sources)):
 			q = self.sources[i]['quality']
@@ -1084,9 +1085,9 @@ class Sources:
 			else:
 				t = ''
 
-			u = self.sources[i]['url']
-			p = self.sources[i]['provider'].upper()
+			# u = self.sources[i]['url']
 			q = self.sources[i]['quality']
+			p = self.sources[i]['provider'].upper()
 			s = self.sources[i]['source'].upper()
 			s = s.rsplit('.', 1)[0]
 			l = self.sources[i]['language']

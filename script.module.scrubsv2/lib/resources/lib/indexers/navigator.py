@@ -83,6 +83,8 @@ class navigator:
         if self.getMenuEnabled('navi.movieboxoffice') == True:
             self.addDirectoryItem(32020, 'movies&url=boxoffice', 'box-office.png', 'DefaultMovies.png')
             self.addDirectoryItem(32020, 'movies&url=traktboxoffice', 'trakt.png', 'DefaultRecentlyAddedMovies.png')
+        if self.getMenuEnabled('navi.movieAnticipated') == True:
+            self.addDirectoryItem(32322, 'movies&url=traktanticipated', 'trakt.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.moviepremiere') == True:
             self.addDirectoryItem(42014, 'movies2&url=premiere', 'movies.png', 'DefaultMovies.png')
         if self.getMenuEnabled('navi.movietheaters') == True:

@@ -4,7 +4,7 @@
 	Venom Add-on
 """
 
-import os, sys, urllib, urlparse, re
+import os, sys, urllib, re
 import xbmc, xbmcaddon, xbmcplugin, xbmcvfs, xbmcgui
 
 integer = 1000
@@ -299,7 +299,7 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
 
 
 def notification(title=None, message=None, icon=None, time=3000, sound=False):
-	if title == 'default' or title == None:
+	if title == 'default' or title is None:
 		title = addonName()
 
 	if isinstance(title, (int, long)):
@@ -335,7 +335,7 @@ def selectDialog(list, heading=addonInfo('name')):
 
 
 def okDialog(title=None, message=None):
-	if title == 'default' or title == None:
+	if title == 'default' or title is None:
 		title = addonName()
 
 	if isinstance(title, (int, long)):

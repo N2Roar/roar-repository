@@ -3,7 +3,12 @@
 import re, sys, cookielib, urllib, urllib2, urlparse, gzip
 import StringIO, HTMLParser, time, random, base64
 
-from resources.lib.modules import cache, dom_parser, workers, utils, log_utils, control
+
+from resources.lib.modules import cache
+from resources.lib.modules import dom_parser
+from resources.lib.modules import workers
+from resources.lib.modules import log_utils
+from resources.lib.modules import control
 
 
 def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, XHR=False, limit=None, referer=None, cookie=None, compression=True, output='', timeout='30', ignoreSsl=False, flare=True, ignoreErrors=None):

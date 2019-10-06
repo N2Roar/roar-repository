@@ -7,7 +7,7 @@
 import ast
 import hashlib
 import re
-import time,xbmc
+import time
 from resources.lib.modules import control
 
 try:

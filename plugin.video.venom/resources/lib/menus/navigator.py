@@ -18,7 +18,6 @@ except:
 	pass
 
 artPath = control.artPath()
-addonFanart = control.addonFanart()
 
 imdbCredentials = False if control.setting('imdb.user') == '' else True
 traktCredentials = trakt.getTraktCredentialsInfo()
@@ -58,7 +57,7 @@ class Navigator:
 		if control.setting('furk.api') != '':
 			self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png',  'DefaultMovies.png')
 
-		if self.getMenuEnabled('navi.youtube') == True:
+		if self.getMenuEnabled('navi.youtube') is True:
 			self.addDirectoryItem('You Tube Videos', 'youtube', 'youtube.png', 'youtube.png')
 
 		self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultAddonsSearch.png')
@@ -518,11 +517,7 @@ class Navigator:
 			item.setProperty('IsPlayable', 'true')
 		else:
 			item.setProperty('IsPlayable', 'false')
-		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
-		# if addonFanart is not None:
-			# item.setProperty('Fanart_Image', addonFanart)
-
+		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder= isFolder)
 
 

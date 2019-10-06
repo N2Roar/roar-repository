@@ -25,7 +25,7 @@ def fetch(items, lang = 'en', user=''):
 
 	for i in range(0, len(items)):
 		try:
-			dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
+			dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i].get('tmdb', '0'), lang, user, items[i]['tvdb'], lang, user))
 			match = dbcur.fetchone()
 			if match is not None:
 				t1 = int(match[6])
@@ -62,8 +62,8 @@ def insert(meta):
 				m["lang"] = 'en'
 			i = repr(m['item'])
 
-			dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m['imdb'], m['lang'], m['user'], m['tmdb'], m['lang'], m['user'], m['tvdb'], m['lang'], m['user']))
-			dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m['imdb'], m['tmdb'], m['tvdb'], m['lang'], m['user'], i, t))
+			dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m['imdb'], m['lang'], m['user'], m.get('tmdb', '0'), m['lang'], m['user'], m['tvdb'], m['lang'], m['user']))
+			dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m['imdb'], m.get('tmdb', '0'), m['tvdb'], m['lang'], m['user'], i, t))
 
 		dbcur.connection.commit()
 		dbcon.close()

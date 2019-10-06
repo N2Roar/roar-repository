@@ -787,10 +787,11 @@ class Seasons:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		# addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
-		# addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
-
 		settingFanart = control.setting('fanart')
+
+		addonPoster = control.addonPoster()
+		addonFanart = control.addonFanart()
+		addonBanner = control.addonBanner()
 
 		try:
 			indicators = playcount.getSeasonIndicators(items[0]['imdb'])
@@ -809,7 +810,7 @@ class Seasons:
 			unwatchedMenu = control.lang(32067).encode('utf-8')
 
 		traktManagerMenu = control.lang(32070).encode('utf-8')
-		playlistManagerMenu = control.lang(35522).encode('utf-8')
+		# playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
 		showPlaylistMenu = control.lang(35517).encode('utf-8')
 		clearPlaylistMenu = control.lang(35516).encode('utf-8')
@@ -840,14 +841,14 @@ class Seasons:
 				except:
 					pass
 
-				systitle = sysname = urllib.quote_plus(title)
+				systitle = urllib.quote_plus(title)
 
 				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
 				meta.update({'tmdb_id': tmdb})
 				meta.update({'tvdb_id': tvdb})
 				meta.update({'mediatype': 'tvshow'})
-				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
+				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -880,14 +881,14 @@ class Seasons:
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
 				poster4 = meta.get('thumb')
-				poster = poster4 or poster3 or poster2 or poster1 or control.addonPoster()
+				poster = poster4 or poster3 or poster2 or poster1 or addonPoster
 
 				fanart = ''
 				if settingFanart:
 					fanart1 = meta.get('fanart')
 					fanart2 = meta.get('fanart2')
 					fanart3 = meta.get('fanart3')
-					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
 				# landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster
@@ -896,7 +897,7 @@ class Seasons:
 				banner1 = meta.get('banner')
 				banner2 = meta.get('banner2')
 				banner3 = meta.get('banner3')
-				banner = banner3 or banner2 or banner1 or control.addonBanner()
+				banner = banner3 or banner2 or banner1 or addonBanner
 
 				clearlogo = meta.get('clearlogo')
 				clearart = meta.get('clearart')
@@ -908,7 +909,7 @@ class Seasons:
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
-					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, sysname, imdb, tvdb, season)))
+					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, systitle, imdb, tvdb, season)))
 
 				try:
 					overlay = int(playcount.getSeasonOverlay(indicators, imdb, tvdb, season))
@@ -922,10 +923,10 @@ class Seasons:
 				except:
 					pass
 
-				sysmeta = urllib.quote_plus(json.dumps(meta))
-				sysart = urllib.quote_plus(json.dumps(art))
+				# sysmeta = urllib.quote_plus(json.dumps(meta))
+				# sysart = urllib.quote_plus(json.dumps(art))
 				url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s' % (sysaddon, systitle, year, imdb, tvdb, season)
-				sysurl = urllib.quote_plus(url)
+				# sysurl = urllib.quote_plus(url)
 
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=episode&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s)' % (
 									sysaddon, systitle, year, imdb, tvdb, season)))

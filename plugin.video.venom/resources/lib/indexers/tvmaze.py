@@ -4,15 +4,15 @@
 	Venom Add-on
 '''
 
-import json, requests, threading, re, urllib
+import json, re, urllib
 import datetime
 
 from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import workers
-from resources.lib.modules import trakt
-from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
+from resources.lib.modules import metacache
+
 
 networks_this_season = [
 			('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
@@ -232,25 +232,25 @@ class tvshows:
 	def tvmaze_list(self, url):
 		try:
 			result = client.request(url)
+			next = ''
 			if control.setting('tvshows.networks.view') == '0':
 				result = client.parseDOM(result, 'section', attrs = {'id': 'this-seasons-shows'})
 				items = client.parseDOM(result, 'span', attrs = {'class': 'title .*'})
-				next = '0'
 				list_count = 60
 
 			if control.setting('tvshows.networks.view') == '1':
 				result = client.parseDOM(result, 'div', attrs = {'id': 'w1'})
 				# result = client.parseDOM(result, 'div', attrs = {'class': 'content auto cell'})
 				items = client.parseDOM(result, 'span', attrs = {'class': 'title'})
-				next = url
+
 				list_count = 25
 				page = int(str(url.split('&page=', 1)[1]))
-				# next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
-				next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+				next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 
+				last = []
 				last = client.parseDOM(result, 'li', attrs = {'class': 'last disabled'})
 				if last != []:
-					next = '0'
+					next = ''
 
 			items = [client.parseDOM(i, 'a', ret='href') for i in items]
 			items = [i[0] for i in items if len(i) > 0]
@@ -322,7 +322,11 @@ class tvshows:
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
 
+
 ###--Check TVDb for missing info
+				# self.list = metacache.fetch(self.list, self.lang, self.user)
+				# if self.list['metacache'] is True:
+					# raise Exception()
 				if tvdb == '0' or imdb == '0':
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
 					item2 = client.request(url, timeout='20', error=True)
@@ -388,39 +392,31 @@ class tvshows:
 							year = '0'
 ###-----
 
-				if next == '0':
-					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
-								'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
-								'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
-								'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
-								'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
+				item = {}
+				item = {'content': content, 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 
+							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner,
+							'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
-					meta = {}
-					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
-
-				else:
-					item = {}
-					item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
-								'mpaa': mpaa, 'genre': genre, 'duration': duration, 'castandart': castandart, 'rating': rating,
-								'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb,
-								'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart,
-								'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
-
-					meta = {}
-					meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
+				meta = {}
+				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
 				if self.disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					# extended_art = fanarttv.get_tvshow_art(tvdb)
 					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
 					if extended_art is not None:
 						item.update(extended_art)
 						meta.update(item)
 
-				self.list.append(item)
-				self.meta.append(meta)
-				metacache.insert(self.meta)
+				try:
+					item = dict((k,v) for k,v in item.iteritems() if v != '0')
+					self.list.append(item)
+					self.meta.append(meta)
+					metacache.insert(self.meta)
+				except:
+					import traceback
+					traceback.print_exc()
+					pass
+
 			except:
 				pass
 

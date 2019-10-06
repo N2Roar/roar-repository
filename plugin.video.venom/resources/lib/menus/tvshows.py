@@ -937,8 +937,8 @@ class TVshows:
 				[i.start() for i in threads]
 				[i.join() for i in threads]
 
-			if self.meta:
-				metacache.insert(self.meta)
+				if self.meta:
+					metacache.insert(self.meta)
 
 			self.list = [i for i in self.list if i['tvdb'] != '0']
 		except:
@@ -954,7 +954,7 @@ class TVshows:
 
 	def super_info(self, i, total):
 		try:
-			if self.list[i]['metacache'] == True:
+			if self.list[i]['metacache'] is True:
 				raise Exception()
 
 			imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
@@ -1190,8 +1190,11 @@ class TVshows:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
-		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
+		settingFanart = control.setting('fanart')
+
+		addonPoster = control.addonPoster()
+		addonFanart = control.addonFanart()
+		addonBanner = control.addonBanner()
 
 		indicators = playcount.getTVShowIndicators()
 
@@ -1209,7 +1212,7 @@ class TVshows:
 			unwatchedMenu = control.lang(32067).encode('utf-8')
 
 		traktManagerMenu = control.lang(32070).encode('utf-8')
-		playlistManagerMenu = control.lang(35522).encode('utf-8')
+		# playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
 		showPlaylistMenu = control.lang(35517).encode('utf-8')
 		clearPlaylistMenu = control.lang(35516).encode('utf-8')
@@ -1219,7 +1222,7 @@ class TVshows:
 
 		for i in items:
 			try:
-				imdb, tmdb, tvdb, year = i['imdb'], i['tmdb'], i['tvdb'], i['year']
+				imdb, tvdb, year = i['imdb'], i['tvdb'], i['year']
 
 				try: title = i['originaltitle']
 				except: title = i['title']
@@ -1263,14 +1266,14 @@ class TVshows:
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
-				poster = poster3 or poster2 or poster1 or control.addonPoster()
+				poster = poster3 or poster2 or poster1 or addonPoster
 
 				fanart = ''
 				if settingFanart:
 					fanart1 = meta.get('fanart')
 					fanart2 = meta.get('fanart2')
 					fanart3 = meta.get('fanart3')
-					fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
 				landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster or landscape
@@ -1279,7 +1282,7 @@ class TVshows:
 				banner1 = meta.get('banner')
 				banner2 = meta.get('banner2')
 				banner3 = meta.get('banner3')
-				banner = banner3 or banner2 or banner1 or control.addonBanner()
+				banner = banner3 or banner2 or banner1 or addonBanner
 
 				clearlogo = meta.get('clearlogo')
 				clearart = meta.get('clearart')
@@ -1296,7 +1299,6 @@ class TVshows:
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
-					# cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, imdb, tvdb)))
 
 				try:
@@ -1311,7 +1313,7 @@ class TVshows:
 				except:
 					pass
 
-				sysmeta = urllib.quote_plus(json.dumps(meta))
+				# sysmeta = urllib.quote_plus(json.dumps(meta))
 
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=http://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
@@ -1394,7 +1396,9 @@ class TVshows:
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
 
-		addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
+		addonThumb = control.addonThumb()
+		artPath = control.artPath()
+
 		queueMenu = control.lang(32065).encode('utf-8')
 		playRandom = control.lang(32535).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
@@ -1435,10 +1439,7 @@ class TVshows:
 
 				item = control.item(label=name)
 				# item = control.item(label=name, offscreen=True)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
-
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

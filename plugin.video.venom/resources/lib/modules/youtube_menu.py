@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys, re, urllib, urllib2
+import sys
+import re
+# import urllib
+import urllib2
+
 from resources.lib.modules import control
 
 syshandle = int(sys.argv[1])
