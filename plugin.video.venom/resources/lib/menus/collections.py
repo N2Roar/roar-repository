@@ -17,7 +17,8 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
+sysaddon = sys.argv[0]
+syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -39,14 +40,17 @@ class Collections:
 		if self.tmdb_key == '' or self.tmdb_key is None:
 			self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
-		self.user = str(self.imdb_user) + str(self.tmdb_key)
+		# self.user = str(self.imdb_user) + str(self.tmdb_key)
+		self.user = str(self.tmdb_key)
 
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
 		sort = int(control.setting('sort.movies.type'))
-		tmdb_sort = 'title'
+		tmdb_sort = 'original_order'
+		if sort == 1:
+			tmdb_sort = 'title'
 		if sort in [2, 3]:
 			tmdb_sort = 'vote_average'
 		if sort in [4, 5, 6]:
@@ -54,7 +58,6 @@ class Collections:
 
 		tmdb_sort_order = '.asc' if int(control.setting('sort.movies.order')) == 0 else '.desc'
 
-		# self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&page=1' % ('%s', self.tmdb_key)
 		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=%s%s&page=1' % ('%s', self.tmdb_key, tmdb_sort, tmdb_sort_order)
 
 		self.imdb_link = 'https://www.imdb.com'
@@ -988,13 +991,12 @@ class Collections:
 
 			premiered = item.get('released', '0')
 
-			genre = item.get('genres', [])
-			genre = [x.title() for x in genre]
-			genre = ' / '.join(genre).strip()
-			if not genre:
-				genre = 'NA'
+			genre = []
+			for x in item['genres']:
+				genre.append(x.title())
+			if genre == []: genre = 'NA'
 
-			duration = str(item.get('runtime', 0))
+			duration = str(item.get('runtime', '0'))
 
 			rating = str(item.get('rating', '0'))
 			votes = str(format(int(item.get('votes', '0')),',d'))
@@ -1003,9 +1005,9 @@ class Collections:
 			if not mpaa:
 				mpaa = '0'
 
-			tagline = item.get('tagline')
+			tagline = item.get('tagline', '0')
 
-			plot = item.get('overview')
+			plot = item.get('overview', '0')
 
 			from resources.lib.indexers.tmdb import Movies
 			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb, imdb)
@@ -1013,9 +1015,12 @@ class Collections:
 			castandart = []
 			for person in tmdb_Item['credits']['cast']:
 				try:
-					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
-					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					castandart = []
 
 			director = writer = '0'
 			for person in tmdb_Item['credits']['crew']:
@@ -1057,9 +1062,8 @@ class Collections:
 				item.update({'landscape': fanart3})
 				meta.update(item)
 
-			item = dict((k,v) for k, v in item.iteritems() if v != '0')
+			item = dict((k, v) for k, v in item.iteritems() if v != '0')
 			self.list[i].update(item)
-
 			self.meta.append(meta)
 		except:
 			pass
@@ -1095,12 +1099,11 @@ class Collections:
 		playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
 		traktManagerMenu = control.lang(32070).encode('utf-8')
-		nextMenu = control.lang(32053).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
 
 		for i in items:
 			try:
-				imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['title'], i['year']
+				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
 				# try:
 					# title = i['originaltitle']
 				# except:
@@ -1220,12 +1223,23 @@ class Collections:
 				if url == '':
 					raise Exception()
 
+				nextMenu = control.lang(32053).encode('utf-8')
+				url_params = dict(urlparse.parse_qsl(url))
+
+				if 'imdb.com' in url:
+					start = int(url_params.get('start'))
+					page = '  [I](%s)[/I]' % str(((start - 1) / self.count) + 1)
+				else:
+					page = url_params.get('page')
+					page = '  [I](%s)[/I]' % page
+
+				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
+
 				url = '%s?action=collections&url=%s' % (sysaddon, urllib.quote_plus(url))
 
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
 				pass

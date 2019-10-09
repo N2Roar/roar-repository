@@ -37,13 +37,14 @@
 <addon
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.2"
+  version="0.0.3"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
 		<import addon="inputstream.adaptive"/>
 		<import addon="inputstream.rtmp"/>
 		<import addon="plugin.program.autocompletion"/>
+		<import addon="service.subtitles.rvm.addic7ed"/>
 		<!-- 3rd Party Useful Addons -->
 		<import addon="plugin.video.openmeta"/>
 		<!-- 3rd Party Useful Modules -->
@@ -287,7 +288,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.2.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -324,13 +325,11 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.3 - Sept 30, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed TMDb occasional title drops
-    due to foreign "originalttiles".[/I]
-[COLOR yellow]--[/COLOR][I] Fixed TVMaze next page issues.[/I]
-[COLOR yellow]--[/COLOR][I] Added next page reset as experimental
-    cure for random incorrect second
-    page IMDb genre loads.[/I]
+[B][COLOR red]Update - v3.2.5 - Oct 8, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added TMDb user lists to TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb Favorites to "My Lists".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed mixed media_type issue with
+    new TMDb user lists.[/I]
 		</news>
 	</extension>
 </addon>

@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#32026"
-msgid ""
+msgid "Favorites"
 msgstr ""
 
 msgctxt "#32027"

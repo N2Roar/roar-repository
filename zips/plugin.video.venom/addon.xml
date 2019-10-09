@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.2.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,13 +36,11 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.3 - Sept 30, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed TMDb occasional title drops
-    due to foreign "originalttiles".[/I]
-[COLOR yellow]--[/COLOR][I] Fixed TVMaze next page issues.[/I]
-[COLOR yellow]--[/COLOR][I] Added next page reset as experimental
-    cure for random incorrect second
-    page IMDb genre loads.[/I]
+[B][COLOR red]Update - v3.2.5 - Oct 8, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added TMDb user lists to TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb Favorites to "My Lists".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed mixed media_type issue with
+    new TMDb user lists.[/I]
 		</news>
 	</extension>
 </addon>

@@ -622,7 +622,8 @@ class indexer:
 
 				try: date = re.findall('<date>(.+?)</date>', item)[0]
 				except: date = ''
-				if re.search(r'\d+', date): name += ' [COLOR red] Updated %s[/COLOR]' % date
+				if re.search(r'\d+', date):
+					name += ' [COLOR red] Updated %s[/COLOR]' % date
 
 				try: meta = re.findall('<meta>(.+?)</meta>', item)[0]
 				except: meta = '0'
@@ -1014,6 +1015,11 @@ class indexer:
 			i = items[0]
 			if i['next'] == '':
 				raise Exception()
+
+				# nextMenu = control.lang(32053).encode('utf-8')
+				# page = '  [I](%s)[/I]' % str(url.split('&page=', 1)[1])
+				# nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
+
 			url = '%s?action=%s&url=%s' % (sysaddon, i['nextaction'], urllib.quote_plus(i['next']))
 			item = control.item(label=control.lang(30500).encode('utf-8'))
 			item.setArt({'addonPoster': addonPoster, 'thumb': addonPoster, 'poster': addonPoster, 'fanart': addonFanart, 'tvshow.poster': addonPoster, 'season.poster': addonPoster, 'banner': addonPoster, 'tvshow.banner': addonPoster, 'season.banner': addonPoster})

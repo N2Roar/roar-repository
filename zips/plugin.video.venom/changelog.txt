@@ -1,3 +1,19 @@
+[B][COLOR red]Update - v3.2.5 - Oct 8, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added TMDb user lists to TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb Favorites to "My Lists".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed mixed media_type issue with
+    new TMDb user lists.[/I]
+
+[B][COLOR red]Update - v3.2.4 - Oct 6, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issued with some genre page2
+    returnning incorect list items.[/I]
+[COLOR yellow]--[/COLOR][I] Added next page count display.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb watchlist and user lists
+    for movies.  Note this requires a special
+    authorization to obtaiin a session_id.
+    This new authorization is found in the
+    settings under API keys.[/I]
+
 [B][COLOR red]Update - v3.2.3 - Sept 30, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TMDb occasional title drops
     due to foreign "originalttiles".[/I]
@@ -23,8 +39,9 @@
 [COLOR yellow]--[/COLOR][I] Reworked directory list builders to
     reduce processing time.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed random TMDb artwork not retrieved
-    due to incorrect tmdb_id in Trakt api. Now both tmdb_id and
-    imdb_id checked.[/I]
+    due to incorrect tmdb_id in Trakt api.
+    Now both tmdb_id and imdb_id
+    checked.[/I]
 
 [B][COLOR red]Update - v3.2.0 - Sept 22, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] changed clearlogo and clearart to

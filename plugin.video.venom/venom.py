@@ -4,10 +4,15 @@
 	Venom Add-on
 '''
 
-import urlparse, sys, urllib
+
+from urlparse import parse_qsl
+from urllib import quote_plus
+from sys import argv
+
 from resources.lib.modules import control
 
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
+# params = dict(parse_qsl(sys.argv[2].replace('?','')))
+params = dict(parse_qsl(argv[2].replace('?','')))
 action = params.get('action')
 
 subid = params.get('subid')
@@ -179,6 +184,7 @@ elif action == 'collectionSuperhero':
 elif action == 'collections':
 	from resources.lib.menus import collections
 	collections.Collections().get(url)
+
 
 ####################################################
 #---Martial Arts Collections
@@ -418,8 +424,6 @@ elif action == 'fitness':
 
 
 
-
-
 ####################################################
 #---Tools
 ####################################################
@@ -522,6 +526,24 @@ elif action == 'cachesyncTVShows':
 	trakt.cachesyncTVShows()
 
 
+
+####################################################
+#---TMDb
+####################################################
+elif action == 'authTMDb':
+	from resources.lib.indexers import tmdb
+	tmdb.Auth().create_session_id()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, "plugin.video.venom")
+
+elif action == 'revokeTMDb':
+	from resources.lib.indexers import tmdb
+	tmdb.Auth().revoke_session_id()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, "plugin.video.venom")
+
+
+
 ####################################################
 # PLAYLIST
 ####################################################
@@ -582,24 +604,24 @@ elif action == 'random':
 	if rtype == 'movie':
 		from resources.lib.menus import movies
 		rlist = movies.Movies().get(url, idx=False)
-		r = sys.argv[0]+"?action=play"
+		r = argv[0]+"?action=play"
 
 	elif rtype == 'episode':
 		from resources.lib.menus import episodes
 		rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, idx=False)
-		r = sys.argv[0]+"?action=play"
+		r = argv[0]+"?action=play"
 
 	elif rtype == 'season':
 		from resources.lib.menus import seasons
 		rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tvdb, idx=False)
-		r = sys.argv[0]+"?action=random&rtype=episode"
+		r = argv[0]+"?action=random&rtype=episode"
 
 	elif rtype == 'show':
 		from resources.lib.menus import tvshows
 		rlist = tvshows.TVshows().get(url, idx=False)
-		r = sys.argv[0]+"?action=random&rtype=season"
+		r = argv[0]+"?action=random&rtype=season"
 
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	from random import randint
 	import json
 
@@ -610,19 +632,19 @@ elif action == 'random':
 
 			if rtype == "show" and p == "tvshowtitle":
 				try:
-					r += '&'+p+'='+urllib.quote_plus(rlist[rand]['title'])
+					r += '&'+p+'='+quote_plus(rlist[rand]['title'])
 				except:
 					pass
 			else:
 				try:
-					r += '&'+p+'='+urllib.quote_plus(rlist[rand][p])
+					r += '&'+p+'='+quote_plus(rlist[rand][p])
 				except:
 					pass
 
 		try:
-			r += '&meta='+urllib.quote_plus(json.dumps(rlist[rand]))
+			r += '&meta='+quote_plus(json.dumps(rlist[rand]))
 		except:
-			r += '&meta='+urllib.quote_plus("{}")
+			r += '&meta='+quote_plus("{}")
 
 		if rtype == "movie":
 			try:

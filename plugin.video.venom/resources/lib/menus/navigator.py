@@ -167,6 +167,9 @@ class Navigator:
 			# self.addDirectoryItem(32032, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultVideoPlaylists.png', queue=True)
 			self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'DefaultVideoPlaylists.png', queue=True)
 
+		# if control.setting('tmdb.session_id') != '':
+			# self.addDirectoryItem(32033, 'tmdbmovieUserlists', 'tmdb.png', 'DefaultVideoPlaylists.png', queue=True)
+
 		if lite is False:
 			self.addDirectoryItem(32031, 'movieliteNavigator', 'movies.png', 'DefaultMovies.png')
 			self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')

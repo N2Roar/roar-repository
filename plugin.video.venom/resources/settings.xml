@@ -9,9 +9,6 @@
 		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
 		<setting type="lsep" label="32319" />
 
-		<!-- Temp setting for gad -->
-<!-- 		<setting id="idx.disable" type="bool" label="Disable super_info()" default="false" /> -->
-
 		<setting id="page.item.limit" type="slider" label="32011" default="20" range="10,60" option="int" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="disable.fanarttv" type="bool" label="32012" default="false" />
@@ -151,7 +148,7 @@
 	<category label ="32315">
 		<setting type="lsep" label="32315" />
 		<setting id="trakt.auth" type="text" default="" visible="hidden"/>
-		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=tru&query=7.2)" />
+		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=true&query=7.2)" />
 		<setting id="trakt.user" type="text" default="" label="40062" enable="false" visible="true" />
 		<setting id="trakt.token" type="text" visible="hidden" label="" default="" />
 		<setting id="trakt.refresh" type="text" visible="hidden" label="" default="" />
@@ -172,10 +169,19 @@
 	<category label="API Keys">
 		<setting type="lsep" label="FANART.TV" />
 		<setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
+
 		<setting type="lsep" label="TMDb" />
 		<setting id="tm.user" type="text" option="hidden" label="TMDb API" default="" />
+		<setting id="tmdb.username" type="text" label="TMDb username" default="" />
+		<setting id="tmdb.password" type="text" label="TMDb password" default="" />
+		<setting id="tmdb.message" type="action" label="  [COLOR FFA0C12C]Authorization rq'd to retrieve user lists[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
+		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&opensettings=true&query=8.5)" />
+		<setting id="tmdb.session_id" type="text" default="" label="session_id" enable="false" />
+		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&opensettings=true&query=8.7)" />
+
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
+
 		<setting type="lsep" label="IMDb" />
 		<setting id="imdb.user" type="text" label="32303" default="" />
 	</category>

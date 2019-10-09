@@ -2,13 +2,14 @@
 <addon
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.2"
+  version="0.0.3"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
 		<import addon="inputstream.adaptive"/>
 		<import addon="inputstream.rtmp"/>
 		<import addon="plugin.program.autocompletion"/>
+		<import addon="service.subtitles.rvm.addic7ed"/>
 		<!-- 3rd Party Useful Addons -->
 		<import addon="plugin.video.openmeta"/>
 		<!-- 3rd Party Useful Modules -->

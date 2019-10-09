@@ -458,9 +458,12 @@ class Seasons:
 				try: role = client.replaceHTMLCodes(person[3])
 				except: pass
 				try:
-					castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					try:
+						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					except:
+						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 				except:
-					castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					castandart = []
 
 			try:
 				label = client.parseDOM(item2, 'SeriesName')[0]
@@ -827,7 +830,7 @@ class Seasons:
 
 		for i in items:
 			try:
-				imdb, tmdb, tvdb, year, season = i['imdb'], i['tmdb'], i['tvdb'], i['year'], i['season']
+				imdb, tmdb, tvdb, year, season = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0'), i['season']
 				title = i['tvshowtitle']
 
 				label = '%s %s' % (labelMenu, i['season'])

@@ -194,7 +194,7 @@ class Episodes:
 			except:
 				self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user, False)
 			self.sort(type = 'calendar')
-			self.episodeDirectory(self.list, unfinished=True)
+			self.episodeDirectory(self.list, unfinished=True, next=False)
 			return self.list
 		except:
 			import traceback
@@ -292,7 +292,7 @@ class Episodes:
 			elif self.tvmaze_link in url:
 				self.list = cache.get(self.tvmaze_list, 1, url, False)
 
-			self.episodeDirectory(self.list)
+			self.episodeDirectory(self.list, unfinished=False, next=False)
 			return self.list
 		except:
 			pass
@@ -480,11 +480,10 @@ class Episodes:
 
 				studio = item.get('show').get('network', '0')
 
-				genre = item['show']['genres']
-				genre = [i.title() for i in genre]
-				if genre == []:
-					genre = '0'
-				genre = ' / '.join(genre)
+				genre = []
+				for i in item['show']['genres']:
+					genre.append(i.title())
+				if genre == []: genre = 'NA'
 
 				if 'duration' in item and item['duration'] is not None and item['duration'] != '':
 					duration = item.get('duration')
@@ -787,9 +786,12 @@ class Episodes:
 					try: role = client.replaceHTMLCodes(person[3])
 					except: pass
 					try:
-						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						try:
+							castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						except:
+							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
-						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						castandart = []
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -982,9 +984,12 @@ class Episodes:
 					try: role = client.replaceHTMLCodes(person[3])
 					except: pass
 					try:
-						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						try:
+							castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						except:
+							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
-						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+						castandart = []
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -1110,6 +1115,8 @@ class Episodes:
 				tmdb = '0'
 
 				tvdb = str(item.get('show').get('externals').get('thetvdb', 0))
+				if tvdb == '' or tvdb is None or tvdb == 'None':
+					tvdb = '0'
 
 # ### episode IDS
 				episodeIDS = {}
@@ -1134,31 +1141,28 @@ class Episodes:
 					thumb = thumb2
 				if thumb is None or thumb == '': thumb = '0'
 
-				premiered = item.get('airdate')
+				premiered = item.get('airdate', '0')
 
 				studio = item.get('show', {}).get('network', {}).get('name', '0')
 				if studio == '' or studio is None:
 					studio = '0'
 
-				try:
-					genre = item['show']['genres']
-				except:
-					genre = '0'
-				genre = [i.title() for i in genre]
-				if genre == []: genre = '0'
-				genre = ' / '.join(genre)
+				genre = []
+				for i in item['show']['genres']:
+					genre.append(i.title())
+				if genre == []: genre = 'NA'
 
-				duration = str(item.get('show', {}).get('runtime', 0))
+				duration = str(item.get('show', {}).get('runtime', '0'))
 
-				rating = str(item.get('show', {}).get('rating', {}).get('average', 0))
+				rating = str(item.get('show', {}).get('rating', {}).get('average', '0'))
 
 				try:
-					status = str(item.get('show', {}).get('status', 0))
+					status = str(item.get('show', {}).get('status', '0'))
 				except:
 					status = 'Continuing'
 
 				try:
-					plot = item.get('show', {}).get('summary', 0)
+					plot = item.get('show', {}).get('summary', '0')
 					plot = re.sub('<.+?>|</.+?>|\n', '', plot)
 				except:
 					plot = '0'
@@ -1206,7 +1210,7 @@ class Episodes:
 		return self.list[0]
 
 
-	def episodeDirectory(self, items, unfinished=False):
+	def episodeDirectory(self, items, unfinished=False, next=True):
 		# TotalTime1 = time.time()
 		if items is None or len(items) == 0:
 			control.idle()
@@ -1294,13 +1298,12 @@ class Episodes:
 
 		playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
-		traktManagerMenu = control.lang(32070).encode('utf-8')
 		tvshowBrowserMenu = control.lang(32071).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
 
 		for i in items:
 			try:
-				imdb, tvdb, year, season, episode, premiered = i['imdb'], i['tvdb'], i['year'], i['season'], i['episode'], i['premiered']
+				imdb, tvdb, year, season, episode, premiered = i.get('imdb', '0'), i.get('tvdb', '0'), i['year'], i['season'], i['episode'], i['premiered']
 				if 'label' not in i:
 					i['label'] = i['title']
 
@@ -1451,6 +1454,7 @@ class Episodes:
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
+					traktManagerMenu = control.lang(32070).encode('utf-8')
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s&episode=%s)' % (
 										sysaddon, systvshowtitle, imdb, tvdb, season, episode)))
 
@@ -1544,13 +1548,26 @@ class Episodes:
 				traceback.print_exc()
 				pass
 
-		if 'next' in items[0]:
+		if next:
 			try:
 				url = items[0]['next']
 				if url == '':
 					raise Exception()
 
 				nextMenu = control.lang(32053).encode('utf-8')
+				url_params = dict(urlparse.parse_qsl(url))
+
+				if 'imdb.com' in url:
+					start = int(url_params.get('start'))
+					# start = int(re.search('start=(.+?)&ref_=', url).group(1))
+					page = '  [I](%s)[/I]' % str(((start - 1) / self.count) + 1)
+				else:
+					page = url_params.get('page')
+					# page = '  [I](%s)[/I]' % str(url.split('&page=', 1)[1])
+					page = '  [I](%s)[/I]' % page
+
+				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
+
 				if '/users/me/history/' in url:
 					url = '%s?action=calendar&url=%s' % (sysaddon, urllib.quote_plus(url))
 
