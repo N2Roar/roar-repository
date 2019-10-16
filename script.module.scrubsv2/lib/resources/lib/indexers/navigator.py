@@ -213,6 +213,7 @@ class navigator:
 
 
     def moreplugs(self):
+        self.addDirectoryItem('WatchWrestling',  'wrestlingNavigator',  'highly-rated.png',  'DefaultVideoPlaylists.png')
         if self.getMenuEnabled('navi.customList') == True:
             self.addDirectoryItem('Custom List', 'navCustom', 'channels.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.iptvChannels') == True:

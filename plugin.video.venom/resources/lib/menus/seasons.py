@@ -22,6 +22,7 @@ from resources.lib.menus import tvshows as tvshowsx
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 class Seasons:
@@ -521,6 +522,7 @@ class Seasons:
 				if thumb == '0':
 					thumb = poster
 
+
 				try:
 					seasoncount = counts[season]
 				except:
@@ -590,6 +592,21 @@ class Seasons:
 				elif poster != '0':
 					thumb = poster
 
+				season_poster = [i for i in artwork if client.parseDOM(i, 'Season')[0] == season]
+				try:
+					season_poster = client.parseDOM(season_poster[0], 'BannerPath')[0]
+				except:
+					season_poster = ''
+				if season_poster != '':
+					season_poster = self.tvdb_image + season_poster
+				else:
+					season_poster = '0'
+				season_poster = client.replaceHTMLCodes(season_poster)
+				season_poster = season_poster.encode('utf-8')
+				if season_poster == '0':
+					season_poster = poster
+				# log_utils.log('season_poster = %s for tvshowtitle = %s' % (season_poster, tvshowtitle), __name__, log_utils.LOGDEBUG)
+
 				try:
 					rating = client.parseDOM(item, 'Rating')[0]
 				except:
@@ -655,7 +672,14 @@ class Seasons:
 				self.list.append({'title': title, 'label': label, 'seasoncount': seasoncount, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
 								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
 								'director': director, 'writer': writer, 'castandart': castandart, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
-								'fanart': fanart, 'thumb': thumb, 'unaired': unaired, 'episodeIDS': episodeIDS})
+								'fanart': fanart, 'thumb': thumb, 'season_poster': season_poster, 'unaired': unaired, 'episodeIDS': episodeIDS})
+
+				# meta = {}
+				# meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tvdb_key, 'item': item}
+
+				# self.list.append(item)
+				# metacache.insert(self.meta)
+
 			except:
 				pass
 		return self.list
@@ -784,7 +808,7 @@ class Seasons:
 	def seasonDirectory(self, items):
 		if items is None or len(items) == 0:
 			control.idle()
-			control.notification(title = 32054, message = 33049, icon = 'INFO')
+			control.notification(title = 32054, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
 		sysaddon = sys.argv[0]

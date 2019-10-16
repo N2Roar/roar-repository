@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-# --[ USTVgo v1.4 ]--|--[ From JewBMX & Tempest ]--
+# --[ USTVgo v1.5 ]--|--[ From JewBMX & Tempest ]--
 # IPTV Indexer made just for the one site as of now.
 
-import re, os, sys, urllib
-#from resources.lib.modules import cfscrape
+import re, os, sys, urllib, traceback
 from resources.lib.modules import client
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 
 
 class ustvgo:
     def __init__(self):
         self.list = []
-        self.base_link = 'http://ustvgo.tv/%s'
-        #self.scraper = cfscrape.create_scraper()
+        self.base_link = 'http://ustvgo.tv/'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
 
 
@@ -74,6 +73,7 @@ class ustvgo:
             ('NFL Network', 'nfl-network-live-free', 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/NFL_Network_logo.svg/450px-NFL_Network_logo.svg.png'),
             ('Nickelodeon', 'nickelodeon-live-streaming-free', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/Nickelodeon.png?raw=true'),
             ('NickToons', 'nicktoons', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/NickToons.png?raw=true'),
+            ('One America News Network', 'one-america-news-network', 'https://upload.wikimedia.org/wikipedia/en/thumb/1/17/OANN.jpg/230px-OANN.jpg'),
             ('OWN', 'own', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/OWN.png?raw=true'),
             ('Oxygen', 'oxygen', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/Oxygen.png?raw=true'),
             ('Paramont Network', 'paramount-network', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/Paramount%20Network.png?raw=true'),
@@ -98,21 +98,26 @@ class ustvgo:
             ('Univision', 'univision', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Logo_Univision_2019.svg/400px-Logo_Univision_2019.svg.png'),
             ('USA Network', 'usa-network-live', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/USA%20Network.png?raw=true'),
             ('VH1', 'vh1', 'https://github.com/jewbmx/resource.images.studios.white/blob/master/resources/VH1.png?raw=true'),
-            ('We Tv', 'we-tv', 'https://upload.wikimedia.org/wikipedia/en/thumb/d/db/We_TV_logo_2014.svg/440px-We_TV_logo_2014.svg.png')
+            ('We Tv', 'we-tv', 'https://upload.wikimedia.org/wikipedia/en/thumb/d/db/We_TV_logo_2014.svg/440px-We_TV_logo_2014.svg.png'),
+            ('WWE Network', 'wwe-network', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/WWE_Network_logo.svg/300px-WWE_Network_logo.svg.png')
         ]
         for channel in channels:
-            self.list.append({'name': channel[0], 'url': self.base_link % channel[1], 'image': channel[2], 'action': 'ustvgoPlay'})
+            self.list.append({'name': channel[0], 'url': self.base_link + channel[1], 'image': channel[2], 'action': 'ustvgoPlay'})
         self.addDirectory(self.list)
         return self.list
 
 
     def play(self, url):
         try:
-            #stream = self.scraper.get(url, headers=self.headers).content
+            #page = client.request(url, headers=self.headers)
+            #url = re.compile('<iframe .+? src="(.+?)"', re.DOTALL).findall(page)[0]
+            #url = "http:" + url if not url.startswith('http') else url
             stream = client.request(url, headers=self.headers)
-            url = re.compile("file: '(.+?)',", re.DOTALL).findall(stream)[0]
-            control.execute('PlayMedia(%s)' % url)
+            link = re.compile("file: '(.+?)',", re.DOTALL).findall(stream)[0]
+            control.execute('PlayMedia(%s)' % link)
         except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---USTVgo - Exception: \n' + str(failure))
             return
 
 

@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
 
+import os, xbmc, xbmcgui, xbmcaddon
 
 def get():
-		import os, xbmc, xbmcgui, xbmcaddon
-		# , xbmcvfs
 		addonInfo = xbmcaddon.Addon().getAddonInfo
 		addonPath = xbmc.translatePath(addonInfo('path'))
 		changelogfile = os.path.join(addonPath, 'changelog.txt')

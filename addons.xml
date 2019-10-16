@@ -241,7 +241,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.6.0">
+<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.6.1">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.scrubsv2" />
@@ -288,7 +288,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.2.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -325,11 +325,16 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.5 - Oct 8, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added TMDb user lists to TVShows.[/I]
-[COLOR yellow]--[/COLOR][I] Added TMDb Favorites to "My Lists".[/I]
-[COLOR yellow]--[/COLOR][I] Fixed mixed media_type issue with
-    new TMDb user lists.[/I]
+[B][COLOR red]Update - v3.2.7 - Oct 16, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added more api languages in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Added more provider languages in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Changed episode "poster" to ""season.poster" to be
+    more descriptive of the season you are viewing.[/I]
+[COLOR yellow]--[/COLOR][I] Changed TMDb threading to "for" loop thread for 2nd
+    api request and fanart.tv request.  Huge speed bump in menu load times.[/I]
+[COLOR yellow]--[/COLOR][I] Some tweaks to TMDb user list sorting.[/I]
+[COLOR yellow]--[/COLOR][I] TMDb has now fixed user lists from dropping titles due to a lang issue.
+    Thank you Travis!!![/I]
 		</news>
 	</extension>
 </addon>
@@ -630,7 +635,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.5.9">
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.6.0">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.beautifulsoup4" />

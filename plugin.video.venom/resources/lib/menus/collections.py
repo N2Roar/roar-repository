@@ -22,6 +22,7 @@ syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 class Collections:
@@ -46,26 +47,12 @@ class Collections:
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
-
-		sort = int(control.setting('sort.movies.type'))
-		tmdb_sort = 'original_order'
-		if sort == 1:
-			tmdb_sort = 'title'
-		if sort in [2, 3]:
-			tmdb_sort = 'vote_average'
-		if sort in [4, 5, 6]:
-			tmdb_sort = 'release_date'
-
-		tmdb_sort_order = '.asc' if int(control.setting('sort.movies.order')) == 0 else '.desc'
-
-		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=%s%s&page=1' % ('%s', self.tmdb_key, tmdb_sort, tmdb_sort_order)
+		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=release_date.asc&page=1' % ('%s', self.tmdb_key)
 
 		self.imdb_link = 'https://www.imdb.com'
 		self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
 		self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
-		self.imdblist2_link = 'https://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
 		self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
-		self.imdbwatchlist2_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
 
 # Martial Arts Movies
@@ -180,13 +167,13 @@ class Collections:
 		self.hanniballector_link = self.tmdb_api_link % '33312'
 		self.hellraiser_link = self.tmdb_api_link % '33313'
 		self.highlander_link = self.tmdb_api_link % '13256'
-		self.thehobbit_link = 'https://www.imdb.com/search/title?title=the+hobbit&title_type=feature,tv_movie&num_votes=1000,&countries=us&languages=en'
+		self.thehobbit_link = 'https://www.imdb.com/search/title?title=the+hobbit&title_type=feature,tv_movie&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.hollowman_link = self.tmdb_api_link % '13251'
 		self.honeyishrunkthekids_link = self.tmdb_api_link % '33208'
 		self.horriblebosses_link = self.tmdb_api_link % '33314'
 		self.hostel_link = self.tmdb_api_link % '33315'
 		self.hotshots_link = self.tmdb_api_link % '33316'
-		self.hungergames_link = 'https://www.imdb.com/search/title?title=hunger+games&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
+		self.hungergames_link = 'https://www.imdb.com/search/title?title=hunger+games&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.huntsman_link = self.tmdb_api_link % '13235'
 		self.independenceday_link = self.tmdb_api_link % '33317'
 		self.indianajones_link = self.tmdb_api_link % '113191'
@@ -211,7 +198,7 @@ class Collections:
 		self.legallyblonde_link = self.tmdb_api_link % '33333'
 		self.lethalweapon_link = self.tmdb_api_link % '33334'
 		self.lookwhostalking_link = self.tmdb_api_link % '33335'
-		self.lordoftherings_link = 'https://www.imdb.com/search/title?title=the+lord+of+the+rings&title_type=feature&num_votes=1000,&countries=us&languages=en'
+		self.lordoftherings_link = 'https://www.imdb.com/search/title?title=the+lord+of+the+rings&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.machete_link = self.tmdb_api_link % '33336'
 		self.madmax_link = self.tmdb_api_link % '13188'
 		self.magicmike_link = self.tmdb_api_link % '33337'
@@ -227,7 +214,7 @@ class Collections:
 		self.misscongeniality_link = self.tmdb_api_link % '33346'
 		self.missinginaction_link = self.tmdb_api_link % '33347'
 		self.missionimpossible_link = self.tmdb_api_link % '113187'
-		self.themummy_link = 'https://www.imdb.com/search/title?title=mummy&title_type=feature&release_date=1999-01-01,&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
+		self.themummy_link = 'https://www.imdb.com/search/title?title=mummy&title_type=feature&release_date=1999-01-01,&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.nakedgun_link = self.tmdb_api_link % '33349'
 		self.nationallampoon_link = self.tmdb_api_link % '33350'
 		self.nationallampoonsvacation_link = self.tmdb_api_link % '33351'
@@ -244,7 +231,7 @@ class Collections:
 		self.omen_link = self.tmdb_api_link % '33362'
 		self.paulblart_link = self.tmdb_api_link % '33363'
 		self.piratesofthecaribbean_link = self.tmdb_api_link % '33364'
-		self.pitchperfect_link = self.tmdb_api_link % '13144'
+		self.pitchperfect_link = self.tmdb_api_link % '123873'
 		self.planetoftheapes_link = self.tmdb_api_link % '13141'
 		self.policeacademy_link = self.tmdb_api_link % '33366'
 		self.poltergeist_link = self.tmdb_api_link % '33367'
@@ -284,10 +271,10 @@ class Collections:
 		self.texaschainsawmassacre_link = self.tmdb_api_link % '33399'
 		self.thething_link = self.tmdb_api_link % '33400'
 		self.thomascrownaffair_link = self.tmdb_api_link % '33401'
-		self.transformers_link = 'https://www.imdb.com/search/title?title=transformers&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
+		self.transformers_link = 'https://www.imdb.com/search/title?title=transformers&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.transporter_link = self.tmdb_api_link % '33402'
-		self.tron_link = 'https://www.imdb.com/search/title?title=tron&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
-		self.twilight_link = 'https://www.imdb.com/search/title?title=twilight&title_type=feature&num_votes=1000,&countries=us&languages=en&plot=vampire&sort=release_date,desc'
+		self.tron_link = 'https://www.imdb.com/search/title?title=tron&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
+		self.twilight_link = 'https://www.imdb.com/search/title?title=twilight&title_type=feature&num_votes=1000,&countries=us&languages=en&plot=vampire&sort=release_date,asc'
 		self.undersiege_link = self.tmdb_api_link % '33403'
 		self.underworld_link = 'https://www.imdb.com/search/title?title=Underworld&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,asc'
 		self.universalsoldier_link = self.tmdb_api_link % '33404'
@@ -379,7 +366,7 @@ class Collections:
 		self.ironman_link = self.tmdb_api_link % '33135'
 		self.spiderman_link = self.tmdb_api_link % '33126'
 		self.superman_link = self.tmdb_api_link % '33136'
-		self.thor_link = 'https://www.imdb.com/search/title?title=thor&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,desc'
+		self.thor_link = 'https://www.imdb.com/search/title?title=thor&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,asc'
 		self.xmen_link = self.tmdb_api_link % '33137'
 
 
@@ -387,7 +374,7 @@ class Collections:
 		self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Martial Arts', 'collection_martial_arts', 'boxsets.png', 'DefaultVideoPlaylists.png')
 
-		if self.getMenuEnabled('navi.xmascollections') is True:
+		if control.getMenuEnabled('navi.xmascollections'):
 			self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('DC Comics', 'collections&url=dcmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Marvel Comics', 'collections&url=marvelmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
@@ -711,13 +698,6 @@ class Collections:
 		self.endDirectory()
 
 
-	def getMenuEnabled(self, menu_title):
-		is_enabled = control.setting(menu_title).strip()
-		if (is_enabled == '' or is_enabled == 'false'):
-			return False
-		return True
-
-
 	def get(self, url, idx=True):
 		try:
 			try: url = getattr(self, url + '_link')
@@ -726,27 +706,29 @@ class Collections:
 			except:
 				pass
 
-			if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
+			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 720, url)
+				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 168, url)
 				# self.sort()
+				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
-			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
+			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_list, 720, url)
+				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
 				# self.sort()
+				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 720, url)
+				self.list = cache.get(self.imdb_list, 168, url)
 				if idx is True:
 					self.worker()
-				self.sort()
+				# self.sort()
 
 			elif u in self.imdb_link:
-				self.list = cache.get(self.imdb_list, 720, url)
+				self.list = cache.get(self.imdb_list, 168, url)
 				if idx is True:
 					self.worker()
-				self.sort()
+				# self.sort()
 
 			if idx is True:
 				self.movieDirectory(self.list)
@@ -758,7 +740,7 @@ class Collections:
 	def sort(self):
 		try:
 			attribute = int(control.setting('sort.movies.type'))
-			reverse = int(control.setting('sort.movies.order')) == 1
+			reverse = (int(control.setting('sort.movies.order')) == 1)
 			if attribute == 0:
 				reverse = False
 			if attribute > 0:
@@ -775,7 +757,9 @@ class Collections:
 					for i in range(len(self.list)):
 						if 'premiered' not in self.list[i]:
 							self.list[i]['premiered'] = ''
-					self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
+							self.list = sorted(self.list, key = lambda k: k['year'], reverse = reverse)
+						else:
+							self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
 				elif attribute == 5:
 					for i in range(len(self.list)):
 						if 'added' not in self.list[i]:
@@ -791,9 +775,26 @@ class Collections:
 		except:
 			import traceback
 			traceback.print_exc()
+			pass
+
+
+	def tmdb_sort(self):
+		sort = int(control.setting('sort.movies.type'))
+		tmdb_sort = 'original_order'
+		if sort == 1:
+			tmdb_sort = 'title'
+		if sort in [2, 3]:
+			tmdb_sort = 'vote_average'
+		if sort in [4, 5, 6]:
+			tmdb_sort = 'release_date'
+
+		tmdb_sort_order = '.asc' if int(control.setting('sort.movies.order')) == 0 else '.desc'
+		sort_string = tmdb_sort + tmdb_sort_order
+		return sort_string
 
 
 	def imdb_list(self, url):
+		list = []
 		try:
 			for i in re.findall('date\[(\d+)\]', url):
 				url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
@@ -804,12 +805,12 @@ class Collections:
 			if url == self.imdbwatchlist_link:
 				url = cache.get(imdb_watchlist_id, 8640, url)
 				url = self.imdblist_link % url
-			elif url == self.imdbwatchlist2_link:
-				url = cache.get(imdb_watchlist_id, 8640, url)
-				url = self.imdblist2_link % url
 
-			result = client.request(url)
+			result = client.request(url, error=True)
+			# result = client.request(url, output = 'extended', error = True)
+
 			result = result.replace('\n', ' ')
+			# result = result[0].replace('\n','')
 			result = result.decode('iso-8859-1').encode('utf-8')
 
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
@@ -817,11 +818,12 @@ class Collections:
 		except:
 			return
 
+		next = ''
 		try:
 			# HTML syntax error, " directly followed by attribute name. Insert space in between. parseDOM can otherwise not handle it.
 			result = result.replace('"class="lister-page-next', '" class="lister-page-next')
-
-			next = client.parseDOM(result, 'a', ret='href', attrs = {'class': 'lister-page-next.+?'})
+			# next = client.parseDOM(result, 'a', ret='href', attrs = {'class': 'lister-page-next.+?'})
+			next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.*?lister-page-next.*?'})
 
 			if len(next) == 0:
 				next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
@@ -838,20 +840,28 @@ class Collections:
 			try:
 				title = client.parseDOM(item, 'a')[1]
 				title = client.replaceHTMLCodes(title)
-				title = title.encode('utf-8')
+				try: title = title.encode('utf-8')
+				except: pass
 
 				year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
 				year = re.findall('(\d{4})', year[0])[0]
 				year = year.encode('utf-8')
 
+				if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+
 				try:
 					show = '–'.decode('utf-8') in str(year).decode('utf-8') or '-'.decode('utf-8') in str(year).decode('utf-8')
 				except:
 					show = False
-				if show:
+				if show or 'Episode:' in item:
 					raise Exception() # Some lists contain TV shows.
 
-				if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+				try: mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
+				except: mpaa = '0'
+				if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
+				mpaa = mpaa.replace('_', '-')
+				mpaa = client.replaceHTMLCodes(mpaa)
+				mpaa = mpaa.encode('utf-8')
 
 				imdb = client.parseDOM(item, 'a', ret='href')[0]
 				imdb = re.findall('(tt\d*)', imdb)[0]
@@ -867,8 +877,7 @@ class Collections:
 				except:
 					poster = '0'
 
-				if '/nopicture/' in poster:
-					poster = '0'
+				if '/nopicture/' in poster: poster = '0'
 				poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
 				poster = client.replaceHTMLCodes(poster)
 				poster = poster.encode('utf-8')
@@ -878,66 +887,85 @@ class Collections:
 				except:
 					genre = '0'
 				genre = ' / '.join([i.strip() for i in genre.split(',')])
-				if genre == '':
-					genre = '0'
+				if genre == '': genre = '0'
 				genre = client.replaceHTMLCodes(genre)
 				genre = genre.encode('utf-8')
 
-				try: duration = re.findall('(\d+?) min(?:s|)', item)[-1]
-				except: duration = '0'
+				try:
+					duration = re.findall('(\d+?) min(?:s|)', item)[-1]
+				except:
+					duration = '0'
 				duration = duration.encode('utf-8')
 
 				rating = '0'
 				try: rating = client.parseDOM(item, 'span', attrs = {'class': 'rating-rating'})[0]
-				except: pass
-				try: rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
-				except: rating = '0'
-				try: rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
-				except: pass
+				except:
+					try: rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
+					except:
+						try: rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
+						except: pass
 				if rating == '' or rating == '-': rating = '0'
+				if rating == '0':
+					try:
+						rating = client.parseDOM(item, 'span', attrs = {'class': 'ipl-rating-star__rating'})[0]
+						if rating == '' or rating == '-': rating = '0'
+					except: pass
 				rating = client.replaceHTMLCodes(rating)
 				rating = rating.encode('utf-8')
 
-				try: votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
-				except: votes = '0'
-				try: votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
-				except: votes = '0'
+				votes = '0'
+				try: votes = client.parseDOM(item, 'span', attrs = {'name': 'nv'})[0]
+				except:
+					try: votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
+					except:
+						try: votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
+						except: pass
 				if votes == '': votes = '0'
 				votes = client.replaceHTMLCodes(votes)
 				votes = votes.encode('utf-8')
 
-				try: mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
-				except: mpaa = '0'
-				if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
-				mpaa = mpaa.replace('_', '-')
-				mpaa = client.replaceHTMLCodes(mpaa)
-				mpaa = mpaa.encode('utf-8')
-
-				try: director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
-				except: director = '0'
+				try:
+					director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
+				except:
+					director = '0'
 				director = client.parseDOM(director, 'a')
 				director = ' / '.join(director)
-				if director == '': director = '0'
+				if director == '':
+					director = '0'
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
 				plot = '0'
-				try: plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
-				except: pass
-				try: plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
-				except: pass
+				try:
+					plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
+				except:
+					try:
+						plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
+					except:
+						pass
 				plot = plot.rsplit('<span>', 1)[0].strip()
 				plot = re.sub('<.+?>|</.+?>', '', plot)
-				if plot == '': plot = '0'
+				if plot == '':
+					plot = '0'
+				if plot == '0':
+					try:
+						plot = client.parseDOM(item, 'div', attrs = {'class': 'lister-item-content'})[0]
+						plot = re.sub('<p\s*class="">', '<p class="plot_">', plot)
+						plot = client.parseDOM(plot, 'p', attrs = {'class': 'plot_'})[0]
+						plot = re.sub('<.+?>|</.+?>', '', plot)
+						if plot == '': plot = '0'
+					except:
+						pass
 				plot = client.replaceHTMLCodes(plot)
 				plot = plot.encode('utf-8')
 
-				self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-											'director': director, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
+											'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'plot': plot, 'tagline': '0', 'imdb': imdb,
+											'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
 				pass
 
-		return self.list
+		return list
 
 
 	def worker(self, level=1):
@@ -1010,7 +1038,7 @@ class Collections:
 			plot = item.get('overview', '0')
 
 			from resources.lib.indexers.tmdb import Movies
-			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb, imdb)
+			tmdb_Item = cache.get(Movies().get_details, 168, tmdb, imdb)
 
 			castandart = []
 			for person in tmdb_Item['credits']['cast']:
@@ -1072,7 +1100,7 @@ class Collections:
 	def movieDirectory(self, items, next=True):
 		if items is None or len(items) == 0: 
 			control.idle()
-			control.notification(title = 32000, message = 33049, icon = 'INFO')
+			control.notification(title = 32000, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
 		settingFanart = control.setting('fanart')
@@ -1279,4 +1307,3 @@ class Collections:
 	def endDirectory(self):
 		control.content(syshandle, 'addons')
 		control.directory(syshandle, cacheToDisc=True)
-		control.sleep(200)

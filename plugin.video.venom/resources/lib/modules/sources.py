@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import sys, time, datetime
+import sys, time, datetime, os
 import xbmc
 import re, urllib, urlparse, random, json
-# import openscrapers
 
 from resources.lib.modules import client, cleantitle, control, workers
 from resources.lib.modules import trakt, source_utils, log_utils
@@ -98,13 +97,15 @@ class Sources:
 		def sourcesDirMeta(metadata):
 			if metadata is None:
 				return metadata
-			allowed = ['poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
+			allowed = ['poster', 'poster2', 'poster3', 'season_poster', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
 			return {k: v for k, v in metadata.iteritems() if k in allowed}
 
 		control.playlist.clear()
 
 		items = control.window.getProperty(self.itemProperty)
 		items = json.loads(items)
+
+		# log_utils.log('items =  %s' % str(items), log_utils.LOGERROR)
 
 		if items is None or len(items) == 0:
 			control.idle()
@@ -130,7 +131,8 @@ class Sources:
 		poster1 = meta.get('poster')
 		poster2 = meta.get('poster2')
 		poster3 = meta.get('poster3')
-		poster = poster3 or poster2 or poster1 or control.addonPoster()
+		poster4 = meta.get('season_poster')
+		poster = poster4 or poster3 or poster2 or poster1 or control.addonPoster()
 
 		fanart1 = meta.get('fanart')
 		fanart2 = meta.get('fanart2')
@@ -139,8 +141,8 @@ class Sources:
 		if control.setting('fanart') != 'true':
 			fanart = '0'
 
-		thumb = meta.get('thumb')
-		thumb = thumb or poster or fanart or control.addonThumb()
+		# thumb = meta.get('thumb')
+		# thumb = thumb or poster or fanart or control.addonThumb()
 
 		sysimage = urllib.quote_plus(poster.encode('utf-8'))
 		downloadMenu = control.lang(32403).encode('utf-8')
@@ -161,6 +163,12 @@ class Sources:
 				if downloads is True:
 					cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' %
 							(sysaddon, sysname, sysimage, syssource)))
+
+				quality = items[i]['quality']
+				if quality == 'SCR': quality = 'CAM'
+				thumb = quality + '.png'
+				artPath = control.artPath()
+				thumb = os.path.join(artPath, thumb) if artPath is not None else ''
 
 				item = control.item(label=label)
 				item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
@@ -1060,6 +1068,7 @@ class Sources:
 		multi = [i['language'] for i in self.sources]
 		multi = [x for y, x in enumerate(multi) if x not in multi[:y]]
 		multi = True if len(multi) > 1 else False
+		log_utils.log('multi %s' % str(multi), log_utils.LOGNOTICE)
 
 		if multi is True:
 			self.sources = [i for i in self.sources if i['language'] != 'en'] + [i for i in self.sources if i['language'] == 'en']
@@ -1077,15 +1086,13 @@ class Sources:
 		sec_color = control.setting('sec.identify')
 		sec_identify = self.getPremColor(sec_color)
 
-		# multiline = control.setting('sourcelist.multiline')
-
 		for i in range(len(self.sources)):
 			if extra_info == 'true':
 				t = source_utils.getFileType(self.sources[i]['url'])
 			else:
 				t = ''
 
-			# u = self.sources[i]['url']
+			u = self.sources[i]['url']
 			q = self.sources[i]['quality']
 			p = self.sources[i]['provider'].upper()
 			s = self.sources[i]['source'].upper()
@@ -1122,12 +1129,13 @@ class Sources:
 					prem_color = prem_identify
 
 			if d != '':
-				label = '[COLOR %s]%02d | [B]%s[/B] | %s | %s |[B] %s[/B][/COLOR]' % (prem_color, int(i + 1), q, d, p, s)
+				label = '[COLOR %s]%02d  |  [B]%s[/B]  |  %s  |  %s  |  [B]%s[/B][/COLOR]' % (prem_color, int(i + 1), q, d, p, s)
 			else:
-				label = '%02d | %s | %s | %s' % (int(i + 1), q, p, s)
+				label = '%02d  |  %s  |  %s  |  %s' % (int(i + 1), q, p, s)
 
-			if multi is True and l != 'en':
-				label += '%s | ' % l
+			# if multi is True and l != 'en':
+			if l != 'en':
+				label += '[COLOR %s]  |  [B]%s[/B][/COLOR]' % (prem_color, l.upper())
 
 			multiline_label = label
 
@@ -1392,12 +1400,26 @@ class Sources:
 
 
 	def getLanguage(self):
-		langDict = {'English': ['en'], 'German': ['de'], 'German+English': ['de', 'en'], 'French': ['fr'],
-					'French+English': ['fr', 'en'], 'Portuguese': ['pt'], 'Portuguese+English': ['pt', 'en'],
-					'Polish': ['pl'], 'Polish+English': ['pl', 'en'], 'Korean': ['ko'], 'Korean+English': ['ko', 'en'],
-					'Russian': ['ru'], 'Russian+English': ['ru', 'en'], 'Spanish': ['es'],
-					'Spanish+English': ['es', 'en'], 'Greek': ['gr'], 'Italian': ['it'], 'Italian+English': ['it', 'en'],
-					'Greek+English': ['gr', 'en']}
+		langDict = {
+			'English': ['en'],
+			'German': ['de'],
+			'German+English': ['de', 'en'],
+			'French': ['fr'],
+			'French+English': ['fr', 'en'],
+			'Portuguese': ['pt'],
+			'Portuguese+English': ['pt', 'en'],
+			'Polish': ['pl'],
+			'Polish+English': ['pl', 'en'],
+			'Korean': ['ko'],
+			'Korean+English': ['ko', 'en'],
+			'Russian': ['ru'],
+			'Russian+English': ['ru', 'en'],
+			'Spanish': ['es'],
+			'Spanish+English': ['es', 'en'],
+			'Greek': ['gr'],
+			'Italian': ['it'],
+			'Italian+English': ['it', 'en'],
+			'Greek+English': ['gr', 'en']}
 		name = control.setting('providers.lang')
 		return langDict.get(name, ['en'])
 

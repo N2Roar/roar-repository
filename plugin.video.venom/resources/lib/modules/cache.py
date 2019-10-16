@@ -15,11 +15,8 @@ try:
 except ImportError:
 	from pysqlite2 import dbapi2 as db, OperationalError
 
-"""
-This module is used to get/set cache for every action done in the system
-"""
-
 cache_table = 'cache'
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 def get(function, duration, *args):
@@ -150,7 +147,7 @@ def cache_clean(duration = 1209600):
 def cache_version_check():
 	if _find_cache_version():
 		cache_clear_all()
-		control.notification(title = 'default', message = 32057, icon = 'INFO', sound = True)
+		control.notification(title = 'default', message = 32057, icon = 'INFO', sound = notificationSound)
 
 
 def cache_clear_all():

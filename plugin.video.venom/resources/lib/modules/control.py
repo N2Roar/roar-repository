@@ -510,3 +510,10 @@ def getSettingDefault(id):
 		return value
 	except:
 		return None
+
+
+def getMenuEnabled(menu_title):
+	is_enabled = setting(menu_title).strip()
+	if (is_enabled == '' or is_enabled == 'false'):
+		return False
+	return True

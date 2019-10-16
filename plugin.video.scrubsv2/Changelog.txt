@@ -2,6 +2,20 @@
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
 [COLOR yellow]If you have any issues from this update try [B]"Kcleaner - Clean All Compact All"[/COLOR][/B]
 
+- Checked/Updated/Fixed/Moved/  Providers.
+- Made and Added in a new Indexer called WatchWrestling  made with 4 sites.
+(Still testing, a bit left todo, a bit to improve, and alot of dead or useless results lol.)
+(Wrestling live streams/feeds might not work. They are not always active.)
+(Feel free to contact me with any feedback from this Indexer. besides complaints of a dead source link lmao.)
+- Updated/Fixed the usTVgo Indexer twice since the last real update.
+(They change much more and i will be removing it for good.)
+- Tossed oload.stream into the craptcha and dbird filters, its the same as oload.tv.
+- Added in Trakt Anticipated for Movies. (Most likely removed it a while back like a goof.)
+
+[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
+[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.6.0 [/COLOR][/B]
 - Did a quick Provider Checkup and Cleanup.
 - Made "My" TMDb and IMDb List sections for movies and tv shows.(10 each.)
 (Placed in the proper sections, to use them add your custom lists in Settings.)
@@ -20,9 +34,6 @@
 -- New Movies/TV Shows are now labeled Widget to match the setting and use lol.
 -- Moved/Made a new section for all IPTV content besides music or xxx crap.
 -- Tools section and some other stuff like that have new labels and/or placement.
-
-[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
-[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
 
 [B][COLOR purple] v4.5.9 [/COLOR][/B]
 - Updated a bit of the IPTV sections/plugins.

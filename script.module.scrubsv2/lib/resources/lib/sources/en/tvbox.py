@@ -14,8 +14,8 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['tvbox.ag']
-        self.base_link = 'https://tvbox.ag'
-        self.search_link = 'https://tvbox.ag/search?q=%s'
+        self.base_link = 'http://tvbox.ag'
+        self.search_link = 'http://tvbox.ag/search?q=%s'
         self.scraper = cfscrape.create_scraper()
 
 

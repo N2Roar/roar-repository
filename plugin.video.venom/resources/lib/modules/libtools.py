@@ -17,6 +17,8 @@ import xbmc
 from resources.lib.modules import control, log_utils
 from resources.lib.modules import cleantitle
 
+notificationSound = False if control.setting('notification.sound') == 'false' else True
+
 
 class lib_tools:
 	@staticmethod
@@ -124,7 +126,7 @@ class libmovies:
 	def add(self, name, title, year, imdb, tmdb, range = False):
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo')\
 				and self.silentDialog is False:
-			control.notification(title = name, message = 32552, icon = 'default', time = 10000000, sound = True)
+			control.notification(title = name, message = 32552, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 
 		try:
@@ -159,7 +161,7 @@ class libmovies:
 			return
 
 		if self.infoDialog is True:
-			control.notification(title = name, message = 32554, icon = 'default', time = 1, sound = True)
+			control.notification(title = name, message = 32554, icon = 'default', time = 1, sound = notificationSound)
 
 		if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
 			control.execute('UpdateLibrary(video)')
@@ -169,7 +171,7 @@ class libmovies:
 		control.idle()
 
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 			self.silentDialog = True
 
@@ -191,7 +193,7 @@ class libmovies:
 		if self.infoDialog is True:
 			self.silentDialog = False
 
-			control.notification(title = 'default', message = 'Trakt Movies Sync Complete', icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 'Trakt Movies Sync Complete', icon = 'default', time = 1, sound = notificationSound)
 
 	def range(self, url):
 		control.idle()
@@ -201,7 +203,7 @@ class libmovies:
 			return
 
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 
 		from resources.lib.menus import movies
@@ -219,7 +221,7 @@ class libmovies:
 				pass
 
 		if self.infoDialog is True:
-			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = notificationSound)
 
 		if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
 			control.execute('UpdateLibrary(video)')
@@ -262,7 +264,7 @@ class libtvshows:
 	def add(self, tvshowtitle, year, imdb, tvdb, range = False):
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo')\
 				and self.silentDialog is False:
-			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound =notificationSound )
 			self.infoDialog = True
 
 		from resources.lib.menus import episodes
@@ -314,7 +316,7 @@ class libtvshows:
 			return
 
 		if self.infoDialog is True:
-			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = notificationSound)
 
 		if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
 			control.execute('UpdateLibrary(video)')
@@ -324,7 +326,7 @@ class libtvshows:
 		control.idle()
 
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-			control.notification(title = 'default', message = 32608, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32608, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 			self.silentDialog = True
 
@@ -343,7 +345,7 @@ class libtvshows:
 
 		if self.infoDialog is True:
 			self.silentDialog = False
-			control.notification(title = 'default', message = 'Trakt TV Show Sync Complete', icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 'Trakt TV Show Sync Complete', icon = 'default', time = 1, sound = notificationSound)
 
 
 	def range(self, url):
@@ -354,7 +356,7 @@ class libtvshows:
 			return
 
 		if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 
 		from resources.lib.menus import tvshows
@@ -372,7 +374,7 @@ class libtvshows:
 				pass
 
 		if self.infoDialog is True:
-			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = notificationSound)
 
 		if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
 			control.execute('UpdateLibrary(video)')
@@ -493,7 +495,7 @@ class libepisodes:
 			return
 
 		if info == 'true' and not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-			control.notification(title = 'default', message = 32553, icon = 'default', time = 10000000, sound = False)
+			control.notification(title = 'default', message = 32553, icon = 'default', time = 10000000, sound = notificationSound)
 			self.infoDialog = True
 
 		try:
@@ -601,7 +603,7 @@ class libepisodes:
 					pass
 
 		if self.infoDialog is True:
-			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
+			control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = notificationSound)
 
 		if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
 			control.execute('UpdateLibrary(video)')

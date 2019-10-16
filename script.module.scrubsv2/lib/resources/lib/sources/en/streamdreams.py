@@ -14,8 +14,8 @@ class source:
         self.language = ['en']
         self.domains = ['streamdreams.org']
         self.base_link = 'https://streamdreams.org'
-        self.search_movie = '/movies/!!!-%s/'
-        self.search_tv = '/shows/!!!-%s/'
+        self.search_movie = '/movies/bbb-%s/'
+        self.search_tv = '/shows/bbb-%s/'
         self.scraper = cfscrape.create_scraper()
 
 

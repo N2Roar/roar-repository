@@ -505,6 +505,34 @@ elif action == 'podcastOne':
     else:
         podcast.podcast().pco_root()
 
+elif action == 'wrestlingNavigator':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().root()
+
+elif action == 'wrestlingMenuLA':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().rootLA()
+
+elif action == 'wrestlingMenuCZ':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().rootCZ()
+
+elif action == 'wrestlingMenu24':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().root24()
+
+elif action == 'wrestlingMenuAWL':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().rootAWL()
+
+elif action == 'wrestlingScrape':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().scrape(url)
+
+elif action == 'wrestlingPlay':
+    from resources.lib.indexers import watchwrestling
+    watchwrestling.WatchWrestling().play(url)
+
 elif action == 'iptvNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().iptvplug()

@@ -9,6 +9,7 @@ except:
 
 from resources.lib.modules import control
 
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 def clearViews():
 	try:
@@ -46,7 +47,7 @@ def clearViews():
 
 		skinName = control.addon(skin).getAddonInfo('name')
 		skinIcon = control.addon(skin).getAddonInfo('icon')
-		control.notification(title = skinName, message = 'View Types Successfully Cleared!', icon = skinIcon, sound = True)
+		control.notification(title = skinName, message = 'View Types Successfully Cleared!', icon = skinIcon, sound = notificationSound)
 	except:
 		import traceback
 		traceback.print_exc()
@@ -72,7 +73,7 @@ def addView(content):
 		skinName = control.addon(skin).getAddonInfo('name')
 		skinIcon = control.addon(skin).getAddonInfo('icon')
 
-		control.infoDialog(viewName, heading=skinName, sound=True, icon=skinIcon)
+		control.infoDialog(viewName, heading=skinName, sound=notificationSound, icon=skinIcon)
 	except:
 		return
 

@@ -50,7 +50,11 @@ def url_clean(url):
 
 
 def get_host(url):
-    host = re.findall('([\w]+[.][\w]+)$', urlparse.urlparse(url.strip().lower()).netloc)[0]
+    try:
+        host = re.findall('([\w]+[.][\w]+)$', urlparse.urlparse(url.strip().lower()).netloc)[0]
+    except:
+        elements = urlparse.urlparse(url)
+        host = elements.netloc
     return host
 
 

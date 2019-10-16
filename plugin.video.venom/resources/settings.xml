@@ -6,9 +6,7 @@
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
 		<setting id="icon.logos" type="select" label="40033" values="Traditional|Meta Provider Logos" default="Traditional" visible="true" />
 		<setting id="index.labels" type="bool" label="40034" default="true" />
-		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
-		<setting type="lsep" label="32319" />
-
+		<setting id="api.language" type="select" label="32316" values="AUTO|English|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="English" />
 		<setting id="page.item.limit" type="slider" label="32011" default="20" range="10,60" option="int" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="disable.fanarttv" type="bool" label="32012" default="false" />
@@ -17,8 +15,9 @@
 		<setting id="hidecinema" type="bool" label="32571" default="false" />
 		<setting id="hidecinema.rollback" type="slider" label="40063" enable="eq(-1,true)" default="6" range="1,12" option="int" />
 		<setting id="newmovies.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />
-		<setting id="mylists.widget" type="bool" label="32329" default="true" />
-		<setting label="My Movies and Collections" type="lsep" />
+		<setting id="notification.sound" type="bool" label="Enable Notification Sound" default="false" />
+
+		<setting type = "lsep" label="32003" />
 		<setting id="sort.movies.type" type="select" label="35190" lvalues="33564|33039|35187|35188|35391|35392|35393" default="4" />
 		<setting id="sort.movies.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
 	</category>
@@ -26,11 +25,14 @@
 
 <!-- Navigation - 1 -->
 	<category label="32621">
-		<setting type="lsep" label="32001" />
-		<setting id="navi.youtube" type="bool" label="40061" default="false" />
-		<setting id="navi.xmascollections" type="bool" label="40064" default="false" />
-		<setting id="navi.originals" type="bool" label="40069" default="false" />
+		<setting type="lsep" label="32005" />
+		<setting id="mylists.widget" type="bool" label="32329" default="true" />
 		<setting id="navi.anime" type="bool" label="40068" default="false" />
+		<setting id="navi.youtube" type="bool" label="40061" default="false" />
+		<setting id="navi.news" type="bool" label="32013" default="true" />
+		<setting id="navi.changelog" type="bool" label="32014" default="true" />
+
+		<setting type="lsep" label="32001" />
 		<setting id="navi.movie.imdb.intheater" type="bool" label="32421" default="true" />
 		<setting id="navi.movie.tmdb.nowplaying" type="bool" label="32423" default="true" />
 		<setting id="navi.movie.trakt.anticipated" type="bool" label="32425" default="true" />
@@ -40,12 +42,41 @@
 		<setting id="navi.movie.trakt.popular" type="bool" label="32433" default="true" />
 		<setting id="navi.movie.imdb.boxoffice" type="bool" label="32435" default="true" />
 		<setting id="navi.movie.trakt.boxoffice" type="bool" label="32437" default="true" />
+		<setting id="navi.movie.imdb.mostvoted" type="bool" label="32439" default="true" />
+		<setting id="navi.movie.tmdb.toprated" type="bool" label="32441" default="true" />
+		<setting id="navi.movie.trakt.trending" type="bool" label="32443" default="true" />
+		<setting id="navi.movie.trakt.recommended" type="bool" label="32445" default="true" />
+		<setting id="navi.movie.imdb.featured" type="bool" label="32447" default="true" />
+		<setting id="navi.movie.collections" type="bool" label="32000" default="true" />
+		<setting id="navi.xmascollections" type="bool" label="40064" enable="eq(-1,true)" default="false" />
+		<setting id="navi.movie.imdb.oscarwinners" type="bool" label="32452" default="true" />
+		<setting id="navi.movie.imdb.oscarnominees" type="bool" label="32454" default="true" />
+		<setting id="navi.movie.imdb.genres" type="bool" label="32456" default="true" />
+		<setting id="navi.movie.imdb.years" type="bool" label="32458" default="true" />
+		<setting id="navi.movie.imdb.people" type="bool" label="32460" default="true" />
+		<setting id="navi.movie.imdb.languages" type="bool" label="32462" default="true" />
+		<setting id="navi.movie.imdb.certificates" type="bool" label="32464" default="true" />
+
 		<setting type="lsep" label="32002" />
+		<setting id="navi.originals" type="bool" label="40069" default="false" />
 		<setting id="navi.tv.imdb.popular" type="bool" label="32429" default="true" />
 		<setting id="navi.tv.tmdb.popular" type="bool" label="32431" default="true" />
 		<setting id="navi.tv.trakt.popular" type="bool" label="32433" default="true" />
 		<setting id="navi.tv.imdb.mostvoted" type="bool" label="32439" default="true" />
 		<setting id="navi.tv.tmdb.toprated" type="bool" label="32441" default="true" />
+		<setting id="navi.tv.trakt.trending" type="bool" label="32443" default="true" />
+		<setting id="navi.tv.imdb.highlyrated" type="bool" label="32449" default="true" />
+		<setting id="navi.tv.trakt.recommended" type="bool" label="32445" default="true" />
+		<setting id="navi.tv.imdb.genres" type="bool" label="32456" default="true" />
+		<setting id="navi.tv.tvmaze.networks" type="bool" label="32470" default="true" />
+		<setting id="navi.tv.imdb.languages" type="bool" label="32462" default="true" />
+		<setting id="navi.tv.imdb.certificates" type="bool" label="32464" default="true" />
+		<setting id="navi.tv.tmdb.airingtoday" type="bool" label="32467" default="true" />
+		<setting id="navi.tv.imdb.airingtoday" type="bool" label="32466" default="true" />
+		<setting id="navi.tv.tmdb.ontv" type="bool" label="32472" default="true" />
+		<setting id="navi.tv.imdb.returningtvshows" type="bool" label="32474" default="true" />
+		<setting id="navi.tv.imdb.newtvshows" type="bool" label="32476" default="true" />
+		<setting id="navi.tv.tvmaze.calendar" type="bool" label="32450" default="true" />
 	</category>
 
 
@@ -58,6 +89,10 @@
 		<setting id="tv.specials" type="bool" label="32649" default="true" />
 		<setting id="showunaired" type="bool" label="32570" default="true" />
 		<setting id="unaired.identify" type="select" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671|32598" default="8" enable="eq(-1,true)" />
+		<setting id="tvshows.seasoncount.enabled" type="bool" label="33890" default="false" />
+		<setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="false" />
+		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
+
 		<setting type="lsep" label="40025" />
 		<setting type="action" action="InstallAddon(service.upnext)" label="40027" option="close" visible="!System.HasAddon(service.upnext)"/>
 		<setting type="bool" id="enable.upnext" default="false" label="40028" visible="System.HasAddon(service.upnext)" />
@@ -65,9 +100,8 @@
 		<setting id="upnext.notice" type="action" label="  [COLOR FFA0C12C]If enabled Episodes are hard coded to Auto play[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
 		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
 		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
-		<setting id="tvshows.seasoncount.enabled" type="bool" label="33890" default="false" />
-		<setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="false" />
-		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
+
+
 		<setting type="lsep" label="32375" />
 		<setting id="tvshows.networks.view" type="enum" label="32376" lvalues="32377|32378" default="1" />
 		<!-- <setting id="tvshows.networks.filter" type="select" label="32379" lvalues="32380|32381|32382|32383|32384|32385" default="4" enable="eq(-1, 1)" /> -->
@@ -110,7 +144,7 @@
 
 <!-- Source Filters - 5 -->
 	<category label="Source Filters">
-		<setting id="providers.lang" type="select" label="32360" values="English|German" default="English" />
+		<setting id="providers.lang" type="select" label="32360" values="English|German|Greek|Polish|Spanish|German+English|Greek+English|Polish+English|Spanish+English" default="English" />
 		<setting id="scrapers.timeout.1" type="slider" label="32312" default="30" range="10,60" option="int" />
 		<setting id="debrid.only" type="bool" label="32653" default="false" enable="true" />
 		<setting id="hosts.mode" type="select" label="32331" lvalues="32332|32333|32334" default="1" />

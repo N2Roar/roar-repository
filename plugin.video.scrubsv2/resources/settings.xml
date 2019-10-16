@@ -53,6 +53,7 @@
         <setting id="navi.moviepopular" type="bool" label="32018" default="true" />
         <setting id="navi.movieviews" type="bool" label="32019" default="true" />
         <setting id="navi.movieboxoffice" type="bool" label="32020" default="true" />
+        <setting id="navi.movieAnticipated" type="bool" label="32322" default="true" />
         <setting id="navi.moviepremiere" type="bool" label="42014" default="true" />
         <setting id="navi.movietheaters" type="bool" label="32022" default="true" />
         <setting id="navi.movieoscars" type="bool" label="32021" default="true" />

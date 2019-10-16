@@ -37,7 +37,7 @@ content = params.get('content')
 
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
-
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 if action is None:
 	from resources.lib.menus import navigator
@@ -563,9 +563,9 @@ elif action == 'queueItem':
 	from resources.lib.modules import control
 	control.queueItem()
 	if name is None:
-		control.notification(title = 35515, message = 35519, icon = 'INFO', sound = False)
+		control.notification(title = 35515, message = 35519, icon = 'INFO', sound = notificationSound)
 	else:
-		control.notification(title = name, message = 35519, icon = 'INFO', sound = False)
+		control.notification(title = name, message = 35519, icon = 'INFO', sound = notificationSound)
 
 
 

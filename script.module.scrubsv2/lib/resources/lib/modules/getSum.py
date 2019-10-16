@@ -189,6 +189,23 @@ def replaceHTMLCodes(text):
     return text
 
 
+def unpacked(url):
+    try:
+        from resources.lib.modules import client
+        from resources.lib.modules import jsunpack
+        from resources.lib.modules import log_utils
+        unpacked = ''
+        html = client.request(url)
+        if jsunpack.detect(html):
+            unpacked = jsunpack.unpack(html)
+            #log_utils.log('WatchWrestling - unpacked: \n' + str(unpacked))
+        else:
+            log_utils.log('getSum - unpacked - Failed.')
+        return unpacked
+    except:
+        return
+
+
 def TEST_RUN():
     import re
     from resources.lib.modules import jsunpack
@@ -198,7 +215,7 @@ def TEST_RUN():
     data = get(url, Type='cfscrape')
     packed = find_match(data, "text/javascript'>(eval.*?)\s*</script>")
     unpacked = jsunpack.unpack(packed)
-    log_utils.log('---getSum TEST_RUN - unpacked: \n' + str(media_url))
+    log_utils.log('---getSum TEST_RUN - unpacked: \n' + str(unpacked))
     log_utils.log('#####################################')
     return unpacked
 

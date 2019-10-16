@@ -13,7 +13,7 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['milversite.live', 'filmovizija.vip', 'filmovizija.fun']
-        self.base_link = 'https://www.milversite.live'
+        self.base_link = 'http://milversite.live'
         self.search_link = 'https://www.milversite.live/search.php?all=all&keywords=%s&vselect=%s'
 
 

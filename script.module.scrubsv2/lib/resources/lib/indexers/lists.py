@@ -30,7 +30,8 @@ class indexer:
     def rootMC(self):
         try:
             regex.clear()
-            url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.xml'
+            url = 'https://textuploader.com/11m10/raw'
+            #url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.xml'
             self.list = self.noname_list(url)
             for i in self.list:
                 i.update({'content': 'addons'})

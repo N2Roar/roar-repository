@@ -52,7 +52,7 @@ msgid "My TV Shows"
 msgstr ""
 
 msgctxt "#32005"
-msgid ""
+msgid "Main"
 msgstr ""
 
 msgctxt "#32006"
@@ -84,11 +84,11 @@ msgid "Disable Extended artwork(fanart.tv)"
 msgstr ""
 
 msgctxt "#32013"
-msgid ""
+msgid "News and Info!!"
 msgstr ""
 
 msgctxt "#32014"
-msgid ""
+msgid "Change Log!!"
 msgstr ""
 
 msgctxt "#32015"
@@ -132,7 +132,7 @@ msgid "Error Connecting to TMDB"
 msgstr ""
 
 msgctxt "#32025"
-msgid ""
+msgid "My Ratings"
 msgstr ""
 
 msgctxt "#32026"
@@ -331,6 +331,12 @@ msgctxt "#32074"
 msgid "[B]HELP[/B]"
 msgstr ""
 
+
+
+
+
+
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""
@@ -392,7 +398,7 @@ msgid "Trakt"
 msgstr ""
 
 msgctxt "#32316"
-msgid "Info Language"
+msgid "api Language"
 msgstr ""
 
 msgctxt "#32317"
@@ -1957,19 +1963,6 @@ msgstr ""
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 msgctxt "#33486"
 msgid "Close"
 msgstr ""
@@ -2033,275 +2026,6 @@ msgstr ""
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-msgctxt "#35500"
-msgid "Watch"
-msgstr ""
-
-msgctxt "#35501"
-msgid ""
-msgstr ""
-
-msgctxt "#35502"
-msgid ""
-msgstr ""
-
-msgctxt "#35503"
-msgid ""
-msgstr ""
-
-msgctxt "#35504"
-msgid ""
-msgstr ""
-
-msgctxt "#35505"
-msgid ""
-msgstr ""
-
-msgctxt "#35506"
-msgid ""
-msgstr ""
-
-msgctxt "#35507"
-msgid ""
-msgstr ""
-
-msgctxt "#35508"
-msgid ""
-msgstr ""
-
-msgctxt "#35509"
-msgid ""
-msgstr ""
-
-msgctxt "#35510"
-msgid ""
-msgstr ""
-
-msgctxt "#35511"
-msgid ""
-msgstr ""
-
-msgctxt "#35512"
-msgid ""
-msgstr ""
-
-msgctxt "#35513"
-msgid ""
-msgstr ""
-
-msgctxt "#35514"
-msgid ""
-msgstr ""
-
-msgctxt "#35515"
-msgid ""
-msgstr ""
-
-msgctxt "#35516"
-msgid ""
-msgstr ""
-
-msgctxt "#35517"
-msgid ""
-msgstr ""
-
-msgctxt "#35518"
-msgid ""
-msgstr ""
-
-msgctxt "#35519"
-msgid ""
-msgstr ""
-
-msgctxt "#35520"
-msgid ""
-msgstr ""
-
-msgctxt "#35521"
-msgid ""
-msgstr ""
-
-msgctxt "#35522"
-msgid ""
-msgstr ""
-
-msgctxt "#35523"
-msgid ""
-msgstr ""
-
-msgctxt "#35524"
-msgid ""
-msgstr ""
-
-msgctxt "#35525"
-msgid ""
-msgstr ""
-
-msgctxt "#35526"
-msgid ""
-msgstr ""
-
-msgctxt "#35527"
-msgid ""
-msgstr ""
-
-msgctxt "#35528"
-msgid ""
-msgstr ""
-
-msgctxt "#35529"
-msgid ""
-msgstr ""
-
-msgctxt "#35530"
-msgid ""
-msgstr ""
-
-msgctxt "#35531"
-msgid ""
-msgstr ""
-
-msgctxt "#35532"
-msgid ""
-msgstr ""
-
-msgctxt "#35533"
-msgid ""
-msgstr ""
-
-msgctxt "#35534"
-msgid ""
-msgstr ""
-
-msgctxt "#35535"
-msgid ""
-msgstr ""
-
-msgctxt "#35536"
-msgid ""
-msgstr ""
-
-msgctxt "#35537"
-msgid ""
-msgstr ""
-
-msgctxt "#35538"
-msgid ""
-msgstr ""
-
-msgctxt "#35539"
-msgid ""
-msgstr ""
-
-msgctxt "#35540"
-msgid ""
-msgstr ""
-
-msgctxt "#35541"
-msgid ""
-msgstr ""
-
-msgctxt "#35542"
-msgid ""
-msgstr ""
-
-msgctxt "#35543"
-msgid ""
-msgstr ""
-
-msgctxt "#35544"
-msgid ""
-msgstr ""
-
-msgctxt "#35545"
-msgid ""
-msgstr ""
-
-msgctxt "#35546"
-msgid ""
-msgstr ""
-
-msgctxt "#35547"
-msgid "Force"
-msgstr ""
-
-msgctxt "#35548"
-msgid ""
-msgstr ""
-
-msgctxt "#35549"
-msgid ""
-msgstr ""
-
-msgctxt "#35550"
-msgid ""
-msgstr ""
-
-msgctxt "#35551"
-msgid ""
-msgstr ""
-
-msgctxt "#35552"
-msgid ""
-msgstr ""
-
-msgctxt "#35553"
-msgid ""
-msgstr ""
-
-msgctxt "#35554"
-msgid ""
-msgstr ""
-
-msgctxt "#35555"
-msgid ""
-msgstr ""
-
-msgctxt "#35556"
-msgid ""
-msgstr ""
-
-msgctxt "#35557"
-msgid ""
-msgstr ""
-
-msgctxt "#35558"
-msgid ""
-msgstr ""
-
-msgctxt "#35559"
-msgid ""
-msgstr ""
-
-msgctxt "#35560"
-msgid ""
-msgstr ""
-
-msgctxt "#35561"
-msgid ""
-msgstr ""
-
-msgctxt "#35562"
-msgid ""
-msgstr ""
-
-msgctxt "#35563"
-msgid ""
-msgstr ""
 
 msgctxt "#33564"
 msgid "Default"
@@ -2754,11 +2478,6 @@ msgstr ""
 
 
 
-
-
-
-
-
 msgctxt "#35308"
 msgid "Unfinished"
 msgstr ""
@@ -2815,7 +2534,6 @@ msgstr ""
 msgctxt "#35487"
 msgid ""
 msgstr ""
-
 
 msgctxt "#35488"
 msgid ""
@@ -3002,6 +2720,12 @@ msgid ""
 msgstr ""
 
 
+
+
+
+msgctxt "#35547"
+msgid "Force"
+msgstr ""
 
 
 
@@ -3201,7 +2925,7 @@ msgid "Months to Rollback for Hide in Cinema"
 msgstr ""
 
 msgctxt "#40064"
-msgid "Enable Christmas Collections"
+msgid "   Enable Christmas Collections"
 msgstr ""
 
 msgctxt "#40065"

@@ -25,6 +25,7 @@ REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 databaseName = control.cacheFile
 databaseTable = 'trakt'
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 def getTrakt(url, post = None, cache = True, check = True, timestamp = None, extended = False, direct = False, authentication = None):
@@ -129,7 +130,7 @@ def getTraktAsJson(url, post = None, authentication = None):
 def _error(url, post, timestamp, message):
 	_cache(url = url, post = post, timestamp = timestamp)
 	if control.setting('trakt.notifications'):
-		control.notification(title = 32315, message = message, icon = 'ERROR', sound = True)
+		control.notification(title = 32315, message = message, icon = 'ERROR', sound = notificationSound)
 	control.hide()
 	return None
 
@@ -338,7 +339,7 @@ def watch(imdb = None, tvdb = None, season = None, episode = None, refresh = Tru
 	if refresh:
 		control.refresh()
 	if notification:
-		control.notification(title = 32315, message = 35502, icon = 'INFO', sound = False)
+		control.notification(title = 32315, message = 35502, icon = 'INFO', sound = notificationSound)
 
 
 def unwatch(imdb = None, tvdb = None, season = None, episode = None, refresh = True, notification = False):
@@ -360,7 +361,7 @@ def unwatch(imdb = None, tvdb = None, season = None, episode = None, refresh = T
 	if refresh:
 		control.refresh()
 	if notification:
-		control.notification(title = 32315, message = 35503, icon = 'INFO', sound = False)
+		control.notification(title = 32315, message = 35503, icon = 'INFO', sound = notificationSound)
 
 
 def rate(imdb = None, tvdb = None, season = None, episode = None):
@@ -406,7 +407,7 @@ def _rating(action, imdb = None, tvdb = None, season = None, episode = None):
 			data = {'action': 'manualRating', 'ratingData': data}
 			sqlitequeue.SqliteQueue().append(data)
 		else:
-			control.notification(title = 32315, message = 33659, icon = 'INFO', sound = False)
+			control.notification(title = 32315, message = 33659, icon = 'INFO', sound = notificationSound)
 	except:
 		pass
 
@@ -486,7 +487,7 @@ def manager(name, imdb = None, tvdb = None, season = None, episode = None, refre
 				message = 33583 if (select % 2) != 0 else 33582
 				if select >= 9:
 					message = 33583 if (select % 2) == 0 else 33582
-				control.notification(title = name, message = message, icon = 'INFO', sound = False)
+				control.notification(title = name, message = message, icon = 'INFO', sound = notificationSound)
 	except:
 		import traceback
 		traceback.print_exc()
@@ -506,10 +507,10 @@ def listAdd(successNotification = True):
 	try:
 		slug = json.loads(result)['ids']['slug']
 		if successNotification:
-			control.notification(title = 32070, message = 33661, icon = 'INFO', sound = False)
+			control.notification(title = 32070, message = 33661, icon = 'INFO', sound = notificationSound)
 		return slug
 	except:
-		control.notification(title = 32070, message = 33584, icon = 'iNFO', sound = False)
+		control.notification(title = 32070, message = 33584, icon = 'iNFO', sound = notificationSound)
 		return None
 
 
