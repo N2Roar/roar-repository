@@ -245,8 +245,8 @@ class Sources:
 					try:
 						if progressDialog.iscanceled():
 							break
-						# progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
-						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
+						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+						# progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
 					except:
 						progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1068,7 +1068,6 @@ class Sources:
 		multi = [i['language'] for i in self.sources]
 		multi = [x for y, x in enumerate(multi) if x not in multi[:y]]
 		multi = True if len(multi) > 1 else False
-		log_utils.log('multi %s' % str(multi), log_utils.LOGNOTICE)
 
 		if multi is True:
 			self.sources = [i for i in self.sources if i['language'] != 'en'] + [i for i in self.sources if i['language'] == 'en']

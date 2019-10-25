@@ -11,6 +11,7 @@ from resources.lib.modules import control
 
 notificationSound = False if control.setting('notification.sound') == 'false' else True
 
+
 def clearViews():
 	try:
 		skin = control.skin

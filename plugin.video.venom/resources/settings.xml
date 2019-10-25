@@ -108,10 +108,10 @@
 		<setting label="32004" type="lsep" />
 		<setting id="sort.shows.type" type="select" label="35191" lvalues="33564|33039|35187|35188|35391|35392|35393" default="6" />
 		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
-		<setting id="sort.progress.type" type="select" label="35572" lvalues="33564|33039|35187|35188|35391|35392|35393" default="6" />
-		<setting id="sort.progress.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" />
+		<setting id="sort.progress.type" type="select" label="35572" lvalues="33564|33039|35187|35188|35391|35392|35393" default="4" />
+		<setting id="sort.progress.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
 		<setting id="sort.calendar.type" type="select" label="35573" lvalues="33564|33039|35187|35188|35391|35392|35393" default="4" />
-		<setting id="sort.calendar.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" />
+		<setting id="sort.calendar.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
 
 		<setting id="tvshows.air.enabled" type="bool" label="35017" default="false" subsetting="false" />
 		<setting id="tvshows.air.zone" type="select" label="35018" lvalues="32314|35022|35023" default="0" subsetting="true" visible="eq(-1,true)" />

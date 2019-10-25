@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -125,7 +125,7 @@ class Movies:
 		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=%d&page=1' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
-		self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+		self.traktonDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
 
 		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
 		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
@@ -167,10 +167,10 @@ class Movies:
 				if idx is True:
 					self.worker(level=0)
 
-			elif self.traktunfinished_link in url:
-				self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
-				if idx is True:
-					self.worker(level=0)
+			# elif self.traktunfinished_link in url:
+				# self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+				# if idx is True:
+					# self.worker(level=0)
 
 			elif u in self.trakt_link:
 				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
@@ -243,30 +243,53 @@ class Movies:
 					control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 
 
-	# def unfinished(self):
-		# try:
-			# try:
-				# activity = trakt.getWatchedActivity()
-				# if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user, False):
-					# raise Exception()
-				# self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user, False)
-			# except:
-				# self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user, False)
-			# self.sort()
-			# if idx is True:
-				# self.worker(level=0)
-				# self.movieDirectory(self.list)
-		# except:
-			# import traceback
-			# traceback.print_exc()
-			# try:
-				# invalid = (self.list is None or len(self.list) == 0)
-			# except:
-				# invalid = True
-			# if invalid:
-				# control.idle()
-					# if self.notifications:
-					# control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
+	def unfinished(self, url, idx=True):
+		try:
+			try:
+				url = getattr(self, url + '_link')
+			except:
+				pass
+
+			activity = trakt.getWatchedActivity()
+			self.list = []
+			if url == self.traktonDeck_link:
+				try:
+					if activity > cache.timeout(self.trakt_list, url, self.trakt_user):
+						raise Exception()
+					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
+				except:
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+				if idx is True:
+					self.worker()
+
+			if url == self.traktunfinished_link :
+				try:
+					if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user):
+						raise Exception()
+					self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user)
+				except:
+					self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user)
+				if idx is True:
+					self.worker()
+
+			if idx is True:
+			# self.sort(type = 'calendar')
+				self.sort()
+				self.movieDirectory(self.list)
+			# self.movieDirectory(self.list, unfinished=True, next=False)
+
+			return self.list
+		except:
+			import traceback
+			traceback.print_exc()
+			try:
+				invalid = (self.list is None or len(self.list) == 0)
+			except:
+				invalid = True
+			if invalid:
+				control.idle()
+				if self.notifications:
+					control.notification(title=32001, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def newMovies(self):
@@ -662,7 +685,14 @@ class Movies:
 				except:
 					title = item.get('title')
 
-				year = str(item.get('year'))
+				premiered = item.get('released', '0')
+
+				year = str(item.get('year', '0'))
+				if year == 'None' or year == '0':
+					year = str(premiered)
+					year = re.search(r"(\d{4})", year).group(1)
+
+				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
 				try:
 					progress = item['progress']
@@ -676,8 +706,6 @@ class Movies:
 				tmdb = str(item.get('ids', {}).get('tmdb', 0))
 				if tmdb == '' or tmdb is None or tmdb == 'None':
 					tmdb = '0'
-
-				premiered = item.get('released', '0')
 
 				genre = []
 				for x in item['genres']:
@@ -910,7 +938,7 @@ class Movies:
 				plot = client.replaceHTMLCodes(plot)
 				plot = plot.encode('utf-8')
 
-				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': '0', 'genre': genre, 'duration': duration, 'rating': rating,
 									'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'tagline': '0', 'plot': plot, 'imdb': imdb,
 									'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
@@ -1030,14 +1058,14 @@ class Movies:
 
 			imdb = self.list[i]['imdb']
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
-# may be issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
+# maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
 			item = trakt.getMovieSummary(id=imdb)
 
 			title = item.get('title')
 
 			originaltitle = title
 
-			year = str(item.get('year', 0))
+			year = self.list[i]['year'] or str(item.get('year', '0'))
 
 			if imdb == '0' or imdb is None:
 				imdb = item.get('ids', {}).get('imdb', '0')
@@ -1048,7 +1076,8 @@ class Movies:
 			if tmdb == '' or tmdb is None or tmdb == 'None':
 				tmdb = '0'
 
-			premiered = item.get('released', '0')
+			premiered = self.list[i]['premiered'] or item.get('released', '0')
+			# premiered = item.get('released', '0')
 
 			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
 				genre = []
@@ -1060,16 +1089,18 @@ class Movies:
 
 			duration = str(item.get('runtime', '0'))
 
-			rating = str(item.get('rating', '0'))
-			votes = str(format(int(item.get('votes', '0')),',d'))
+			rating = self.list[i]['rating'] or str(item.get('rating', '0'))
+			votes = self.list[i]['votes'] or str(format(int(item.get('votes', '0')),',d'))
 
-			mpaa = item.get('certification', '0')
-			if not mpaa:
-				mpaa = '0'
+			mpaa = self.list[i]['mpaa'] or item.get('certification', '0')
 
-			tagline = item.get('tagline', '0')
+			# tagline = self.list[i]['tagline'] or item.get('tagline', '0')
+			tagline = '0'
+			plot2 = item.get('overview', '0')
+			try: plot2 = plot2.encode('utf-8')
+			except: pass
 
-			plot = item.get('overview', '0')
+			plot = self.list[i]['plot'] or plot2
 
 #########################################
 			from resources.lib.indexers.tmdb import Movies

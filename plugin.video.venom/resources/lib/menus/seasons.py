@@ -495,7 +495,7 @@ class Seasons:
 				premiered = premiered.encode('utf-8')
 
 				# Show Unaired items.
-				if status == 'Ended':
+				if status.lower() == 'ended':
 					pass
 				elif premiered == '0':
 					raise Exception()
@@ -522,7 +522,6 @@ class Seasons:
 				if thumb == '0':
 					thumb = poster
 
-
 				try:
 					seasoncount = counts[season]
 				except:
@@ -545,8 +544,8 @@ class Seasons:
 				premiered = client.replaceHTMLCodes(premiered)
 				premiered = premiered.encode('utf-8')
 
-				# Show future items
-				if status == 'Ended':
+				# Show Unaired items.
+				if status.lower() == 'ended':
 					pass
 				elif premiered == '0':
 					raise Exception()

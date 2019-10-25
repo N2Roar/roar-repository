@@ -136,7 +136,7 @@ class Player(xbmc.Player):
 			thumb = meta.get('thumb')
 			thumb = thumb or poster or control.addonThumb()
 
-			season_poster = meta.get('season_poster')
+			season_poster = meta.get('season_poster') or poster
 
 			fanart1 = meta.get('fanart')
 			fanart2 = meta.get('fanart2')

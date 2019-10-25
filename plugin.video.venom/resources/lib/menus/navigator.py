@@ -146,7 +146,8 @@ class Navigator:
 			self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
 
 			if traktIndicators is True:
-				self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				self.addDirectoryItem(32468, 'moviesUnfinished&url=traktonDeck', 'trakt.png', 'DefaultYear.png')
+				self.addDirectoryItem(35308, 'moviesUnfinished&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				# self.addDirectoryItem(32037, 'movies&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32033, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultVideoPlaylists.png', queue=True)
@@ -156,7 +157,8 @@ class Navigator:
 			self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
 
 			if traktIndicators is True:
-				self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				self.addDirectoryItem(32468, 'moviesUnfinished&url=traktonDeck', 'trakt.png', 'DefaultYear.png')
+				self.addDirectoryItem(35308, 'moviesUnfinished&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				# self.addDirectoryItem(32037, 'movies&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 
@@ -234,8 +236,8 @@ class Navigator:
 			self.addDirectoryItem(32041, 'episodesUserlists', 'userlists.png', 'DefaultVideoPlaylists.png')
 
 			if traktIndicators is True:
-				self.addDirectoryItem(32468, 'calendar&url=onDeck', 'trakt.png', 'DefaultYear.png')
-				self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				self.addDirectoryItem(32468, 'episodesUnfinished&url=traktonDeck', 'trakt.png', 'DefaultYear.png')
+				self.addDirectoryItem(35308, 'episodesUnfinished&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'DefaultYear.png', queue=True)
@@ -247,7 +249,8 @@ class Navigator:
 			self.addDirectoryItem(32041, 'episodesUserlists', 'trakt.png', 'DefaultVideoPlaylists.png')
 
 			if traktIndicators is True:
-				self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
+				self.addDirectoryItem(32468, 'episodesUnfinished&url=traktonDeck', 'trakt.png', 'DefaultYear.png')
+				self.addDirectoryItem(35308, 'episodesUnfinished&url=traktunfinished', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultVideoPlaylists.png', queue=True)
 				self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultVideoPlaylists.png.png', queue=True)
 				self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'DefaultYear.png', queue=True)

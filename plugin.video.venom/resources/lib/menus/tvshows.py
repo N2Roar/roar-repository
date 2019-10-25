@@ -23,6 +23,7 @@ params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) 
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
 
+
 class TVshows:
 	def __init__(self, type = 'show', notifications = True):
 		self.count = int(control.setting('page.item.limit'))
@@ -657,7 +658,11 @@ class TVshows:
 				except:
 					title = item['title']
 
-				year = str(item.get('year'))
+				year = str(item.get('year', '0'))
+				if year == 'None' or year == '0':
+					raise Exception()
+
+				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
 				imdb = item.get('ids', {}).get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
@@ -692,12 +697,12 @@ class TVshows:
 				mpaa = item.get('certification', '0')
 
 				plot = item.get('overview')
+				try: plot = plot.encode('utf-8')
+				except: pass
 
 				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
 										'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
 			except:
-				import traceback
-				traceback.print_exc()
 				pass
 
 		return list

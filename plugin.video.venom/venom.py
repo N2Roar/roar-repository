@@ -148,6 +148,10 @@ elif action == 'moviePersons':
 	from resources.lib.menus import movies
 	movies.Movies().persons(url)
 
+elif action == 'moviesUnfinished':
+	from resources.lib.menus import movies
+	movies.Movies().unfinished(url)
+
 elif action == 'movieUserlists':
 	from resources.lib.menus import movies
 	movies.Movies().userlists()
@@ -357,7 +361,7 @@ elif action == 'calendars':
 
 elif action == 'episodesUnfinished':
 	from resources.lib.menus import episodes
-	episodes.Episodes().unfinished()
+	episodes.Episodes().unfinished(url)
 
 elif action == 'episodesUserlists':
 	from resources.lib.menus import episodes

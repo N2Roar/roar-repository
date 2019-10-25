@@ -113,7 +113,6 @@ class Movies:
 ###                                                                             other "append_to_response" options                             external_ids,alternative_titles,videos,images
 
 		self.tmdb_art_link = base_link + '/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
-
 		self.tmdb_external_ids = base_link + '/3/movie/%s/external_ids?api_key=%s' % ('%s', API_key)
 
 
@@ -121,10 +120,11 @@ class Movies:
 		try:
 			result = get_request(url % API_key)
 			items = result['results']
-			next = ''
-			list = []
 		except:
 			return
+
+		list = []
+		sortList = []
 
 		try:
 			page = int(result['page'])
@@ -151,6 +151,7 @@ class Movies:
 			year = str(item.get('release_date')[:4])
 
 			tmdb = item.get('id')
+			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
 			fanart = '%s%s' % (fanart_path, item['backdrop_path']) if item['backdrop_path'] else '0'
@@ -173,7 +174,6 @@ class Movies:
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
 
 			list.append(values)
-
 
 		def items_list(i):
 			try:
@@ -261,7 +261,11 @@ class Movies:
 		[i.start() for i in threads]
 		[i.join() for i in threads]
 
-		return self.list
+		sorted_list = []
+		for i in sortList:
+			sorted_list += [item for item in self.list if item['tmdb'] == i]
+
+		return sorted_list
 
 
 	def tmdb_collections_list(self, url):
@@ -271,10 +275,10 @@ class Movies:
 				items = result['items']
 			else:
 				items = result['results']
-			next = ''
-			list = []
 		except:
 			return
+
+		list = []
 
 		try:
 			page = int(result['page'])
@@ -486,10 +490,11 @@ class TVshows:
 		try:
 			result = get_request(url % API_key)
 			items = result['results']
-			next = ''
-			list = []
 		except:
 			return
+
+		list = []
+		sortList = []
 
 		try:
 			page = int(result['page'])
@@ -511,6 +516,7 @@ class TVshows:
 			year = str(item.get('first_air_date')[:4])
 
 			tmdb = item.get('id')
+			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
 			fanart = '%s%s' % (fanart_path, item['backdrop_path']) if item['backdrop_path'] else '0'
@@ -565,6 +571,8 @@ class TVshows:
 					except:
 						mpaa = 'NR'
 
+				status = item.get('status', '0')
+
 				try:
 					studio = item.get('networks', None)[0]['name']
 				except:
@@ -589,7 +597,7 @@ class TVshows:
 						castandart = []
 
 				values = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
+								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
 								'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': API_key, 'item': values}
@@ -619,7 +627,11 @@ class TVshows:
 		[i.start() for i in threads]
 		[i.join() for i in threads]
 
-		return self.list
+		sorted_list = []
+		for i in sortList:
+			sorted_list += [item for item in self.list if item['tmdb'] == i]
+
+		return sorted_list
 
 
 	def tmdb_collections_list(self, url):
@@ -629,10 +641,10 @@ class TVshows:
 				items = result['items']
 			else:
 				items = result['results']
-			next = ''
-			list = []
 		except:
 			return
+
+		list = []
 
 		try:
 			page = int(result['page'])
@@ -710,6 +722,8 @@ class TVshows:
 						mpaa = item['content_ratings'][0]['rating']
 					except: mpaa = 'NR'
 
+				status = item.get('status', '0')
+
 				try:
 					studio = item.get('networks', None)[0]['name']
 				except:
@@ -734,7 +748,7 @@ class TVshows:
 						castandart = []
 
 				values = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
