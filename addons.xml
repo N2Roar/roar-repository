@@ -288,7 +288,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.2.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.3.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -325,15 +325,27 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.9 - Oct 21, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed My TV Shows-Unfinished being empty if no imdb account entered.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed My TV Shows-Trakt On Deck menu missing if no imdb account entered.[/I]
-[COLOR yellow]--[/COLOR][I] Added Trakt On Deck to My Movies.[/I]
+[B][COLOR red]Update - v3.3.0 - Oct 27, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Re-wrote TV Shows-Calendar (TVMaze). Hard coded shows air time
+    to display and changed sort to match api response
+    order for time aired.  Added extended artwork from
+    fanart.tv. Added season.posters[/I]
+[COLOR yellow]--[/COLOR][I] Addeed setting option "Direct Progress Scraping" for Trakt Progress list.
+    This will now bypass the Trakt secondary progress episode list and begin
+    scraping current selected episode instead.  Added
+    context menu option "Browse Progress" for when
+    new setting option is enabled to allow bypassing
+    on the fly. Added new context menu option
+    "Direct Progress Scrape" when new setting
+    option is not enabled.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed episode ID ""None" type issue for occasional missing ids in Trakt
+    api response during TV Show search when
+    Up Next is enabled.[/I]
 		</news>
 	</extension>
 </addon>
 
-<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.6" provider-name="doko">
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.3.7" provider-name="doko">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests"/>
@@ -344,6 +356,9 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.3.7:[/B]
+- Fixed thumbnail images with the Show Information context menu.
+
 [B]0.3.6:[/B]
 - Updated the URL to the website, after a domain change.
 
@@ -360,10 +375,6 @@
 
 [B]0.3.2:[/B]
 - Fixed a fault in the stream getting logic.
-
-[B]0.3.1:[/B]
-- Fixed a new way of getting video streams.
-- Added "liked" lists to the Trakt search (besides your own lists).
         </news>
         <description lang="en">
 Watch cartoons and anime from [COLOR orange][B]WatchCartoonOnline.io[/B][/COLOR].

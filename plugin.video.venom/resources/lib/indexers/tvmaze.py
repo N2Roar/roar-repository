@@ -11,7 +11,7 @@ from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import workers
 from resources.lib.modules import cache
-from resources.lib.modules import metacache, log_utils
+from resources.lib.modules import metacache
 
 
 networks_this_season = [
@@ -261,21 +261,27 @@ class tvshows:
 			items = [i[0] for i in items if len(i) > 0]
 			items = items[:list_count]
 		except:
+			import traceback
+			traceback.print_exc()
 			return
 
 		def items_list(i):
 			try:
 				url = self.tvmaze_info_link % i
-				# item = client.request(url)
 				item = client.request(url, timeout='20', error=True)
 				item = json.loads(item)
+
+				content = item.get('type', '0').lower()
 
 				try:
 					title = (item.get('name')).encode('utf-8')
 				except:
 					title = item.get('name')
 
+				premiered = item.get('premiered', '0')
+
 				year = str(item.get('premiered', '0'))
+				year = re.search(r"(\d{4})", year).group(1)
 
 				imdb = item.get('externals').get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
@@ -288,12 +294,8 @@ class tvshows:
 				# TVMaze does not have tmdb in api
 				tmdb = '0'
 
-				premiered = item.get('premiered', '0')
-
-				studio = item.get('network', {})
-				if studio == '0' or studio is None:
-					studio = item.get('webChannel', {})
-				studio = studio.get('name')
+				studio = item.get('network', {}) or item.get('webChannel', {})
+				studio = studio.get('name', '0')
 
 				genre = []
 				for i in item['genres']:
@@ -304,10 +306,8 @@ class tvshows:
 
 				rating = str(item.get('rating').get('average', '0'))
 
-				plot = item.get('summary')
+				plot = item.get('summary', '0')
 				plot = re.sub('<.+?>|</.+?>|\n', '', plot)
-
-				content = item.get('type', '0').lower()
 
 				status = item.get('status', '0')
 
@@ -320,6 +320,7 @@ class tvshows:
 							castandart.append({'name': person['person']['name'], 'role': person['character']['name'], 'thumbnail': (person['person']['image']['medium'] if person['person']['image']['medium'] is not None else '0')})
 					except:
 						castandart = []
+						pass
 
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
@@ -345,16 +346,10 @@ class tvshows:
 					item2 = client.parseDOM(item2, 'Series')
 
 					if tvdb == '0': 
-						try:
-							tvdb = client.parseDOM(item2, 'seriesid')[0]
-						except:
-							tvdb = '0'
+						tvdb = client.parseDOM(item2, 'seriesid')[0] or '0'
 
 					if imdb == '0':
-						try:
-							imdb = client.parseDOM(item2, 'IMDB_ID')[0]
-						except:
-							imdb = '0'
+						imdb = client.parseDOM(item2, 'IMDB_ID')[0] or '0'
 
 				try:
 					if self.tvdb_key == '' or tvdb == '0':
@@ -365,46 +360,50 @@ class tvshows:
 					item3 = None
 
 				if item3 is not None:
-					if poster == '0' :
+					if poster == '0':
 						poster = client.parseDOM(item3, 'poster')[0]
 						if poster != '' or poster is not None:
 							poster = self.tvdb_image + poster
-
-					banner = client.parseDOM(item3, 'banner')[0]
-					if banner != '' or banner is not None:
-						banner = self.tvdb_image + banner
 
 					fanart = client.parseDOM(item3, 'fanart')[0]
 					if fanart != '' or fanart is not None:
 						fanart = self.tvdb_image + fanart
 
-					try:
-						mpaa = client.parseDOM(item3, 'ContentRating')[0]
-					except:
-						mpaa = 'NR'
+					banner = client.parseDOM(item3, 'banner')[0]
+					if banner != '' or banner is not None:
+						banner = self.tvdb_image + banner
+
+					mpaa = client.parseDOM(item3, 'ContentRating')[0] or '0'
 
 					if duration == '0':
-						try:
-							duration = client.parseDOM(item3, 'Runtime')[0]
-						except:
-							duration = '0'
+						duration = client.parseDOM(item3, 'Runtime')[0] or '0'
 
-					try:
-						votes = client.parseDOM(item3, 'RatingCount')[0]
-					except:
-						votes = '0'
+					if rating == '0':
+						rating = client.parseDOM(item3, 'Rating')[0] or '0'
+
+					votes = client.parseDOM(item3, 'RatingCount')[0] or '0'
+
+					if status == '0':
+						status = client.parseDOM(item3, 'Status')[0] or '0'
 
 					if year == '0':
-						try:
-							year = client.parseDOM(item3, 'FirstAired')[0]
-							year = re.compile('(\d{4})').findall(year)[0]
-						except:
-							year = '0'
+						year = client.parseDOM(item3, 'FirstAired')[0]
+						year = re.compile('(\d{4})').findall(year)[0] or '0'
+
+					if plot == '0':
+						plot = client.parseDOM(item3, 'Overview')[0] or '0'
+						plot = client.replaceHTMLCodes(plot)
+						try: plot = plot.encode('utf-8')
+						except: pass
+
+					airday = client.parseDOM(item3, 'Airs_DayOfWeek')[0] or '0'
+					airtime = client.parseDOM(item3, 'Airs_Time')[0] or '0'
 ###-----
 
 				item = {}
 				item = {'content': content, 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 
-							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner,
+							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'airday': airday, 'airtime': airtime, 'poster': poster,
+							'poster2': '0', 'banner': banner,
 							'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {}
@@ -426,6 +425,8 @@ class tvshows:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
+				import traceback
+				traceback.print_exc()
 				pass
 
 		try:
@@ -441,4 +442,6 @@ class tvshows:
 
 			return self.list
 		except:
+			import traceback
+			traceback.print_exc()
 			return

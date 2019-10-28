@@ -254,7 +254,8 @@ class Movies:
 			except:
 				pass
 
-		items = list[:100]
+		# items = list[:100]
+		items = list[:len(list)]
 		threads = []
 		for i in items:
 			threads.append(workers.Thread(items_list, i))
@@ -411,7 +412,8 @@ class Movies:
 			except:
 				pass
 
-		items = list[:100]
+		# items = list[:100]
+		items = list[:len(list)]
 		threads = []
 		for i in items:
 			threads.append(workers.Thread(items_list, i))
@@ -540,7 +542,6 @@ class TVshows:
 
 			list.append(values)
 
-
 		def items_list(i):
 			try:
 				next, title, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = i['next'], i['title'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
@@ -620,7 +621,8 @@ class TVshows:
 			except:
 				pass
 
-		items = list[:100]
+		# items = list[:100]
+		items = list[:len(list)]
 		threads = []
 		for i in items:
 			threads.append(workers.Thread(items_list, i))
@@ -645,6 +647,7 @@ class TVshows:
 			return
 
 		list = []
+		sortList = []
 
 		try:
 			page = int(result['page'])
@@ -670,6 +673,7 @@ class TVshows:
 			year = str(item.get('first_air_date')[:4])
 
 			tmdb = item.get('id')
+			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
 			fanart = '%s%s' % (fanart_path, item['backdrop_path']) if item['backdrop_path'] else '0'
@@ -770,7 +774,20 @@ class TVshows:
 				metacache.insert(self.meta)
 			except:
 				pass
-		return self.list
+
+		# items = list[:100]
+		items = list[:len(list)]
+		threads = []
+		for i in items:
+			threads.append(workers.Thread(items_list, i))
+		[i.start() for i in threads]
+		[i.join() for i in threads]
+
+		sorted_list = []
+		for i in sortList:
+			sorted_list += [item for item in self.list if item['tmdb'] == i]
+
+		return sorted_list
 
 
 	def get_details(self, tmdb, imdb):

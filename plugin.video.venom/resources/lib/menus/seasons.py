@@ -139,7 +139,8 @@ class Seasons:
 				if not found:
 					result.append(i)
 			self.list = result
-		except: pass
+		except:
+			pass
 
 		self.seasonDirectory(self.list)
 
@@ -273,10 +274,8 @@ class Seasons:
 		try:
 			if tvdb == '0':
 				return
-
 			url = self.tvdb_info_link % (tvdb, 'en')
 			data = urllib2.urlopen(url, timeout=30).read()
-
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -565,8 +564,9 @@ class Seasons:
 # ### episode IDS
 				episodeIDS = {}
 				if control.setting('enable.upnext') == 'true':
-					episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
-					episodeIDS = episodeIDS.get('ids', {})
+					episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False) or {}
+					if episodeIDS != {}:
+						episodeIDS = episodeIDS.get('ids', {})
 ##------------------
 
 				title = client.parseDOM(item, 'EpisodeName')[0]

@@ -4,14 +4,12 @@
 	Venom Add-on
 '''
 
-
 from urlparse import parse_qsl
 from urllib import quote_plus
 from sys import argv
 
 from resources.lib.modules import control
 
-# params = dict(parse_qsl(sys.argv[2].replace('?','')))
 params = dict(parse_qsl(argv[2].replace('?','')))
 action = params.get('action')
 
@@ -469,23 +467,23 @@ elif action == 'addView':
 	views.addView(content)
 
 elif action == 'refresh':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.refresh()
 
 elif action == 'openSettings':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.openSettings(query)
 
 elif action == 'open.Settings.CacheProviders':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.openSettings(query)
 
 elif action == 'artwork':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.artwork()
 
 elif action == 'UpNextSettings':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.openSettings('0.0', 'service.upnext')
 
 
@@ -564,7 +562,7 @@ elif action == 'clearPlaylist':
 	playlist.playlistClear()
 
 elif action == 'queueItem':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.queueItem()
 	if name is None:
 		control.notification(title = 35515, message = 35519, icon = 'INFO', sound = notificationSound)
@@ -625,7 +623,6 @@ elif action == 'random':
 		rlist = tvshows.TVshows().get(url, idx=False)
 		r = argv[0]+"?action=random&rtype=season"
 
-	# from resources.lib.modules import control
 	from random import randint
 	import json
 
@@ -747,18 +744,20 @@ elif action == 'clearResolveURLcache':
 #---Provider Source actions
 ####################################################
 elif action == 'openscrapersSettings':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.openSettings('0.0', 'script.module.openscrapers')
 	# if params['opensettings'] == 'true':
 		# control.openSettings(query, "plugin.video.venom")
 
 elif action == 'urlResolver':
-	try: import resolveurl
-	except: pass
+	try:
+		import resolveurl
+	except:
+		pass
 	resolveurl.display_settings()
 
 elif action == 'urlResolverRDTorrent':
-	from resources.lib.modules import control
+	# from resources.lib.modules import control
 	control.openSettings(query, "script.module.resolveurl")
 
 elif action == "toggleAll":

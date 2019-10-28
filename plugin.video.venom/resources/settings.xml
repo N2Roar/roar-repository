@@ -101,11 +101,11 @@
 		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
 		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
 
-
 		<setting type="lsep" label="32375" />
 		<setting id="tvshows.networks.view" type="enum" label="32376" lvalues="32377|32378" default="1" />
 		<!-- <setting id="tvshows.networks.filter" type="select" label="32379" lvalues="32380|32381|32382|32383|32384|32385" default="4" enable="eq(-1, 1)" /> -->
 		<setting label="32004" type="lsep" />
+		<setting id="tvshows.direct" type="bool" label="35492" default="false" />
 		<setting id="sort.shows.type" type="select" label="35191" lvalues="33564|33039|35187|35188|35391|35392|35393" default="6" />
 		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
 		<setting id="sort.progress.type" type="select" label="35572" lvalues="33564|33039|35187|35188|35391|35392|35393" default="4" />
@@ -118,7 +118,7 @@
 		<setting id="tvshows.air.location" type="select" label="35019" lvalues="35024|35025|35026|35027" default="0" subsetting="true" visible="eq(-2,true)" />
 		<setting id="tvshows.air.format" type="select" label="35020" lvalues="35029|35028|35030" default="2" subsetting="true" visible="eq(-3,true)" />
 		<setting id="tvshows.air.day" type="enum" label="35031" lvalues="35049|35050" default="1" subsetting="true" visible="eq(-4,true) + !eq(-1,0)" />
-		<setting id="tvshows.air.time" type="select" label="35048" lvalues="35051|35052|35053" default="1" subsetting="true" visible="eq(-5,true) + !eq(-2,1)" />
+		<setting id="tvshows.air.time" type="select" label="35048" lvalues="35051|35052|35053" default="2" subsetting="true" visible="eq(-5,true) + !eq(-2,1)" />
 		<setting id="tvshows.air.bold" type="bool" label="35021" default="true" subsetting="true" visible="eq(-6,true)" />
 	</category>
 

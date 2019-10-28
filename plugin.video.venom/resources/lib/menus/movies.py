@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -275,8 +275,7 @@ class Movies:
 			if idx is True:
 			# self.sort(type = 'calendar')
 				self.sort()
-				self.movieDirectory(self.list)
-			# self.movieDirectory(self.list, unfinished=True, next=False)
+				self.movieDirectory(self.list, unfinished=True, next=False)
 
 			return self.list
 		except:
@@ -717,11 +716,13 @@ class Movies:
 				rating = str(item.get('rating', '0'))
 				votes = str(format(int(item.get('votes', '0')),',d'))
 
-				try:
-					mpaa = item['certification']
-					mpaa = mpaa.encode('utf-8')
-				except:
-					mpaa = '0'
+				# try:
+					# mpaa = item['certification']
+					# mpaa = mpaa.encode('utf-8')
+				# except:
+					# mpaa = '0'
+
+				mpaa = item.get('certification', '0')
 
 				plot = item.get('overview')
 				try: plot = plot.encode('utf-8')
@@ -1045,12 +1046,6 @@ class Movies:
 			traceback.print_exc()
 
 
-	def metadataRetrieve(self, imdb, tmdb):
-		self.list = [{'imdb': imdb, 'tmdb': tmdb}]
-		self.worker()
-		return self.list[0]
-
-
 	def super_info(self, i):
 		try:
 			if self.list[i]['metacache'] is True:
@@ -1065,7 +1060,10 @@ class Movies:
 
 			originaltitle = title
 
-			year = self.list[i]['year'] or str(item.get('year', '0'))
+			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
+				year = str(item.get('year', '0'))
+			else:
+				year = self.list[i]['year']
 
 			if imdb == '0' or imdb is None:
 				imdb = item.get('ids', {}).get('imdb', '0')
@@ -1076,8 +1074,10 @@ class Movies:
 			if tmdb == '' or tmdb is None or tmdb == 'None':
 				tmdb = '0'
 
-			premiered = self.list[i]['premiered'] or item.get('released', '0')
-			# premiered = item.get('released', '0')
+			if 'premiered' not in self.list[i] or self.list[i]['premiered'] == '0':
+				premiered = item.get('released', '0')
+			else:
+				premiered = self.list[i]['premiered']
 
 			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
 				genre = []
@@ -1087,20 +1087,38 @@ class Movies:
 			else:
 				genre = self.list[i]['genre']
 
-			duration = str(item.get('runtime', '0'))
+			if 'duration' not in self.list[i] or self.list[i]['duration'] == '0':
+				duration = str(item.get('runtime', '0'))
+			else:
+				duration = self.list[i]['duration']
 
-			rating = self.list[i]['rating'] or str(item.get('rating', '0'))
-			votes = self.list[i]['votes'] or str(format(int(item.get('votes', '0')),',d'))
+			if 'rating' not in self.list[i] or self.list[i]['rating'] == '0':
+				rating = str(item.get('rating', '0'))
+			else:
+				rating = self.list[i]['rating']
 
-			mpaa = self.list[i]['mpaa'] or item.get('certification', '0')
+			if 'votes' not in self.list[i] or self.list[i]['votes'] == '0':
+				votes = str(format(int(item.get('votes', '0')),',d'))
+			else:
+				votes = self.list[i]['votes']
 
-			# tagline = self.list[i]['tagline'] or item.get('tagline', '0')
-			tagline = '0'
-			plot2 = item.get('overview', '0')
-			try: plot2 = plot2.encode('utf-8')
+			if 'mpaa' not in self.list[i] or self.list[i]['mpaa'] == '0' or self.list[i]['mpaa'] == 'NR':
+				mpaa = item.get('certification', '0')
+			else:
+				mpaa = self.list[i]['mpaa']
+
+			if 'tagline' not in self.list[i] or self.list[i]['tagline'] == '0':
+				tagline = item.get('tagline', '0')
+			else:
+				tagline = self.list[i]['tagline']
+
+			if 'plot' not in self.list[i] or self.list[i]['plot'] == '0':
+				plot = item.get('overview', '0')
+			else:
+				plot = self.list[i]['plot']
+			try: plot = plot.encode('utf-8')
 			except: pass
 
-			plot = self.list[i]['plot'] or plot2
 
 #########################################
 			from resources.lib.indexers.tmdb import Movies
@@ -1164,7 +1182,7 @@ class Movies:
 			pass
 
 
-	def movieDirectory(self, items, next=True):
+	def movieDirectory(self, items, unfinished=False, next=True):
 		if items is None or len(items) == 0:
 			control.idle()
 			control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
@@ -1277,7 +1295,14 @@ class Movies:
 
 				try:
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
-					if overlay == 7:
+					watched = (overlay == 7)
+
+					# Skip movies marked as watched for the unfinished and onDeck lists.
+					try:
+						if unfinished and watched and not i['progress'] is None: continue
+					except: pass
+
+					if watched:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
 						meta.update({'playcount': 1, 'overlay': 7})
 						# lastplayed = trakt.watchedMoviesTime(imdb)

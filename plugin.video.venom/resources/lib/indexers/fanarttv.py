@@ -131,6 +131,7 @@ def get_tvshow_art(tvdb):
 	art = client.request(url % tvdb, headers=headers, timeout='10', error=True)
 	art = json.loads(art)
 	if 'error message' in art and art['error message'].lower() == 'not found':
+
 		return None
 
 	try:

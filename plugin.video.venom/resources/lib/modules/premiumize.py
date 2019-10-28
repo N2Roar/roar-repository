@@ -138,7 +138,7 @@ class PremiumizeMe:
 			url = '%s?items[]=%s' % (CacheCheck, media_id)
 			# result = self.net.http_GET(url, headers=self.headers).content
 			# result = requests.get(url, headers=self.headers)
-			result = client.request(url, headers=self.headers)
+			result = client.request(url, headers=self.headers, error=True)
 			# log_utils.log('result = %s' % result, log_utils.LOGDEBUG)
 			# log_utils.log('result = %s' % result.txt, log_utils.LOGDEBUG)
 			result = json.loads(result)

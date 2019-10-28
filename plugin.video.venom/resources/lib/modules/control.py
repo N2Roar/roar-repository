@@ -517,3 +517,15 @@ def getMenuEnabled(menu_title):
 	if (is_enabled == '' or is_enabled == 'false'):
 		return False
 	return True
+
+
+def trigger_widget_refresh():
+	import time
+	# Force an update of widgets to occur
+	# log('FORCE REFRESHING WIDGETS')
+	timestr = time.strftime("%Y%m%d%H%M%S", time.gmtime())
+	homeWindow.setProperty("widgetreload", timestr)
+	homeWindow.setProperty('widgetreload-tvshows', timestr)
+	homeWindow.setProperty('widgetreload-episodes', timestr)
+	homeWindow.setProperty('widgetreload-movies', timestr)
+

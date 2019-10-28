@@ -1001,12 +1001,6 @@ class TVshows:
 			traceback.print_exc()
 
 
-	def metadataRetrieve(self, title, year, imdb, tmdb, tvdb):
-		self.list = [{'metacache': False, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb}]
-		self.worker()
-		return self.list[0]
-
-
 	def super_info(self, i, total):
 		try:
 			if self.list[i]['metacache'] is True:
@@ -1020,7 +1014,6 @@ class TVshows:
 				try:
 					trakt_ids = trakt.SearchTVShow(urllib.quote_plus(self.list[i]['title']), self.list[i]['year'], full=False)[0]
 					trakt_ids = trakt_ids.get('show', '0')
-					# log_utils.log('trakt_ids = %s for title = %s' % (str(trakt_ids), str(self.list[i]['title'])), __name__, log_utils.LOGDEBUG)
 
 					if imdb == '0':
 						imdb = trakt_ids.get('ids', {}).get('imdb', '0')
@@ -1450,14 +1443,12 @@ class TVshows:
 
 				u = urlparse.urlparse(url).netloc.lower()
 
-				# if self.imdb_link in url or self.trakt_link in url:
 				if u in self.imdb_link or u in self.trakt_link:
 					url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
 				elif u in self.tmdb_link:
 					url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-				# elif self.tvmaze_link in url:
 				elif u in self.tvmaze_link:
 					url = '%s?action=tvmazeTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 				item = control.item(label=nextMenu)

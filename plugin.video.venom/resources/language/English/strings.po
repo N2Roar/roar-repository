@@ -92,11 +92,11 @@ msgid "Change Log!!"
 msgstr ""
 
 msgctxt "#32015"
-msgid ""
+msgid "Direct Progress Scrape"
 msgstr ""
 
 msgctxt "#32016"
-msgid ""
+msgid "Browse Progress"
 msgstr ""
 
 msgctxt "#32017"
@@ -2552,7 +2552,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#35492"
-msgid ""
+msgid "Direct Progress Scraping"
 msgstr ""
 
 msgctxt "#35493"

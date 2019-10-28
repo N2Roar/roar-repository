@@ -109,7 +109,7 @@ class tvMaze:
 	def episodeAbsoluteNumber(self, thetvdb, season, episode):
 		try:
 			url = 'http://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('MUQ2MkYyRjkwMDMwQzQ0NA=='.decode('base64'), thetvdb, int(season), int(episode))
-			r = client.request(url)
+			r = client.request(url, error=True)
 			episode = client.parseDOM(r, 'absolute_number')[0]
 
 			return int(episode)
@@ -121,7 +121,7 @@ class tvMaze:
 	def getTVShowTranslation(self, thetvdb, lang):
 		try:
 			url = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % ('MUQ2MkYyRjkwMDMwQzQ0NA=='.decode('base64'), thetvdb, lang)
-			r = client.request(url)
+			r = client.request(url, error=True)
 			title = client.parseDOM(r, 'SeriesName')[0]
 			title = client.replaceHTMLCodes(title)
 			title = title.encode('utf-8')

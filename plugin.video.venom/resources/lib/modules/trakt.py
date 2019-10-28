@@ -13,7 +13,6 @@ from resources.lib.modules import cleandate
 from resources.lib.modules import client
 from resources.lib.modules import utils
 
-# from resources.lib.extensions import tools
 from resources.lib.extensions import database
 
 
@@ -968,7 +967,7 @@ def SearchMovie(title, year, full=True):
 		if full:
 			url += '&extended=full'
 
-		return getTraktAsJson(url)
+		return cache.get(getTraktAsJson, 48, url)
 	except:
 		return
 
@@ -983,18 +982,21 @@ def SearchTVShow(title, year, full=True):
 		if full:
 			url += '&extended=full'
 
-		return getTraktAsJson(url)
+		return cache.get(getTraktAsJson, 48, url)
 	except:
 		return
 
 
-# def SearchEpisode(title, season, episode, full=True):
-	# try:
-		# url = '/search/%s/seasons/%s/episodes/%s' % (title, season, episode)
-		# if full: url += '&extended=full'
-		# return getTraktAsJson(url)
-	# except:
-		# return
+def SearchEpisode(title, season, episode, full=True):
+	try:
+		url = '/search/%s/seasons/%s/episodes/%s' % (title, season, episode)
+
+		if full:
+			url += '&extended=full'
+
+		return cache.get(getTraktAsJson, 48, url)
+	except:
+		return
 
 
 def getGenre(content, type, type_id):

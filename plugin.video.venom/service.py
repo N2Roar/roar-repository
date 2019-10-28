@@ -5,7 +5,7 @@
 """
 
 import threading
-from resources.lib.modules import control,log_utils,trakt
+from resources.lib.modules import control, log_utils, trakt
 
 control.execute('RunPlugin(plugin://%s)' % control.get_plugin_url({'action': 'service'}))
 traktCredentials = trakt.getTraktCredentialsInfo()
