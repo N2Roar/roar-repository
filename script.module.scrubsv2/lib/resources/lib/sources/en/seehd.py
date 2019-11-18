@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
+
 
 class source:
     def __init__(self):
@@ -60,7 +61,7 @@ class source:
                 if valid:
                     sources.append({'source': host, 'quality': '720p', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
             return sources
-        except Exception:
+        except:
             return sources
 
 

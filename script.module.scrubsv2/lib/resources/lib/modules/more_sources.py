@@ -4,21 +4,31 @@ import re, requests, urlparse, json
 from resources.lib.modules import client
 from resources.lib.modules import jsunpack
 from resources.lib.modules import source_utils
+from resources.lib.modules import source_tools
 
 
 def getMore(link, hostDict):
     sources = []
     if link == None:
         return sources
-    if "vidnode.net" in link:
+    elif "vidnode.net" in link:
         for source in more_vidnode(link, hostDict):
             sources.append(source)
-    if "vidlink.org" in link:
+    elif "vidlink.org" in link:
         for source in more_vidlink(link, hostDict):
             sources.append(source)
-    if "gomostream.com" in link:
+    elif "gomostream.com" in link:
         for source in more_gomo(link, hostDict):
             sources.append(source)
+    elif "123moviesplayer.com" in link:
+        for source in more_123moviesplayer(link, hostDict):
+            sources.append(source)
+    else:
+        valid, host = source_tools.checkHost(link, hostDict)
+        if valid:
+            quality = source_tools.get_quality(link)
+            info = source_tools.get_info(link)
+            sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': False})
     return sources
 
 
@@ -34,10 +44,13 @@ def more_vidnode(link, hostDict):
         urls = re.findall('''\{file:\s*['"]([^'"]+).*?label:\s*['"](\d+\s*P)['"]''', response, re.DOTALL | re.I)
         if urls:
             for url, qual in urls:
-                quality, info = source_utils.get_release_quality(qual, url)
                 host = url.split('//')[1].replace('www.', '')
                 host = host.split('/')[0].lower()  # 'CDN'
-                sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': True, 'debridonly': False})
+                valid, host = source_tools.checkHost(host, hostDict)
+                if valid:
+                    quality = source_tools.get_quality(qual, url)
+                    info = source_tools.get_info(qual, url)
+                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': True, 'debridonly': False})
         return sources
     except:
         return sources
@@ -69,7 +82,8 @@ def more_vidlink(link, hostDict):
         if urls:
             for qual, url in urls:
                 url = stream_link + '/' + url + '.m3u8'
-                quality, info = source_utils.get_release_quality(qual, url)
+                quality = source_tools.get_quality(qual, url)
+                info = source_tools.get_info(qual, url)
                 sources.append({'source': 'GVIDEO', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': True, 'debridonly': False})
         return sources
     except:
@@ -95,35 +109,51 @@ def more_gomo(link, hostDict):
             urls = json.loads(result)
             for url in urls:
                 if 'gomostream' in url:
-                    continue
-                    #sources.append({'source': 'CDN', 'quality': 'SD', 'language': 'en', 'url': url, 'direct': True, 'debridonly': False})
+                    sources.append({'source': 'CDN', 'quality': 'SD', 'language': 'en', 'url': url, 'direct': True, 'debridonly': False})
                 else:
-                    quality, info = source_utils.get_release_quality(url, url)
-                    valid, host = source_utils.is_host_valid(url, hostDict)
-                    sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
+                    valid, host = source_tools.checkHost(url, hostDict)
+                    if valid:
+                        quality = source_tools.get_quality(url)
+                        info = source_tools.get_info(url)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
+        return sources
+    except:
+        return sources
+
+
+def more_123moviesplayer(link, hostDict):
+    sources = []  # Gomo Clone
+    try:
+        gomo_link = 'https://123moviesplayer.com/decoding_v3.php'
+        User_Agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+        result = client.request(link)
+        tc = re.compile('tc = \'(.+?)\';').findall(result)[0]
+        if (tc):
+            token = re.compile('"_token": "(.+?)",').findall(result)[0]
+            post = {'tokenCode': tc, '_token': token}
+            def tsd(tokenCode):
+                _13x48X = tokenCode
+                _71Wxx199 = _13x48X[4:18][::-1]
+                return _71Wxx199 + "18" + "432782"
+            headers = {'Host': '123moviesplayer.com', 'Referer': link, 'User-Agent': User_Agent, 'x-token': tsd(tc)}
+            result = client.request(gomo_link, XHR=True, post=post, headers=headers)
+            urls = json.loads(result)
+            for url in urls:
+                if '123moviesplayer.com' in url:
+                    sources.append({'source': 'CDN', 'quality': 'SD', 'language': 'en', 'url': url, 'direct': True, 'debridonly': False})
+                else:
+                    valid, host = source_tools.checkHost(url, hostDict)
+                    if valid:
+                        quality = source_tools.get_quality(url)
+                        info = source_tools.get_info(url)
+                        sources.append({'source': host, 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': False})
         return sources
     except:
         return sources
 
 
 def more_rapidvideo(link, hostDict, lang, info):
-    if "rapidvideo.com" in link:
-        sources = []
-        try:
-            headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3555.0 Safari/537.36"}
-            response = requests.get(link, headers=headers).content
-            test = re.findall("""(https:\/\/www.rapidvideo.com\/e\/.*)">""", response)
-            numGroups = len(test)
-            for i in range(1, numGroups):
-                url = test[i]
-                valid, host = source_utils.is_host_valid(url, hostDict)
-                q = source_utils.check_sd_url(url)
-                sources.append({'source': host, 'quality': q, 'language': lang, 'url': url, 'info': info, 'direct': False, 'debridonly': False})
-            return sources
-        except:
-            return sources
-    else:
-        return []
+    return []
 
 
 def more_cdapl(link, hostDict, lang, info):

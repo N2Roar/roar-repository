@@ -222,7 +222,7 @@ class WatchWrestling:
             ('WWE Breaking Ground', '/wwe-3/breaking-ground/'),
             ('WWE Fastlane', '/wwe-3/wwe-ppv/fastlane/'),
             ('WWE Great Balls of Fire', '/wwe-3/wwe-ppv/greate-balls-of-fire/'),
-            ('WWE Network Live Stream 24/7', '/watch-wwe-network-online-free-wwe-network-free-live-stream/'),
+            #('WWE Network Live Stream 24/7', '/watch-wwe-network-online-free-wwe-network-free-live-stream/'),  # all 5 sources seem to always be 404 pages.
             ('WWE Network TV Live Stream', '/wwenetwork/'),
             ('WWE Network', '/wwe-3/wwe-network/'),
             ('WWE NXT', '/wwe-3/wwe-nxt/'),

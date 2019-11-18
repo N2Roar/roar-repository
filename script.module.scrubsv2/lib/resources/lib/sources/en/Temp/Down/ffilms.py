@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import cleantitle,cfscrape
+from resources.lib.modules import cfscrape
+from resources.lib.modules import cleantitle
 
 
 class source:
@@ -33,12 +34,13 @@ class source:
             match = re.compile('src="//ok\.ru/videoembed/(.+?)"').findall(r)
             for vid in match:
                 url = 'https://ok.ru/videoembed/' + vid
-                sources.append({ 'source': 'ok', 'quality': 'HD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False })
-        except Exception:
-            return
-        return sources
+                sources.append({'source': 'ok', 'quality': 'HD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
+            return sources
+        except:
+            return sources
 
 
     def resolve(self, url):
         return url
+
 

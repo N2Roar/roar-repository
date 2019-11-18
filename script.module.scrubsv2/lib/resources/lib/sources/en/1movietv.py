@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests
+import re, requests
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -30,7 +30,7 @@ class source:
         try:
             tmdburl = 'https://api.themoviedb.org/3/find/%s?external_source=tvdb_id&language=en-US&api_key=%s' % (tvdb, self.tm_user)
             tmdbresult = self.session.get(tmdburl, headers=self.headers).content
-            tmdb_id = re.compile('"id":(.+?),',re.DOTALL).findall(tmdbresult)[0]
+            tmdb_id = re.compile('"id":(.+?),', re.DOTALL).findall(tmdbresult)[0]
             url = '/playstream/' + tmdb_id
             return url
         except:
@@ -53,7 +53,7 @@ class source:
             if url == None:
                 return sources
             r = self.session.get(url, headers=self.headers).content
-            match = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(r)
+            match = re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(r)
             for url in match:
                 url =  "https:" + url if not url.startswith('http') else url
                 valid, host = source_utils.is_host_valid(url, hostDict)

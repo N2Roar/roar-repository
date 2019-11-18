@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse,base64
+import re, urllib, urlparse, base64
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -11,8 +11,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['extramovies.today', 'extramovies.trade', 'extramovies.guru', 'extramovies.wiki'] # http://extramovies.ind.in/
-        self.base_link = 'http://extramovies.today' # Dead  extramovies.host
+        self.domains = ['extramovies.blue']
+        self.base_link = 'http://extramovies.blue'
         self.search_link = '/?s=%s'
         self.scraper = cfscrape.create_scraper()
 

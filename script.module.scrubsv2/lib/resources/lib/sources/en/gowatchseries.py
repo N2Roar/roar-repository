@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse,json
+import re, urllib, urlparse, json
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import more_sources
@@ -11,9 +11,9 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['gowatchseries.video', 'gowatchseries.tv', 'gowatchseries.co', 'gowatchseries.io']
-        self.base_link = 'https://gowatchseries.video'
+        self.language = ['en']  #  Old  gowatchseries.tv  gowatchseries.co  gowatchseries.io
+        self.domains = ['gowatchseries.fm', 'gowatchseries.video']
+        self.base_link = 'https://gowatchseries.fm'
         self.search_link = '/ajax-search.html?keyword=%s&id=-1'
         self.search_link2 = '/search.html?keyword=%s'
 
@@ -71,17 +71,17 @@ class source:
                 r = json.loads(r)['content']
                 r = zip(client.parseDOM(r, 'a', ret='href'), client.parseDOM(r, 'a'))
                 if 'tvshowtitle' in data:                   
-                    cltitle = cleantitle.get(title+'season'+season)
-                    cltitle2 = cleantitle.get(title+'season%02d'%int(season))
+                    cltitle = cleantitle.get(title + 'season' + season)
+                    cltitle2 = cleantitle.get(title + 'season%02d' % int(season))
                     r = [i for i in r if cltitle == cleantitle.get(i[1]) or cltitle2 == cleantitle.get(i[1])]
-                    vurl = '%s%s-episode-%s'%(self.base_link, str(r[0][0]).replace('/info',''), episode)
+                    vurl = '%s%s-episode-%s'%(self.base_link, str(r[0][0]).replace('/info', ''), episode)
                     vurl2 = None
                 else:
                     cltitle = cleantitle.getsearch(title)
-                    cltitle2 = cleantitle.getsearch('%s (%s)'%(title,year))
+                    cltitle2 = cleantitle.getsearch('%s (%s)'%(title, year))
                     r = [i for i in r if cltitle2 == cleantitle.getsearch(i[1]) or cltitle == cleantitle.getsearch(i[1])]
-                    vurl = '%s%s-episode-0'%(self.base_link, str(r[0][0]).replace('/info',''))
-                    vurl2 = '%s%s-episode-1'%(self.base_link, str(r[0][0]).replace('/info',''))                
+                    vurl = '%s%s-episode-0'%(self.base_link, str(r[0][0]).replace('/info', ''))
+                    vurl2 = '%s%s-episode-1'%(self.base_link, str(r[0][0]).replace('/info', ''))                
                 r = client.request(vurl, headers=headers)
                 headers['Referer'] = vurl
                 slinks = client.parseDOM(r, 'div', attrs = {'class': 'anime_muti_link'})

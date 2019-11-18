@@ -1,18 +1,18 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse,requests
+import re, urllib, urlparse, requests
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
-from resources.lib.modules import dom_parser2
+from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 
 
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['milversite.live', 'filmovizija.vip', 'filmovizija.fun']
+        self.language = ['en']  #  Old  filmovizija.vip  filmovizija.fun
+        self.domains = ['milversite.live']
         self.base_link = 'http://milversite.live'
         self.search_link = 'https://www.milversite.live/search.php?all=all&keywords=%s&vselect=%s'
 
@@ -28,7 +28,7 @@ class source:
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            url = 'https://www.milversite.live/watch-%s-tvshows.html#' % tvshowtitle.replace(" ","_")
+            url = 'https://www.milversite.live/watch-%s-tvshows.html#' % tvshowtitle.replace(" ", "_")
             return url
         except:
             return
@@ -77,7 +77,7 @@ class source:
                 match2 = re.compile(regex).findall(response)
                 for link_in in match2:
                     quality = "720p"
-                    host = link_in.replace('\n','').strip().split('//')[1].replace('www.','')
+                    host = link_in.replace('\n', '').strip().split('//')[1].replace('www.', '')
                     host = host.split('/')[0].lower()
                     if source_utils.limit_hosts() is True and host in str(self.sources):
                         continue
@@ -107,13 +107,13 @@ class source:
                             data = {'id': link_in}
                             response = requests.post('https://www.milversite.live/morgan.php', headers=headers, data=data).content
                             quality = "720p"
-                            host = response.replace('\n','').strip().split('//')[1].replace('www.','')
+                            host = response.replace('\n', '').strip().split('//')[1].replace('www.', '')
                             host = host.split('/')[0].lower()
                             if source_utils.limit_hosts() is True and host in str(self.sources):
                                 continue
                             valid, host = source_utils.is_host_valid(host, hostDict)
                             if valid:
-                                self.sources.append({'source':host , 'quality': quality, 'language': 'en', 'url': response.replace('\n','').strip(), 'direct': False, 'debridonly': False})
+                                self.sources.append({'source':host , 'quality': quality, 'language': 'en', 'url': response.replace('\n', '').strip(), 'direct': False, 'debridonly': False})
             return self.sources
         except:
             return self.sources

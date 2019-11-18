@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # -Update by Tempest (Pulls links for RD users)
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import debrid
@@ -12,9 +12,9 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['ganool.bz', 'ganool.ws', 'ganol.si', 'ganool123.com']
-        self.base_link = 'https://www1.ganool.bz'
+        self.language = ['en']  #  Old  ganool.bz  ganol.si  ganool123.com
+        self.domains = ['ganool.ws']
+        self.base_link = 'https://ww1.ganool.ws'
         self.search_link = '/search/?q=%s'
         self.scraper = cfscrape.create_scraper()
 
@@ -24,7 +24,7 @@ class source:
             url = {'imdb': imdb, 'title': title, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except BaseException:
+        except:
             return
 
 

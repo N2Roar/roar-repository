@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urlparse,json
+import re, urlparse, json
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
-from resources.lib.modules import dom_parser2
+from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 
 
@@ -38,10 +38,10 @@ class source:
             if url == None:
                 return
             r = client.request(url)
-            r = dom_parser2.parse_dom(r, 'div', {'class': 'el-item'})
-            r = [(dom_parser2.parse_dom(i, 'div', {'class': 'season'}), \
-                  dom_parser2.parse_dom(i, 'div', {'class': 'episode'}), \
-                  dom_parser2.parse_dom(i, 'a', req='href')) \
+            r = dom_parser.parse_dom(r, 'div', {'class': 'el-item'})
+            r = [(dom_parser.parse_dom(i, 'div', {'class': 'season'}), \
+                  dom_parser.parse_dom(i, 'div', {'class': 'episode'}), \
+                  dom_parser.parse_dom(i, 'a', req='href')) \
                   for i in r if i]
             r = [(i[2][0].attrs['href']) for i in r if i[0][0].content == 'Season %01d' % int(season) \
                   and i[1][0].content == 'Episode %01d' % int(episode)]
@@ -59,9 +59,9 @@ class source:
             if url == None:
                 return sources
             r = client.request(url)
-            r = dom_parser2.parse_dom(r, 'div', {'class': 'll-item'})
-            r = [(dom_parser2.parse_dom(i, 'a', req='href'), \
-                  dom_parser2.parse_dom(i, 'div', {'class': 'notes'})) \
+            r = dom_parser.parse_dom(r, 'div', {'class': 'll-item'})
+            r = [(dom_parser.parse_dom(i, 'a', req='href'), \
+                  dom_parser.parse_dom(i, 'div', {'class': 'notes'})) \
                   for i in r if i]
             r = [(i[0][0].attrs['href'], i[0][0].content, i[1][0].content if i[1] else 'None') for i in r]
             for i in r:
@@ -92,11 +92,12 @@ class source:
     def resolve(self, url):
         try:
             r = client.request(url)
-            r = dom_parser2.parse_dom(r, 'a', req=['href','data-episodeid','data-linkid'])[0]
+            r = dom_parser.parse_dom(r, 'a', req=['href','data-episodeid','data-linkid'])[0]
             url = r.attrs['href']
             url = client.replaceHTMLCodes(url)
             url = url.encode('utf-8')
             return url
         except:
             return
+
 

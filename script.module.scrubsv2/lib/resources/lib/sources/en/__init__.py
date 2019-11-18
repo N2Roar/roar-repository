@@ -30,6 +30,17 @@ __all__ = [filename[:-3] for filename in files if not filename.startswith('__') 
 # self.scraper = cfscrape.create_scraper()
 # r = self.scraper.get(url).content
 
+# from resources.lib.modules import client
+# url = client.request(url, timeout='10', output='geturl')
+# r = client.request(url)
+
+#import traceback
+#from resources.lib.modules import log_utils
+#except Exception:
+    #failure = traceback.format_exc()
+    #log_utils.log('---Scraper Testing - Exception: \n' + str(failure))
+    #return
+
 # import xbmcgui
 # TIP = '(name as in you name it.)'
 # xbmcgui.Dialog ().textviewer ("data",str (name))
@@ -41,12 +52,10 @@ __all__ = [filename[:-3] for filename in files if not filename.startswith('__') 
 # log_utils.log('---Scraper Testing - Sources - info: ' + str(info))
 # log_utils.log('---Scraper Testing - Sources - url: \n' + str(url))
 
-#import traceback
-#from resources.lib.modules import log_utils
-#except Exception:
-    #failure = traceback.format_exc()
-    #log_utils.log('---Scraper Testing - Exception: \n' + str(failure))
-    #return
+# from resources.lib.modules import source_tools
+# valid, host = source_tools.checkHost(link, hostDict)
+# quality = source_tools.get_quality(link)
+# info = source_tools.get_info(link)
 
 # from resources.lib.modules import more_sources
 # for source in more_sources.getMore(url, hostDict): sources.append(source)

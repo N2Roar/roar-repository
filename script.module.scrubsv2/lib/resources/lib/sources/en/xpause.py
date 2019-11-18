@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -12,15 +12,16 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['xpau.se']
+        self.domains = ['xpau.se', 'topnow.se']
         self.base_link = 'http://xpau.se'
+        self.base2_link = 'http://topnow.se'
         self.search_link = '/watch/%s'
+        self.search2_link = '/%s'
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            mtitle = cleantitle.geturl(title)
-            url = self.base_link + self.search_link % mtitle
+            url = cleantitle.geturl(title)
             return url
         except:
             return
@@ -35,9 +36,15 @@ class source:
                 raise Exception()
             if debrid.tor_enabled() is False:
                 raise Exception()
-            html = client.request(url)
-            link = re.findall('href="(magnet:.+?)"', html, re.DOTALL)
-            for link in link:
+            try:
+                s_url = self.base_link + self.search_link % (url + '666')
+                html = client.request(s_url)
+                links = re.findall('href="(magnet:.+?)"', html, re.DOTALL)
+            except:
+                s_url = self.base2_link + self.search2_link % url
+                html = client.request(s_url)
+                links = re.findall('href="(magnet:.+?)"', html, re.DOTALL)
+            for link in links:
                 link = str(client.replaceHTMLCodes(link).split('&tr')[0])
                 quality, info = source_utils.get_release_quality(link, link)
                 try:

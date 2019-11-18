@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
 import re
@@ -12,8 +12,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['cmovieshd.bz']
-        self.base_link = 'https://www6.cmovieshd.bz'
+        self.domains = ['cmovies.video', 'cmovieshd.bz']
+        self.base_link = 'https://www2.cmovies.video'
         self.search_link = '/film/%s/watching.html?ep=0'
         self.scraper = cfscrape.create_scraper()
 

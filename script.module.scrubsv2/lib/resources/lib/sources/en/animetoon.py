@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -11,9 +11,9 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.genre_filter = ['animation', 'anime']
-        self.domains = ['animetoon.org','animetoon.tv']
-        self.base_link = 'http://www.animetoon.org'
+        self.genre_filter = ['animation', 'anime'] #  Old  animetoon.tv
+        self.domains = ['animetoon.org']
+        self.base_link = 'http://animetoon.org'
 
 
     def movie(self, imdb, title, localtitle, aliases, year):

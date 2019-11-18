@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import control
@@ -13,7 +13,7 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']
-        self.domains = ['yts.am', 'yts.lt'] # Old yts.ag
+        self.domains = ['yts.lt', 'yts.am', 'yts.ag']
         self.base_link = 'https://yts.lt'
         self.search_link = '/browse-movies/%s/all/all/0/latest'
         self.min_seeders = int(control.setting('torrent.min.seeders'))
@@ -45,7 +45,7 @@ class source:
             html = client.request(url)
             try:
                 results = client.parseDOM(html, 'div', attrs={'class': 'row'})[2]
-            except Exception:
+            except:
                 return sources
             items = re.findall('class="browse-movie-bottom">(.+?)</div>\s</div>', results, re.DOTALL)
             if items is None:
@@ -57,7 +57,7 @@ class source:
                         name = client.replaceHTMLCodes(name)
                         if not cleantitle.get(name) == cleantitle.get(data['title']):
                             continue
-                    except Exception:
+                    except:
                         continue
                     y = entry[-4:]
                     if not y == data['year']:
@@ -78,16 +78,16 @@ class source:
                                 size = float(re.sub('[^0-9|/.|/,]', '', size)) / div
                                 size = '%.2f GB' % size
                                 info.append(size)
-                            except Exception:
+                            except:
                                 pass
                             info = ' | '.join(info)
                             sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': True})
-                    except Exception:
+                    except:
                         continue
-                except Exception:
+                except:
                     continue
             return sources
-        except Exception:
+        except:
             return sources
 
 

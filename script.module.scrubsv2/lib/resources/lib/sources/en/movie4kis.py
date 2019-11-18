@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urlparse
+import re, urlparse
 from resources.lib.modules import cfscrape
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
@@ -26,9 +26,9 @@ class source:
             url = url % (search_id.replace(':', ' ').replace(' ', '+'))
             h = {'User-Agent': client.randomagent()}
             r = self.scraper.get(url, headers=h).content
-            z = re.compile('<item>(.+?)</item>',flags=re.DOTALL | re.UNICODE | re.MULTILINE | re.IGNORECASE).findall(r)
+            z = re.compile('<item>(.+?)</item>', flags=re.DOTALL | re.UNICODE | re.MULTILINE | re.IGNORECASE).findall(r)
             for t in z:
-                b = re.compile('<a rel="nofollow" href="(.+?)">(.+?)</a>',flags=re.DOTALL | re.UNICODE | re.MULTILINE | re.IGNORECASE).findall(t)
+                b = re.compile('<a rel="nofollow" href="(.+?)">(.+?)</a>', flags=re.DOTALL | re.UNICODE | re.MULTILINE | re.IGNORECASE).findall(t)
                 for foundURL, foundTITLE in b:
                     if cleantitle.get(title) in cleantitle.get(foundTITLE):
                         return foundURL

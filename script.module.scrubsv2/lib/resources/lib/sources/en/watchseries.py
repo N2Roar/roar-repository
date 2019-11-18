@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests,urllib,urlparse
+import re, requests, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import directstream
@@ -14,8 +14,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']  # Old  watch-series.co  watch-series.ru  watch-series.live
-        self.domains = ['watchseries.fm']
-        self.base_link = 'https://www4.watchseries.fm'
+        self.domains = ['watchseries.movie', 'watchseries.fm']
+        self.base_link = 'http://watchseries.movie'
         self.search_link = '/search.html?keyword=%s'
 
 

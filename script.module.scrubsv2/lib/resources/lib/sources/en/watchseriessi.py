@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -11,7 +11,7 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['watchseries.fi', 'watchseries.si'] # old  watchseries.sk
+        self.domains = ['watchseries.fi', 'watchseries.si']
         self.base_link = 'http://watchseries.si'
         self.search_link = '/series/%s/season/%s/episode/%s/'
 
@@ -26,8 +26,9 @@ class source:
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         try:
-            if not url: return
-            url = self.base_link + self.search_link % (url,season,episode)
+            if not url:
+                return
+            url = self.base_link + self.search_link % (url, season, episode)
             return url
         except:
             return

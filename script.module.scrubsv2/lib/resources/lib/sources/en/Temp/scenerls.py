@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
 # -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import cleantitle
-from resources.lib.modules import client
-from resources.lib.modules import debrid
+import re, urllib, urlparse
 from resources.lib.modules import cfscrape
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import debrid
+import traceback
+from resources.lib.modules import log_utils
 
 
 class source:
@@ -165,7 +167,9 @@ class source:
                 except:
                     pass
             return sources
-        except:
+        except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---SceneRLS - Exception: \n' + str(failure))
             return sources
 
 

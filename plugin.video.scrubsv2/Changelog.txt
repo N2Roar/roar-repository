@@ -1,7 +1,24 @@
 [B][COLOR grey](Contact me about any errors or issues.)(https://github.com/jewbmx/repo/issues)
 (Feel free to test anything and tell me what works and what dont.) [/COLOR][/B]
-[COLOR yellow]If you have any issues from this update try [B]"Kcleaner - Clean All Compact All"[/COLOR][/B]
 
+
+- Ditched most the code related to some now dead resolvers and tossed em in the blocklist.
+- Removed a couple unused modules to lighten the load.
+- Replaced all dom_parser2 code to be dom_parser since 2 is a useless dupe with no real difference.
+(Will remove the actual module in the next update after i make sure no imports or code was missed.)
+- Updated the proxy module and removed a bunch of non-workin poop. (Gotta retest half still.)
+- Adjusted the artwork code back the way it was before if i recall. (Guessing that no changes were missed.)
+- Did a deep clean for EN Providers. (Some were completely removed, the rest were updated.)
+(Waiting for a resolveurl update before i finish cleaning providers and results.)
+- Updated cfscrape a bit and a few other modules. (Replaced cfscrape with another version to try.)
+(If ya have problems with it and got a little brainsmarts the previous version i updated is in the folder too.)
+- Added "In Theaters(Old Style)" to the Movie Widget bit.
+(Anyone using the last widget setting aka "Films/TV Movies" will need to adjust the settings.)
+
+[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
+[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
+
+[B][COLOR purple] v4.6.1 [/COLOR][/B]
 - Checked/Updated/Fixed/Moved/  Providers.
 - Made and Added in a new Indexer called WatchWrestling  made with 4 sites.
 (Still testing, a bit left todo, a bit to improve, and alot of dead or useless results lol.)
@@ -11,9 +28,6 @@
 (They change much more and i will be removing it for good.)
 - Tossed oload.stream into the craptcha and dbird filters, its the same as oload.tv.
 - Added in Trakt Anticipated for Movies. (Most likely removed it a while back like a goof.)
-
-[B][COLOR fuchsia] --[Clicking Clear all Cache and Providers after each update is Wise and Advised.]-- [/COLOR][/B]
-[B][COLOR fuchsia] --[Save the Providers Stress and me some work lol, Disable what you Dont use.]-- [/COLOR][/B]
 
 [B][COLOR purple] v4.6.0 [/COLOR][/B]
 - Did a quick Provider Checkup and Cleanup.

@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import client,cleantitle,dom_parser,source_utils
+import re, urllib, urlparse
+from resources.lib.modules import cfscrape
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import dom_parser
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -12,6 +16,7 @@ class source:
         self.domains = ['movie4k.pe'] # domain list at bottom of page.
         self.base_link = 'http://movie4k.pe'
         self.search_link = '/movies.php?list=search&search=%s'
+        self.scraper = cfscrape.create_scraper()
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -30,7 +35,7 @@ class source:
             if url == None:
                 return sources
             url = urlparse.urljoin(self.base_link, url)
-            r = client.request(url, timeout='5')
+            r = self.scraper.get(url).content
             r = r.replace('\\"', '"')
             links = dom_parser.parse_dom(r, 'tr', attrs={'id': 'tablemoviesindex2'})
             for i in links:
@@ -58,7 +63,7 @@ class source:
     def resolve(self, url):
         try:
             h = urlparse.urlparse(url.strip().lower()).netloc
-            r = client.request(url, timeout='5')
+            r = self.scraper.get(url).content
             r = r.rsplit('"underplayer"')[0].rsplit("'underplayer'")[0]
             u = re.findall('\'(.+?)\'', r) + re.findall('\"(.+?)\"', r)
             u = [client.replaceHTMLCodes(i) for i in u]
@@ -75,7 +80,7 @@ class source:
             q = urlparse.urljoin(self.base_link, q)
             t = [cleantitle.get(i) for i in set(titles) if i]
             y = ['%s' % str(year), '%s' % str(int(year) + 1), '%s' % str(int(year) - 1), '0']
-            r = client.request(q, timeout='10')
+            r = self.scraper.get(q).content
             r = dom_parser.parse_dom(r, 'tr', attrs={'id': re.compile('coverPreview.+?')})
             r = [(dom_parser.parse_dom(i, 'a', req='href'), dom_parser.parse_dom(i, 'div', attrs={'style': re.compile('.+?')}), dom_parser.parse_dom(i, 'img', req='src')) for i in r]
             r = [(i[0][0].attrs['href'].strip(), i[0][0].content.strip(), i[1], i[2]) for i in r if i[0] and i[2]]
@@ -100,7 +105,7 @@ class source:
                 try:
                     if match:
                         url = match[0]; break
-                    r = client.request(urlparse.urljoin(self.base_link, i))
+                    r = self.scraper.get(urlparse.urljoin(self.base_link, i)).content
                     r = re.findall('(tt\d+)', r)
                     if imdb in r:
                         url = i; break
@@ -111,39 +116,34 @@ class source:
             return
 
 
-#http://movie4k.pe/
+# http://movie4k.pe/
 # -Clean
 
 # http://movie4k.lol/
 # -CFscrape
 
-#http://movie4k.tv/
-# -CFscrape, redirects to: https://movie4k.lol/
-
-#http://movie2k.nu/
+# http://movie2k.nu/
 # -CFscrape
 
-#http://movie2k.cm/
+# http://movie2k.cm/
 # -CFscrape
 
-#http://movie4k.me/
+# http://movie4k.me/
 # -CFscrape
 
-#http://movie4k.sg/
+# http://movie4k.sg/
 # -CFscrape
 
-#http://movie4k.sh/
+# http://movie4k.sh/
 # -CFscrape
 
-#https://movie.to/
+# https://movie.to/
 # -CFscrape
 
-#https://movie4k.am/
+# https://movie4k.am/
 # -CFscrape
 
-#https://movie4k.org/
+# https://movie4k.org/
 # -CFscrape
 
-#https://movie4k.io/
-# -Dead
 

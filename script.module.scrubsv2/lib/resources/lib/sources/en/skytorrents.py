@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import control
@@ -80,7 +80,7 @@ class source:
                         div = 1 if size.endswith('GB') else 1024
                         size = float(re.sub('[^0-9|/.|/,]', '', size.replace(',', '.'))) / div
                         size = '%.2f GB' % size
-                    except BaseException:
+                    except:
                         size = '0'
                     for url, data in link:
                         if hdlr not in data:

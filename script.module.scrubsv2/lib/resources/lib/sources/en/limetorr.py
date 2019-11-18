@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
+import re, urllib, urlparse
+from resources.lib.modules import client
 from resources.lib.modules import cache
 from resources.lib.modules import cleantitle
-from resources.lib.modules import dom_parser2
+from resources.lib.modules import dom_parser
 from resources.lib.modules import debrid
 from resources.lib.modules import source_utils
 from resources.lib.modules import workers
-from resources.lib.modules import client
-#from resources.lib.modules import client2 as client
+
 
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']
-        self.domains = ['limetorrents.info', 'limetorrents.co', 'limetor.com']
+        self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']  #  Old  limetorrents.zone
+        self.domains = ['limetorrents.info', 'limetor.com']
         self._base_link = None
         self.tvsearch = '/search/tv/{0}/'
         self.moviesearch = '/search/movies/{0}/'
-        # Spares that need cfscrape
-        # https://limetorrents.zone/  http://limetorrents.asia/  https://limetor.pro/
+        # cfscrape  limetorrents.co  limetorrents.asia  limetor.pro
 
 
     @property
@@ -102,7 +101,7 @@ class source:
             posts = client.parseDOM(r, 'table', attrs={'class': 'table2'})[0]
             posts = client.parseDOM(posts, 'tr')
             for post in posts:
-                data = dom_parser2.parse_dom(post, 'a', req='href')[1]
+                data = dom_parser.parse_dom(post, 'a', req='href')[1]
                 link = urlparse.urljoin(self.base_link, data.attrs['href'])
                 name = data.content
                 t = name.split(self.hdlr)[0]

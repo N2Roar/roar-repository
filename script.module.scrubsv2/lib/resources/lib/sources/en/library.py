@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-import urllib,urlparse,json
-from resources.lib.modules import cleantitle,control,source_utils
+import urllib, urlparse, json
+from resources.lib.modules import cleantitle
+from resources.lib.modules import control
+from resources.lib.modules import source_utils
 
 
 class source:

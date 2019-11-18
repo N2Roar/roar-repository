@@ -12,10 +12,8 @@ queueMenu = control.lang(32065).encode('utf-8')
 
 DBIRDSTAT = (xbmcaddon.Addon('script.module.resolveurl').getSetting('RealDebridResolver_enabled'))
 isDbird = 'lime' if DBIRDSTAT == 'true' else 'darkorange'
-
 ADBIRDSTAT = (xbmcaddon.Addon('script.module.resolveurl').getSetting('AllDebridResolver_enabled'))
 isAdbird = 'lime' if ADBIRDSTAT == 'true' else 'darkorange'
-
 PREMESTAT = (xbmcaddon.Addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_enabled'))
 isPreMe = 'lime' if PREMESTAT == 'true' else 'darkorange'
 
@@ -347,7 +345,6 @@ class navigator:
 
 
     def devtools(self):
-        #self.addDirectoryItem('Dev_Test', 'myDevTest', 'tools.png', 'DefaultMovies.png')
         #self.addDirectoryItem('Toon Navigator', 'toonNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem('Test Movies(TMDB)', 'movies2&url=tmdbjewtestmovies', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem('Test Shows(TMDB)', 'tvshows2&url=tmdbjewtestshows', 'tvshows.png', 'DefaultTVShows.png')

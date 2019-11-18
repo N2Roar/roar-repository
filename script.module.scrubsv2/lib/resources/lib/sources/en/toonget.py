@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -13,7 +13,7 @@ class source:
         self.language = ['en']
         self.genre_filter = ['animation', 'anime']
         self.domains = ['toonget.net']
-        self.base_link = 'https://toonget.net'
+        self.base_link = 'http://toonget.net'
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -61,7 +61,7 @@ class source:
                 else:
                     match = re.compile('file: "(.+?)",').findall(r)
                 for url in match:
-                    url = url.replace('\\','')
+                    url = url.replace('\\', '')
                     if url in str(sources):
                         continue
                     info = source_tools.get_info(url)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os,re,sys,hashlib,urllib,urlparse,json,base64,random,datetime,xbmc
+import os,re,sys,hashlib,urllib,urlparse
+import json,base64,random,datetime,xbmc
 from resources.lib.modules import cache,client,control,metacache,regex
 from resources.lib.modules import views,workers,youtube,trailer
 try:
@@ -30,8 +31,7 @@ class indexer:
     def rootMC(self):
         try:
             regex.clear()
-            url = 'https://textuploader.com/11m10/raw'
-            #url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.xml'
+            url = 'https://raw.githubusercontent.com/jewbmx/xml/master/lists/MClist.xml'
             self.list = self.noname_list(url)
             for i in self.list:
                 i.update({'content': 'addons'})

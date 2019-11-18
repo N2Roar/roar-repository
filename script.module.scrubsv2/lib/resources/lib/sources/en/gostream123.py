@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
@@ -10,8 +10,8 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']  #  Old  gostream-123.com
-        self.domains = ['movie-32.online', 'gomovies123.today', 'movie-32.com']
+        self.language = ['en']  #  Old  movie-32.com  gostream-123.com
+        self.domains = ['movie-32.online', 'gomovies123.today']
         self.base_link = 'http://movie-32.online'
         self.search_link = '/?s=%s+%s'
         self.scraper = cfscrape.create_scraper()
@@ -39,7 +39,7 @@ class source:
             if url == None:
                 return sources
             r = self.scraper.get(url).content
-            match = re.compile('<iframe .+? src="(.+?)"').findall(r)
+            match = re.compile('<iframe.+?src="(.+?)"').findall(r)
             for url in match:
                 valid, host = source_utils.is_host_valid(url, hostDict)
                 if valid:

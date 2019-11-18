@@ -2,10 +2,12 @@
 # -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
 # Mod'D by Tempest
 
-import re,urllib,urlparse,json,base64
+import re, urllib, urlparse, json, base64
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import debrid
+import traceback
+from resources.lib.modules import log_utils
 
 
 class source:
@@ -64,7 +66,9 @@ class source:
             result = result.decode('iso-8859-1').encode('utf-8')
             result = urllib.unquote_plus(result)
             return result
-        except:
+        except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---DirectDownload - Exception: \n' + str(failure))
             return
 
 
@@ -75,7 +79,9 @@ class source:
             result = re.compile('id=(\d+)>.+?href=(.+?)>').findall(result)
             result = [(re.sub('http.+?//.+?/','/', i[1]), 'tt' + i[0]) for i in result]
             return result
-        except:
+        except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---DirectDownload - Exception: \n' + str(failure))
             return
 
 
@@ -146,6 +152,8 @@ class source:
                     pass
             return sources
         except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---DirectDownload - Exception: \n' + str(failure))
             return sources
 
 

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import re,urllib,urlparse,hashlib,base64
-from resources.lib.modules import client,control,directstream,pyaes,trakt
+import re, urllib, urlparse, hashlib, base64
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import directstream
+from resources.lib.modules import pyaes
+from resources.lib.modules import trakt
 
 
 def is_anime(content, type, type_id):
@@ -25,7 +29,9 @@ def get_release_quality(release_name, release_link=None):
         fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', release_name)
         fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
         fmt = [i.lower() for i in fmt]
-        if '2160p' in fmt:
+        if '4k' in fmt:
+            quality = '4K'
+        elif '2160p' in fmt:
             quality = '4K'
         elif '2160' in fmt:
             quality = '4K'
@@ -39,21 +45,13 @@ def get_release_quality(release_name, release_link=None):
             quality = '720p'
         elif 'brrip' in fmt:
             quality = '720p'
-        elif 'hd' in fmt:
-            quality = '720p'
-        elif 'HD' in fmt:
-            quality = '720p'
-        elif '.hd.' in fmt:
-            quality = '720p'
         elif 'hdtv' in fmt:
+            quality = '720p'
+        elif 'hd' in fmt:
             quality = '720p'
         elif 'bluray' in fmt:
             quality = '720p'
-        elif 'BluRay' in fmt:
-            quality = '720p'
         elif 'webrip' in fmt:
-            quality = '720p'
-        elif '.WEBRip.' in fmt:
             quality = '720p'
         elif '480p' in fmt:
             quality = '480p'
@@ -70,7 +68,9 @@ def get_release_quality(release_name, release_link=None):
                     release_link = release_link.encode('utf-8')
                 except:
                     pass
-                if '2160' in release_link:
+                if '4k' in release_link:
+                    quality = '4K'
+                elif '2160' in release_link:
                     quality = '4K'
                 elif '1080' in release_link:
                     quality = '1080p'

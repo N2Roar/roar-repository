@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 07-08-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle,source_tools
-from resources.lib.modules import source_utils,tvmaze
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import source_tools
+from resources.lib.modules import source_utils
+from resources.lib.modules import tvmaze
 
 
 class source:
@@ -62,4 +65,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

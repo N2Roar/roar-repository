@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Site to get more urls to use.  https://piratebayproxy.info/  or  https://proxybay.app/
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
@@ -15,8 +15,11 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']
-        self.domains = ['pirateproxy.live', 'thepiratebay.fun', 'thepiratebay.asia', 'tpb.party', 'thepiratebay3.org', 'thehiddenbay.com', 'piratebay.live', 'thepiratebay.zone']
-        self._base_link = None # Old  ['tpb.cool', 'thepiratebayz.org', 'thepiratebay.fail', 'openpirate.org', 'piratebay.icu', 'thepiratebay.fyi', 'thepirate.fun', 'thepiratebay.press']
+        self.domains = ['pirateproxy.live', 'thepiratebay.fun', 'thepiratebay.asia',
+            'tpb.party', 'thehiddenbay.com', 'piratebay.live', 'thepiratebay.zone',
+            'thepiratebay.fail', 'openpirate.org', 'thepiratebay.fyi', 'thepiratebay.press'
+        ]
+        self._base_link = None
         self.search_link = '/s/?q=%s&page=0&&video=on&orderby=99'
         self.min_seeders = int(control.setting('torrent.min.seeders'))
 
@@ -81,7 +84,7 @@ class source:
             html = html.replace('&nbsp;', ' ')
             try:
                 results = client.parseDOM(html, 'table', attrs={'id': 'searchResult'})[0]
-            except Exception:
+            except:
                 return sources
             rows = re.findall('<tr(.+?)</tr>', results, re.DOTALL)
             if rows is None:
@@ -94,14 +97,14 @@ class source:
                         #t = re.sub('(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*|3D)(\.|\)|\]|\s|)(.+|)', '', name, flags=re.I)
                         if not cleantitle.get(title) in cleantitle.get(name):
                             continue
-                    except Exception:
+                    except:
                         continue
                     y = re.findall('[\.|\(|\[|\s](\d{4}|S\d*E\d*|S\d*)[\.|\)|\]|\s]', name)[-1].upper()
                     if not y == hdlr:
                         continue
                     try:
                         seeders = int(re.findall('<td align="right">(.+?)</td>', entry, re.DOTALL)[0])
-                    except Exception:
+                    except:
                         continue
                     if self.min_seeders > seeders:
                         continue
@@ -110,7 +113,7 @@ class source:
                         link = str(client.replaceHTMLCodes(link).split('&tr')[0])
                         if link in str(sources):
                             continue
-                    except Exception:
+                    except:
                         continue
                     quality, info = source_utils.get_release_quality(name, name)
                     try:
@@ -119,17 +122,17 @@ class source:
                         size = float(re.sub('[^0-9|/.|/,]', '', size)) / div
                         size = '%.2f GB' % size
                         info.append(size)
-                    except Exception:
+                    except:
                         pass
                     info = ' | '.join(info)
                     sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': True})
-                except Exception:
+                except:
                     continue
             check = [i for i in sources if not i['quality'] == 'CAM']
             if check:
                 sources = check
             return sources
-        except Exception:
+        except:
             return sources
 
 
@@ -151,4 +154,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,base64
+import re, base64
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -58,4 +58,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

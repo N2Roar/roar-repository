@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # host limit code is a must on this one, otherwise your getting 1000+ results for aquaman lol.
 
-import re,requests
+import re, requests
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
 

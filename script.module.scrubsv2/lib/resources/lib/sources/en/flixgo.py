@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -10,9 +10,9 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['flixgo.cc', 'flixgo.co']
-        self.base_link = 'https://flixgo.cc'
+        self.language = ['en']  #  Old  flixgo.cc  flixgo.co
+        self.domains = ['flixgo.fun']
+        self.base_link = 'https://www1.flixgo.fun'
         self.search_link = '/?do=search&mode=advanced&subaction=search&story=%s+%s'
 
 

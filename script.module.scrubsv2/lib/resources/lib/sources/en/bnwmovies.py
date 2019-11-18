@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re 
 from resources.lib.modules import client
@@ -18,17 +18,17 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            scrape = title.lower().replace(' ','+').replace(':', '')
-            start_url = self.search_link %(self.goog,scrape,year)
+            scrape = title.lower().replace(' ', '+').replace(':', '')
+            start_url = self.search_link %(self.goog, scrape, year)
             html = client.request(start_url)
-            results = re.compile('href="(.+?)"',re.DOTALL).findall(html)
+            results = re.compile('href="(.+?)"', re.DOTALL).findall(html)
             for url in results:
                 if self.base_link in url:
                     if 'webcache' in url:
                         continue
                     if cleantitle.get(title) in cleantitle.get(url):
                         chkhtml = client.request(url)
-                        chktitle = re.compile('<title.+?>(.+?)</title>',re.DOTALL).findall(chkhtml)[0]
+                        chktitle = re.compile('<title.+?>(.+?)</title>', re.DOTALL).findall(chkhtml)[0]
                         if cleantitle.get(title) in cleantitle.get(chktitle):
                             if year in chktitle:
                                 return url
@@ -43,9 +43,9 @@ class source:
             if url == None:
                 return sources
             html = client.request(url)
-            Links = re.compile('<source.+?src="(.+?)"',re.DOTALL).findall(html)
+            Links = re.compile('<source.+?src="(.+?)"', re.DOTALL).findall(html)
             for link in Links:
-                sources.append({'source':'BNW', 'quality':'SD', 'language': 'en', 'url':link, 'direct':True, 'debridonly':False})
+                sources.append({'source': 'BNW', 'quality': 'SD', 'language': 'en', 'url': link, 'direct': True, 'debridonly': False})
             return sources
         except:
             return sources

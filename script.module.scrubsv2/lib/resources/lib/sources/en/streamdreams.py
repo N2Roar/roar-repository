@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
 from resources.lib.modules import cfscrape
@@ -14,8 +14,8 @@ class source:
         self.language = ['en']
         self.domains = ['streamdreams.org']
         self.base_link = 'https://streamdreams.org'
-        self.search_movie = '/movies/bbb-%s/'
-        self.search_tv = '/shows/bbb-%s/'
+        self.search_movie = '/movies/zzz-%s/'
+        self.search_tv = '/shows/zzz-%s/'
         self.scraper = cfscrape.create_scraper()
 
 

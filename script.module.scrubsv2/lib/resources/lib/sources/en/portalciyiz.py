@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Think its all Turkish
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import cfscrape
 from resources.lib.modules import directstream
 from resources.lib.modules import source_utils
@@ -37,15 +37,15 @@ class source:
             title = urldata['title'].replace(':', ' ').lower()
             year = urldata['year']
             search_id = title.lower()
-            start_url = urlparse.urljoin(self.base_link, self.search_link % (search_id.replace(' ','+') + '+' + year))
+            start_url = urlparse.urljoin(self.base_link, self.search_link % (search_id.replace(' ', '+') + '+' + year))
             headers={'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'}
             html = self.scraper.get(start_url, headers=headers).content
-            Links = re.compile('<div class="col-8">.+?<a href="(.+?)" class="baslikust h5">(.+?)"',re.DOTALL).findall(html)
+            Links = re.compile('<div class="col-8">.+?<a href="(.+?)" class="baslikust h5">(.+?)"', re.DOTALL).findall(html)
             for link, name in Links:
                 if title.lower() in name.lower(): 
                     if year in name:
                         holder = self.scraper.get(link, headers=headers).content
-                        Alterjnates = re.compile('<button class="text-capitalize dropdown-item" value="(.+?)"',re.DOTALL).findall(holder)
+                        Alterjnates = re.compile('<button class="text-capitalize dropdown-item" value="(.+?)"', re.DOTALL).findall(holder)
                         for alt_link in Alterjnates:
                             alt_url = alt_link.split ("e=")[1]
                             if alt_url in str(sources):

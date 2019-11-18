@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
@@ -43,23 +43,21 @@ class source:
             if url == None:
                 return sources
             r = self.scraper.get(url).content
-            try:
-                match = re.compile('<IFRAME.+?SRC=.+?//(.+?)/(.+?)"').findall(r)
-                for host,url in match: 
-                    url = 'http://%s/%s' % (host,url)
-                    host = host.replace('www.','')
-                    valid, host = source_utils.is_host_valid(host, hostDict)
-                    if source_utils.limit_hosts() is True and host in str(sources):
-                        continue
-                    if valid:
-                        sources.append({ 'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False })
-            except:
-                return
+            match = re.compile('<IFRAME.+?SRC=.+?//(.+?)/(.+?)"').findall(r)
+            for host, url in match:
+                url = 'http://%s/%s' % (host, url)
+                host = host.replace('www.', '')
+                valid, host = source_utils.is_host_valid(host, hostDict)
+                if source_utils.limit_hosts() is True and host in str(sources):
+                    continue
+                if valid:
+                    sources.append({ 'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False })
+            return sources
         except Exception:
-            return
-        return sources
+            return sources
 
 
     def resolve(self, url):
         return url
+
 

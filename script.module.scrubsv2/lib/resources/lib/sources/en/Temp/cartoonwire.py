@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 05-06-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
-from resources.lib.modules import client,cleantitle
-from resources.lib.modules import directstream,source_utils
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import directstream
+from resources.lib.modules import source_utils
 
 
 class source:
@@ -14,12 +16,6 @@ class source:
         self.domains = ['watchcartoononline.info', 'cartoonwire.to']
         self.base_link = 'https://cartoonwire.to'
         self.search_link = '/?s=%s'
-
-
-# https://cartoonwire.to/toy-story-4-2019/
-# https://cartoonwire.to/gnome-alone-2017/
-# https://watchcartoononline.info/wonder-park-2019/
-# https://watchcartoononline.info/friends-naki-on-the-monster-island-2011/
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -46,11 +42,6 @@ class source:
                         return source_utils.strip_domain(url)
         except:
             return
-
-
-# https://cartoonwire.to/episode/transformers-cyberverse-season-2-episode-1/
-# https://watchcartoononline.info/episode/zeroman-episode-13/
-# https://watchcartoononline.info/episode/guardians-of-the-galaxy-season-3-episode-23/
 
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):

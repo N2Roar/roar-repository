@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re,json
+import re, json
 
 
 def json_load_as_str(file_handle):

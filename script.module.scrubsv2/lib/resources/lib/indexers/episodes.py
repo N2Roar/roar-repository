@@ -91,7 +91,7 @@ class seasons:
             url = self.tvdb_info_link % (tvdb, 'en')
             data = urllib2.urlopen(url, timeout=30).read()
             zip = zipfile.ZipFile(StringIO.StringIO(data))
-            result = zip.read('%s.xml' % 'en')
+            result = zip.read('en.zip.xml')
             artwork = zip.read('banners.xml')
             zip.close()
             dupe = client.parseDOM(result, 'SeriesName')[0]
@@ -101,14 +101,14 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, 'en')
                 data = urllib2.urlopen(url, timeout=30).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('%s.xml' % 'en')
+                result = zip.read('en.zip.xml')
                 artwork = zip.read('banners.xml')
                 zip.close()
             if not lang == 'en':
                 url = self.tvdb_info_link % (tvdb, lang)
                 data = urllib2.urlopen(url, timeout=30).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result2 = zip.read('%s.xml' % lang)
+                result2 = zip.read('%s.zip.xml' % lang)
                 zip.close()
             else:
                 result2 = result
@@ -825,7 +825,7 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 data = urllib2.urlopen(url, timeout=10).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('%s.xml' % lang)
+                result = zip.read('%s.zip.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
                 result = result.split('<Episode>')
@@ -1059,7 +1059,7 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 data = urllib2.urlopen(url, timeout=10).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('%s.xml' % lang)
+                result = zip.read('%s.zip.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
                 result = result.split('<Episode>')

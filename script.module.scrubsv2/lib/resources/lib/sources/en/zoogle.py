@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import control
@@ -65,7 +65,8 @@ class source:
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
             hdlr = 'S%02dE%02d' % (int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else data['year']
             category = '+category%3ATV' if 'tvshowtitle' in data else '+category%3AMovies'
-            query = '%s S%02dE%02d' % (data['tvshowtitle'], int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
+            query = '%s S%02dE%02d' % (data['tvshowtitle'], int(data['season']), int(data['episode'])) \
+                if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|<|>|\|)', ' ', query)
             url = self.search_link % urllib.quote_plus(query)
             url = urlparse.urljoin(self.base_link, url) + str(category)
@@ -73,7 +74,7 @@ class source:
             html = html.replace('&nbsp;', ' ')
             try:
                 results = client.parseDOM(html, 'table', attrs={'class': 'table table-condensed table-torrents vmiddle'})[0]
-            except Exception:
+            except:
                 return sources
             rows = re.findall('<tr(.+?)</tr>', results, re.DOTALL)
             if rows is None:
@@ -85,14 +86,14 @@ class source:
                         name = client.replaceHTMLCodes(name).replace('<hl>', '').replace('</hl>', '')
                         if not cleantitle.get(title) in cleantitle.get(name):
                             continue
-                    except Exception:
+                    except:
                         continue
                     y = re.findall('[\.|\(|\[|\s](\d{4}|S\d*E\d*|S\d*)[\.|\)|\]|\s]', name)[-1].upper()
                     if not y == hdlr:
                         continue
                     try:
                         seeders = int(re.findall('class="progress prog trans90" title="Seeders: (.+?) \|', entry, re.DOTALL)[0])
-                    except Exception:
+                    except:
                         continue
                     if self.min_seeders > seeders:
                         continue
@@ -101,7 +102,7 @@ class source:
                         link = str(client.replaceHTMLCodes(link).split('&tr')[0])
                         if link in str(sources):
                             continue
-                    except Exception:
+                    except:
                         continue
                     quality, info = source_utils.get_release_quality(name, name)
                     try:
@@ -110,20 +111,21 @@ class source:
                         size = float(re.sub('[^0-9|/.|/,]', '', size)) / div
                         size = '%.2f GB' % size
                         info.append(size)
-                    except Exception:
+                    except:
                         pass
                     info = ' | '.join(info)
                     sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': link, 'info': info, 'direct': False, 'debridonly': True})
-                except Exception:
+                except:
                     continue
             check = [i for i in sources if not i['quality'] == 'CAM']
             if check:
                 sources = check
             return sources
-        except Exception:
+        except:
             return sources
 
 
     def resolve(self, url):
         return url
+
 

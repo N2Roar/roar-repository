@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Old Yoda scraper mixed with a Fix By Shellc0de or Muad
 # Added spare domains and swapped baseLink to reduce traffic.
 
-import re,requests,urllib,urlparse
+import re, requests, urllib, urlparse
 from resources.lib.modules import more_sources
 from resources.lib.modules import source_utils
 
@@ -11,7 +11,7 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en'] # Old  putlockerhd.co
+        self.language = ['en']
         self.domains = ['afdah.org', 'putlocker.how', 'watch32hd.co']
         self.base_link = 'https://putlocker.how'
         self.search_link = '/watch?v=%s_%s'
@@ -39,7 +39,7 @@ class source:
             title = data['title']
             year = data['year']
             url = urlparse.urljoin(self.base_link, self.search_link) 
-            url = url % (title.replace(':', '').replace(' ','_'),year)
+            url = url % (title.replace(':', '').replace(' ', '_'), year)
             moviePage = self.session.get(url, headers=self.headers).content
             results = re.compile('var frame_url = "(.+?)"', re.DOTALL | re.M).findall(moviePage)
             if results:

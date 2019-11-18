@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urlparse
+import re, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -11,8 +11,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['fmoviesto.to']
-        self.base_link = 'https://fmoviesto.to'
+        self.domains = ['fmovies.ru.com', 'fmoviesto.to']
+        self.base_link = 'https://fmovies.ru.com'
         self.search_link = '/search.html?keyword=%s'
 
 
@@ -22,7 +22,7 @@ class source:
             url = urlparse.urljoin(self.base_link, self.search_link)
             url = url  % (search_id.replace(':', ' ').replace(' ', '+'))
             search_results = client.request(url)
-            match = re.compile('<a href="/watch/(.+?)" title="(.+?)">',re.DOTALL).findall(search_results)
+            match = re.compile('<a href="/watch/(.+?)" title="(.+?)">', re.DOTALL).findall(search_results)
             for row_url, row_title in match:
                 row_url = self.base_link + '/watch/%s' % row_url
                 if cleantitle.get(title) in cleantitle.get(row_title):
@@ -39,11 +39,11 @@ class source:
             if url == None:
                 return sources
             html = client.request(url)
-            quality = re.compile('<div>Quanlity: <span class="quanlity">(.+?)</span></div>',re.DOTALL).findall(html)
+            quality = re.compile('<div>Quanlity: <span class="quanlity">(.+?)</span></div>', re.DOTALL).findall(html)
             for qual in quality:
                 quality = source_utils.check_url(qual)
                 info = qual
-            links = re.compile('var link_.+? = "(.+?)"',re.DOTALL).findall(html)
+            links = re.compile('var link_.+? = "(.+?)"', re.DOTALL).findall(html)
             for url in links:
                 if not url.startswith('http'):
                     url =  "https:" + url

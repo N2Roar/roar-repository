@@ -160,6 +160,8 @@ class movies:
         elif setting == '4':
             self.get(self.theaters_link)
         elif setting == '5':
+            self.get(self.theatersOld_link)
+        elif setting == '6':
             self.get(self.added_link)
         else:
             self.get(self.featured_link)
@@ -1154,7 +1156,7 @@ class movies:
                     meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
                 except:
                     pass
-                poster = [i[x] for x in ['poster', 'poster2', 'poster3'] if i.get(x, '0') != '0']
+                poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
                 poster = poster[0] if poster else addonPoster
                 meta.update({'poster': poster})
                 sysmeta = urllib.quote_plus(json.dumps(meta))

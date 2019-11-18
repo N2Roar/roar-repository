@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests
+import re, requests
 from resources.lib.modules import cleantitle
 from resources.lib.modules import directstream
 from resources.lib.modules import getSum
@@ -13,7 +13,7 @@ class source:
         self.priority = 1
         self.language = ['en']  # watchserieshd.co got changed to a different source 
         self.domains = ['watchserieshd.cc']  # Old  watchserieshd.io
-        self.base_link = 'https://watchserieshd.cc'
+        self.base_link = 'https://www1.watchserieshd.cc'
         self.search_link = '/series/%s-season-%s-episode-%s'
 
 
@@ -29,8 +29,7 @@ class source:
         try:
             if not url:
                 return
-            tvshowtitle = url
-            url = self.base_link + self.search_link % (tvshowtitle, season, episode)
+            url = self.base_link + self.search_link % (url, season, episode)
             return url
         except:
             return

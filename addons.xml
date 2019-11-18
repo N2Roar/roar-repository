@@ -71,6 +71,7 @@
 		<!-- Official Addons -->
 		<!-- <import addon="plugin.video.aswim"/> -->
 		<!-- 3rd Party Anime (doko.repository) -->
+		<import addon="plugin.video.ctoonkodi" optional="true"/>
 		<import addon="plugin.video.toonmania2"/>
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
@@ -135,6 +136,23 @@
         <language>en</language>
         <platform>all</platform>
     </extension>
+</addon>
+
+<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.3.9" provider-name="doko, Tikipeter">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.requests" />
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="Main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en"></summary>
+    <description lang="en">[COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR][CR][CR]A simple addon for streaming cartoon episodes from the [B]ctoon.party[/B] website.[CR][CR]Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B][/COLOR]</description>
+    <news>[COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR] - Cartoons[CR][CR][B]0.3.9:[/B][CR]- Added settings (autoplay, clear cache)[CR]- Added disk and memory caching.[CR][CR][B]0.3.0:[/B][CR]- Added support for the CTOON web API.</news>
+    <disclaimer lang="en"></disclaimer>
+    <platform>all</platform>
+  </extension>
 </addon>
 
 <addon id="plugin.video.dramatic" name="Dramatic [COLOR red](Krypton Only)[/COLOR]" version="1.0.3" provider-name="Wilson Magic">
@@ -242,7 +260,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.6.1">
+<addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.6.2">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.scrubsv2" />
@@ -390,7 +408,7 @@ Add-on by doko.
     </extension>
 </addon>
 
-<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.26">
+<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.27">
   <requires>
     <import addon="xbmc.python" version="2.25.0" />
     <import addon="script.module.requests" version="2.12.4" />
@@ -644,7 +662,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
     </extension>
 </addon>
 
-<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.6.0">
+<addon id="script.module.scrubsv2" name="[COLOR orange]Scrubs v2 Module[/COLOR]" provider-name="JewBMX" version="4.6.2">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.beautifulsoup4" />

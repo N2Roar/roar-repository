@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # -Mod'D by Tempest
 
 import re
@@ -60,4 +60,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

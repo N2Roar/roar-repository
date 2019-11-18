@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="General">
+        <setting id="autoplay" label="Use Autoplay" type="labelenum" default="Disabled" values="Disabled|240|480|720|1080"/>/>
+    </category>
+    <category label="Cache">
+        <setting id="clearCache" label="Clear Cache Files" type="action" action="RunPlugin(plugin://plugin.video.ctoonkodi/?view=CLEAR_CACHE)"/>
+    </category>
+</settings>

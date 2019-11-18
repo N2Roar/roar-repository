@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Made By Shellc0de or Muad
 
-import re,requests,urlparse
+import re, requests, urlparse
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils

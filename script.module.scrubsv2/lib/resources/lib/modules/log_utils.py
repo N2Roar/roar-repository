@@ -10,6 +10,7 @@ name = control.addonInfo('name')
 DEBUGPREFIX = '[ %s  DEBUG ]' % (name)
 DEBUGSPACER = '[ %s  DEBUG ]' % (name)
 
+
 def spacer():
     _text = '-'
     _spacer = _text * 80

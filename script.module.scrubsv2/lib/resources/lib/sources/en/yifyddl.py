@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Created by Tempest
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import debrid
 from resources.lib.modules import source_utils
@@ -12,8 +12,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en', 'de', 'fr', 'ko', 'pl', 'pt', 'ru']
-        self.domains = ['yifyddl.movie']
-        self.base_link = 'https://yifyddl.movie/'
+        self.domains = ['yify.yt', 'yifyddl.movie']
+        self.base_link = 'https://yify.yt'
         self.search_link = '/movie/%s'
 
 
@@ -69,4 +69,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

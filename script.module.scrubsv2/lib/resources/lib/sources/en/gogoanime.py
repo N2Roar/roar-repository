@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_tools
@@ -15,7 +15,7 @@ class source:
         self.language = ['en']
         self.genre_filter = ['animation', 'anime']
         self.domains = ['gogoanime.io']
-        self.base_link = 'https://www9.gogoanime.io/'
+        self.base_link = 'https://www9.gogoanime.io'
         self.search_link = '/search.html?keyword=%s'
         self.episode_link = '/%s-episode-%s'
 

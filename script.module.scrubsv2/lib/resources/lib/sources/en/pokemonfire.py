@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import client
@@ -65,8 +65,12 @@ class source:
         if 'veohb.net/vid.php?' in url:
             r = client.request(url)
             url = re.compile('<source src="(.+?)"').findall(r)[0]
+            return url
         elif self.base_link in url:
             r = client.request(url)
             url = re.compile("file: '(.+?)'").findall(r)[0]
-        return url
+            return url
+        else:
+            return url
+
 

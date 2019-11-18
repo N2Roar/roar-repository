@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urlparse,urllib,base64
+import re, urlparse, urllib, base64
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
@@ -12,10 +12,9 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['putlockers.la','putlockers.mn','putlockers.tw']
-        self.base_link = 'http://putlockers.la'
+        self.domains = ['putlockers.la', 'putlockers.mn', 'putlockers.tw', 'putlockers.tf']
+        self.base_link = 'http://putlockers.tf'
         self.search_link = '/search-movies/%s.html'
-        # Spare  putlockers.tf
 
 
     def movie(self, imdb, title, localtitle, aliases, year):

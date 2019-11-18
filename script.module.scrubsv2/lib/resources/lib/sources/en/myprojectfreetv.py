@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
@@ -10,8 +10,8 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['projectfreetv.ag', 'project-free-tv.ag', 'my-project-free.tv']
+        self.language = ['en']  #  Old  project-free-tv.ag  my-project-free.tv
+        self.domains = ['projectfreetv.ag']
         self.base_link = 'http://www1.projectfreetv.ag'
         self.search_link = '/episode/%s-season-%s-episode-%s'
         self.scraper = cfscrape.create_scraper()
@@ -43,7 +43,7 @@ class source:
             if url == None:
                 return sources
             r = self.scraper.get(url).content
-            data = re.compile("callvalue\('.+?','.+?','(.+?)://(.+?)/(.+?)'\)",re.DOTALL).findall(r)
+            data = re.compile("callvalue\('.+?','.+?','(.+?)://(.+?)/(.+?)'\)", re.DOTALL).findall(r)
             for http, host, url in data:
                 url = '%s://%s/%s' % (http, host, url)
                 if source_utils.limit_hosts() is True and host in str(sources):
@@ -52,7 +52,7 @@ class source:
                     continue
                 valid, host = source_utils.is_host_valid(host, hostDict)
                 if valid:
-                    sources.append({ 'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False })
+                    sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
             return sources
         except:
             return sources

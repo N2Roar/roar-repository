@@ -1,14 +1,13 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re, urllib, urlparse
+from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import debrid
+from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 from resources.lib.modules import workers
-#from resources.lib.modules import client2 as client
-from resources.lib.modules import client
-from resources.lib.modules import dom_parser2 as dom
 
 
 class source:
@@ -86,7 +85,7 @@ class source:
             [i.start() for i in threads2]
             [i.join() for i in threads2]
             return self._sources
-        except BaseException:
+        except:
             return self._sources
 
 
@@ -97,7 +96,7 @@ class source:
             posts = client.parseDOM(r, 'tbody')[0]
             posts = client.parseDOM(posts, 'tr')
             for post in posts:
-                data = dom.parse_dom(post, 'a', req='href')[1]
+                data = dom_parser.parse_dom(post, 'a', req='href')[1]
                 link = urlparse.urljoin(self.base_link, data.attrs['href'])
                 name = data.content
                 t = name.split(self.hdlr)[0]
@@ -105,7 +104,7 @@ class source:
                     continue
                 try:
                     y = re.findall('[\.|\(|\[|\s|\_|\-](S\d+E\d+|S\d+)[\.|\)|\]|\s|\_|\-]', name, re.I)[-1].upper()
-                except BaseException:
+                except:
                     y = re.findall('[\.|\(|\[|\s\_|\-](\d{4})[\.|\)|\]|\s\_|\-]', name, re.I)[-1].upper()
                 if not y == self.hdlr:
                     continue
@@ -114,11 +113,11 @@ class source:
                     div = 1 if size.endswith('GB') else 1024
                     size = float(re.sub('[^0-9|/.|/,]', '', size.replace(',', '.'))) / div
                     size = '%.2f GB' % size
-                except BaseException:
+                except:
                     size = '0'
                 self.items.append((name, link, size))
             return self.items
-        except BaseException:
+        except:
             return self.items
 
 
@@ -133,7 +132,7 @@ class source:
             url = [i for i in data if 'magnet:' in i][0]
             url = url.split('&tr')[0]
             self._sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
-        except BaseException:
+        except:
             pass
 
 

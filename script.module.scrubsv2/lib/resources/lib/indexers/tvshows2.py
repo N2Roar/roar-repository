@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os,sys,re,json,urllib,urlparse,datetime,xbmc,base64
-from resources.lib.modules import cache,client,control,cleangenre,cleantitle,trakt
-from resources.lib.modules import utils,views,metacache,workers,playcount,favourites
-from resources.lib.indexers import navigator
+import os, sys, re, urllib, urlparse
+import json, datetime, base64
+from resources.lib.modules import cache
+from resources.lib.modules import client
+from resources.lib.modules import cleangenre
+from resources.lib.modules import control
+from resources.lib.modules import metacache
+from resources.lib.modules import playcount
+from resources.lib.modules import trakt
+from resources.lib.modules import utils
+from resources.lib.modules import views
+from resources.lib.modules import workers
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -14,17 +22,18 @@ class tvshows:
     def __init__(self):
         self.list = []
         self.tmdb_link = 'https://api.themoviedb.org'
-        self.imdb_link = 'http://www.imdb.com'
+        self.imdb_link = 'https://www.imdb.com'
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'http://www.tvmaze.com'
         self.tvdb_key = base64.urlsafe_b64decode('MUQ2MkYyRjkwMDMwQzQ0NA==')
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        self.lang = control.apiLanguage()['tvdb']
-        self.tmdb_key = control.setting('tm.user')
         self.omdb_key = control.setting('omdb.key')
-        if self.tmdb_key == '' or self.tmdb_key == None: self.tmdb_key = base64.b64decode('YzhiN2RiNzAxYmFjMGIyNmVkZmNjOTNiMzk4NTg5NzI=')
+        self.tmdb_key = control.setting('tm.user')
+        if self.tmdb_key == '' or self.tmdb_key == None:
+            self.tmdb_key = base64.b64decode('YzhiN2RiNzAxYmFjMGIyNmVkZmNjOTNiMzk4NTg5NzI=')
+        self.lang = control.apiLanguage()['tvdb']
         self.tmdb_lang = 'en'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
@@ -35,11 +44,11 @@ class tvshows:
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key, '%s', self.lang)
-        self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key, '%s', self.lang)
+        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.imdb_by_query = 'http://www.omdbapi.com/?i=%s&apikey=%s' % ("%s", self.omdb_key)
-        self.tvdb_image = 'http://thetvdb.com/banners/'
+        self.tvdb_image = 'https://thetvdb.com/banners/'
         self.tmdb_by_query_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ("%s", self.tmdb_key)
 
         self.person_link = 'https://api.themoviedb.org/3/person/%s?api_key=%s&append_to_response=tv_credits'

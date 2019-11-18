@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 # Dupe of wsunblock. only real difference is search vs build.
 
-import re,base64
+import re, base64
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -24,7 +24,7 @@ class source:
             tvshowTitle = cleantitle.geturl(tvshowtitle).replace(':', ' ').replace(' ', '+')
             url = self.base_link + self.search_link % tvshowTitle
             searchPage = self.scraper.get(url).content
-            results = re.compile('<div valign="top" style="padding-left: 10px;">.+?<a href="(.+?)" title=".+?" target="_blank"><strong>(.+?)</strong></a>',re.DOTALL).findall(searchPage)
+            results = re.compile('<div valign="top" style="padding-left: 10px;">.+?<a href="(.+?)" title=".+?" target="_blank"><strong>(.+?)</strong></a>', re.DOTALL).findall(searchPage)
             for url, checkit in results:
                 zcheck = '%s (%s)' % (tvshowtitle, year)
                 if zcheck.lower() in checkit.lower():
@@ -66,4 +66,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

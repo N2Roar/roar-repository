@@ -24,7 +24,8 @@ class channels:
         channels = [('01', 'Sky Premiere', '4021'), ('02', 'Sky Premiere +1', '1823'), ('03', 'Sky Hits', '4033'),
             ('04', 'Sky Greats', '4015'), ('05', 'Sky Disney', '4013'), ('06', 'Sky Family', '4018'), ('07', 'Sky Action', '4014'),
             ('08', 'Sky Comedy', '4019'), ('09', 'Sky Thriller', '4062'), ('10', 'Sky Drama', '4016'), ('11', 'Sky SciFi/Horror', '4017'),
-            ('12', 'Sky Select', '4020'), ('13', 'Film4', '4044'), ('14', 'Film4 +1', '1629'), ('15', 'TCM', '3811'), ('16', 'TCM +1', '5275')]
+            ('12', 'Sky Select', '4020'), ('13', 'Film4', '4044'), ('14', 'Film4 +1', '1629'), ('15', 'TCM', '3811'), ('16', 'TCM +1', '5275')
+        ]
         threads = []
         for i in channels:
             threads.append(workers.Thread(self.sky_list, i[0], i[1], i[2]))
@@ -200,8 +201,7 @@ class channels:
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)
-                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
-                #item.setInfo(type='Video', infoLabels = meta) # old code
+                item.setInfo(type='Video', infoLabels=control.metadataClean(meta))
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
@@ -209,4 +209,5 @@ class channels:
                 pass
         control.content(syshandle, 'files')
         control.directory(syshandle, cacheToDisc=True)
+
 

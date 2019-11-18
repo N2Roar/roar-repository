@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2018 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2018 by JewBMX in Scrubs.
 # Sites ass and barely has much. Tested with new walking dead episodes.
 
-import re,requests
+import re, requests
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
 
@@ -10,8 +10,8 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['on.mywatchseries.stream', 'get.mywatchseries.stream', 'go.mywatchseries.stream']
+        self.language = ['en']  #  Old  get.mywatchseries.stream  go.mywatchseries.stream
+        self.domains = ['on.mywatchseries.stream']
         self.base_link = 'https://on.mywatchseries.stream'
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0', 'Referer': self.base_link}
         self.session = requests.Session()

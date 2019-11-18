@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests
+import re, requests
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -23,7 +23,7 @@ class source:
             tvShowTitle = cleantitle.geturl(tvshowtitle)
             tmdburl = 'https://api.themoviedb.org/3/find/%s?external_source=tvdb_id&language=en-US&api_key=%s' % (tvdb, self.tm_user)
             tmdbresult = self.session.get(tmdburl, headers=self.headers).content
-            tmdb_id = re.compile('"id":(.+?),',re.DOTALL).findall(tmdbresult)[0]
+            tmdb_id = re.compile('"id":(.+?),', re.DOTALL).findall(tmdbresult)[0]
             url = '/watch-' + tvShowTitle + '-online-free/' + tmdb_id
             return url
         except:
@@ -46,12 +46,14 @@ class source:
             sources = []
             if url == None:
                 return sources
-            url = url.replace(' ','-')
+            url = url.replace(' ', '-')
             r = self.session.get(url, headers=self.headers).content
-            match = re.compile('<li class="playlist_entry " id="(.+?)"><a><div class="list_number">.+?</div>(.+?)<span>></span></a></li>',re.DOTALL).findall(r)
+            match = re.compile('<li class="playlist_entry " id="(.+?)"><a><div class="list_number">.+?</div>(.+?)<span>></span></a></li>', re.DOTALL).findall(r)
             for id, host in match:
                 url = self.base_link + '/embed/' + id
                 valid, host = source_utils.is_host_valid(host, hostDict)
+                if source_utils.limit_hosts() is True and host in str(sources):
+                    continue
                 if valid:
                     sources.append({'source': host, 'quality': 'SD', 'language': 'en', 'url': url, 'direct': False, 'debridonly': False})
             return sources

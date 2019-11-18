@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests,urlparse
+import re, requests, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_tools
@@ -39,7 +39,7 @@ class source:
             r = client.request(q)
             r = client.parseDOM(r, 'div', attrs={'class': 'featured-image'})
             for i in r:
-                match = re.compile('<a href="(.+?)"',re.DOTALL).findall(i)
+                match = re.compile('<a href="(.+?)"', re.DOTALL).findall(i)
                 for url in match:
                     if t in cleantitle.get(url):
                         return source_utils.strip_domain(url)
@@ -67,7 +67,7 @@ class source:
             if url == None:
                 return sources
             r = client.request(url)
-            match = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(r)
+            match = re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(r)
             for url in match:
                 quality = source_tools.get_quality(url)
                 info = source_tools.get_info(url)
@@ -80,13 +80,12 @@ class source:
 
 
     def resolve(self, url):
-        try:
-            open = requests.get(url, timeout=3).content
-            if 'gogoanime' in url:
-                url = re.compile('"link":"(.+?)"',re.DOTALL).findall(open)[0]
-                url = url.replace('\\','')
-        except:
-            pass
-        return url
+        if 'gogoanime' in url:
+            open = requests.get(url, timeout=5).content
+            url = re.compile('"link":"(.+?)"', re.DOTALL).findall(open)[0]
+            url = url.replace('\\', '')
+            return url
+        else:
+            return url
 
 

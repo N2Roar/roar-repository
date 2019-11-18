@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests,urllib,urlparse
+import re, requests, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import directstream
@@ -14,7 +14,7 @@ class source:
         self.priority = 1
         self.language = ['en']
         self.domains = ['123movieshub.gg', 'seriesonline8.co']
-        self.base_link = 'https://www3.123movieshub.gg'
+        self.base_link = 'https://www4.123movieshub.gg'
         self.search_link = '/movie/search/%s'
 
 

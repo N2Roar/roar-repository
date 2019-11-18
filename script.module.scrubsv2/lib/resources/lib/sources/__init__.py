@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import os,pkgutil
+import os, pkgutil
 from resources.lib.modules import log_utils
 
 __all__ = [x[1] for x in os.walk(os.path.dirname(__file__))][0]

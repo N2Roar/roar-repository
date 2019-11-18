@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import re,json
-from resources.lib.modules import client,workers
+import re, json
+from resources.lib.modules import client
+from resources.lib.modules import workers
 
 
 class youtube(object):

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
 import re
 from resources.lib.modules import cfscrape
@@ -10,8 +10,8 @@ from resources.lib.modules import source_utils
 class source:
     def __init__(self):
         self.priority = 1
-        self.language = ['en']
-        self.domains = ['new123movies.co', 'flenix.online', 'flenix-hd.online']
+        self.language = ['en']  #  Old  flenix.online
+        self.domains = ['new123movies.co', 'gomovie32.com']
         self.base_link = 'http://new123movies.co'
         self.search_link = '/?s=%s+%s'
         self.scraper = cfscrape.create_scraper()
@@ -24,11 +24,7 @@ class source:
             searchPage = self.scraper.get(url).content
             results = re.compile('<a href="(.+?)" title="(.+?)">').findall(searchPage)
             for url, checkit in results:
-                zcheck = '%s (%s)' % (title, year)
-                zcheck2 = '%s %s' % (title, year)
-                if zcheck.lower() in checkit.lower():
-                    return url
-                elif zcheck2.lower() in checkit.lower():
+                if title.lower() in checkit.lower() and year in checkit.lower():
                     return url
         except:
             return

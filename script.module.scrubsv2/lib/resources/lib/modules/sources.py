@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import re,sys,urllib,urlparse,json
-import time,datetime,random,xbmc
+import re, sys, urllib, urlparse, json
+import time, datetime, random, xbmc
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
@@ -80,9 +80,11 @@ class sources:
         elif 'year' in meta:
             sysname += urllib.quote_plus(' (%s)' % meta['year'])
         poster = meta['poster3'] if 'poster3' in meta else '0'
-        if poster == '0': poster = meta['poster'] if 'poster' in meta else '0'
+        if poster == '0':
+            poster = meta['poster'] if 'poster' in meta else '0'
         fanart = meta['fanart2'] if 'fanart2' in meta else '0'
-        if fanart == '0': fanart = meta['fanart'] if 'fanart' in meta else '0'
+        if fanart == '0':
+            fanart = meta['fanart'] if 'fanart' in meta else '0'
         thumb = meta['thumb'] if 'thumb' in meta else '0'
         if thumb == '0':
             thumb = poster
@@ -1158,9 +1160,12 @@ class sources:
         except:
             self.hostDict = []
         self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
-        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.stream', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se', 'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
-        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.stream', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
-        self.hostblockDict = ['youtube.com', 'hqq.tv', 'waaw.tv', 'netu.tv', 'movdivx.com', 'divxme.com', 'divxstage.eu', 'streamflv.com', 'speedvid.net', 'powvideo.net', 'povvideo.net', 'estream.to']
+        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se', 'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
+        self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co', 'vidlox.tv']
+        self.hostblockDict = ['youtube.com', 'hqq.tv', 'waaw.tv', 'netu.tv', 'movdivx.com', 'divxme.com', 'divxstage.eu', 'streamflv.com', 'speedvid.net', 'powvideo.net', 'povvideo.net', 'estream.to',
+            'rapidvideo.com', 'rapidvideo.is', 'rapidvid.to', 'openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.space', 'openload.pw',
+            'streamango.com', 'streamcherry.com', 'fruitstreams.com', 'fruitadblock.net', 'fruithosted.net', 'fruithosts.net'
+        ]
 
 
     def enableAll(self):
@@ -1171,7 +1176,7 @@ class sources:
                 control.setSetting(source_setting, 'true')
         except:
             pass
-        control.openSettings(query='11.0')
+        control.openSettings(query='14.0')
 
 
     def disableAll(self):
@@ -1182,5 +1187,5 @@ class sources:
                 control.setSetting(source_setting, 'false')
         except:
             pass
-        control.openSettings(query='11.0')
+        control.openSettings(query='14.0')
 

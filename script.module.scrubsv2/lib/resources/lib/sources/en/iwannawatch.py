@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,requests,urlparse
+import re, requests, urlparse
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
 
@@ -21,11 +21,11 @@ class source:
             search_id = cleantitle.getsearch(title)
             url = urlparse.urljoin(self.base_link, self.search_link)
             url = url  % (search_id.replace(' ', '+').replace('-', '+').replace('++', '+'), year)
-            headers = {'User-Agent':self.User_Agent}
+            headers = {'User-Agent': self.User_Agent}
             search_results = requests.get(url, headers=headers, timeout=10).content
-            items = re.compile('<item>(.+?)</item>',re.DOTALL).findall(search_results)
+            items = re.compile('<item>(.+?)</item>', re.DOTALL).findall(search_results)
             for item in items:
-                match = re.compile('<title>(.+?)</title>.+?<link>(.+?)</link>',re.DOTALL).findall(item)
+                match = re.compile('<title>(.+?)</title>.+?<link>(.+?)</link>', re.DOTALL).findall(item)
                 for row_title, row_url in match:
                     if cleantitle.get(title) in cleantitle.get(row_title):
                         if year in str(row_title):
@@ -41,12 +41,12 @@ class source:
             sources = []
             if url == None:
                 return sources
-            headers = {'User-Agent':self.User_Agent}
+            headers = {'User-Agent': self.User_Agent}
             html = requests.get(url, headers=headers, timeout=10).content
-            qual = re.compile('<div class="cf">.+?class="quality">(.+?)</td>',re.DOTALL).findall(html)
+            qual = re.compile('<div class="cf">.+?class="quality">(.+?)</td>', re.DOTALL).findall(html)
             for i in qual:
                 quality = source_utils.check_url(i)
-            links = re.compile('data-href="(.+?)"',re.DOTALL).findall(html)
+            links = re.compile('data-href="(.+?)"', re.DOTALL).findall(html)
             for link in links:
                 if 'http' not in link:
                     link = 'https://' + link

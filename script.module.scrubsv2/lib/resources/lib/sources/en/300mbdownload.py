@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
+import re, urllib, urlparse
 from resources.lib.modules import client
 from resources.lib.modules import cleantitle
 from resources.lib.modules import debrid
@@ -12,8 +12,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['300mbdownload.ws', '300mbdownload.club']
-        self.base_link = 'https://www.300mbdownload.ws'
+        self.domains = ['300mbdownload.mobi', '300mbdownload.ws', '300mbdownload.club']
+        self.base_link = 'https://www.300mbdownload.mobi'
         self.search_link = '/search/%s/feed/rss2/'
 
 
@@ -117,7 +117,7 @@ class source:
                 sources = check
             return sources
         except:
-            return
+            return sources
 
 
     def resolve(self, url):

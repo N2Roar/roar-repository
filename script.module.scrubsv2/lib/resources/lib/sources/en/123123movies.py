@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse,json
+import re, urllib, urlparse, json
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
-from resources.lib.modules import dom_parser2
+from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 
 
@@ -46,8 +46,8 @@ class source:
             clean_title = cleantitle.geturl(url['tvshowtitle']) + '-s%02d' % int(season)
             url = urlparse.urljoin(self.base_link, (self.search_link % (clean_title, url['year'])))
             r = self.scraper.get(url).content
-            r = dom_parser2.parse_dom(r, 'div', {'id': 'ip_episode'})
-            r = [dom_parser2.parse_dom(i, 'a', req=['href']) for i in r if i]
+            r = dom_parser.parse_dom(r, 'div', {'id': 'ip_episode'})
+            r = [dom_parser.parse_dom(i, 'a', req=['href']) for i in r if i]
             for i in r[0]:
                 if i.content == 'Episode %s' % episode:
                     url = i.attrs['href']
@@ -66,8 +66,8 @@ class source:
             qual = re.findall(">(\w+)<\/p", r)
             for i in qual:
                 quality, info = source_utils.get_release_quality(i, i)
-            r = dom_parser2.parse_dom(r, 'div', {'id': 'servers-list'})
-            r = [dom_parser2.parse_dom(i, 'a', req=['href']) for i in r if i]
+            r = dom_parser.parse_dom(r, 'div', {'id': 'servers-list'})
+            r = [dom_parser.parse_dom(i, 'a', req=['href']) for i in r if i]
             for i in r[0]:
                 url = {'url': i.attrs['href'], 'data-film': i.attrs['data-film'], 'data-server': i.attrs['data-server'], 'data-name': i.attrs['data-name']}
                 url = urllib.urlencode(url)

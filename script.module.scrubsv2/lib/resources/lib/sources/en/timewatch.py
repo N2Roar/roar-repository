@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# -Cleaned and Checked on 08-24-2019 by JewBMX in Scrubs.
+# -Cleaned and Checked on 10-16-2019 by JewBMX in Scrubs.
 
-import re,urlparse
+import re, urlparse
 from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
@@ -23,7 +23,7 @@ class source:
             url = urlparse.urljoin(self.base_link, self.search_link)
             url = url % (search_id.replace(':', '%3A').replace(',', '%2C').replace('&', '%26').replace("'", '%27').replace(' ', '+').replace('...', ' '))
             search_results = self.scraper.get(url).content
-            match = re.compile('<div data-movie-id=.+?href="(.+?)".+?oldtitle="(.+?)".+?rel="tag">(.+?)</a></div>',re.DOTALL).findall(search_results)
+            match = re.compile('<div data-movie-id=.+?href="(.+?)".+?oldtitle="(.+?)".+?rel="tag">(.+?)</a></div>', re.DOTALL).findall(search_results)
             for movie_url, movie_title, movie_year in match:
                 clean_title = cleantitle.get(title)
                 movie_title = movie_title.replace('&#8230', ' ').replace('&#038', ' ').replace('&#8217', ' ').replace('...', ' ')
@@ -42,7 +42,7 @@ class source:
             if url == None:
                 return sources
             html = self.scraper.get(url).content
-            links = re.compile('id="linkplayer.+?href="(.+?)"',re.DOTALL).findall(html)
+            links = re.compile('id="linkplayer.+?href="(.+?)"', re.DOTALL).findall(html)
             for link in links:
                 valid, host = source_utils.is_host_valid(link, hostDict)
                 if source_utils.limit_hosts() is True and host in str(sources):
@@ -57,4 +57,5 @@ class source:
 
     def resolve(self, url):
         return url
+
 

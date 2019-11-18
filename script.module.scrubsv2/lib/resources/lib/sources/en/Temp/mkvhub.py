@@ -1,9 +1,14 @@
 # -*- coding: UTF-8 -*-
 # -Cleaned and Checked on 06-17-2019 by JewBMX in Scrubs.
 
-import re,urllib,urlparse
-from resources.lib.modules import client,cleantitle,source_utils
-from resources.lib.modules import dom_parser2,workers
+import re, urllib, urlparse
+from resources.lib.modules import client
+from resources.lib.modules import cleantitle
+from resources.lib.modules import dom_parser
+from resources.lib.modules import source_utils
+from resources.lib.modules import workers
+import traceback
+from resources.lib.modules import log_utils
 
 
 class source:
@@ -105,6 +110,8 @@ class source:
             [i.join() for i in threads]
             return self._sources
         except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---MkvHub - Exception: \n' + str(failure))
             return self._sources
 
 
@@ -113,7 +120,7 @@ class source:
             for url in urls:
                 r = client.request(url)
                 if 'linkprotector' in url:
-                    p_link = dom_parser2.parse_dom(r, 'link', {'rel': 'canonical'},  req='href')[0]
+                    p_link = dom_parser.parse_dom(r, 'link', {'rel': 'canonical'},  req='href')[0]
                     p_link = p_link.attrs['href']
                     input_name = client.parseDOM(r, 'input', ret='name')[0]
                     input_value = client.parseDOM(r, 'input', ret='value')[0]
@@ -143,7 +150,9 @@ class source:
                     url = [i for i in data if 'magnet:' in i][0]
                     url = url.split('&tr')[0]
                     self._sources.append({'source': 'Torrent', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
-        except:
+        except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('---MkvHub - Exception: \n' + str(failure))
             pass
 
 
