@@ -1,3 +1,22 @@
+[B][COLOR red]Update - v3.3.1 - Nov. 18, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TVDb for new changed xml file names.  Please note TVDb is still not
+    fully fixed on their end. On 11-16-19 I retrieved the
+    xmls to discover many tags inside the files were
+    missing data, or lacked closing tags, so looks like
+    they have more updating to do.  Season posters
+    are not working at this time from them and they're
+    only providing a show poster.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting option to remove "CAM and SD sources".  Note this new
+    option will only take place if better than
+    "CAM and SD" sources exists to avoid nothing
+    returned for links.[/I]
+[COLOR yellow]--[/COLOR][I] Added new setting option to remove "3D sources".[/I]
+COLOR yellow]--[/COLOR][I] Added new setting Category called "Shortcuts".  This now allows you to
+    clear specific cache without backing out of menus
+    and going into Tools. Call up "Venom Settings"
+    and go to "Shortcuts" anywhere.[/I]
+
+
 [B][COLOR red]Update - v3.3.0 - Oct 27, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Re-wrote TV Shows-Calendar (TVMaze). Hard coded shows air time
     to display and changed sort to match api response

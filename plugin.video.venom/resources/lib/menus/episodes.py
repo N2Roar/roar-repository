@@ -537,7 +537,7 @@ class Episodes:
 				data = urllib2.urlopen(url, timeout=10).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.xml' % lang)
+				result = zip.read('%s.zip.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -897,7 +897,7 @@ class Episodes:
 				data = urllib2.urlopen(url, timeout=10).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.xml' % lang)
+				result = zip.read('%s.zip.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -1242,7 +1242,7 @@ class Episodes:
 					raise Exception()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.xml' % self.lang)
+				result = zip.read('%s.zip.xml' % self.lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()

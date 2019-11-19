@@ -16,7 +16,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -32,7 +32,6 @@ class TVshows:
 		self.threads = []
 		self.type = type
 		self.lang = control.apiLanguage()['tvdb']
-		# self.season_special = False
 		self.notifications = notifications
 
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
@@ -49,6 +48,7 @@ class TVshows:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.zip.xml' % (self.tvdb_key.decode('base64'), '%s', '%s') # check if normal xml needs this. seems like same file in response
 		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -366,7 +366,7 @@ class TVshows:
 		for (id, term) in dbcur.fetchall():
 			if term not in str(lst):
 				delete_option = True
-				navigator.Navigator().addDirectoryItem(term, 'tvSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png')
+				navigator.Navigator().addDirectoryItem(term, 'tvSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png', isSearch=True, table='tvshow')
 				lst += [(term)]
 
 		dbcon.close()
@@ -660,7 +660,8 @@ class TVshows:
 
 				year = str(item.get('year', '0'))
 				if year == 'None' or year == '0':
-					raise Exception()
+					# raise Exception()
+					continue
 
 				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
@@ -677,7 +678,8 @@ class TVshows:
 					tvdb = '0'
 
 				if tvdb is None or tvdb == '' or tvdb in dupes:
-					raise Exception()
+					# raise Exception()
+					continue
 				dupes.append(tvdb)
 
 				premiered = item.get('first_aired', '0')
@@ -1078,12 +1080,14 @@ class TVshows:
 				raise Exception()
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
+			log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
+
 			item = client.request(url, timeout='10', error = True)
 
 			# url = self.tvdb_info_link % (tvdb, 'en')
 			# data = urllib2.urlopen(url, timeout=30).read()
 			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-			# result = zip.read('en.xml')
+			# result = zip.read('en.zip.xml')
 			# artwork = zip.read('banners.xml')
 			# actors = zip.read('actors.xml')
 			# zip.close()
@@ -1406,9 +1410,10 @@ class TVshows:
 					total_seasons = trakt.getSeasons(imdb, full=False)
 					if total_seasons is not None:
 						total_seasons = [i['number'] for i in total_seasons]
+						season_special = True if 0 in total_seasons else False
 						total_seasons = len(total_seasons)
-						# if control.setting('tv.specials') == 'true' and self.season_special is True:
-							# total_seasons = total_seasons - 1
+						if control.setting('tv.specials') == 'false' or (control.setting('tv.specials') == 'true' and season_special is False):
+							total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
 
 				item.setArt(art)

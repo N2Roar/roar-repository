@@ -7,6 +7,7 @@
 import os, sys, urllib, re
 import xbmc, xbmcaddon, xbmcplugin, xbmcvfs, xbmcgui
 
+
 integer = 1000
 
 addon = xbmcaddon.Addon
@@ -388,6 +389,17 @@ def hide():
 
 def closeAll():
 	return execute('Dialog.Close(all,true)')
+
+
+def closeOk():
+	return execute('Dialog.Close(okdialog, true)')
+
+
+def cancelPlayback():
+	playlist.clear()
+	syshandle = int(sys.argv[1])
+	resolve(syshandle, False, item())
+	closeOk()
 
 
 def visible():

@@ -15,7 +15,7 @@ from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import cache
 from resources.lib.modules import playcount
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
@@ -269,16 +269,22 @@ class Seasons:
 				if tvdb == '':
 					tvdb = '0'
 		except:
+			import traceback
+			traceback.print_exc()
 			return
 
 		try:
 			if tvdb == '0':
 				return
 			url = self.tvdb_info_link % (tvdb, 'en')
+			log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
+
 			data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-			result = zip.read('en.xml')
+			result = zip.read('en.zip.xml')
+			# log_utils.log('result = %s' % str(result), __name__, log_utils.LOGDEBUG)
 			artwork = zip.read('banners.xml')
+
 			actors = zip.read('actors.xml')
 			zip.close()
 
@@ -289,10 +295,11 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 
 				url = self.tvdb_info_link % (tvdb, 'en')
+				log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
 				data = urllib2.urlopen(url, timeout=30).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('en.xml')
+				result = zip.read('en.zip.xml')
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -301,7 +308,7 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, lang)
 				data = urllib2.urlopen(url, timeout=30).read()
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result2 = zip.read('%s.xml' % lang)
+				result2 = zip.read('%s.zip.xml' % lang)
 				zip.close()
 			else:
 				result2 = result
@@ -314,9 +321,14 @@ class Seasons:
 			result2 = result2.split('<Episode>')
 
 			item = result[0]
+			log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
+
+
 			item2 = result2[0]
 
 			episodes = [i for i in result if '<EpisodeNumber>' in i]
+			log_utils.log('episodes = %s' % str(episodes), __name__, log_utils.LOGDEBUG)
+
 
 			if control.setting('tv.specials') == 'true':
 				episodes = [i for i in episodes]
@@ -484,6 +496,8 @@ class Seasons:
 			unaired = ''
 
 		except:
+			import traceback
+			traceback.print_exc()
 			pass
 
 		for item in seasons:
@@ -492,6 +506,7 @@ class Seasons:
 				if premiered == '' or '-00' in premiered: premiered = '0'
 				premiered = client.replaceHTMLCodes(premiered)
 				premiered = premiered.encode('utf-8')
+
 
 				# Show Unaired items.
 				if status.lower() == 'ended':
@@ -502,6 +517,20 @@ class Seasons:
 					unaired = 'true'
 					if self.showunaired != 'true':
 						raise Exception()
+
+
+				# # Show Unaired items.
+				# if status.lower() == 'ended':
+					# pass
+				# elif premiered == '0':
+					# unaired = 'true'
+					# pass
+				# elif premiered != '0':
+					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
+						# unaired = 'true'
+						# if self.showunaired != 'true':
+							# raise Exception()
+
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -533,6 +562,8 @@ class Seasons:
 											'thumb': thumb, 'unaired': unaired})
 
 			except:
+				import traceback
+				traceback.print_exc()
 				pass
 
 		for item in episodes:
@@ -543,6 +574,7 @@ class Seasons:
 				premiered = client.replaceHTMLCodes(premiered)
 				premiered = premiered.encode('utf-8')
 
+
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
@@ -552,6 +584,22 @@ class Seasons:
 					unaired = 'true'
 					if self.showunaired != 'true':
 						raise Exception()
+
+
+				# # Show Unaired items.
+				# if status.lower() == 'ended':
+					# pass
+				# elif premiered == '0':
+					# unaired = 'true'
+					# pass
+				# elif premiered != '0':
+					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
+						# unaired = 'true'
+						# if self.showunaired != 'true':
+							# raise Exception()
+
+
+
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -680,6 +728,8 @@ class Seasons:
 				# metacache.insert(self.meta)
 
 			except:
+				import traceback
+				traceback.print_exc()
 				pass
 		return self.list
 
@@ -784,7 +834,7 @@ class Seasons:
 			url = self.tvdb_info_link % (tvdb, 'en')
 			data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-			result = zip.read('%s.xml' % 'en')
+			result = zip.read('%s.zip.xml' % 'en')
 			zip.close()
 
 			dupe = client.parseDOM(result, 'SeriesName')[0]
@@ -795,7 +845,7 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, 'en')
 				data = urllib2.urlopen(url, timeout=30).read()
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.xml' % 'en')
+				result = zip.read('%s.zip.xml' % 'en')
 				zip.close()
 
 			result = result.split('<Episode>')
@@ -986,8 +1036,9 @@ class Seasons:
 					if total_seasons is not None:
 						total_seasons = [i['number'] for i in total_seasons]
 						total_seasons = len(total_seasons)
-						# if control.setting('tv.specials') == 'false' or self.season_special is False:
-							# total_seasons = total_seasons - 1
+						if control.setting('tv.specials') == 'false' or (control.setting('tv.specials') == 'true' and self.season_special is False):
+
+							total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
 
 				item.setArt(art)

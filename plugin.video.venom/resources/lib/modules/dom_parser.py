@@ -108,6 +108,7 @@ def parse_dom(html, name='', attrs=None, req=False, exclude_comments=False):
 				html = [html.decode("utf-8", "replace")]
 			except:
 				html = [html]
+
 	elif not isinstance(html, list):
 		return ''
 

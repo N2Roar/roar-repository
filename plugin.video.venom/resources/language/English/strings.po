@@ -232,11 +232,11 @@ msgid "[B]VENOM[/B] : Viewtypes"
 msgstr ""
 
 msgctxt "#32050"
-msgid ""
+msgid "Remove CAM and SD Sources"
 msgstr ""
 
 msgctxt "#32051"
-msgid ""
+msgid "Remove 3D Sources"
 msgstr ""
 
 msgctxt "#32052"
@@ -1498,27 +1498,27 @@ msgid "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32610"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]All [/COLOR]Cache..."
+msgid "Clear [COLOR yellow]All [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32611"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]Providers [/COLOR]Cache..."
+msgid "Clear [COLOR yellow]Providers [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32612"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]Metadata [/COLOR]Cache..."
+msgid "Clear [COLOR yellow]Metadata [/COLOR]Cache..."
 msgstr ""
 
 msgctxt "#32613"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]Cache [/COLOR]..."
+msgid "Clear [COLOR yellow]Cache [/COLOR]..."
 msgstr ""
 
 msgctxt "#32614"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]Search[/COLOR] Cache..."
+msgid "Clear [COLOR yellow]Search[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32615"
-msgid "[B]VENOM[/B] : Clear [COLOR yellow]Bookmarks[/COLOR] Cache..."
+msgid "Clear [COLOR yellow]Bookmarks[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32616"
@@ -1658,7 +1658,7 @@ msgid "[B][COLOR red]Open Scrapers[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32652"
-msgid "Clear Providers Cache"
+msgid ""
 msgstr ""
 
 msgctxt "#32653"
@@ -1686,7 +1686,7 @@ msgid "Your Online List is Empty!"
 msgstr ""
 
 msgctxt "#32659"
-msgid ""
+msgid "Min. Pre-emptive Res."
 msgstr ""
 
 msgctxt "#32660"

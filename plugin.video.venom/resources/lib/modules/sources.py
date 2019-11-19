@@ -391,6 +391,7 @@ class Sources:
 			title = self.getTitle(title)
 			localtitle = self.getLocalTitle(title, imdb, tvdb, content)
 			aliases = self.getAliasTitles(imdb, localtitle, content)
+
 			for i in sourceDict:
 				threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
 		else:
@@ -437,6 +438,7 @@ class Sources:
 
 		pre_emp = str(control.setting('preemptive.termination'))
 		pre_emp_limit = int(control.setting('preemptive.limit'))
+		pre_emp_res = str(control.setting('preemptive.res'))
 
 		source_4k = d_source_4k = 0
 		source_1080 = d_source_1080 = 0
@@ -446,7 +448,6 @@ class Sources:
 
 		debrid_list = debrid.debrid_resolvers
 		debrid_status = debrid.status()
-		# debrid_only = control.setting('debrid.only')
 
 		total_format = '[COLOR %s][B]%s[/B][/COLOR]'
 		pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
@@ -454,16 +455,16 @@ class Sources:
 
 		for i in range(0, 4 * timeout):
 			if pre_emp == 'true':
-				if quality in ['0','1']:
+				if pre_emp_res in ['0','1']:
 					if (source_4k + d_source_4k) >= pre_emp_limit:
 						break
-				elif quality in ['1']:
+				elif pre_emp_res in ['2']:
 					if (source_1080 + d_source_1080) >= pre_emp_limit:
 						break
-				elif quality in ['2']:
+				elif pre_emp_res in ['3']:
 					if (source_720 + d_source_720) >= pre_emp_limit:
 						break
-				elif quality in ['3']:
+				elif pre_emp_res in ['4']:
 					if (source_sd + d_source_sd) >= pre_emp_limit:
 						break
 				else:
@@ -674,6 +675,7 @@ class Sources:
 				import traceback
 				traceback.print_exc()
 				pass
+
 		try:
 			progressDialog.close()
 		except:
@@ -994,25 +996,31 @@ class Sources:
 		if control.setting('HEVC') != 'true':
 			self.sources = [i for i in self.sources if not any(value in i['url'].lower() for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265'])]
 
+		if source_utils.ck_CamSd():
+			if any(i for i in self.sources if any(value in i['quality'] for value in ['4k', '1080p', '720p'])):
+				self.sources = [i for i in self.sources if not any(value in i['quality'].upper() for value in ['CAM', 'SD'])]
+
+		if control.setting('remove.3D.sources') == 'true':
+			try:
+				self.sources = [i for i in self.sources if '3D' not in i.get('info', '')]
+			except:
+				import traceback
+				traceback.print_exc()
+				pass
+
+		for i in self.sources:
+			log_utils.log('info = %s' % i.get('info', ''), __name__, log_utils.LOGDEBUG)
+
+
 		random.shuffle(self.sources)
 
 		if provider == 'true':
 			self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
-		# for i in self.sources:
-			# if 'checkquality' in i and i['checkquality'] is True:
-				# if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']:
-					# i.update({'quality': 'SD'})
-
 		local = [i for i in self.sources if 'local' in i and i['local'] is True]
 		for i in local:
 			i.update({'language': self._getPrimaryLang() or 'en'})
 		self.sources = [i for i in self.sources if not i in local]
-
-		# filter = []
-		# filter += [i for i in self.sources if i['direct'] is True]
-		# filter += [i for i in self.sources if i['direct'] is False]
-		# self.sources = filter
 
 		filter = []
 		for d in debrid.debrid_resolvers:
@@ -1403,7 +1411,7 @@ class Sources:
 			control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
 		else:
 			control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
-		# return sys.exit()
+		control.cancelPlayback()
 
 
 	def getLanguage(self):
@@ -1486,18 +1494,18 @@ class Sources:
 		except:
 			self.hostDict = []
 
-		self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to',
-									'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
+		self.hostprDict = ['1fichier.com', 'filefactory.com', 'nitroflare.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'turbobit.net',
+									'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'uploadrocket.net', 'multiup.org']
 
-		self.hostcapDict = ['flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc', 'hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co',
-									'openload.pw', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life',
-									'streamin.to', 'thevideo.me', 'torba.se', 'vidup.me', 'vidup.tv', 'vshare.eu', 'vshare.io', 'vev.io']
+		self.hostcapDict = ['flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc', 'hugefiles.net', 'kingfiles.net', 'streamin.to',
+									'thevideo.me', 'torba.se', 'vidup.me', 'vidup.tv', 'vshare.eu', 'vshare.io', 'vev.io']
 
-		self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv',
-									'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
+		self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
+									'xvidstage.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
 
-		# self.hostblockDict = []
-		self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv']
+		self.hostblockDict = ['divxme.com', 'divxstage.eu', 'estream.to', 'facebook.com', 'oload.download', 'oload.fun', 'oload.icu', 'oload.info',
+									'oload.life', 'oload.space', 'oload.stream', 'oload.tv', 'oload.win', 'openload.co', 'openload.io', 'openload.pw', 'rapidvideo.com',
+									'rapidvideo.is', 'rapidvid.to', 'streamango.com', 'streamcherry.com', 'twitch.tv', 'youtube.com', 'zippyshare.com']
 
 
 	def getPremColor(self, n):

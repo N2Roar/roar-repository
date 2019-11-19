@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -166,11 +166,6 @@ class Movies:
 				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
 				if idx is True:
 					self.worker(level=0)
-
-			# elif self.traktunfinished_link in url:
-				# self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
-				# if idx is True:
-					# self.worker(level=0)
 
 			elif u in self.trakt_link:
 				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
@@ -405,7 +400,7 @@ class Movies:
 		for (id, term) in dbcur.fetchall():
 			if term not in str(lst):
 				delete_option = True
-				navigator.Navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png')
+				navigator.Navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png', isSearch=True, table='movies')
 				lst += [(term)]
 
 		dbcon.close()
@@ -423,7 +418,6 @@ class Movies:
 
 		if (q is None or q == ''):
 			return
-			# return sys.exit()
 
 		try:
 			from sqlite3 import dbapi2 as database

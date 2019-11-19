@@ -32,6 +32,8 @@ select = params.get('select')
 query = params.get('query')
 source = params.get('source')
 content = params.get('content')
+table = params.get('table')
+
 
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
@@ -711,6 +713,8 @@ elif action == 'cfNavigator':
 elif action == 'clearAllCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheAll()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearSources':
 	from resources.lib.menus import navigator
@@ -721,18 +725,30 @@ elif action == 'clearSources':
 elif action == 'clearMetaCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheMeta()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCache()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearCacheSearch':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheSearch()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, 'plugin.video.venom')
+
+elif action == 'clearSearchPhrase':
+	from resources.lib.menus import navigator
+	navigator.Navigator().clearCacheSearchPhrase(table, name)
 
 elif action == 'clearBookmarks':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearBookmarks()
+	if params['opensettings'] == 'true':
+		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearResolveURLcache':
 	if control.condVisibility('System.HasAddon(script.module.resolveurl)'):

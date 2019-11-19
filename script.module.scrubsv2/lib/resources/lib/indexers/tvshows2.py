@@ -44,7 +44,7 @@ class tvshows:
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key, '%s', self.lang)
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.zip.xml' % (self.tvdb_key, '%s', self.lang)
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.imdb_by_query = 'http://www.omdbapi.com/?i=%s&apikey=%s' % ("%s", self.omdb_key)

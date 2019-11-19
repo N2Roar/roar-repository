@@ -42,6 +42,10 @@ class Player(xbmc.Player):
 
 	def play_source(self, title, year, season, episode, imdb, tvdb, url, meta):
 		try:
+			if url is None:
+				control.cancelPlayback()
+				raise Exception
+
 			control.sleep(200)
 			self.media_type = 'movie' if season is None or episode is None else 'episode'
 			self.title = title
@@ -94,7 +98,7 @@ class Player(xbmc.Player):
 				control.closeAll()
 				control.player.play(url, item)
 
-				xbmc.sleep(2000)
+				# xbmc.sleep(2000)
 
 			if 'plugin' not in control.infoLabel('Container.PluginName'):
 				if control.window.getProperty('infodialogs.active'):
@@ -102,12 +106,16 @@ class Player(xbmc.Player):
 				control.resolve(syshandle, True, item)
 
 			control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
+
 			self.keepAlive()
+
+			# # Kodi's "Playback Failed" dialog is killing me on android.
+
 			control.window.clearProperty('script.trakt.ids')
 		except:
 			import traceback
 			traceback.print_exc()
-			return
+			return	control.cancelPlayback()
 
 
 	def play_playlist(self):
@@ -291,6 +299,9 @@ class Player(xbmc.Player):
 				if not self.playback_started:
 					self.start_playback()
 
+				# if control.condVisibility('Window.IsActive(okdialog)'):
+					# control.closeOk()
+
 				try:
 					self.current_time = self.getTime()
 					self.media_length = self.getTotalTime()
@@ -357,7 +368,6 @@ class Player(xbmc.Player):
 				try:
 					# if int(control.playlist.getposition()) < (control.playlist.size() - 1) and not int(control.playlist.getposition()) == -1:
 					if int(control.playlist.getposition()) < (control.playlist.size() - 1):
-						# log_utils.log('playlist.getposition = %s' % int(control.playlist.getposition()), __name__, log_utils.LOGDEBUG)
 						if self.media_type is None:
 							return
 						next_info = self.next_info()

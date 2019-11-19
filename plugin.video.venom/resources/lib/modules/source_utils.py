@@ -13,43 +13,45 @@ from resources.lib.modules import trakt
 from resources.lib.modules import pyaes
 
 
-RES_4K = ['4k', 'hd4k', 'hd4k ', '4khd', '4khd ', 'uhd', 'ultrahd', 'ultra hd', 'ultra high', '2160', '2160p', '2160i', 'hd2160', '2160hd',
-						'2160 ', '2160p ', '2160i ', 'hd2160 ', '2160hd ', '1716p', '1716i', 'hd1716', '1716hd', '1716p ', '1716i ', 'hd1716 ',
-						'1716hd ', '2664p', '2664i', 'hd2664', '2664hd', '2664p ', '2664i ', 'hd2664 ', '2664hd ', '3112p', '3112i', 'hd3112',
-						'3112hd', '3112p ', '3112i ', 'hd3112 ', '3112hd ', '2880p', '2880i', 'hd2880', '2880hd', '2880p ', '2880i ', 'hd2880 ',
-						'2880hd ']
-RES_2K = ['2k', 'hd2k', 'hd2k ', '2khd', '2khd ', '2048p', '2048i', 'hd2048', '2048hd', '2048p ', '2048i ', 'hd2048 ', '2048hd ',
-						'1332p', '1332i', 'hd1332', '1332hd', '1332p ', '1332i ', 'hd1332 ', '1332hd ', '1556p', '1556i', 'hd1556', '1556hd',
-						'1556p ', '1556i ', 'hd1556 ', '1556hd ', ]
-RES_1080 = ['1080', '1080p', '1080i', 'hd1080', '1080hd', '1080 ', '1080p ', '1080i ', 'hd1080 ', '1080hd ', '1200p', '1200i', 'hd1200',
-						'1200hd', '1200p ', '1200i ', 'hd1200 ', '1200hd ']
-RES_HD = ['720', '720p', '720i', 'hd720', '720hd', 'hd', '720 ', '720p ', '720i ', 'hd720 ', '720hd ']
-RES_SD = ['576', '576p', '576i', 'sd576', '576sd', '576 ', '576p ', '576i ', 'sd576 ', '576sd ', '480', '480p', '480i', 'sd480', '480sd',
-						'480 ', '480p ', '480i ', 'sd480 ', '480sd ', '360', '360p', '360i', 'sd360', '360sd', '360 ', '360p ', '360i ', 'sd360 ', '360sd ',
-						'240', '240p', '240i', 'sd240', '240sd', '240 ', '240p ', '240i ', 'sd240 ', '240sd ']
+RES_4K = ['4k', 'hd4k', '4khd', 'uhd', 'ultrahd', 'ultra-hd', '2160', '2160p', '2160i', 'hd2160', '2160hd',
+						'1716p', '1716i', 'hd1716', '1716hd', '2664p', '2664i', 'hd2664', '2664hd', '3112p',
+						'3112i', 'hd3112', '3112hd', '2880p', '2880i', 'hd2880', '2880hd']
+RES_2K = ['2k', 'hd2k', 'hd2k ', '2khd', '2khd ', '2048p', '2048i', 'hd2048', '2048hd', '1332p', '1332i',
+						'hd1332', '1332hd', '1556p', '1556i', 'hd1556', '1556hd']
+RES_1080 = ['1080', '1080p', '1080i', 'hd1080', '1080hd', '1200p', '1200i', 'hd1200', '1200hd']
+RES_HD = ['720', '720p', '720i', 'hd720', '720hd', '.hd.']
+RES_SD = ['576', '576p', '576i', 'sd576', '576sd', '480', '480p', '480i', 'sd480', '480sd', '360', '360p',
+						'360i', 'sd360', '360sd', '240', '240p', '240i', 'sd240', '240sd']
 
-SCR = ['dvdscr', 'screener', 'scr', 'r5', 'r6', 'dvdscr ', 'r5 ', 'r6 ']
-
-CAM = ['camrip', 'cam rip', 'tsrip', 'ts rip', 'hdcam', 'hd cam', 'hdts', 'hd ts', 'dvdcam', 'dvd cam', 'dvdts', 'dvd ts', 'cam', 'telesync',
-						'tele sync', 'ts', 'camrip ', 'tsrip ', 'hcam', 'hdts ', 'dvdcam ', 'dvdts ', 'telesync ']
-
+SCR = ['dvdscr', 'screener', 'scr', 'r5', 'r6']
+CAM = ['camrip', 'cam rip', 'tsrip', 'ts rip', 'dvdcam', 'dvd cam', 'dvdts', 'dvd ts', 'cam', 'telesync', 'tele sync', 'ts']
+HDCAM = ['hdcam', 'hd cam', 'hd-cam', 'hd.cam', 'hdts', 'hd ts', 'hcam']
 
 CODEC_H265 = ['hevc', 'h265', 'h.265', 'x265', 'x.265']
 CODEC_H264 = ['avc', 'h264', 'h.264', 'x264', 'x.264']
-CODEC_XVID = ['xvid', 'xvid ']
-CODEC_DIVX = ['divx', 'divx ', 'div2', 'div2 ', 'div3', 'div3 ']
-CODEC_MPEG = ['mp4', 'mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 ', 'mpeg ', 'msmpeg', 'msmpeg4', 'mpegurl',
-								'm4v ', 'mpg ', 'mpg1 ', 'mpg2 ', 'mpg3 ', 'mpg4 ', 'msmpeg ', 'msmpeg4 ']
-CODEC_AVI  = ['avi']
-CODEC_MKV  = ['mkv', 'mkv ', '.mkv', 'matroska', 'matroska ']
+CODEC_XVID = ['xvid', 'x.vid', 'x-vid']
+CODEC_DIVX = ['divx', 'divx ', 'div2', 'div2 ', 'div3']
+CODEC_MPEG = ['mp4', 'mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 ', 'mpeg ', 'msmpeg', 'msmpeg4', 'mpegurl']
+CODEC_AVI = ['avi']
+CODEC_MKV = ['mkv', '.mkv', 'matroska']
 
-AUDIO_8CH = ['ch8', '8ch', 'ch7.1', '7.1ch', '7.1']
-AUDIO_7CH = ['ch7', '7ch', 'ch6.1', '6.1ch', '6.1']
-AUDIO_6CH = ['ch6', '6ch', 'ch5.1', '5.1ch', '5.1']
-AUDIO_2CH = ['ch2', '2ch', 'stereo', 'dualaudio', 'dual-audio', 'dual', '2 0', 'ch2 0', '2 0ch', 'ch2 ', '2ch ', 'stereo ', 'dual audio', 'dual ']
-AUDIO_1CH = ['ch1', '1ch', 'mono', 'monoaudio', 'ch1 0', '1 0ch', 'ch1 ', '1ch ', 'mono ']
+AUDIO_8CH = ['ch8', '8ch', 'ch7.1', '7.1ch', '7.1', '7-1ch']
+AUDIO_7CH = ['ch7', '7ch', 'ch6.1', '6.1ch', '6.1', '6-1ch']
+AUDIO_6CH = ['ch6', '6ch', 'ch5.1', '5.1ch', '5.1', '5-1ch']
+AUDIO_2CH = ['ch2', '2ch', 'ch2.0', 'stereo']
+AUDIO_1CH = ['ch1', '1ch', 'mono', 'monoaudio']
 
 VIDEO_3D = ['3d', 'sbs', 'hsbs', 'sidebyside', 'side by side', 'stereoscopic', 'tab', 'htab', 'topandbottom', 'top and bottom']
+
+MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng', 'dut.eng', 'ell.eng', 'esl.eng',
+							'esp.eng', 'fin.eng', 'fra.eng', 'fre.eng', 'frn.eng', 'gai.eng', 'ger.eng', 'gle.eng', 'gre.eng', 'gtm.eng',
+							'heb.eng', 'hin.eng', 'hun.eng', 'ind.eng', 'iri.eng', 'ita.eng', 'jap.eng', 'jpn.eng', 'kor.eng', 'lat.eng',
+							'lebb.eng', 'lit.eng', 'nor.eng', 'pol.eng', 'por.eng', 'rus.eng', 'som.eng', 'spa.eng', 'sve.eng',
+							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio', 'dual.audio']
+
+LANG = ['french', 'italian', 'spanish', 'truefrech', 'german', 'arabic', 'dutch', 'portuguese', 'greek', 'arabic', 'finnish', 'hebrew']
+
+ADDS = ['1xbet']
 
 
 
@@ -73,6 +75,7 @@ def get_release_quality(release_name, release_link=None):
 	try:
 		quality = None
 		release_name = release_name.upper()
+
 		fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', release_name)
 		fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
 		fmt = [i.lower() for i in fmt]
@@ -86,11 +89,11 @@ def get_release_quality(release_name, release_link=None):
 		elif any(value in fmt for value in RES_HD):
 			quality = "720p"
 
-		elif any(value in fmt for value in RES_SD):
-			quality = "480p"
-
 		elif any(value in fmt for value in SCR):
 			quality = 'SCR'
+
+		elif any(value in fmt for value in RES_SD):
+			quality = "SD"
 
 		elif any(value in fmt for value in CAM):
 			quality = 'CAM'
@@ -112,14 +115,18 @@ def get_release_quality(release_name, release_link=None):
 				elif any(value in release_link for value in RES_HD):
 					quality = "720p"
 
-				elif any(value in release_link for value in RES_SD):
-					quality = "480p"
-
 				elif any(value in release_link for value in SCR):
 					quality = 'SCR'
 
+				elif any(value in release_link for value in RES_SD):
+					quality = "SD"
+
 				elif any(value in release_link for value in CAM):
 					quality = 'CAM'
+
+				else:
+					quality = 'SD'
+
 			else:
 				quality = 'SD'
 
@@ -131,7 +138,6 @@ def get_release_quality(release_name, release_link=None):
 			info.append('HEVC')
 
 		return quality, info
-
 	except:
 		return 'SD', []
 
@@ -139,6 +145,7 @@ def get_release_quality(release_name, release_link=None):
 def getFileType(url):
 	try:
 		url = url.lower()
+		url = url.replace(' ', '.')
 	except:
 		url = str(url)
 
@@ -147,8 +154,8 @@ def getFileType(url):
 	if any(value in url for value in ['bluray', 'blu-ray']):
 		type += ' BLURAY /'
 
-	if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip']):
-		type += ' BD-RIP /'
+	if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip', 'brrip', 'br.rip']):
+		type += ' BR-RIP /'
 
 	if ' remux ' in url:
 		type += ' REMUX /'
@@ -168,7 +175,7 @@ def getFileType(url):
 	if any(value in url for value in ['hd-rip', 'hd.rip', 'hdrip']):
 		type += ' HDRIP /'
 
-	if any(value in url for value in ['.dd5.1', 'dolby-digital', 'dolby.digital']):
+	if any(value in url for value in ['dd5.1', 'dd-5.1', 'dolby-digital', 'dolby.digital']):
 		type += ' DOLBYDIGITAL /'
 
 	if any(value in url for value in ['.ddex', 'dd-ex', 'dolby-ex', 'dolby.digital.ex']):
@@ -186,13 +193,13 @@ def getFileType(url):
 	if '.dts.' in url:
 		type += ' DTS /'
 
-	if any(value in url for value in ['dts-hd', 'dtshd']):
+	if any(value in url for value in ['dts-hd', 'dtshd', 'dts.hd']):
 		type += ' DTS-HD /'
 
-	if any(value in url for value in ['dts-es', 'dtses']):
+	if any(value in url for value in ['dts-es', 'dtses', 'dts.es']):
 		type += ' DTS-ES /'
 
-	if any(value in url for value in ['dts-neo', 'dtsneo']):
+	if any(value in url for value in ['dts-neo', 'dtsneo', 'dts.neo']):
 		type += ' DTS-NEO /'
 
 	if '.thx.' in url:
@@ -234,6 +241,15 @@ def getFileType(url):
 	if any(value in url for value in CODEC_MKV):
 		type += ' MKV /'
 
+	if any(value in url for value in HDCAM):
+		type += ' HDCAM /'
+
+	if any(value in url for value in MULTI_LANG):
+		type += ' MULTI-LANG /'
+
+	if any(value in url for value in ADDS):
+		type += ' 1XBET /'
+
 	if 'subs' in url: 
 		if type != '':
 			type += ' WITH SUBS'
@@ -261,25 +277,15 @@ def check_sd_url(release_link):
 			quality = '1080p'
 		elif '720' in release_link:
 			quality = '720p'
-		elif 'hd.' in release_link:
-			quality = '720p'
-		elif '.hd' in release_link:
-			quality = '720p'
-		elif 'HD' in release_link:
+		elif '.hd.' in release_link:
 			quality = '720p'
 		elif 'hdtv' in release_link:
 			quality = '720p'
 		elif 'bluray' in release_link:
 			quality = '720p'
-		elif 'BluRay' in release_link:
-			quality = '720p'
-		elif '.BluRay.' in release_link:
-			quality = '720p'
 		elif 'webrip' in release_link:
 			quality = '720p'
-		elif '.WEBRip.' in release_link:
-			quality = '720p'
-		elif any(i in ['dvdscr', 'r5', 'r6'] for i in release_link):
+		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in release_link):
 			quality = 'SCR'
 		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in release_link):
 			quality = 'CAM'
@@ -291,6 +297,7 @@ def check_sd_url(release_link):
 
 
 def check_direct_url(url):
+	url = url.lower()
 	try:
 		if '2160' in url:
 			quality = '4K'
@@ -304,23 +311,15 @@ def check_direct_url(url):
 			quality = '720p'
 		elif '720' in url:
 			quality = '720p'
-		elif 'hd' in url:
+		elif '.hd.' in url:
 			quality = '720p'
 		elif '.hd' in url:
-			quality = '720p'
-		elif 'HD' in url:
 			quality = '720p'
 		elif 'hdtv' in url:
 			quality = '720p'
 		elif 'bluray' in url:
 			quality = '720p'
-		elif 'BluRay' in url:
-			quality = '720p'
-		elif '480p' in url:
-			quality = '480p'
-		elif '480' in url:
-			quality = '480p'
-		elif any(i in ['dvdscr', 'r5', 'r6'] for i in url):
+		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in url):
 			quality = 'SCR'
 		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url):
 			quality = 'CAM'
@@ -332,6 +331,7 @@ def check_direct_url(url):
 
 
 def check_url(url):
+	url = url.lower()
 	try:
 		if '2160p' in url:
 			quality = '4K'
@@ -351,23 +351,19 @@ def check_url(url):
 			quality = '720p'
 		elif '.hd.' in url:
 			quality = '720p'
-		elif 'hd' in url:
-			quality = '720p'
-		elif 'HD' in url:
+		elif '.hd' in url:
 			quality = '720p'
 		elif 'hdtv' in url:
 			quality = '720p'
-		elif 'BluRay' in url:
+		elif 'bluray' in url:
 			quality = '720p'
-		elif '.BluRay.' in url:
-			quality = '720p'
-		elif '.WEBRip.' in url:
+		elif 'webrip' in url:
 			quality = '720p'
 		elif '480p' in url:
 			quality = 'SD'
 		elif '480' in url:
 			quality = 'SD'
-		elif any(i in ['dvdscr', 'r5', 'r6'] for i in url):
+		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in url):
 			quality = 'SCR'
 		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url):
 			quality = 'CAM'
@@ -545,3 +541,11 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
 		derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
 		number_of_derived_words += len(block) / 4
 	return {"key": derived_bytes[0: key_size * 4], "iv": derived_bytes[key_size * 4:]}
+
+
+def ck_CamSd():
+	from resources.lib.modules import control
+	try:
+		return True if control.setting('remove.CamSd.sources') == 'true' else False
+	except:
+		return False

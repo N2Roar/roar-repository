@@ -138,7 +138,7 @@
 		<setting id="module.provider" type="text" label="32650" default="Openscrapers Scrapers" visible="true" enable="false" />
 		<setting id="open.settings" type="action" label="32651" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings&opensettings=true&query=4.1)" />
 		<setting type="lsep" label="40067" />
-		<setting id="clear.sources" type="action" label="32652" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=4.2)" />
+		<setting id="clear.sources" type="action" label="32611" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=4.2)" />
 	</category>
 
 
@@ -156,7 +156,8 @@
 		<setting type="lsep" label="32338" />
 		<setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
 		<setting id="preemptive.termination" type="bool" label="32654" default="false" />
-		<setting id="preemptive.limit" type="slider" label="32655" default="10" range="1,50" option="int" enable="eq(-1,true)" />
+		<setting id="preemptive.limit" type="slider" label="32655" default="10" range="1,50" option="int" visible="eq(-1,true)" />
+		<setting id="preemptive.res" type="enum" label="32659" values="4K|1440p|1080p|720p|480p" default="2" visible="eq(-2,true)"/>
 		<setting id="prem.identify" type="select" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32598" default="6" />
 		<setting id="autoplay.sd" type="bool" label="32656" default="false" />
 		<setting id="sources.extrainfo" type="bool" label="32587" default="true" />
@@ -164,6 +165,8 @@
 		<setting id="hosts.captcha" type="bool" label="32341" default="false" />
 		<setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
 		<setting id="remove.duplicates" type="bool" label="32035" default="true" />
+		<setting id="remove.CamSd.sources" type="bool" label="32050" default="false"/>
+		<setting id="remove.3D.sources" type="bool" label="32051" default="false"/>
 	</category>
 
 
@@ -178,11 +181,22 @@
 	</category>
 
 
-<!-- Trakt-7 -->
+<!-- Short Cuts - 7 -->
+	<category label="Shortcuts">
+		<setting id="clear.all.cache" type="action" label="32610" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearAllCache&opensettings=true&query=7.0)" />
+		<setting id="clear.sources2" type="action" label="32611" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=7.1)" />
+		<setting id="clear.metacache" type="action" label="32612" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearMetaCache&opensettings=true&query=7.2)" />
+		<setting id="clear.cache" type="action" label="32613" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCache&opensettings=true&query=7.3)" />
+		<setting id="clear.search.cache" type="action" label="32614" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCacheSearch&opensettings=true&query=7.4)" />
+		<setting id="clear.bookmarks.cache" type="action" label="32615" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearBookmarks&opensettings=true&query=7.5)" />
+	</category>
+
+
+<!-- Trakt-8 -->
 	<category label ="32315">
 		<setting type="lsep" label="32315" />
 		<setting id="trakt.auth" type="text" default="" visible="hidden"/>
-		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=true&query=7.2)" />
+		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=true&query=8.2)" />
 		<setting id="trakt.user" type="text" default="" label="40062" enable="false" visible="true" />
 		<setting id="trakt.token" type="text" visible="hidden" label="" default="" />
 		<setting id="trakt.refresh" type="text" visible="hidden" label="" default="" />
@@ -199,7 +213,7 @@
 	</category>
 
 
-<!-- API Keys - 8 -->
+<!-- API Keys - 9 -->
 	<category label="API Keys">
 		<setting type="lsep" label="FANART.TV" />
 		<setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
@@ -209,9 +223,9 @@
 		<setting id="tmdb.username" type="text" label="TMDb username" default="" />
 		<setting id="tmdb.password" type="text" label="TMDb password" default="" />
 		<setting id="tmdb.message" type="action" label="  [COLOR FFA0C12C]Authorization rq'd to retrieve user lists[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
-		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&opensettings=true&query=8.5)" />
+		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&opensettings=true&query=9.5)" />
 		<setting id="tmdb.session_id" type="text" default="" label="session_id" enable="false" />
-		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&opensettings=true&query=8.7)" />
+		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&opensettings=true&query=9.7)" />
 
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
@@ -221,7 +235,7 @@
 	</category>
 
 
-<!-- Library - 9 -->
+<!-- Library - 10 -->
 	<category label="32541">
 		<setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.venom/Movies" />
 		<setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.venom/TVShows" />
@@ -240,7 +254,7 @@
 	</category>
 
 
-<!-- Downloads - 10 -->
+<!-- Downloads - 11 -->
 	<category label="32347">
 		<setting id="downloads" type="bool" label="32348" default="false" />
 		<setting type="sep" />
@@ -252,7 +266,7 @@
 	</category>
 
 
-<!-- Subtitles - 11 -->
+<!-- Subtitles - 12 -->
 	<category label="32353">
 		<setting id="subtitles" type="bool" label="32354" default="false" />
 		<setting type="sep" />
@@ -265,7 +279,7 @@
 	</category>
 
 
-<!-- Debugging - 12 -->
+<!-- Debugging - 13 -->
 	<category label="32616">
 		<setting id="first.info" label="33005" type="bool" default="" />
 		<setting id="addon_debug" type="bool" label="32374" default="false" />

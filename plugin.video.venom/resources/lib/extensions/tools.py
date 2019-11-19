@@ -1309,7 +1309,7 @@ class Converter(object):
 
 	@classmethod
 	def quoteFrom(self, data, default = None):
-		try: return urllib.unquote_plus(data).decode('utf8')
+		try: return urllib.unquote_plus(data).decode('utf-8')
 		except: return default
 
 	@classmethod

@@ -79,7 +79,7 @@ def timeout(function, *args):
 		key = _hash_function(function, args)
 		result = cache_get(key)
 		return int(result['date'])
-	except Exception:
+	except:
 		return None
 
 
@@ -223,6 +223,21 @@ def cache_clear_search():
 	control.execute('Container.Refresh')
 
 
+def cache_clear_SearchPhrase(table, key):
+	cursor = _get_connection_cursor_search()
+
+	try:
+		cursor.execute('DELETE FROM %s WHERE term IS "%s";' % (table, key))
+		cursor.connection.commit()
+	except:
+		cursor.close()
+		import traceback
+		traceback.print_exc()
+		pass
+	cursor.close()
+	control.execute('Container.Refresh')
+
+
 def cache_clear_bookmarks():
 	cursor = _get_connection_cursor_bookmarks()
 
@@ -344,7 +359,8 @@ def _find_cache_version():
 		os.makedirs(ad_folder)
 
 	try:
-		with open(versionFile, 'rb') as fh: oldVersion = fh.read()
+		with open(versionFile, 'rb') as fh:
+			oldVersion = fh.read()
 	except:
 		oldVersion = '0'
 
@@ -352,7 +368,8 @@ def _find_cache_version():
 		curVersion = control.addon('plugin.video.venom').getAddonInfo('version')
 
 		if oldVersion != curVersion:
-			with open(versionFile, 'wb') as fh: fh.write(curVersion)
+			with open(versionFile, 'wb') as fh:
+				fh.write(curVersion)
 			return True
 		else:
 			return False
