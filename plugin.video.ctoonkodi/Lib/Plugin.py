@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 import sys
-import json
 import requests
-from urllib import urlencode
-from urlparse import parse_qs
-from ast import literal_eval
+from urllib import urlencode, quote_plus
+from urlparse import parse_qsl
 
 import xbmc
 import xbmcgui
 import xbmcaddon
 import xbmcplugin
 
-#from Lib.SimpleTVDB import simpleTVDB as tvdb
-from Lib.SimpleCache import simpleCache as cache
+from Lib.SimpleCache import cache
 
-
-ADDON_VERSION = '0.3.9'
-
+# Disable urllib3's "InsecureRequestWarning: Unverified HTTPS request is being made" warnings.
+requests.packages.urllib3.disable_warnings(
+    requests.packages.urllib3.exceptions.InsecureRequestWarning
+)
 
 # Changelog:
+#   0.3.10:
+#       - Added support for episodes thumbnail and subtitles (see settings).
+#       - Adapt to API changes.
+#       - Code cleanup and refactor (remember to update your Kodi favorites).
+#
 #   0.3.9:
 #       - Refactored code.
 #       - Added disk and memory caching.
@@ -34,124 +37,132 @@ ADDON_VERSION = '0.3.9'
 #   0.2.0:
 #       - Initial release.
 
-
-BASEURL = 'https://ctoon.party'
-
+ADDON_VERSION = '0.3.10'
 USER_AGENT = 'CTOONKodi/' + ADDON_VERSION + ' (JSON API; +https://github.com/doko-desuka/plugin.video.ctoonkodi)'
+USER_AGENT_KODI = '|User-Agent=' + quote_plus(USER_AGENT) # Custom header(s) for Kodi to use when fetching stuff.
+
+PLUGIN_ID = int(sys.argv[1])
+PLUGIN_URL = sys.argv[0]
 
 ADDON = xbmcaddon.Addon()
-ADDON_SETTINGS = dict()
 
-PROPERTY_SHOWS = 'ctoonkodi.prop.shows'
-PROPERTY_SEASONS_TEMPLATE = 'ctoonkodi.prop.seasons_' # Used with the 'short_name' of each show.
+# TVDB api key exclusively for CTOON Kodi, for future use (e.g. getting episode plots etc.).
+#TVDB_API_KEY = '0HVVMAMIQQNCTWV7'
 
-#===================================================================================
+PROPERTY_SHOWS = 'ctoonkodi.shows'
+PROPERTY_SEASONS_TEMPLATE = 'ctoonkodi.seasons_' # Incomplete value, used on actionSeasonsMenu().
 
-def viewShows(params):
-    xbmcplugin.setContent(int(sys.argv[1]), 'episodes') # Estuary skin has better layout for this than for 'tvshows' content.
+
+# =====================================================================================
+
+
+def actionShowsMenu(params):
+    # Estuary skin has better layout for this than for 'tvshows' content.
+    xbmcplugin.setContent(PLUGIN_ID, 'episodes')
 
     cache.saveCacheIfDirty() # Try saving the cache on the main menu, if necessary.
 
-    showsData = getShowsProperty()
+    showsData = getCacheProperty(PROPERTY_SHOWS, route='')
     if showsData:
-
-        def _viewShowsItems():
+        def _showsItemsGen():
             for showData in showsData:
-                thumb = BASEURL + showData['cover'] if showData['cover'] else ''
+                showThumb = showData['cover']+USER_AGENT_KODI if showData['cover'] else ''
                 showName = showData['name']
-                imdbURL = showData['links']['imdb']
-                showIMDB = imdbURL[imdbURL.rfind('/')+1 : ] # Show IMDB ID ('tt#######'), useful for getting metadata.
+                # imdbURL = showData['links']['imdb']
+                # showIMDB = imdbURL[imdbURL.rfind('/') + 1:]  # Show IMDB ID ('tt#######'), useful for getting metadata.
                 showPlot = showData['description']
 
-                item = xbmcgui.ListItem(showName)
-                if thumb:
-                    item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb, 'fanart': thumb})
-                # 'episode' mediatype looks better on Estuary than 'tvshow'.
-                item.setInfo('video', {'tvshowtitle': showName, 'plot': showPlot, 'mediatype': 'episode'})
+                # Make a main menu item.
+                # The 'episode' mediatype looks better on Estuary than 'tvshow'.
+                item = makeListItem(
+                    showName,
+                    {'tvshowtitle': showName, 'plot': showPlot, 'mediatype': 'episode'},
+                    showThumb
+                )
+                item.setArt({'fanart': showThumb}) # Additional art setup for main menu items, purely cosmetic.
                 yield (
                     buildURL(
                         {
-                            'view': 'SEASONS',
+                            'action': 'actionSeasonsMenu',
                             'route': showData['short_name'],
                             'show': showName,
                             'plot': showPlot if showPlot else '',
-                            'thumb': thumb
+                            'showThumb': showThumb
                         }
                     ),
                     item,
                     True
                 )
             # Yield the settings item as well, after the loop.
-            settingsItem = xbmcgui.ListItem('Settings')
-            settingsItem.setInfo('video', {'plot': 'Change the add-on settings.'})
-            _settingsIcon = ADDON.getAddonInfo('path') + '/resources/media/IconSettings.png'
-            settingsItem.setArt({key: _settingsIcon for key in ('icon', 'thumb', 'poster', 'fanart')})
-            yield((buildURL({'view':'SETTINGS'}), settingsItem, False))
+            settingsItem = makeListItem(
+                'Settings', {'plot': 'Change the add-on settings.'}, 'DefaultAddonService.png'
+            )
+            yield((buildURL({'action': 'actionSettingsScreen'}), settingsItem, False))
 
-        xbmcplugin.addDirectoryItems(int(sys.argv[1]), tuple(_viewShowsItems()))
-
-    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
+        xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_showsItemsGen()))
+    xbmcplugin.endOfDirectory(PLUGIN_ID, cacheToDisc=False)
 
 
-def viewSeasons(params):
-    xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
-
+def actionSeasonsMenu(params):
+    xbmcplugin.setContent(PLUGIN_ID, 'seasons')
     route = params['route']
 
-    seasonsData = getSeasonsProperty(route)
+    # Retrieve and cache the seasons data from the full show data.
+    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE + route, route, customKey='seasons')
     if seasonsData:
-
-        def _viewSeasonsItems():
+        def _seasonsItemsGen():
             showName = params['show']
             showPlot = params.get('plot', '')
-            thumb = params['thumb']
+            showThumb = params['showThumb']
             # Sort seasons and put the 'Extra' and 'Movie' seasons at the end of the list.
-            orderedKeys = sorted(seasonsData.iterkeys(), key = lambda k: k if k.lower().startswith('season') else 'z')
+            orderedKeys = sorted(seasonsData.iterkeys(), key=lambda k: k if 'season' in k.lower() else 'z')
             for seasonKey in orderedKeys:
-                item = xbmcgui.ListItem(seasonKey)
-                item.setArt({'thumb': thumb, 'poster': thumb})
-                seasonNumber = seasonsData[seasonKey][0]['season'] # Use the first episode to get the season number.
+                # Use the first episode to get the season number.
+                seasonNumber = seasonsData[seasonKey][0]['season']
                 seasonNumber = int(seasonNumber) if seasonNumber and seasonNumber.isdigit() else 0
-                item.setInfo(
-                    'video', {'tvshowtitle': showName, 'plot': showPlot, 'season': seasonNumber, 'mediatype': 'season'}
+                item = makeListItem(
+                    seasonKey,
+                    {
+                        'tvshowtitle': showName,
+                        'plot': showPlot,
+                        'season': seasonNumber,
+                        'mediatype': 'season'
+                    },
+                    showThumb
                 )
                 yield (
                     buildURL(
                         {
-                            'view': 'EPISODES',
+                            'action': 'actionEpisodesMenu',
                             'route': route,
-                            'season': ','.join((seasonKey, str(seasonNumber))),
+                            'season': seasonKey + '|' + str(seasonNumber),
                             'show': showName,
-                            'plot': showPlot,
-                            'thumb': thumb
+                            'showThumb': showThumb
                         }
                     ),
                     item,
                     True
                 )
 
-        xbmcplugin.addDirectoryItems(int(sys.argv[1]), tuple(_viewSeasonsItems()))
+        xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_seasonsItemsGen()))
+    xbmcplugin.endOfDirectory(PLUGIN_ID, cacheToDisc=False)
 
-    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
-
-def viewEpisodes(params):
-    xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
-
+def actionEpisodesMenu(params):
+    xbmcplugin.setContent(PLUGIN_ID, 'episodes')
     route = params['route']
 
-    seasonsData = getSeasonsProperty(route)
+    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE + route, route) # Cache contains the seasons data.
     if seasonsData:
-
-        def _viewEpisodesItems():
+        def _episodesItemsGen():
             showName = params['show']
-            showPlot = params['plot']
-            thumb = params['thumb']
-            seasonKey, seasonNumber = params['season'].split(',')
+            showThumb = params['showThumb']
+            seasonKey, seasonNumber = params['season'].split('|')
             seasonNumber = int(seasonNumber)
             # Handle media type for each season type: "Season (...)", "Movie" and "Extra".
             mediaType = 'episode' if 'Season' in seasonKey else 'movie' if 'Movie' in seasonKey else 'video'
-            dateLength = len('yyyy-mm-dd')
+            showThumbnails = (ADDON.getSetting('thumbnails') == 'true')
+            useSubtitlesContextMenu = (ADDON.getSetting('subtitles') == 'Disabled')
 
             for episodeData in seasonsData[seasonKey]:
                 episodeTitle = episodeData['title']
@@ -161,99 +172,136 @@ def viewEpisodes(params):
                     label = seasonKey + ' | ' + episodeTitle
                 # Get episode number. Handles single episodes names ('8') and double episode names ('20_21').
                 episodeNumbers = episodeData['episode'].split('_')
-                episodeDate = episodeData['published_date'][:dateLength]
+                episodeDate = episodeData['published_date'][:10] # 10 = len('yyyy-mm-dd')
 
-                item = xbmcgui.ListItem(label)
-                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb})
-                # Infolabels to pass on to the viewMedia() function and to allow users to favourite individual
-                # episodes.
-                infoLabels = {
-                    'tvshowtitle': showName,
-                    'title': episodeTitle,
-                    'plot': showPlot,
-                    'season': seasonNumber,
-                    'episode': episodeNumbers[0],
-                    'aired': episodeDate,
-                    'premiered': episodeDate, # According to the docs 'premiered' is what makes Kodi display a date.
-                    'year': int(episodeDate.split('-')[0]),
-                    'mediatype': mediaType
-                }
-                item.setInfo('video', infoLabels)
-                item.setProperty('IsPlayable', 'true') # Allows the checkmark to be placed on watched episodes.
-                yield (
-                    buildURL(
-                        {
-                            'view': 'MEDIA',
-                            'route': route + '/' + str(episodeData['id']),
-                            'label': label,
-                            'thumb': thumb,
-                            'infoLabels': str(infoLabels)
-                        }
-                    ),
-                    item,
-                    False
+                if episodeData['thumbnail'] and showThumbnails:
+                    episodeThumb = episodeData['thumbnail']+USER_AGENT_KODI
+                else:
+                    episodeThumb = showThumb
+
+                item = makeListItem(
+                    label,
+                    {
+                        'tvshowtitle': showName,
+                        'title': episodeTitle,
+                        'season': seasonNumber,
+                        'episode': episodeNumbers[0],
+                        'aired': episodeDate,
+                        'premiered': episodeDate, # According to the docs 'premiered' is what makes Kodi display a date.
+                        'year': int(episodeDate.split('-')[0]),
+                        'mediatype': mediaType
+                    },
+                    episodeThumb
                 )
+                item.setProperty('IsPlayable', 'true') # Allows the checkmark to be placed on watched episodes.
+                itemURL = buildURL(
+                    {
+                        'action': 'actionPlay',
+                        'route': route + '/' + str(episodeData['id']),
+                        'label': label,
+                        'date': episodeDate,
+                        'mediaType': mediaType
+                    }
+                )
+                if useSubtitlesContextMenu:
+                    item.addContextMenuItems(
+                        [('Play with Subtitles', 'PlayMedia(' + itemURL + '&forceSubtitles)')]
+                    )
+                yield (itemURL, item, False)
 
-        xbmcplugin.addDirectoryItems(int(sys.argv[1]), tuple(_viewEpisodesItems()))
+        xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_episodesItemsGen()))
+    xbmcplugin.endOfDirectory(PLUGIN_ID)
 
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
-
-def viewMedia(params):
+def actionPlay(params):
     cache.saveCacheIfDirty() # Try saving the cache before playing an episode, if necessary.
 
     data = ctoonGET(params['route'])
     episodeData = data['episode']
 
-    # Sorted pairs of video size ("1080", "720", "480" etc.) and stream URL.
+    # Sort stream data in pairs of integer video size (1080, 720, 480 etc.) and URL string.
     streamItems = sorted(
-        ((int(item[0]), BASEURL + item[1]) for item in episodeData['files']['webm'].iteritems()),
+        ((int(quality), url) for quality, url in episodeData['files']['webm'].iteritems()),
         key = lambda m: m[0],
-        reverse = True # Sorts from biggest quality to lowest quality.
+        reverse = True # Sort from biggest quality to lowest quality.
     )
-    # Recreate the item with the same infolabels, otherwise Kodi overwrites the item that was selected from the list.
-    item = xbmcgui.ListItem(params['label'])
-    thumb = params['thumb']
-    item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb})
-    item.setInfo('video', literal_eval(params['infoLabels']))
+
+    # Recreate the item with the exact same infolabels, or Kodi replaces the item in the list after playback stops.
+    item = makeListItem(
+        params['label'],
+        {
+            'tvshowtitle': xbmc.getInfoLabel('ListItem.TVShowTitle'),
+            'title': xbmc.getInfoLabel('ListItem.Title'),
+            'season': xbmc.getInfoLabel('ListItem.Season'),
+            'episode': xbmc.getInfoLabel('ListItem.Episode'), #int(xbmc.getInfoLabel('ListItem.Episode')),
+            'aired': params['date'], # Using a parameter to avoid having to parse the 'dd/mm/yyyy' InfoLabel.
+            'premiered': params['date'],
+            'year': xbmc.getInfoLabel('ListItem.Year'),
+            'mediatype': params['mediaType']
+        }
+    )
     item.setMimeType('video/webm')
-    item.setProperty('IsPlayable', 'true')
+    item.setContentLookup(False) # Avoids Kodi's MIME-type request.
 
-    if ADDON_SETTINGS['autoplay']:
+    streamURL = None
+    if ADDON.getSetting('autoplay') != 'Disabled':
         # Find the exact quality the user wants, or the next smaller quality.
-        desiredQuality = int(ADDON_SETTINGS['autoplay'])
-        for streamQuality, streamURL in streamItems:
-            if streamQuality <= desiredQuality:
-                item.setPath(streamURL)
-                xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-                return
+        desiredResolution = int(autoplaySetting[:-1]) # Strip the 'p' from the quality name.
+        for resolution, url in streamItems:
+            if resolution <= desiredResolution:
+                streamURL = url
+                break
     else:
-        # Display a dialog for selection.
-        index = xbmcgui.Dialog().select('Select Quality', tuple(str(sItem[0]) for sItem in streamItems), useDetails=True)
+        # Display a dialog for selection. Order the qualities according to the setting.
+        qualityOrder = {
+            quality: index
+            for index, quality in enumerate(ADDON.getSetting('qualityOrder').replace(' ', '').split(','))
+        }
+        sortedQualityItems = sorted(
+            (xbmcgui.ListItem(str(item[0])+'p', item[1]) for item in streamItems),
+            key = lambda m: qualityOrder.get(m.getLabel(), 1)
+        )
+        index = xbmcgui.Dialog().select('Select Quality', sortedQualityItems, useDetails=True)
         if index >= 0:
-            item.setPath(streamItems[index][1])
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-            return
+            streamURL = sortedQualityItems[index].getLabel2()
 
-            '''
-            An alternative playing method, to be used if something else needs to be done afterwards
-            like auto-loading subtitles etc. (such a thing can't be done with 'setResolvedUrl()'):
-            xbmc.Player().play(url=streamURL, listitem=item)
-            '''
+    if streamURL:
+        # Load subtitles if available.
+        if ADDON.getSetting('subtitles') != 'Disabled' or 'forceSubtitles' in params:
+            if episodeData['files']['subtitles']:
+                subsList = sorted(
+                    (xbmcgui.ListItem(name.upper(), url) for name, url in episodeData['files']['subtitles'].iteritems()),
+                    key = lambda m: 0 if 'EN' in m.getLabel() else 1 # Order EN (English) before all others.
+                )
+                index = xbmcgui.Dialog().select(
+                    'Load subtitles?', subsList + [xbmcgui.ListItem('None', "(Don't use subtitles)")], useDetails=True
+                )
+                if index < len(subsList):
+                    if index != -1:
+                        item.setSubtitles([subsList[index].getLabel2() + USER_AGENT_KODI])
+                    else:
+                        streamURL = None # Cancel playback if the subtitle dialog is cancelled.
+                else:
+                    pass # User chose "None", play but with no subtitles.                    
+            elif 'forceSubtitles' in params:
+                # Show a notification to the user because he came in from the context menu.
+                xbmc.sleep(1000)
+                notification('No subtitles found', delay=2000, useSound=False)
 
-    # Fall-through: failed to resolve.
-    xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item)
+    if streamURL:
+        item.setPath(streamURL + USER_AGENT_KODI) # Set the User-Agent header when Kodi is streaming.
+        xbmcplugin.setResolvedUrl(PLUGIN_ID, True, item)
+    else:
+        xbmcplugin.setResolvedUrl(PLUGIN_ID, False, xbmcgui.ListItem())
 
 
-def viewSettings(params):
-    '''
-    View that shows the add-on settings dialog.
-    '''
-    ADDON.openSettings() # Modal dialog, so the plugin won't continue from this point until user closes\confirms it.
-    reloadSettings() # So right after that is a good time to update the globals.
+def actionSettingsScreen(params):
+    # View that shows the add-on settings dialog.
+    # 'openSettings()' is a modal dialog, so the plugin won't continue from here until the user closes\confirms it.
+    xbmcaddon.Addon().openSettings()
 
 
-def viewClearCache(params):
+def actionClearCache(params):
     if cache.clearCacheFiles():
         notification('Cache files cleared', 3000, False)
     # Close the settings dialog when it was opened from within this add-on.
@@ -261,82 +309,52 @@ def viewClearCache(params):
         xbmc.executebuiltin('Dialog.Close(all)')
 
 
-#==================================================================================	=
-
-
 def buildURL(query):
-    '''
-    Helper function to build a Kodi xbmcgui.ListItem URL.
-    :param query: Dictionary of url parameters to put in the URL.
-    :returns: A formatted and urlencoded URL string.
-    '''
-    return (sys.argv[0] + '?' + urlencode({k: v.encode('utf-8') if isinstance(v, unicode)
+    # Helper function to build a Kodi xbmcgui.ListItem URL string.
+    # query -> A dictionary of parameters to put in the item URL.
+    return (PLUGIN_URL + '?' + urlencode({k: v.encode('utf-8') if isinstance(v, unicode)
                                            else unicode(v, errors='ignore').encode('utf-8')
                                            for k, v in query.iteritems()}))
 
 
-def reloadSettings():
-    global ADDON_SETTINGS
-    autoplay = ADDON.getSetting('autoplay')
-    ADDON_SETTINGS['autoplay'] = int(autoplay) if autoplay != 'Disabled' else 0
+def makeListItem(label, videoMetadata=None, thumb=None):
+    item = xbmcgui.ListItem(label)
+    if videoMetadata:
+        item.setInfo('video', videoMetadata)
+    if thumb:
+        item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb})
+    return item
 
 
 def notification(message, delay=3000, useSound=True):
     xbmcgui.Dialog().notification('CTOON Kodi', message, xbmcgui.NOTIFICATION_INFO, delay, useSound)
+    return None
 
 
-def ctoonGET(route = ''):
+def ctoonGET(route=''):
     try:
-        r = requests.get(BASEURL + '/api/' + route, headers={'User-Agent': USER_AGENT}, timeout=10)
-        if r.ok:
-            return r.json()
-        else:
-            notification('Could not connect to CTOON')
+        r = requests.get(
+            'https://ctoon.party/api/1.1/' + route, headers={'User-Agent': USER_AGENT}, timeout=10, verify=False
+        )
+        return r.json() if r.ok else notification('Could not connect to CTOON')
     except requests.exceptions.Timeout:
-        notification('Request to CTOON timed out')
-    return None # Fall-through.
+        return notification('Request to CTOON timed out')
+    except:
+        return notification('Web request failed')
 
 
-def getShowsProperty():
-    showsData = cache.getCacheProperty(PROPERTY_SHOWS, readFromDisk=True)
-    if not showsData:
-        showsData = ctoonGET()
-        if showsData:
-            # Create a disk-enabled property, lifetime of five days.
-            cache.setCacheProperty(PROPERTY_SHOWS, showsData, saveToDisk=True, lifetime=cache.LIFETIME_FIVE_DAYS)
-    return showsData
-
-
-def getSeasonsProperty(route):
-    propName = PROPERTY_SEASONS_TEMPLATE + route
-    seasonsData = cache.getCacheProperty(propName, readFromDisk=True)
-    if not seasonsData:
-        temp = ctoonGET(route)
-        if temp and 'seasons' in temp:
-            seasonsData = temp['seasons']
-            cache.setCacheProperty(propName, seasonsData, saveToDisk=True, lifetime=cache.LIFETIME_FIVE_DAYS)
-    return seasonsData
-
-
-#===================================================================================
-
-
-VIEWS_DICT = {
-    'SHOWS': viewShows, # View all shows.
-    'SEASONS': viewSeasons, # View all seasons of a show.
-    'EPISODES': viewEpisodes, # View all episodes of a season.
-
-    'MEDIA': viewMedia, # View all media URLs of an episode \ autoplay.
-
-    'SETTINGS': viewSettings, # Settings dialog.
-    'CLEAR_CACHE': viewClearCache # Clear the cache file.
-}
-
-
-# Global scope, initialises the ADDON_SETTINGS dict.
-reloadSettings()
+def getCacheProperty(propertyName, route, customKey=None):
+    data = cache.getCacheProperty(propertyName, readFromDisk=True)
+    if not data:
+        data = ctoonGET(route)
+        if data:
+            if customKey:
+                data = data[customKey] # Filter the data by key, if needed.
+            # Create a disk-enabled property, lifetime of one day.
+            cache.setCacheProperty(propertyName, data, saveToDisk=True, lifetime=24)
+    return data
 
 
 def main():
-    params = {key: value[0] for key, value in parse_qs(sys.argv[2][1:], keep_blank_values=True).iteritems()}
-    view = VIEWS_DICT[params.get('view', 'SHOWS')](params)
+    params = dict(parse_qsl(sys.argv[2][1:], keep_blank_values=True))
+    globals()[params.get('action', 'actionShowsMenu')](params) # Call the action function, defaults to actionShowsMenu().

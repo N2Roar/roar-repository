@@ -16,10 +16,8 @@ import xbmcaddon
 
 class SimpleCache():
 
-    '''
-    Cache version log:
-    1: CTOONKodi 0.3.9
-    '''
+    # Cache version log:
+    # 1: CTOONKodi 0.3.9
 
     # Cache version, for future extension. Used with properties saved to disk.
     CACHE_VERSION = 1
@@ -34,11 +32,11 @@ class SimpleCache():
     # Property name pointing to a Python 'set()' of property names.
     # This is used to quickly tell if a property exists or not by checking its name in the set,
     # rather than retrieving a property that could be a huge JSON blob just to see that it exists.
-    PROPERTY_DISK_CACHE_NAMES = 'scache.prop.names'
+    PROPERTY_DISK_CACHE_NAMES = 'simplecache.names'
 
     # Property name pointing to a comma-separated list of dirty disk-enabled properties that need saving.
     # This list is converted to a set when read and used for quick testing.
-    PROPERTY_DIRTY_NAMES = 'scache.prop.dirty'
+    PROPERTY_DIRTY_NAMES = 'simplecache.dirty'
 
 
     def __init__(self):
@@ -74,7 +72,7 @@ class SimpleCache():
         '''
         Convenience function to create several properties at once.
         :param properties: For disk-enabled properties (saveToDisk=True), it's an iterable where
-        each entry should be a tuple, list or other indexable object of this format:
+        each entry should be a tuple, list or other unpackable object of this format:
         ((str)PROPERTY_NAME, (anything)PROPERTY_DATA, (int)LIFETIME_HOURS)
         Otherwise (with saveToDisk=False), 'properties' is an iterable of (name, data) pairs.
 
@@ -201,7 +199,7 @@ class SimpleCache():
     def saveCacheIfDirty(self):
         dirtyNamesRaw = self.window.getProperty(self.PROPERTY_DIRTY_NAMES)
         if dirtyNamesRaw:
-            for propName in dirtyNamesRaw.split(','):
+            for propName in dirtyNamesRaw.split('\x00'):
                 self._saveCacheProperty(propName)
             self.window.setProperty(self.PROPERTY_DIRTY_NAMES, '') # "Clears" the dirty names set.
 
@@ -292,7 +290,7 @@ class SimpleCache():
                 self._writeBlankCacheFile(fullPath)
         except:
             pass
-        return None # Fall-through.
+        return None
 
 
     def _pushCacheProperty(self, propName, data, lifetime, epoch):
@@ -337,11 +335,11 @@ class SimpleCache():
 
 
     def _setToString(self, setObject):
-        return ','.join(element for element in setObject)
+        return '\x00'.join(element for element in setObject)
 
 
     def _stringToSet(self, text):
-        return set(text.split(',')) if text else set()
+        return set(text.split('\x00')) if text else set()
 
 
     def _getEpochHours(self):
@@ -351,4 +349,4 @@ class SimpleCache():
         return int(time() // 3600.0)
 
 
-simpleCache = SimpleCache()
+cache = SimpleCache()
