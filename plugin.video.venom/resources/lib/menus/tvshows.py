@@ -16,7 +16,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -48,9 +48,6 @@ class TVshows:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.zip.xml' % (self.tvdb_key.decode('base64'), '%s', '%s') # check if normal xml needs this. seems like same file in response
-		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
-
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
@@ -882,7 +879,6 @@ class TVshows:
 					director = '0'
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
-				# log_utils.log('director = %s' % director, __name__, log_utils.LOGDEBUG)
 
 				plot = '0'
 				try:
@@ -1080,14 +1076,14 @@ class TVshows:
 				raise Exception()
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
-			log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
+			# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
 
 			item = client.request(url, timeout='10', error = True)
 
 			# url = self.tvdb_info_link % (tvdb, 'en')
 			# data = urllib2.urlopen(url, timeout=30).read()
 			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-			# result = zip.read('en.zip.xml')
+			# result = zip.read('en.xml')
 			# artwork = zip.read('banners.xml')
 			# actors = zip.read('actors.xml')
 			# zip.close()

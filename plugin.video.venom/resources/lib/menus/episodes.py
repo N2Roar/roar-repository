@@ -455,7 +455,6 @@ class Episodes:
 			return
 
 		for item in result:
-			# log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
 			try:
 				num_1 = 0
 				for i in range(0, len(item['seasons'])):
@@ -537,7 +536,7 @@ class Episodes:
 				data = urllib2.urlopen(url, timeout=10).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.zip.xml' % lang)
+				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -761,7 +760,6 @@ class Episodes:
 			next = ''
 
 		for item in items:
-			# log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
 			try:
 				if 'show' not in item or 'episode' not in item:
 					raise Exception()
@@ -897,7 +895,7 @@ class Episodes:
 				data = urllib2.urlopen(url, timeout=10).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.zip.xml' % lang)
+				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -1242,7 +1240,7 @@ class Episodes:
 					raise Exception()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.zip.xml' % self.lang)
+				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()

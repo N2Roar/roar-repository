@@ -15,7 +15,7 @@ from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import cache
 from resources.lib.modules import playcount
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
@@ -40,9 +40,10 @@ class Seasons:
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 		# decoded key above = 1D62F2F90030C444
 		# Test for api response
-		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.zip
+		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.xml.zip
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
@@ -277,14 +278,12 @@ class Seasons:
 			if tvdb == '0':
 				return
 			url = self.tvdb_info_link % (tvdb, 'en')
-			log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
+			# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
 
 			data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-			result = zip.read('en.zip.xml')
-			# log_utils.log('result = %s' % str(result), __name__, log_utils.LOGDEBUG)
+			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
-
 			actors = zip.read('actors.xml')
 			zip.close()
 
@@ -295,11 +294,11 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 
 				url = self.tvdb_info_link % (tvdb, 'en')
-				log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
+				# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
 				data = urllib2.urlopen(url, timeout=30).read()
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('en.zip.xml')
+				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
@@ -308,7 +307,7 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, lang)
 				data = urllib2.urlopen(url, timeout=30).read()
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result2 = zip.read('%s.zip.xml' % lang)
+				result2 = zip.read('%s.xml' % lang)
 				zip.close()
 			else:
 				result2 = result
@@ -321,14 +320,9 @@ class Seasons:
 			result2 = result2.split('<Episode>')
 
 			item = result[0]
-			log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
-
-
 			item2 = result2[0]
 
 			episodes = [i for i in result if '<EpisodeNumber>' in i]
-			log_utils.log('episodes = %s' % str(episodes), __name__, log_utils.LOGDEBUG)
-
 
 			if control.setting('tv.specials') == 'true':
 				episodes = [i for i in episodes]
@@ -829,12 +823,13 @@ class Seasons:
 			return None
 
 		try:
-			if tvdb == '0': return None
+			if tvdb == '0':
+				return None
 
 			url = self.tvdb_info_link % (tvdb, 'en')
 			data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-			result = zip.read('%s.zip.xml' % 'en')
+			result = zip.read('%s.xml' % 'en')
 			zip.close()
 
 			dupe = client.parseDOM(result, 'SeriesName')[0]
@@ -845,7 +840,7 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, 'en')
 				data = urllib2.urlopen(url, timeout=30).read()
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
-				result = zip.read('%s.zip.xml' % 'en')
+				result = zip.read('%s.xml' % 'en')
 				zip.close()
 
 			result = result.split('<Episode>')

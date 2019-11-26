@@ -138,7 +138,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.0" provider-name="doko, mkody, Tikipeter">
+<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.2" provider-name="doko, mkody, Tikipeter">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests" />
@@ -156,6 +156,14 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
         </description>
         <news>
 [COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR] - Cartoons
+
+[B]0.4.2:[/B]
+- Fixed a bug with old cache files.
+- Added a warning on old favorite items (please recreate them).
+
+[B]0.4.1:[/B]
+- Fixed a bug with the Autoplay setting (thanks @WilsonMagic!).
+- Added the "List Qualities &amp; Subs" context menu, for choosing a different quality even with Autoplay on.
 
 [B]0.4.0:[/B]
 - Recreated the logo. That thing was annoying me with how distracting it was.
@@ -225,7 +233,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
   </extension>
 </addon>
 
-<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.12.01" provider-name="A4K">
+<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.13.01" provider-name="A4K">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0"/>
 		<import addon="metadata.tvdb.com" version="3.0.14"/>
@@ -265,6 +273,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 		<website></website>
 		<source></source>
 		<news>
+		1.4.13 - Added realtitle (movies) and realname (tvshows) parameters for plexkodiconnect compatibility
 		1.4.12 - Handle non-existent 'filename' key in TVDB data.
 		1.4.11 - TVDB API fix, thanks to @ruinernin and @bg-22 (among others)!
 				 BUG: Some artwork may not load for certain items, due to ongoing API instability.
@@ -331,7 +340,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.3.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.3.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -368,23 +377,8 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.3.1 - Nov. 18, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed TVDb for new changed xml file names.  Please note TVDb is still not
-    fully fixed on their end. On 11-16-19 I retrieved the
-    xmls to discover many tags inside the files were
-    missing data, or lacked closing tags, so looks like
-    they have more updating to do.  Season posters
-    are not working at this time from them and they're
-    only providing a show poster.[/I]
-[COLOR yellow]--[/COLOR][I] Added setting option to remove "CAM and SD sources".  Note this new
-    option will only take place if better than
-    "CAM and SD" sources exists to avoid nothing
-    returned for links.[/I]
-[COLOR yellow]--[/COLOR][I] Added new setting option to remove "3D sources".[/I]
-COLOR yellow]--[/COLOR][I] Added new setting Category called "Shortcuts".  This now allows you to
-    clear specific cache without backing out of menus
-    and going into Tools. Call up "Venom Settings"
-    and go to "Shortcuts" anywhere.[/I]
+[B][COLOR red]Update - v3.3.3 - Nov. 24, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Sorry folks missed an entry in last update for TVDb name change[/I]
 		</news>
 	</extension>
 </addon>

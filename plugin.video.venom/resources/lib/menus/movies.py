@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -863,7 +863,6 @@ class Movies:
 				poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
 				poster = client.replaceHTMLCodes(poster)
 				poster = poster.encode('utf-8')
-				# log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
 
 				try:
 					duration = re.findall('(\d+?) min(?:s|)', item)[-1]

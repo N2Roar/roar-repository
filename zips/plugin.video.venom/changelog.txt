@@ -1,3 +1,11 @@
+[B][COLOR red]Update - v3.3.3 - Nov. 24, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Sorry folks missed an entry in last update for TVDb name change[/I]
+
+
+[B][COLOR red]Update - v3.3.2 - Nov. 24, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TVDb for changed xml file names....AGAIN![/I]
+
+
 [B][COLOR red]Update - v3.3.1 - Nov. 18, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TVDb for new changed xml file names.  Please note TVDb is still not
     fully fixed on their end. On 11-16-19 I retrieved the

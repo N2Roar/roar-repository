@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.0" provider-name="doko, mkody, Tikipeter">
+<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.2" provider-name="doko, mkody, Tikipeter">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests" />
@@ -17,6 +17,14 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
         </description>
         <news>
 [COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR] - Cartoons
+
+[B]0.4.2:[/B]
+- Fixed a bug with old cache files.
+- Added a warning on old favorite items (please recreate them).
+
+[B]0.4.1:[/B]
+- Fixed a bug with the Autoplay setting (thanks @WilsonMagic!).
+- Added the "List Qualities &amp; Subs" context menu, for choosing a different quality even with Autoplay on.
 
 [B]0.4.0:[/B]
 - Recreated the logo. That thing was annoying me with how distracting it was.

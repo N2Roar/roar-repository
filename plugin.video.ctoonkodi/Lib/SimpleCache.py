@@ -18,9 +18,10 @@ class SimpleCache():
 
     # Cache version log:
     # 1: CTOONKodi 0.3.9
+    # 2: CTOONKodi 0.4.0
 
     # Cache version, for future extension. Used with properties saved to disk.
-    CACHE_VERSION = 1
+    CACHE_VERSION = 2
 
     LIFETIME_THREE_DAYS = 72 # 3 days, in hours.
     LIFETIME_FIVE_DAYS = 120 # 5 days.

@@ -7,7 +7,7 @@
 import os, sys
 
 from resources.lib.modules import control
-from resources.lib.modules import trakt, log_utils
+from resources.lib.modules import trakt
 
 try:
 	sysaddon = sys.argv[0]
@@ -476,8 +476,6 @@ class Navigator:
 
 
 	def clearCacheSearchPhrase(self, table, name):
-		log_utils.log('table = %s' % str(table), __name__, log_utils.LOGDEBUG)
-		log_utils.log('name = %s' % str(name), __name__, log_utils.LOGDEBUG)
 		control.idle()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 

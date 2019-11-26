@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# CTOON Kodi video add-on for Kodi 17.6+.
+# https://github.com/doko-desuka/plugin.video.ctoonkodi
 import sys
 import requests
 from urllib import urlencode, quote_plus
@@ -16,28 +18,7 @@ requests.packages.urllib3.disable_warnings(
     requests.packages.urllib3.exceptions.InsecureRequestWarning
 )
 
-# Changelog:
-#   0.3.10:
-#       - Added support for episodes thumbnail and subtitles (see settings).
-#       - Adapt to API changes.
-#       - Code cleanup and refactor (remember to update your Kodi favorites).
-#
-#   0.3.9:
-#       - Refactored code.
-#       - Added disk and memory caching.
-#       - Added plugin settings (autoplay, clear cache).
-#
-#   0.3.1:
-#       - Minor fixes.
-#
-#   0.3.0:
-#       - Added support for the ctoon web API.
-#       - Code cleanup and improvement.
-#
-#   0.2.0:
-#       - Initial release.
-
-ADDON_VERSION = '0.3.10'
+ADDON_VERSION = '0.4.2'
 USER_AGENT = 'CTOONKodi/' + ADDON_VERSION + ' (JSON API; +https://github.com/doko-desuka/plugin.video.ctoonkodi)'
 USER_AGENT_KODI = '|User-Agent=' + quote_plus(USER_AGENT) # Custom header(s) for Kodi to use when fetching stuff.
 
@@ -162,7 +143,6 @@ def actionEpisodesMenu(params):
             # Handle media type for each season type: "Season (...)", "Movie" and "Extra".
             mediaType = 'episode' if 'Season' in seasonKey else 'movie' if 'Movie' in seasonKey else 'video'
             showThumbnails = (ADDON.getSetting('thumbnails') == 'true')
-            useSubtitlesContextMenu = (ADDON.getSetting('subtitles') == 'Disabled')
 
             for episodeData in seasonsData[seasonKey]:
                 episodeTitle = episodeData['title']
@@ -203,15 +183,14 @@ def actionEpisodesMenu(params):
                         'mediaType': mediaType
                     }
                 )
-                if useSubtitlesContextMenu:
-                    item.addContextMenuItems(
-                        [('Play with Subtitles', 'PlayMedia(' + itemURL + '&forceSubtitles)')]
-                    )
+                item.addContextMenuItems(
+                    [('List Qualities & Subs', 'PlayMedia('+itemURL+'&autoplayOff)')]
+                )
                 yield (itemURL, item, False)
 
         xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_episodesItemsGen()))
     xbmcplugin.endOfDirectory(PLUGIN_ID)
-
+    
 
 def actionPlay(params):
     cache.saveCacheIfDirty() # Try saving the cache before playing an episode, if necessary.
@@ -244,7 +223,8 @@ def actionPlay(params):
     item.setContentLookup(False) # Avoids Kodi's MIME-type request.
 
     streamURL = None
-    if ADDON.getSetting('autoplay') != 'Disabled':
+    autoplaySetting = ADDON.getSetting('autoplay')
+    if autoplaySetting != 'Disabled' and 'autoplayOff' not in params:
         # Find the exact quality the user wants, or the next smaller quality.
         desiredResolution = int(autoplaySetting[:-1]) # Strip the 'p' from the quality name.
         for resolution, url in streamItems:
@@ -267,7 +247,7 @@ def actionPlay(params):
 
     if streamURL:
         # Load subtitles if available.
-        if ADDON.getSetting('subtitles') != 'Disabled' or 'forceSubtitles' in params:
+        if ADDON.getSetting('subtitles') != 'Disabled' or 'autoplayOff' in params:
             if episodeData['files']['subtitles']:
                 subsList = sorted(
                     (xbmcgui.ListItem(name.upper(), url) for name, url in episodeData['files']['subtitles'].iteritems()),
@@ -282,9 +262,9 @@ def actionPlay(params):
                     else:
                         streamURL = None # Cancel playback if the subtitle dialog is cancelled.
                 else:
-                    pass # User chose "None", play but with no subtitles.                    
-            elif 'forceSubtitles' in params:
-                # Show a notification to the user because he came in from the context menu.
+                    pass # User chose "None", play but with no subtitles.            
+            elif 'autoplayOff' in params:
+                # Show a notification to the user when they came in from the context menu.
                 xbmc.sleep(1000)
                 notification('No subtitles found', delay=2000, useSound=False)
 
@@ -357,4 +337,9 @@ def getCacheProperty(propertyName, route, customKey=None):
 
 def main():
     params = dict(parse_qsl(sys.argv[2][1:], keep_blank_values=True))
+    
+    # Stop on old favorites items, but only if necessary.
+    if 'thumb' in params or 'view' in params:
+        return notification('OLD FAVORITE detected, please recreate this favorite item', useSound=False)
+        
     globals()[params.get('action', 'actionShowsMenu')](params) # Call the action function, defaults to actionShowsMenu().
