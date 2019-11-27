@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import time, hashlib
+import time
 from resources.lib.modules import control
 try:
     from sqlite3 import dbapi2 as database

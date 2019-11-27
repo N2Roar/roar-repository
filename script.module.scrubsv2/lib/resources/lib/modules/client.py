@@ -156,11 +156,13 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             return result
         elif output == 'geturl':
             result = response.geturl()
-            if close is True: response.close()
+            if close is True:
+                response.close()
             return result
         elif output == 'headers':
             result = response.headers
-            if close is True: response.close()
+            if close is True:
+                response.close()
             return result
         elif output == 'chunk':
             try:
@@ -227,10 +229,12 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
                 cookie = cf
             except:
                 pass
-            if close is True: response.close()
+            if close is True:
+                response.close()
             return (result, response_code, response_headers, _headers, cookie)
         else:
-            if close is True: response.close()
+            if close is True:
+                response.close()
             return result
     except Exception as e:
         log_utils.log('Request-Error: (%s) => %s' % (str(e), url), log_utils.LOGDEBUG)

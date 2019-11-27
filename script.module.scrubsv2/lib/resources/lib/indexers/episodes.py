@@ -21,7 +21,7 @@ class seasons:
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'https://www.thetvdb.com/banners/'
@@ -37,7 +37,7 @@ class seasons:
                 self.seasonDirectory(self.list)
             return self.list
         else:
-            self.list = self.tvdb_list(tvshowtitle, year, imdb, tvdb, 'en')
+            self.list = self.tvdb_list(tvshowtitle, year, imdb, tvdb, self.lang)
             return self.list
 
 
@@ -88,27 +88,21 @@ class seasons:
         try:
             if tvdb == '0':
                 return
-            url = self.tvdb_info_link % (tvdb, 'en')
+            url = self.tvdb_info_link % tvdb
             data = urllib2.urlopen(url, timeout=30).read()
             zip = zipfile.ZipFile(StringIO.StringIO(data))
-            result = zip.read('en.zip.xml')
+            result = zip.read('%s.xml' % lang)
             artwork = zip.read('banners.xml')
             zip.close()
             dupe = client.parseDOM(result, 'SeriesName')[0]
             dupe = re.compile('[***]Duplicate (\d*)[***]').findall(dupe)
             if len(dupe) > 0:
                 tvdb = str(dupe[0]).encode('utf-8')
-                url = self.tvdb_info_link % (tvdb, 'en')
+                url = self.tvdb_info_link % tvdb
                 data = urllib2.urlopen(url, timeout=30).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('en.zip.xml')
+                result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
-                zip.close()
-            if not lang == 'en':
-                url = self.tvdb_info_link % (tvdb, lang)
-                data = urllib2.urlopen(url, timeout=30).read()
-                zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result2 = zip.read('%s.zip.xml' % lang)
                 zip.close()
             else:
                 result2 = result
@@ -513,7 +507,7 @@ class episodes:
         self.unairedcolor = control.setting('unaired.identify')
         if self.unairedcolor == '': self.unairedcolor = 'darkred'
 
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.tvdb_image = 'https://www.thetvdb.com/banners/'
         self.tvdb_poster = 'https://www.thetvdb.com/banners/_cache/'
 
@@ -543,7 +537,7 @@ class episodes:
                     self.episodeDirectory(self.list)
                 return self.list
             else:
-                self.list = seasons().tvdb_list(tvshowtitle, year, imdb, tvdb, 'en', '-1')
+                self.list = seasons().tvdb_list(tvshowtitle, year, imdb, tvdb, self.lang, '-1')
                 return self.list
         except:
             pass
@@ -822,10 +816,10 @@ class episodes:
             except:
                 pass
             try:
-                url = self.tvdb_info_link % (i['tvdb'], lang)
+                url = self.tvdb_info_link % i['tvdb']
                 data = urllib2.urlopen(url, timeout=10).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('%s.zip.xml' % lang)
+                result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
                 result = result.split('<Episode>')
@@ -1056,10 +1050,10 @@ class episodes:
             except:
                 pass
             try:
-                url = self.tvdb_info_link % (i['tvdb'], lang)
+                url = self.tvdb_info_link % i['tvdb']
                 data = urllib2.urlopen(url, timeout=10).read()
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
-                result = zip.read('%s.zip.xml' % lang)
+                result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
                 result = result.split('<Episode>')

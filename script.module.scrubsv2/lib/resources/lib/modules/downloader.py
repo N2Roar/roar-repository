@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import re,os,sys,urllib,urllib2,urlparse,json,inspect
-import xbmc,xbmcplugin,xbmcvfs,xbmcgui
+import re, os, sys, urllib, urllib2, urlparse, json
+import xbmc, xbmcplugin, xbmcvfs, xbmcgui
+import inspect
 
 
 def download(name, image, url):
@@ -179,18 +180,15 @@ def doDownload(url, dest, title, image, headers):
             xbmc.sleep(sleep*1000)
         if (resumable and errors > 0) or errors >= 10:
             if (not resumable and resume >= 50) or resume >= 500:
-                #Give up!
                 print '%s download canceled - too many error whilst downloading' % (dest)
                 return done(title, dest, False)
             resume += 1
             errors  = 0
             if resumable:
                 chunks  = []
-                #create new response
                 print 'Download resumed (%d) %s' % (resume, dest)
                 resp = getResponse(url, headers, total)
             else:
-                #use existing response
                 pass
 
 
