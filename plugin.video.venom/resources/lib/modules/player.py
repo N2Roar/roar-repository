@@ -40,7 +40,7 @@ class Player(xbmc.Player):
 		self.av_started = False
 
 
-	def play_source(self, title, year, season, episode, imdb, tvdb, url, meta):
+	def play_source(self, title, year, season, episode, imdb, tvdb, url, meta, select=None):
 		try:
 			if url is None:
 				control.cancelPlayback()
@@ -94,44 +94,33 @@ class Player(xbmc.Player):
 				item.setUniqueIDs(self.ids)
 
 			item.setInfo(type='video', infoLabels=control.metadataClean(meta))
-			if 'plugin' in control.infoLabel('Container.PluginName'):
-				control.closeAll()
-				control.player.play(url, item)
+			if self.media_type == 'episode':
+				if ('plugin' not in control.infoLabel('Container.PluginName') or control.setting('enable.upnext') == 'true' or control.setting('hosts.mode') == '0') or select != '1':
+					if control.window.getProperty('infodialogs.active'):
+						control.closeAll()
+					control.resolve(syshandle, True, item)
 
-				# xbmc.sleep(2000)
-
-			if 'plugin' not in control.infoLabel('Container.PluginName'):
-				if control.window.getProperty('infodialogs.active'):
+				elif (control.setting('enable.upnext') == 'false' and control.setting('hosts.mode') == '1') or select == '1':
 					control.closeAll()
-				control.resolve(syshandle, True, item)
+					control.player.play(url, item)
 
-			control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
+			elif self.media_type == 'movie':
+				if ('plugin' not in control.infoLabel('Container.PluginName') or control.setting('hosts.mode') == '0') or select != '1':
+					if control.window.getProperty('infodialogs.active'):
+						control.closeAll()
+					control.resolve(syshandle, True, item)
+
+				elif control.setting('hosts.mode') == '1' or select == '1':
+					control.closeAll()
+					control.player.play(url, item)
 
 			self.keepAlive()
-
-			# # Kodi's "Playback Failed" dialog is killing me on android.
-
+			control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
 			control.window.clearProperty('script.trakt.ids')
 		except:
 			import traceback
 			traceback.print_exc()
 			return	control.cancelPlayback()
-
-
-	def play_playlist(self):
-		try:
-			playlist = control.playlist.getPlayListId()
-			# log_utils.log('playlist = %s' % playlist, __name__, log_utils.LOGDEBUG)
-			playlistSize = control.playlist.size()
-			# log_utils.log('playlistSize = %s' % str(playlistSize), __name__, log_utils.LOGDEBUG)
-			control.player.play(control.playlist)
-			xbmc.sleep(2000)
-			# control.closeAll()
-			# control.resolve(syshandle, True, control.playlist)
-			self.keepAlive()
-		except:
-			import traceback
-			traceback.print_exc()
 
 
 	def getMeta(self, meta):
@@ -299,9 +288,6 @@ class Player(xbmc.Player):
 				if not self.playback_started:
 					self.start_playback()
 
-				# if control.condVisibility('Window.IsActive(okdialog)'):
-					# control.closeOk()
-
 				try:
 					self.current_time = self.getTime()
 					self.media_length = self.getTotalTime()
@@ -373,6 +359,11 @@ class Player(xbmc.Player):
 						next_info = self.next_info()
 						AddonSignals.sendSignal('upnext_data', next_info, source_id)
 						AddonSignals.registerSlot('upnextprovider', return_id, self.signals_callback)
+
+						# # Prescrape
+						# from resources.lib.modules import sources
+						# psources = sources.Sources().preScrape(title=next_info['next_episode']['title'], year=next_info['next_episode']['year'], imdb=next_info['next_episode']['tvshowimdb'], tvdb=next_info['next_episode']['tvshowid'], season=next_info['next_episode']['season'], episode=next_info['next_episode']['episode'], tvshowtitle=next_info['next_episode']['showtitle'], premiered=next_info['next_episode']['firstaired'])
+
 				except:
 					import traceback
 					traceback.print_exc()
@@ -451,7 +442,7 @@ class Player(xbmc.Player):
 
 
 	def onPlayBackStopped(self):
-		xbmc.sleep(3000)
+		# xbmc.sleep(3000)
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
 		if control.setting('crefresh') == 'true':
 			xbmc.executebuiltin('Container.Refresh')
@@ -544,6 +535,11 @@ class Player(xbmc.Player):
 		next_episode["episode"] = next_info.get('episode')
 		next_episode["rating"] = next_info.get('rating')
 		next_episode["firstaired"] = next_info.get('tvshowyear')
+
+
+		next_episode["tvshowimdb"] = next_info.get('imdb')
+		next_episode["year"] = next_info.get('year')
+
 
 		play_info = {}
 		play_info["item_id"] = current_info.get('episodeIDS', {}).get('trakt')

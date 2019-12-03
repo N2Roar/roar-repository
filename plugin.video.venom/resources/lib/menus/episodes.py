@@ -461,7 +461,7 @@ class Episodes:
 					num_1 += len(item['seasons'][i]['episodes'])
 				num_2 = int(item['show']['aired_episodes'])
 				if num_1 >= num_2:
-					raise Exception()
+					continue
 
 				season = str(item['seasons'][-1]['number'])
 				episode = str(item['seasons'][-1]['episodes'][-1]['number'])
@@ -471,7 +471,7 @@ class Episodes:
 				except:
 					tvshowtitle = item['show']['title']
 				if tvshowtitle is None or tvshowtitle == '':
-					raise Exception()
+					continue
 
 				year = str(item.get('show').get('year'))
 
@@ -589,6 +589,9 @@ class Episodes:
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
 
+				if control.setting('tv.specials') == 'false' and season == '0':
+					raise Exception()
+
 				episode = client.parseDOM(item, 'EpisodeNumber')[0]
 				episode = re.sub('[^0-9]', '', '%01d' % int(episode))
 
@@ -696,6 +699,8 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
+					if len(castandart) == 200: break
+
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -762,31 +767,32 @@ class Episodes:
 		for item in items:
 			try:
 				if 'show' not in item or 'episode' not in item:
-					raise Exception()
+					continue
 
 				try:
 					title = (item['episode']['title']).encode('utf-8')
 				except:
 					title = item['episode']['title']
 				if title is None or title == '':
-					raise Exception()
+					continue
 
 				season = item['episode']['season']
 				season = re.sub('[^0-9]', '', '%01d' % int(season))
-				if season == '0':
-					raise Exception()
+
+				if control.setting('tv.specials') == 'false' and season == '0':
+					continue
 
 				episode = item['episode']['number']
 				episode = re.sub('[^0-9]', '', '%01d' % int(episode))
 				if episode == '0':
-					raise Exception()
+					continue
 
 				try:
 					tvshowtitle = (item['show']['title']).encode('utf-8')
 				except:
 					tvshowtitle = item['show']['title']
 				if tvshowtitle is None or tvshowtitle == '':
-					raise Exception()
+					continue
 
 				year = str(item.get('show').get('year'))
 
@@ -867,7 +873,10 @@ class Episodes:
 					self.seasonCount(itemlist, len(itemlist) - 1)
 
 			except:
+				import traceback
+				traceback.print_exc()
 				pass
+
 		if count:
 			self.seasonCountWait()
 
@@ -922,6 +931,9 @@ class Episodes:
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
+
+				if control.setting('tv.specials') == 'false' and season == '0':
+					raise Exception()
 
 				episode = client.parseDOM(item, 'EpisodeNumber')[0]
 				episode = re.sub('[^0-9]', '', '%01d' % int(episode))
@@ -1041,6 +1053,7 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
+					if len(castandart) == 200: break
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -1073,7 +1086,6 @@ class Episodes:
 			except:
 				pass
 
-		# items = items[:100]
 		items = items[:len(items)]
 
 		threads = []
@@ -1096,10 +1108,10 @@ class Episodes:
 		for item in items:
 			try:
 				if 'english' not in item['show']['language'].lower():
-					raise Exception()
+					continue
 
 				if limit is True and 'scripted' not in item['show']['type'].lower():
-					raise Exception()
+					continue
 
 				try:
 					title = (item.get('name')).encode('utf-8')
@@ -1108,12 +1120,15 @@ class Episodes:
 
 				season = item['season']
 				if season is None:
-					raise Exception()
+					continue
 				season = re.sub('[^0-9]', '', '%01d' % int(season))
+
+				if control.setting('tv.specials') == 'false' and season == '0':
+					continue
 
 				episode = item['number']
 				if episode is None:
-					raise Exception()
+					continue
 				episode = re.sub('[^0-9]', '', '%01d' % int(episode))
 
 				premiered = item.get('airdate', '0')
@@ -1394,6 +1409,7 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
+					if len(castandart) == 200: break
 
 				airday = i['airday'] or ''
 				airtime = i['airtime'] or client.parseDOM(item2, 'Airs_Time')[0] or ''
@@ -1476,9 +1492,15 @@ class Episodes:
 		except:
 			sysaction = ''
 
-		isFolder = False if sysaction != 'episodes' else True
-		isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 		indicators = playcount.getTVShowIndicators()
+
+		isFolder = False if sysaction != 'episodes' else True
+
+		isPlayable = 'false'
+		if 'plugin' not in control.infoLabel('Container.PluginName'):
+			isPlayable = 'true'
+		elif control.setting('enable.upnext') == 'true' or control.setting('hosts.mode') != '1' :
+			isPlayable = 'true'
 
 		unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
 		unwatchedLimit = False
@@ -1712,7 +1734,12 @@ class Episodes:
 
 				if isFolder is True:
 					if traktProgress is True:
-						cm.append((progressMenu, 'RunPlugin(%s)' % url))
+						if control.setting('hosts.mode') == '1' and control.setting('enable.upnext') != 'true':
+							cm.append((progressMenu, 'RunPlugin(%s)' % url))
+
+						elif control.setting('hosts.mode') != '1' or control.setting('enable.upnext') == 'true':
+							cm.append((progressMenu, 'PlayMedia(%s)' % url))
+
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
 										sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
 
@@ -1727,14 +1754,23 @@ class Episodes:
 				if isFolder is False:
 					if traktProgress is True:
 						cm.append((progressMenu, 'Container.Update(%s)' % Folderurl))
-					cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (
-										sysaddon, sysurl, sysmeta)))
-					cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
-										sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
+
+					cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
+
+					if control.setting('hosts.mode') == '1' and control.setting('enable.upnext') != 'true':
+						cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
+											sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
+
+					elif control.setting('hosts.mode') != '1' or control.setting('enable.upnext') == 'true':
+						cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
+											sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
 
 				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
 										sysaddon, systvshowtitle, year, imdb, tvdb)))
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+
+				# cm.append(('PlayAll', 'RunPlugin(%s?action=playAll)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				item = control.item(label=labelProgress)
@@ -1859,7 +1895,8 @@ class Episodes:
 				if queue is True:
 					cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 				item = control.item(label=name)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})

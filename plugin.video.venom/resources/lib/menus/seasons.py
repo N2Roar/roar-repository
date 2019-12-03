@@ -40,14 +40,13 @@ class Seasons:
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 		# decoded key above = 1D62F2F90030C444
 		# Test for api response
-		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.xml.zip
+		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.zip
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
-
-		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
-		self.tvdb_image = 'http://thetvdb.com/banners/'
-		self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'
+		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+		self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
+		self.tvdb_image = 'https://thetvdb.com/banners/'
+		self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
 		self.trakt_user = control.setting('trakt.user').strip()
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
@@ -211,7 +210,9 @@ class Seasons:
 			# if imdb == '0' or tmdb == '0' or tvdb == '0':
 			if imdb == '0' or tvdb == '0':
 				try:
-					trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
+					# trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
+					trakt_ids = trakt.SearchTVShow(tvshowtitle, year, full=False)[0]
+
 					trakt_ids = trakt_ids.get('show', '0')
 
 					if imdb == '0':
@@ -270,18 +271,15 @@ class Seasons:
 				if tvdb == '':
 					tvdb = '0'
 		except:
-			import traceback
-			traceback.print_exc()
 			return
 
 		try:
 			if tvdb == '0':
 				return
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
-
 			data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
+
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
 			actors = zip.read('actors.xml')
@@ -294,10 +292,9 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 
 				url = self.tvdb_info_link % (tvdb, 'en')
-				# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
 				data = urllib2.urlopen(url, timeout=30).read()
-
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
+
 				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
@@ -332,6 +329,7 @@ class Seasons:
 
 			seasons = [i for i in episodes if '<EpisodeNumber>1</EpisodeNumber>' in i]
 			counts = self.seasonCountParse(seasons = seasons, episodes = episodes)
+
 			locals = [i for i in result2 if '<EpisodeNumber>' in i]
 
 			result = ''
@@ -470,6 +468,7 @@ class Seasons:
 						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 				except:
 					castandart = []
+				if len(castandart) == 200: break
 
 			try:
 				label = client.parseDOM(item2, 'SeriesName')[0]
@@ -501,17 +500,15 @@ class Seasons:
 				premiered = client.replaceHTMLCodes(premiered)
 				premiered = premiered.encode('utf-8')
 
-
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
 				elif premiered == '0':
-					raise Exception()
+					continue
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
 					if self.showunaired != 'true':
-						raise Exception()
-
+						continue
 
 				# # Show Unaired items.
 				# if status.lower() == 'ended':
@@ -523,8 +520,7 @@ class Seasons:
 					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 						# unaired = 'true'
 						# if self.showunaired != 'true':
-							# raise Exception()
-
+							# continue
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -568,17 +564,16 @@ class Seasons:
 				premiered = client.replaceHTMLCodes(premiered)
 				premiered = premiered.encode('utf-8')
 
-
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
 				elif premiered == '0':
-					raise Exception()
+					continue
+
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
 					if self.showunaired != 'true':
-						raise Exception()
-
+						continue
 
 				# # Show Unaired items.
 				# if status.lower() == 'ended':
@@ -590,10 +585,7 @@ class Seasons:
 					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 						# unaired = 'true'
 						# if self.showunaired != 'true':
-							# raise Exception()
-
-
-
+							# continue
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -1008,7 +1000,8 @@ class Seasons:
 				cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
 
 				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				item = control.item(label = label)

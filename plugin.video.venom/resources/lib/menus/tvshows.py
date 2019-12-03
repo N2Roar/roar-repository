@@ -90,7 +90,8 @@ class TVshows:
 
 		self.trakttrending_link = 'http://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
 		self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
-		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?page=1&limit=%d' % self.count
+		# self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?page=1&limit=%d' % self.count
+		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?limit=40'
 
 		self.tvmaze_link = 'http://www.tvmaze.com'
 
@@ -101,7 +102,6 @@ class TVshows:
 		self.tmdb_session_id = control.setting('tmdb.session_id')
 
 		self.tmdb_link = 'http://api.themoviedb.org'
-		# self.tmdb_lang = 'en-US'
 		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
@@ -657,7 +657,6 @@ class TVshows:
 
 				year = str(item.get('year', '0'))
 				if year == 'None' or year == '0':
-					# raise Exception()
 					continue
 
 				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
@@ -666,16 +665,15 @@ class TVshows:
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
-				tmdb = str(item.get('ids', {}).get('tmdb', 0))
+				tmdb = str(item.get('ids', {}).get('tmdb', '0'))
 				if tmdb == '' or tmdb is None or tmdb == 'None':
 					tmdb = '0'
 
-				tvdb = str(item.get('ids', {}).get('tvdb', 0))
+				tvdb = str(item.get('ids', {}).get('tvdb', '0'))
 				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
 				if tvdb is None or tvdb == '' or tvdb in dupes:
-					# raise Exception()
 					continue
 				dupes.append(tvdb)
 
@@ -879,6 +877,7 @@ class TVshows:
 					director = '0'
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
+				# log_utils.log('director = %s' % director, __name__, log_utils.LOGDEBUG)
 
 				plot = '0'
 				try:
@@ -990,10 +989,11 @@ class TVshows:
 				[i.start() for i in threads]
 				[i.join() for i in threads]
 
-				if self.meta:
-					metacache.insert(self.meta)
+			if self.meta:
+				metacache.insert(self.meta)
 
 			self.list = [i for i in self.list if i['tvdb'] != '0']
+
 		except:
 			import traceback
 			traceback.print_exc()
@@ -1173,6 +1173,8 @@ class TVshows:
 								castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 						except:
 							castandart = []
+						if len(castandart) == 200: break
+
 			else:
 				castandart = self.list[i]['castandart']
 
@@ -1216,7 +1218,6 @@ class TVshows:
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
-			# fanart_thread = threading.Thread
 			if (poster == '0' or fanart == '0' and total > 40) or (self.disable_fanarttv != 'true'):
 				if tvdb is not None and tvdb != '0':
 					from resources.lib.indexers import fanarttv
@@ -1385,9 +1386,9 @@ class TVshows:
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, systitle)))
 				cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
 				cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
-
 				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				item = control.item(label=label)
@@ -1512,8 +1513,8 @@ class TVshows:
 					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowsToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
 				except:
 					pass
-
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 				item = control.item(label=name)
 				# item = control.item(label=name, offscreen=True)

@@ -280,17 +280,17 @@ class Navigator:
 		#-- Providers - 4
 		self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonService.png', isFolder=False)
 		#-- General - 0
-		self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		#-- Navigation - 1
-		self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		self.addDirectoryItem(32362, 'openSettings&query=1.1', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		#-- Playback - 3
-		self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
-		#-- Api-keys - 9
-		self.addDirectoryItem(32044, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
-		#-- Downloads - 11
-		self.addDirectoryItem(32048, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
-		#-- Subtitles - 12
-		self.addDirectoryItem(32046, 'openSettings&query=12.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		self.addDirectoryItem(32045, 'openSettings&query=3.1', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		#-- Api-keys - 8
+		self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		#-- Downloads - 10
+		self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+		#-- Subtitles - 11
+		self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
 		self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
 		self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonService.png', isFolder=False)
@@ -538,7 +538,9 @@ class Navigator:
 		if isSearch is True:
 			cm.append(('Clear Search Phrase', 'RunPlugin(%s?action=clearSearchPhrase&table=%s&name=%s)' % (sysaddon, table, name)))
 
-		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+		cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
+
 
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)

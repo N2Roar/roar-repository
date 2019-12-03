@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import time
-from resources.lib.modules import control
 
 try:
 	from sqlite3 import dbapi2 as database
 except:
 	from pysqlite2 import dbapi2 as database
+
+from resources.lib.modules import control
 
 
 def fetch(items, lang = 'en', user=''):
@@ -25,12 +26,27 @@ def fetch(items, lang = 'en', user=''):
 
 	for i in range(0, len(items)):
 		try:
-			dbcur.execute("SELECT * FROM meta WHERE ((imdb = '%s' and lang = '%s' and user = '%s') and (tmdb = '%s' and lang = '%s' and user = '%s')) or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i].get('imdb', '0'), lang, user, items[i].get('tmdb', '0'), lang, user, items[i].get('tvdb', '0'), lang, user))
-
-			match = dbcur.fetchone()
-			if match is not None:
+			# First lookup by TVDb and IMDb, since there are some incorrect shows on Trakt that have the same IMDb ID, but different TVDb IDs (eg: Gotham, Supergirl).
+			try:
+				dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0' and not tvdb = '0')" % (items[i].get('imdb', '0'), items[i].get('tvdb', '0'), lang, user))
+				match = dbcur.fetchone()
 				t1 = int(match[6])
+			except:
+				# Lookup both IMDb and TMDb for more accurate match.
+				try:
+					dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tmdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0' and not tmdb = '0')" % (items[i].get('imdb', '0'), items[i].get('tmdb', '0'), lang, user))
+					match = dbcur.fetchone()
+					t1 = int(match[6])
+				except:
+					# Last resort single ID lookup.
+					try:
+						dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') OR (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') OR (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i].get('imdb', '0'), lang, user, items[i].get('tmdb', '0'), lang, user, items[i].get('tvdb', '0'), lang, user))
+						match = dbcur.fetchone()
+						t1 = int(match[6])
+					except:
+						pass
 
+			if match is not None:
 				update = (abs(t2 - t1) / 3600) >= 720
 				if update is True:
 					raise Exception()
@@ -51,8 +67,8 @@ def fetch(items, lang = 'en', user=''):
 
 def insert(meta):
 	try:
-		# if not control.existsPath(control.dataPath):
-		control.makeFile(control.dataPath)
+		if not control.existsPath(control.dataPath):
+			control.makeFile(control.dataPath)
 		dbcon = database.connect(control.metacacheFile)
 		dbcur = dbcon.cursor()
 		dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
@@ -65,12 +81,21 @@ def insert(meta):
 				m["lang"] = 'en'
 			i = repr(m['item'])
 
+			# Look for exact match to what is about to be written.
 			try:
-				dbcur.execute("DELETE FROM meta WHERE ((imdb = '%s' and lang = '%s' and user = '%s') and (tmdb = '%s' and lang = '%s' and user = '%s')) or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m.get('imdb', '0'), m['lang'], m['user'], m.get('tmdb', '0'), m['lang'], m['user'], m.get('tvdb', '0'), m['lang'], m['user']))
+				dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'])).fetchone()[0] # Try to find entry.
+				dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user']))
+				# log_utils.log("metacache exact match found and deleted", __name__, log_utils.LOGDEBUG)
 			except:
+				# log_utils.log("no exact metacache match", __name__, log_utils.LOGDEBUG)
 				pass
 
-			dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
+			try:
+				dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
+				# log_utils.log("metacache written", __name__, log_utils.LOGDEBUG)
+			except:
+				# log_utils.log("metacache write failed", __name__, log_utils.LOGDEBUG)
+				pass
 
 		dbcur.connection.commit()
 		dbcon.close()

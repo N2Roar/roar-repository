@@ -34,7 +34,6 @@ source = params.get('source')
 content = params.get('content')
 table = params.get('table')
 
-
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 notificationSound = False if control.setting('notification.sound') == 'false' else True
@@ -74,7 +73,7 @@ elif action == 'ShowChangelog':
 
 
 ####################################################
-#---MOVIE
+#---MOVIES
 ####################################################
 elif action == 'movieNavigator':
 	from resources.lib.menus import navigator
@@ -318,7 +317,7 @@ elif action == 'tvUserlists':
 
 
 ####################################################
-# SEASON
+#---SEASONS
 ####################################################
 elif action == 'seasons':
 	from resources.lib.menus import seasons
@@ -336,7 +335,7 @@ elif action == 'seasonsList':
 
 
 ####################################################
-# EPISODES
+#---EPISODES
 ####################################################
 elif action == 'episodes':
 	from resources.lib.menus import episodes
@@ -370,7 +369,7 @@ elif action == 'episodesUserlists':
 
 
 ####################################################
-# Anime
+#---Anime
 ####################################################
 elif action == 'animeNavigator':
 	from resources.lib.menus import navigator
@@ -386,7 +385,7 @@ elif action == 'animeTVshows':
 
 
 ####################################################
-# Originals
+#---Originals
 ####################################################
 elif action == 'originals':
 	from resources.lib.menus import tvshows
@@ -403,28 +402,6 @@ elif action == 'youtube':
 		youtube.yt_index().root(action)
 	else:
 		youtube.yt_index().get(action, subid)
-
-elif action == 'kidscorner':
-    from resources.lib.indexers import youtube
-    if subid is None:
-        youtube.yt_index().root(action)
-    else:
-        youtube.yt_index().get(action, subid)
-
-elif action == 'musicvids':
-    from resources.lib.indexers import youtube
-    if subid is None:
-        youtube.yt_index().root(action)
-    else:
-        youtube.yt_index().get(action, subid)
-
-elif action == 'fitness':
-    from resources.lib.indexers import youtube
-    if subid is None:
-        youtube.yt_index().root(action)
-    else:
-        youtube.yt_index().get(action, subid)
-
 
 
 
@@ -469,24 +446,36 @@ elif action == 'addView':
 	views.addView(content)
 
 elif action == 'refresh':
-	# from resources.lib.modules import control
 	control.refresh()
 
 elif action == 'openSettings':
-	# from resources.lib.modules import control
 	control.openSettings(query)
 
 elif action == 'open.Settings.CacheProviders':
-	# from resources.lib.modules import control
 	control.openSettings(query)
 
 elif action == 'artwork':
-	# from resources.lib.modules import control
 	control.artwork()
 
 elif action == 'UpNextSettings':
-	# from resources.lib.modules import control
 	control.openSettings('0.0', 'service.upnext')
+	if params.get('opensettings') == 'true':
+		control.openSettings('0.0', "plugin.video.venom")
+
+elif action == 'openscrapersSettings':
+	control.openSettings('0.0', 'script.module.openscrapers')
+	if params.get('opensettings') == 'true':
+		control.openSettings(query, "plugin.video.venom")
+
+elif action == 'urlResolver':
+	try:
+		import resolveurl
+		resolveurl.display_settings()
+	except:
+		pass
+
+elif action == 'urlResolverRDTorrent':
+	control.openSettings(query, "script.module.resolveurl")
 
 
 
@@ -513,12 +502,11 @@ elif action == 'tvPlaycount':
 elif action == 'traktManager':
 	from resources.lib.modules import trakt
 	trakt.manager(name, imdb, tvdb, season, episode)
-	# trakt.manager2(name, imdb, tvdb, season, episode)
 
 elif action == 'authTrakt':
 	from resources.lib.modules import trakt
 	trakt.authTrakt()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, "plugin.video.venom")
 
 elif action == 'cachesyncMovies':
@@ -537,19 +525,19 @@ elif action == 'cachesyncTVShows':
 elif action == 'authTMDb':
 	from resources.lib.indexers import tmdb
 	tmdb.Auth().create_session_id()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, "plugin.video.venom")
 
 elif action == 'revokeTMDb':
 	from resources.lib.indexers import tmdb
 	tmdb.Auth().revoke_session_id()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, "plugin.video.venom")
 
 
 
 ####################################################
-# PLAYLIST
+#---Playlist
 ####################################################
 elif action == 'playlistManager':
 	from resources.lib.modules import playlist
@@ -564,7 +552,6 @@ elif action == 'clearPlaylist':
 	playlist.playlistClear()
 
 elif action == 'queueItem':
-	# from resources.lib.modules import control
 	control.queueItem()
 	if name is None:
 		control.notification(title = 35515, message = 35519, icon = 'INFO', sound = notificationSound)
@@ -577,22 +564,30 @@ elif action == 'queueItem':
 #---Player
 ####################################################
 elif action == 'play':
+	# playlistStarted = False
+	# try:
+		# import xbmc
+		# if not xbmc.Player().isPlayingVideo():
+			# r = argv[0]+"?action=playAll"
+			# control.execute('RunPlugin(%s)' % r)
+			# playlistStarted = True
+	# except:
+		# pass
+	# if playlistStarted == False:
+
 	from resources.lib.modules import sources
 	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False)
-	# from resources.lib.modules import control
-	# control.player.play(control.playlist)
 
-elif action == 'reScrape':
-	from resources.lib.modules import sources
-	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=True)
+elif action == 'playAll':
+	control.player2().play(control.playlist)
 
 elif action == 'playItem':
 	from resources.lib.modules import sources
 	sources.Sources().playItem(title, source)
 
-elif action == 'trailer':
-	from resources.lib.modules import trailer
-	trailer.Trailer().play(name, url, windowedtrailer)
+elif action == 'reScrape':
+	from resources.lib.modules import sources
+	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=True)
 
 elif action == 'addItem':
 	from resources.lib.modules import sources
@@ -601,6 +596,10 @@ elif action == 'addItem':
 elif action == 'alterSources':
 	from resources.lib.modules import sources
 	sources.Sources().alterSources(url, meta)
+
+elif action == 'trailer':
+	from resources.lib.modules import trailer
+	trailer.Trailer().play(name, url, windowedtrailer)
 
 elif action == 'random':
 	rtype = params.get('rtype')
@@ -667,7 +666,7 @@ elif action == 'random':
 
 
 ####################################################
-#----Library Actions
+#---Library Actions
 ####################################################
 elif action == 'movieToLibrary':
 	from resources.lib.modules import libtools
@@ -713,31 +712,31 @@ elif action == 'cfNavigator':
 elif action == 'clearAllCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheAll()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearSources':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheProviders()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearMetaCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCacheMeta()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearCache':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearCache()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearCacheSearch':
 	from resources.lib.menus import navigator
-	navigator.Navigator().clearCacheSearch()
-	if params['opensettings'] == 'true':
+	navigator.Navigator().clearCacheSearch() 
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearSearchPhrase':
@@ -747,142 +746,9 @@ elif action == 'clearSearchPhrase':
 elif action == 'clearBookmarks':
 	from resources.lib.menus import navigator
 	navigator.Navigator().clearBookmarks()
-	if params['opensettings'] == 'true':
+	if params.get('opensettings') == 'true':
 		control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearResolveURLcache':
 	if control.condVisibility('System.HasAddon(script.module.resolveurl)'):
 		control.execute('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
-
-
-
-####################################################
-#---Provider Source actions
-####################################################
-elif action == 'openscrapersSettings':
-	# from resources.lib.modules import control
-	control.openSettings('0.0', 'script.module.openscrapers')
-	# if params['opensettings'] == 'true':
-		# control.openSettings(query, "plugin.video.venom")
-
-elif action == 'urlResolver':
-	try:
-		import resolveurl
-	except:
-		pass
-	resolveurl.display_settings()
-
-elif action == 'urlResolverRDTorrent':
-	# from resources.lib.modules import control
-	control.openSettings(query, "script.module.resolveurl")
-
-elif action == "toggleAll":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.all_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllHosters":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.hoster_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Hoster providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllForeign":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.all_foreign_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Foregin providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllSpanish":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.spanish_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Spanish providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllGerman":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.german_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All German providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllGreek":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.greek_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Greek providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllPolish":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.polish_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Polish providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllPaid":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.all_paid_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Paid providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllDebrid":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.debrid_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Debrid providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-elif action == "toggleAllTorrent":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.torrent_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		control.setSetting(source_setting, params['setting'])
-	# xbmc.log('All Torrent providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")
-
-if action == "toggleDefaults":
-	sourceList = []
-	from resources.lib import sources
-	sourceList = sources.all_providers
-	for i in sourceList:
-		source_setting = 'provider.' + i
-		default = control.getSettingDefault(source_setting)
-		control.setSetting(source_setting, default)
-	# xbmc.log('All providers = %s' % sourceList, 2)
-	control.openSettings(query, "plugin.video.venom")

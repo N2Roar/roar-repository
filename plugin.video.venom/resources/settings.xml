@@ -181,22 +181,11 @@
 	</category>
 
 
-<!-- Short Cuts - 7 -->
-	<category label="Shortcuts">
-		<setting id="clear.all.cache" type="action" label="32610" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearAllCache&opensettings=true&query=7.0)" />
-		<setting id="clear.sources2" type="action" label="32611" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=7.1)" />
-		<setting id="clear.metacache" type="action" label="32612" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearMetaCache&opensettings=true&query=7.2)" />
-		<setting id="clear.cache" type="action" label="32613" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCache&opensettings=true&query=7.3)" />
-		<setting id="clear.search.cache" type="action" label="32614" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCacheSearch&opensettings=true&query=7.4)" />
-		<setting id="clear.bookmarks.cache" type="action" label="32615" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearBookmarks&opensettings=true&query=7.5)" />
-	</category>
-
-
-<!-- Trakt-8 -->
+<!-- Trakt - 7 -->
 	<category label ="32315">
 		<setting type="lsep" label="32315" />
 		<setting id="trakt.auth" type="text" default="" visible="hidden"/>
-		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=true&query=8.2)" />
+		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=true&query=7.2)" />
 		<setting id="trakt.user" type="text" default="" label="40062" enable="false" visible="true" />
 		<setting id="trakt.token" type="text" visible="hidden" label="" default="" />
 		<setting id="trakt.refresh" type="text" visible="hidden" label="" default="" />
@@ -205,7 +194,6 @@
 		<setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-5,true)" />
 		<setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-6,true)" />
 		<setting id="bookmarks.trakt" type="bool" label="32644" default="false" enable="!eq(-7,true)"/>
-<!-- 		<setting id="prgr.sortorder" type="enum" label="32584" lvalues="32585|32586" default="1" enable="!eq(-8,true)" /> -->
 		<setting type="lsep" label="32645" />
 		<setting id="autoTraktOnStart" type="bool" label="32646" default="False" enable="!eq(-9,true)" />
 		<setting id="schedTraktTime" type="slider" label="32647" default="0" range="0,24" option="int" enable="eq(-1,true)" />
@@ -213,7 +201,7 @@
 	</category>
 
 
-<!-- API Keys - 9 -->
+<!-- API Keys - 8 -->
 	<category label="API Keys">
 		<setting type="lsep" label="FANART.TV" />
 		<setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
@@ -223,9 +211,9 @@
 		<setting id="tmdb.username" type="text" label="TMDb username" default="" />
 		<setting id="tmdb.password" type="text" label="TMDb password" default="" />
 		<setting id="tmdb.message" type="action" label="  [COLOR FFA0C12C]Authorization rq'd to retrieve user lists[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
-		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&opensettings=true&query=9.5)" />
+		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&opensettings=true&query=8.5)" />
 		<setting id="tmdb.session_id" type="text" default="" label="session_id" enable="false" />
-		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&opensettings=true&query=9.7)" />
+		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&opensettings=true&query=8.7)" />
 
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
@@ -235,7 +223,7 @@
 	</category>
 
 
-<!-- Library - 10 -->
+<!-- Library - 9 -->
 	<category label="32541">
 		<setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.venom/Movies" />
 		<setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.venom/TVShows" />
@@ -254,7 +242,7 @@
 	</category>
 
 
-<!-- Downloads - 11 -->
+<!-- Downloads - 10 -->
 	<category label="32347">
 		<setting id="downloads" type="bool" label="32348" default="false" />
 		<setting type="sep" />
@@ -266,7 +254,7 @@
 	</category>
 
 
-<!-- Subtitles - 12 -->
+<!-- Subtitles - 11 -->
 	<category label="32353">
 		<setting id="subtitles" type="bool" label="32354" default="false" />
 		<setting type="sep" />
@@ -279,10 +267,23 @@
 	</category>
 
 
-<!-- Debugging - 13 -->
+<!-- Debugging - 12 -->
 	<category label="32616">
 		<setting id="first.info" label="33005" type="bool" default="" />
 		<setting id="addon_debug" type="bool" label="32374" default="false" />
 		<setting id="debug.location" type="enum" label="32617" lvalues="32618|32619" default="1" enable="eq(-1,true)" />
+	</category>
+
+
+<!-- Short Cuts - 13 -->
+	<category label="Shortcuts">
+		<setting id="clear.all.cache" type="action" label="32610" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearAllCache&opensettings=true&query=13.0)" />
+		<setting id="clear.sources2" type="action" label="32611" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=13.1)" />
+		<setting id="clear.metacache" type="action" label="32612" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearMetaCache&opensettings=true&query=13.2)" />
+		<setting id="clear.cache" type="action" label="32613" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCache&opensettings=true&query=13.3)" />
+		<setting id="clear.search.cache" type="action" label="32614" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearCacheSearch&opensettings=true&query=13.4)" />
+		<setting id="clear.bookmarks.cache" type="action" label="32615" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearBookmarks&opensettings=true&query=13.5)" />
+		<setting id="open.urlResolver" type="action" label="32609" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolver)" />
+		<setting id="open.UpNext" type="action" label="32505" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=UpNextSettings)" />
 	</category>
 </settings>

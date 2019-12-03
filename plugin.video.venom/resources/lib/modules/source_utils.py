@@ -54,7 +54,6 @@ LANG = ['french', 'italian', 'spanish', 'truefrech', 'german', 'arabic', 'dutch'
 ADDS = ['1xbet']
 
 
-
 def is_anime(content, type, type_id):
 	try:
 		r = trakt.getGenre(content, type, type_id)
@@ -131,7 +130,7 @@ def get_release_quality(release_name, release_link=None):
 				quality = 'SD'
 
 		info = []
-		if any(value in release_name for value in VIDEO_3D):
+		if any(value in fmt for value in VIDEO_3D):
 			info.append('3D')
 
 		if any(value in fmt for value in CODEC_H265):
@@ -146,6 +145,10 @@ def getFileType(url):
 	try:
 		url = url.lower()
 		url = url.replace(' ', '.')
+
+		# url = fmt.replace('7.1', '7-1').replace('6.1', '6-1').replace('5.1', '5-1')
+		# url = re.split('\.|\(|\)|\[|\]|\s|', url)
+
 	except:
 		url = str(url)
 
@@ -157,7 +160,7 @@ def getFileType(url):
 	if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip', 'brrip', 'br.rip']):
 		type += ' BR-RIP /'
 
-	if ' remux ' in url:
+	if 'remux' in url:
 		type += ' REMUX /'
 
 	if any(i in url for i in ['dvd-rip', 'dvd.rip', 'dvdrip']):

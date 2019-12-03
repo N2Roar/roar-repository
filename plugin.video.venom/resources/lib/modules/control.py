@@ -424,7 +424,7 @@ def openSettings(query=None, id=addonInfo('id')):
 		execute('Addon.OpenSettings(%s)' % id)
 
 		if query is None:
-			raise Exception()
+			return
 
 		c, f = query.split('.')
 

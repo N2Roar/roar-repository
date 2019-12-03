@@ -104,10 +104,6 @@ def playlistAdd(name, url, meta, art):
 	if labelPosition >= 0:
 		return control.notification(title = 35522, message = 'Title already in playlist', icon = 'INFO', sound = notificationSound)
 
-	# if url is None:
-		# control.queueItem()
-	# else:
-
 	if isinstance(meta, basestring):
 		meta = json.loads(meta)
 
@@ -140,5 +136,3 @@ def playlistRemove(name):
 		if notification:
 			control.notification(title = 35522, message = 'Not found in playlist', icon = 'INFO', sound = notificationSound)
 	# control.refresh()
-
-

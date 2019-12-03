@@ -81,7 +81,7 @@ class Movies:
 		self.keyword_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&keywords=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 		self.oscars_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_winners&sort=year,desc&count=%d&start=1' % self.count
 		self.oscarsnominees_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_nominees&sort=year,desc&count=%d&start=1' % self.count
-		self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&groups=now-playing-us&countries=us&languages=en&sort=release_date,desc&count=%s&start=1' % str(self.count)
+		self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=%s,%s&groups=now-playing-us&languages=en&sort=release_date,desc&count=%s&start=1' % (self.year_date, self.today_date, str(self.count))
 		self.year_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&year=%s,%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', '%s', self.count)
 
 		if self.hidecinema == 'true':
@@ -131,7 +131,8 @@ class Movies:
 		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
 		self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
 		self.traktpopular_link = 'http://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
-		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=%d&page=1' % self.count
+		# self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=%d&page=1' % self.count
+		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
 
 
 	def get(self, url, idx=True):
@@ -641,7 +642,6 @@ class Movies:
 			q.update({'extended': 'full'})
 			q = (urllib.urlencode(q)).replace('%2C', ',')
 			u = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
-
 			result = trakt.getTraktAsJson(u)
 
 			items = []
@@ -863,6 +863,7 @@ class Movies:
 				poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
 				poster = client.replaceHTMLCodes(poster)
 				poster = poster.encode('utf-8')
+				# log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
 
 				try:
 					duration = re.findall('(\d+?) min(?:s|)', item)[-1]
@@ -1030,8 +1031,8 @@ class Movies:
 				[i.start() for i in threads]
 				[i.join() for i in threads]
 
-				if self.meta:
-					metacache.insert(self.meta)
+			if self.meta:
+				metacache.insert(self.meta)
 
 			self.list = [i for i in self.list if i['imdb'] != '0']
 		except:
@@ -1045,6 +1046,7 @@ class Movies:
 				raise Exception()
 
 			imdb = self.list[i]['imdb']
+
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
 # maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
 			item = trakt.getMovieSummary(id=imdb)
@@ -1126,6 +1128,7 @@ class Movies:
 						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
 					castandart = []
+				if len(castandart) == 200: break
 
 			director = writer = '0'
 			for person in tmdb_Item['credits']['crew']:
@@ -1188,7 +1191,12 @@ class Movies:
 		addonBanner = control.addonBanner()
 
 		indicators = playcount.getMovieIndicators()
-		isPlayable = 'true' if 'plugin' not in control.infoLabel('Container.PluginName') else 'false'
+
+		isPlayable = 'false'
+		if 'plugin' not in control.infoLabel('Container.PluginName'):
+			isPlayable = 'true'
+		elif control.setting('hosts.mode') != '1' :
+			isPlayable = 'true'
 
 		if control.setting('hosts.mode') == '2':
 			playbackMenu = control.lang(32063).encode('utf-8')
@@ -1215,7 +1223,6 @@ class Movies:
 				# except:
 					# title = i['title']
 
-				# label = '%s (%s)' % (i['title'], i['year'])
 				label = '%s (%s)' % (title, year)
 
 				try:
@@ -1312,13 +1319,20 @@ class Movies:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
-				cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
-				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
 				cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
+
+				if control.setting('hosts.mode') == '1':
+					cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+
+				elif control.setting('hosts.mode') != '1':
+					cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+
 				cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				item = control.item(label=labelProgress)
@@ -1363,6 +1377,7 @@ class Movies:
 
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
+				item.setProperty('IsPlayable', 'false')
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
@@ -1418,9 +1433,11 @@ class Movies:
 				except:
 					pass
 
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 				item = control.item(label=name)
+				item.setProperty('IsPlayable', 'false')
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

@@ -20,7 +20,6 @@ class yt_index:  # initializes as musicvids, functions can override based on act
 	def __init__(self):
 		self.action = 'musicvids'
 		self.base_url = 'https://raw.githubusercontent.com/123venom/xml/master/youtube/'
-		# self.base_url = 'https://raw.githubusercontent.com/123venom/xmltest/master/youtube/'
 		self.mainmenu = self.base_url + 'musicvids.txt'
 		self.submenu = '%s/%s.txt'
 		self.default_icon = '%s/icons/music_video_folder_icon.png'
@@ -31,7 +30,6 @@ class yt_index:  # initializes as musicvids, functions can override based on act
 			if action == 'youtube':
 				self.action = 'youtube'
 				self.base_url = 'https://raw.githubusercontent.com/123venom/xml/master/youtube/'
-				# self.base_url = 'https://raw.githubusercontent.com/123venom/xmltest/master/youtube/'
 				self.mainmenu = self.base_url + 'ytmain.txt'
 			self.submenu = self.submenu % (self.base_url, '%s')
 			self.default_icon = self.default_icon % (self.base_url)

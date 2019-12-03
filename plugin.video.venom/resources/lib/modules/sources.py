@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, time, datetime, os
-import xbmc
+import xbmc, xbmcgui
 import re, urllib, urlparse, random, json
 
 from resources.lib.modules import client, cleantitle, control, workers
@@ -28,9 +28,10 @@ class Sources:
 	def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False):
 		try:
 			url = None
-			if rescrape is True:
+
+			if rescrape:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-			if rescrape is False:
+			else:
 				items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
 			if items is None:
@@ -80,13 +81,8 @@ class Sources:
 				pass
 
 			from resources.lib.modules import player
-			if control.playlist.size() != 0:
-				# playlist = control.playlist.getPlayListId()
-				# control.player2().play(control.playlist)
-				# player.Player().play_playlist()
-				player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta)
-			else:
-				player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta)
+			player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta, select)
+
 		except:
 			import traceback
 			traceback.print_exc()
@@ -163,18 +159,20 @@ class Sources:
 							(sysaddon, sysname, sysimage, syssource)))
 
 				quality = items[i]['quality']
-				if quality == 'SCR': quality = 'CAM'
+				# if quality == 'SCR': quality = 'CAM'
 				thumb = quality + '.png'
 				artPath = control.artPath()
 				thumb = os.path.join(artPath, thumb) if artPath is not None else ''
 
 				item = control.item(label=label)
 				item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
-				# item.setProperty('IsPlayable', 'true')
-
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)
 				item.addContextMenuItems(cm)
+
+				# item.setProperty('IsPlayable', 'true') # test
+				item.setProperty('IsPlayable', 'false')
+
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
 			except:
@@ -227,7 +225,9 @@ class Sources:
 					break
 
 			items = json.loads(source)
-			items = [i for i in items + next + prev][:40]
+
+			# items = [i for i in items + next + prev][:40]
+			items = [i for i in items + next + prev][:1000]
 
 			header = control.addonInfo('name')
 			header2 = header.upper()
@@ -254,26 +254,14 @@ class Sources:
 					w = workers.Thread(self.sourcesResolve, items[i])
 					w.start()
 
-					# offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
-
-					# if items[i].get('debrid').lower() == 'real-debrid':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'alldebrid':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'premiumize.me':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'linksnappy':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
-
 					if items[i].get('source').lower() in self.hostcapDict:
 						offset = 60 * 2
-					elif items[i].get('source').lower() == 'torrent':# and no_skip:
+					elif items[i].get('source').lower() == 'torrent':
 						offset = float('inf')
 					else:
 						offset = 0
 
 					m = ''
-
 					for x in range(3600):
 						try:
 							if xbmc.abortRequested is True:
@@ -328,7 +316,7 @@ class Sources:
 					control.execute('Dialog.Close(yesnoDialog)')
 
 					from resources.lib.modules import player
-					player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta)
+					player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta, select='1')
 
 					return self.url
 				except:
@@ -386,7 +374,6 @@ class Sources:
 		sourceDict = sorted(sourceDict, key=lambda i: i[2])
 
 		threads = []
-
 		if content == 'movie':
 			title = self.getTitle(title)
 			localtitle = self.getLocalTitle(title, imdb, tvdb, content)
@@ -685,6 +672,72 @@ class Sources:
 		return self.sources
 
 
+	def preScrape(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered):
+		return cache.get(self.silentScrape, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+
+
+	# def silentScrape(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
+		# self.prepareSources()
+		# sourceDict = self.sourceDict
+
+		# content = 'movie' if tvshowtitle is None else 'episode'
+		# if content == 'movie':
+			# sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
+			# genres = trakt.getGenre('movie', 'imdb', imdb)
+		# else:
+			# sourceDict = [(i[0], i[1], getattr(i[1], 'tvshow', None)) for i in sourceDict]
+			# genres = trakt.getGenre('show', 'tvdb', tvdb)
+
+		# sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(
+								# x in i[1].genre_filter for x in genres)]
+		# sourceDict = [(i[0], i[1]) for i in sourceDict if i[2] is not None]
+
+		# language = self.getLanguage()
+
+		# sourceDict = [(i[0], i[1], i[1].language) for i in sourceDict]
+		# sourceDict = [(i[0], i[1]) for i in sourceDict if any(x in i[2] for x in language)]
+
+		# try:
+			# sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
+		# except:
+			# sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
+
+		# sourceDict = [(i[0], i[1]) for i in sourceDict if i[2] != 'false']
+		# sourceDict = [(i[0], i[1], i[1].priority) for i in sourceDict]
+
+		# random.shuffle(sourceDict)
+
+		# sourceDict = sorted(sourceDict, key=lambda i: i[2])
+
+		# threads = []
+
+		# if content == 'movie':
+			# title = self.getTitle(title)
+			# localtitle = self.getLocalTitle(title, imdb, tvdb, content)
+			# aliases = self.getAliasTitles(imdb, localtitle, content)
+
+			# for i in sourceDict:
+				# threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
+		# else:
+			# tvshowtitle = self.getTitle(tvshowtitle)
+			# localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
+			# aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
+
+			# for i in sourceDict:
+				# threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season,
+											# episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
+
+		# s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
+		# s = [(i[3].getName(), i[0], i[2]) for i in s]
+
+		# mainsourceDict = [i[0] for i in s if i[2] == 0]
+		# sourcelabelDict = dict([(i[0], i[1].upper()) for i in s])
+
+
+
+
+
+
 	def prepareSources(self):
 		try:
 			control.makeFile(control.dataPath)
@@ -837,6 +890,7 @@ class Sources:
 				dbcur.execute(
 					"DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (
 					source, imdb, '', ''))
+
 				dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
 				dbcur.connection.commit()
 		except:
@@ -897,15 +951,12 @@ class Sources:
 
 	def alterSources(self, url, meta):
 		try:
-			if control.setting('hosts.mode') == '2':
+			if control.setting('hosts.mode') == '2' or (control.setting('enable.upnext') == 'true' and 'episode' in meta):
 				url += '&select=1'
 			else:
-				isEpisode = True if 'episode' in meta else False
-				if isEpisode:
-					url += '&select=1'
-				else:
-					url += '&select=2'
-			control.execute('RunPlugin(%s)' % url)
+				url += '&select=2'
+			# control.execute('RunPlugin(%s)' % url)
+			control.execute('PlayMedia(%s)' % url)
 		except:
 			pass
 
@@ -1007,10 +1058,6 @@ class Sources:
 				import traceback
 				traceback.print_exc()
 				pass
-
-		for i in self.sources:
-			log_utils.log('info = %s' % i.get('info', ''), __name__, log_utils.LOGDEBUG)
-
 
 		random.shuffle(self.sources)
 
@@ -1187,6 +1234,7 @@ class Sources:
 					u = part
 					if d != '':
 						part = debrid.resolver(part, d)
+
 					elif direct is not True:
 						hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=False)
 						if hmf.valid_url() is True:
@@ -1236,11 +1284,14 @@ class Sources:
 			if select == -1:
 				return 'close://'
 
+			tot_items = len(items)
 			next = [y for x, y in enumerate(items) if x >= select]
 			prev = [y for x, y in enumerate(items) if x < select][::-1]
 
 			items = [items[select]]
-			items = [i for i in items + next + prev][:40]
+
+			# items = [i for i in items + next + prev][:40]
+			items = [i for i in items + next + prev][:tot_items]
 
 			header = control.addonInfo('name')
 			header2 = header.upper()
@@ -1268,7 +1319,7 @@ class Sources:
 
 					if items[i].get('source').lower() in self.hostcapDict:
 						offset = 60 * 2
-					elif items[i].get('source').lower() == 'torrent':# and no_skip:
+					elif items[i].get('source').lower() == 'torrent':
 						offset = float('inf')
 					else:
 						offset = 0
@@ -1502,6 +1553,7 @@ class Sources:
 
 		self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
 									'xvidstage.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
+
 
 		self.hostblockDict = ['divxme.com', 'divxstage.eu', 'estream.to', 'facebook.com', 'oload.download', 'oload.fun', 'oload.icu', 'oload.info',
 									'oload.life', 'oload.space', 'oload.stream', 'oload.tv', 'oload.win', 'openload.co', 'openload.io', 'openload.pw', 'rapidvideo.com',

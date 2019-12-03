@@ -969,28 +969,32 @@ class Collections:
 
 
 	def worker(self, level=1):
-		if self.list is None or self.list == []:
-			return
-		self.meta = []
-		total = len(self.list)
+		try:
+			if self.list is None or self.list == []:
+				return
+			self.meta = []
+			total = len(self.list)
 
-		for i in range(0, total):
-			self.list[i].update({'metacache': False})
+			for i in range(0, total):
+				self.list[i].update({'metacache': False})
 
-		self.list = metacache.fetch(self.list, self.lang, self.user)
+			self.list = metacache.fetch(self.list, self.lang, self.user)
 
-		for r in range(0, total, 40):
-			threads = []
-			for i in range(r, r + 40):
-				if i <= total:
-					threads.append(workers.Thread(self.super_imdb_info, i))
-			[i.start() for i in threads]
-			[i.join() for i in threads]
+			for r in range(0, total, 40):
+				threads = []
+				for i in range(r, r + 40):
+					if i <= total:
+						threads.append(workers.Thread(self.super_imdb_info, i))
+				[i.start() for i in threads]
+				[i.join() for i in threads]
 
 			if self.meta:
 				metacache.insert(self.meta)
 
-		self.list = [i for i in self.list]
+			self.list = [i for i in self.list]
+		except:
+			import traceback
+			traceback.print_exc()
 
 
 	def super_imdb_info(self, i):
@@ -1049,6 +1053,7 @@ class Collections:
 						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
 					castandart = []
+				if len(castandart) == 200: break
 
 			director = writer = '0'
 			for person in tmdb_Item['credits']['crew']:
@@ -1109,8 +1114,13 @@ class Collections:
 		addonFanart = control.addonFanart()
 		addonBanner = control.addonBanner()
 
-		isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 		indicators = playcount.getMovieIndicators()
+
+		isPlayable = 'false'
+		if 'plugin' not in control.infoLabel('Container.PluginName'):
+			isPlayable = 'true'
+		elif control.setting('hosts.mode') != '1' :
+			isPlayable = 'true'
 
 		if control.setting('hosts.mode') == '2':
 			playbackMenu = control.lang(32063).encode('utf-8')
@@ -1137,7 +1147,6 @@ class Collections:
 				# except:
 					# title = i['title']
 
-				# label = '%s (%s)' % (i['title'], i['year'])
 				label = '%s (%s)' % (title, year)
 
 				sysname = urllib.quote_plus(label)
@@ -1204,7 +1213,9 @@ class Collections:
 
 				try:
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
-					if overlay == 7:
+					watched = (overlay == 7)
+
+					if watched:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
 						meta.update({'playcount': 1, 'overlay': 7})
 						# lastplayed = trakt.watchedMoviesTime(imdb)
@@ -1221,13 +1232,20 @@ class Collections:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
-				cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
-				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
 				cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
+
+				if control.setting('hosts.mode') == '1':
+					cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+
+				elif control.setting('hosts.mode') != '1':
+					cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+
 				cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
+				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				item = control.item(label=label)
@@ -1295,7 +1313,8 @@ class Collections:
 		if context is not None:
 			cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 
-		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
+		cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 		item = control.item(label=name)
 		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})

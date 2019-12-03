@@ -1169,7 +1169,7 @@ class resolver:
 
 			from resources.lib.modules import sources
 
-			u = sources.sources().getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality)
+			u = sources.Sources().getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality)
 
 			if not u is None: return u
 		except:
@@ -1178,7 +1178,7 @@ class resolver:
 		try:
 			from resources.lib.modules import sources
 
-			u = sources.sources().getURISource(url)
+			u = sources.Sources().getURISource(url)
 
 			if not u is False: direct = False
 			if u is None or u is False: raise Exception()

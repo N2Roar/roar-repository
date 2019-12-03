@@ -13,44 +13,15 @@ from requests.adapters import HTTPAdapter
 from requests.compat import urlparse, urlunparse
 from requests.exceptions import RequestException
 
-from urllib3.util.ssl_ import create_urllib3_context, DEFAULT_CIPHERS
+try:
+    from urllib3.util.ssl_ import create_urllib3_context, DEFAULT_CIPHERS
+except:
+    from requests.packages.urllib3.util.ssl_ import create_urllib3_context, DEFAULT_CIPHERS
 
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-]
-
+from .user_agents import USER_AGENTS
 from .cfscrape_solver import solve_challenge
 
-__version__ = "2.0.7"
+__version__ = "2.0.8"
 
 DEFAULT_USER_AGENT = random.choice(USER_AGENTS)
 
@@ -71,7 +42,6 @@ DEFAULT_HEADERS = OrderedDict(
 
 BUG_REPORT = """\
 Cloudflare may have changed their technique, or there may be a bug in the script.
-
 Please read https://github.com/Anorov/cloudflare-scrape#updates, then file a \
 bug report at https://github.com/Anorov/cloudflare-scrape/issues."\
 """
@@ -81,13 +51,12 @@ The challenge answer was not properly accepted by Cloudflare. This can occur if 
 the target website is under heavy load, or if Cloudflare is experiencing issues. You can
 potentially resolve this by increasing the challenge answer delay (default: 8 seconds). \
 For example: cfscrape.create_scraper(delay=15)
-
 If increasing the delay does not help, please open a GitHub issue at \
 https://github.com/Anorov/cloudflare-scrape/issues\
 """
 
 # Remove a few problematic TLSv1.0 ciphers from the defaults
-DEFAULT_CIPHERS += ":!ECDHE+SHA:!AES128-SHA"
+DEFAULT_CIPHERS += ":!ECDHE+SHA:!AES128-SHA:!AESCCM:!DHE:!ARIA"
 
 
 class CloudflareAdapter(HTTPAdapter):
@@ -147,7 +116,7 @@ class CloudflareScraper(Session):
 
         # Check if Cloudflare captcha challenge is presented
         if self.is_cloudflare_captcha_challenge(resp):
-            self.handle_captcha_challenge()
+            self.raise_captcha_error()
 
         self.prev_resp = resp
 
@@ -170,7 +139,7 @@ class CloudflareScraper(Session):
             (resp and resp.cookies.get("cf_clearance", None, domain=cookie_domain))
         )
 
-    def handle_captcha_challenge(self):
+    def raise_captcha_error(self):
         exception_message = 'Cloudflare returned captcha!'
         if self.prev_resp is not None and os.getenv('CI') == 'true':
             exception_message += '\n' + self.prev_resp.text
@@ -183,7 +152,10 @@ class CloudflareScraper(Session):
         body = resp.text
         parsed_url = urlparse(resp.url)
         domain = parsed_url.netloc
-        submit_url = "%s://%s/cdn-cgi/l/chk_jschl" % (parsed_url.scheme, domain)
+        
+        submit_details = re.findall(r'<form.*action="(.+?)" method="(.+?)" ', body)[0]
+        submit_url = "%s://%s%s" % (parsed_url.scheme, domain, submit_details[0])
+        submit_method = submit_details[1]
 
         cloudflare_kwargs = copy.deepcopy(original_kwargs)
 
@@ -191,8 +163,8 @@ class CloudflareScraper(Session):
         headers["Referer"] = resp.url
 
         try:
-            params = cloudflare_kwargs["params"] = OrderedDict(
-                re.findall(r'name="(s|jschl_vc|pass)"(?: [^<>]*)? value="(.+?)"', body)
+            params = cloudflare_kwargs["data"] = OrderedDict(
+                re.findall(r'name="(r|s|jschl_vc|pass)"(?: [^<>]*)? value="(.+?)"', body)
             )
 
             for k in ("jschl_vc", "pass"):
@@ -209,7 +181,11 @@ class CloudflareScraper(Session):
             )
 
         # Solve the Javascript challenge
-        answer, delay = solve_challenge(body, domain)
+        try:
+            answer, delay = solve_challenge(body, domain)
+        except:
+            self.raise_captcha_error()
+
         params["jschl_answer"] = answer
 
         # Requests transforms any request into a GET after a redirect,
@@ -223,9 +199,13 @@ class CloudflareScraper(Session):
             time.sleep(max(delay - (time.time() - start_time), 0))
         else:
             time.sleep(self.delay)
-			
+
         # Send the challenge response and handle the redirect manually
-        redirect = self.request(method, submit_url, **cloudflare_kwargs)
+        redirect = self.request(submit_method, submit_url, **cloudflare_kwargs)
+
+        if "Location" not in redirect.headers:
+          return redirect
+
         redirect_location = urlparse(redirect.headers["Location"])
 
         if not redirect_location.netloc:
@@ -242,5 +222,5 @@ class CloudflareScraper(Session):
             return self.request(method, redirect_url, **original_kwargs)
         return self.request(method, redirect.headers["Location"], **original_kwargs)
 
-		
+
 create_scraper = CloudflareScraper
