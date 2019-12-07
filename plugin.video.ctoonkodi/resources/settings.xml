@@ -9,7 +9,4 @@
         <setting id="qualityOrder" label="&quot;Select Quality&quot; Dialog Order" type="select" subsetting="true" default="480p, 720p, 1080p, 240p" enable="eq(-1,0)" values="480p, 720p, 1080p, 240p|720p, 1080p, 480p, 240p|1080p, 720p, 480p, 240p|240p, 480p, 720p, 1080p"/>
         <setting id="subtitles" label="Subtitles" type="labelenum" default="Disabled" values="Disabled|Select Via Dialog (when available)"/>        
     </category>
-    <category label="Cache">
-        <setting id="clearCache" label="Clear Cache Files" type="action" action="RunPlugin(plugin://plugin.video.ctoonkodi/?action=actionClearCache)"/>
-    </category>
 </settings>

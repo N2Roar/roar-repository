@@ -2,6 +2,7 @@
 # CTOON Kodi video add-on for Kodi 17.6+.
 # https://github.com/doko-desuka/plugin.video.ctoonkodi
 import sys
+import json
 import requests
 from urllib import urlencode, quote_plus
 from urlparse import parse_qsl
@@ -11,14 +12,12 @@ import xbmcgui
 import xbmcaddon
 import xbmcplugin
 
-from Lib.SimpleCache import cache
-
 # Disable urllib3's "InsecureRequestWarning: Unverified HTTPS request is being made" warnings.
 requests.packages.urllib3.disable_warnings(
     requests.packages.urllib3.exceptions.InsecureRequestWarning
 )
 
-ADDON_VERSION = '0.4.2'
+ADDON_VERSION = '0.4.3'
 USER_AGENT = 'CTOONKodi/' + ADDON_VERSION + ' (JSON API; +https://github.com/doko-desuka/plugin.video.ctoonkodi)'
 USER_AGENT_KODI = '|User-Agent=' + quote_plus(USER_AGENT) # Custom header(s) for Kodi to use when fetching stuff.
 
@@ -40,8 +39,6 @@ PROPERTY_SEASONS_TEMPLATE = 'ctoonkodi.seasons_' # Incomplete value, used on act
 def actionShowsMenu(params):
     # Estuary skin has better layout for this than for 'tvshows' content.
     xbmcplugin.setContent(PLUGIN_ID, 'episodes')
-
-    cache.saveCacheIfDirty() # Try saving the cache on the main menu, if necessary.
 
     showsData = getCacheProperty(PROPERTY_SHOWS, route='')
     if showsData:
@@ -89,7 +86,7 @@ def actionSeasonsMenu(params):
     route = params['route']
 
     # Retrieve and cache the seasons data from the full show data.
-    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE + route, route, customKey='seasons')
+    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE+route, route, customKey='seasons')
     if seasonsData:
         def _seasonsItemsGen():
             showName = params['show']
@@ -133,7 +130,8 @@ def actionEpisodesMenu(params):
     xbmcplugin.setContent(PLUGIN_ID, 'episodes')
     route = params['route']
 
-    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE + route, route) # Cache contains the seasons data.
+    # Cache contains the seasons data.
+    seasonsData = getCacheProperty(PROPERTY_SEASONS_TEMPLATE+route, route, customKey='seasons')
     if seasonsData:
         def _episodesItemsGen():
             showName = params['show']
@@ -193,8 +191,6 @@ def actionEpisodesMenu(params):
     
 
 def actionPlay(params):
-    cache.saveCacheIfDirty() # Try saving the cache before playing an episode, if necessary.
-
     data = ctoonGET(params['route'])
     episodeData = data['episode']
 
@@ -281,14 +277,6 @@ def actionSettingsScreen(params):
     xbmcaddon.Addon().openSettings()
 
 
-def actionClearCache(params):
-    if cache.clearCacheFiles():
-        notification('Cache files cleared', 3000, False)
-    # Close the settings dialog when it was opened from within this add-on.
-    if 'ctoonkodi' in xbmc.getInfoLabel('Container.PluginName'):
-        xbmc.executebuiltin('Dialog.Close(all)')
-
-
 def buildURL(query):
     # Helper function to build a Kodi xbmcgui.ListItem URL string.
     # query -> A dictionary of parameters to put in the item URL.
@@ -324,15 +312,22 @@ def ctoonGET(route=''):
 
 
 def getCacheProperty(propertyName, route, customKey=None):
-    data = cache.getCacheProperty(propertyName, readFromDisk=True)
-    if not data:
+    window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    data = window.getProperty(propertyName)
+    if data:
+        return json.loads(data)
+    else:
         data = ctoonGET(route)
         if data:
             if customKey:
-                data = data[customKey] # Filter the data by key, if needed.
-            # Create a disk-enabled property, lifetime of one day.
-            cache.setCacheProperty(propertyName, data, saveToDisk=True, lifetime=24)
-    return data
+                data = data[customKey]
+            window.setProperty(propertyName, json.dumps(data))
+        return data
+        
+        
+def debug(*args):
+    for arg in args:
+        xbmc.log('CTOON Debug> ' + (arg if isinstance(arg, str) else repr(arg)), xbmc.LOGNOTICE)
 
 
 def main():

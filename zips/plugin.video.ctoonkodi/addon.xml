@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.2" provider-name="doko, mkody, Tikipeter">
+<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.3" provider-name="doko, mkody, Tikipeter">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests" />
@@ -18,6 +18,9 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
         <news>
 [COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR] - Cartoons
 
+[B]0.4.3:[/B]
+- Fixed a bug when loading seasons from favorite items.
+
 [B]0.4.2:[/B]
 - Fixed a bug with old cache files.
 - Added a warning on old favorite items (please recreate them).
@@ -33,13 +36,6 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 - Added support for episodes thumbnail and subtitles (see settings).
 - Adapt to API changes.
 - Code cleanup and refactor.
-
-[B]0.3.9:[/B]
-- Added settings (autoplay, clear cache)
-- Added disk and memory caching.
-
-[B]0.3.0:[/B]
-- Added support for the CTOON web API.
         </news>
         <platform>all</platform>
     </extension>
