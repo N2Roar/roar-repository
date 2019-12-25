@@ -5,9 +5,14 @@
 """
 
 import threading
-from resources.lib.modules import control, log_utils, trakt
 
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
+from resources.lib.modules import trakt
+
+# check on adding while loop here with xbmc.Monitor().abortRequested() vs. inside the service function
 control.execute('RunPlugin(plugin://%s)' % control.get_plugin_url({'action': 'service'}))
+
 traktCredentials = trakt.getTraktCredentialsInfo()
 
 try:
@@ -53,3 +58,6 @@ if int(control.setting('schedTraktTime')) > 0:
 	timeout = 3600 * int(control.setting('schedTraktTime'))
 	schedTrakt = threading.Timer(timeout, syncTraktLibrary)
 	schedTrakt.start()
+
+
+

@@ -7,16 +7,18 @@
 import os, sys, re, datetime
 import urllib, urlparse, json
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
+from resources.lib.menus import navigator
+
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
+from resources.lib.modules import trakt
 from resources.lib.modules import views
-from resources.lib.menus import navigator
+from resources.lib.modules import workers
 
 sysaddon = sys.argv[0]
 syshandle = int(sys.argv[1])
@@ -67,9 +69,9 @@ class Movies:
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
 		self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
-		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
+		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
@@ -169,7 +171,7 @@ class Movies:
 					self.worker(level=0)
 
 			elif u in self.trakt_link:
-				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
+				self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
 				if idx is True:
 					self.worker()
 
@@ -203,7 +205,7 @@ class Movies:
 					control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 
 
-	def getTMDb(self, url, idx=True):
+	def getTMDb(self, url, idx=True, cached=True):
 		try:
 			try: url = getattr(self, url + '_link')
 			except: pass
@@ -213,12 +215,13 @@ class Movies:
 			self.list = []
 			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 168, url)
+				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 0, url)
 				self.sort()
 
 			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
+				duration = 168 if cached else 0
+				self.list = cache.get(tmdb.Movies().tmdb_list, duration, url)
 
 			if self.list is None: 
 				self.list = []
@@ -275,8 +278,7 @@ class Movies:
 
 			return self.list
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			try:
 				invalid = (self.list is None or len(self.list) == 0)
 			except:
@@ -338,8 +340,7 @@ class Movies:
 			elif reverse:
 				self.list = reversed(self.list)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -390,8 +391,7 @@ class Movies:
 			dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
 			dbcur.connection.commit()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
@@ -527,6 +527,40 @@ class Movies:
 			self.list[i].update({'icon': 'DefaultActor.png', 'action': 'movies'})
 		self.addDirectory(self.list)
 		return self.list
+
+
+	def moviesListToLibrary(self, url):
+		url = getattr(self, url + '_link')
+		u = urlparse.urlparse(url).netloc.lower()
+
+		try:
+			control.idle()
+			if u in self.tmdb_link:
+				from resources.lib.indexers import tmdb
+				items = tmdb.userlists(url)
+
+			elif u in self.trakt_link:
+				items = self.trakt_user_list(url, self.trakt_user)
+
+			items = [(i['name'], i['url']) for i in items]
+
+			select = control.selectDialog([i[0] for i in items], control.lang(32663).encode('utf-8'))
+			list_name = items[select][0]
+
+			if select == -1:
+				return
+
+			link = items[select][1]
+			link = link.split('&sort_by')[0]
+
+			from resources.lib.modules import libtools
+			libtools.libmovies().range(link, list_name)
+
+			# url = '%s?action=moviesToLibrary&url=%s&list_name=%s' % (sys.argv[0], link, list_name)
+			# control.execute('RunPlugin(%s)' % url)
+		except:
+			log_utils.error()
+			return
 
 
 	def userlists(self):
@@ -950,8 +984,7 @@ class Movies:
 			# items = client.parseDOM(result, 'div', attrs = {'class': '.+?etail'})
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		for item in items:
@@ -1026,7 +1059,8 @@ class Movies:
 			for r in range(0, total, 40):
 				threads = []
 				for i in range(r, r + 40):
-					if i <= total:
+					# if i <= total: # this is wrong loop counts 0 but len() does not
+					if i < total:
 						threads.append(workers.Thread(self.super_info, i))
 				[i.start() for i in threads]
 				[i.join() for i in threads]
@@ -1034,22 +1068,24 @@ class Movies:
 			if self.meta:
 				metacache.insert(self.meta)
 
-			self.list = [i for i in self.list if i['imdb'] != '0']
+			self.list = [i for i in self.list if (i['imdb'] and i['tmdb'] != '0')]
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def super_info(self, i):
 		try:
 			if self.list[i]['metacache'] is True:
-				raise Exception()
+				return
 
-			imdb = self.list[i]['imdb']
+			imdb = self.list[i]['imdb'] or '0'
+			tmdb = self.list[i]['tmdb'] or '0'
+			id = (self.list[i]['title'].lower() + '-' + self.list[i]['year']) if imdb == '0' else imdb
 
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
 # maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
-			item = trakt.getMovieSummary(id=imdb)
+			# item = trakt.getMovieSummary(id=imdb)
+			item = trakt.getMovieSummary(id)
 
 			title = item.get('title')
 
@@ -1065,9 +1101,10 @@ class Movies:
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
-			tmdb = str(item.get('ids', {}).get('tmdb', 0))
-			if tmdb == '' or tmdb is None or tmdb == 'None':
-				tmdb = '0'
+			if tmdb == '0' or tmdb is None:
+				tmdb = str(item.get('ids', {}).get('tmdb', '0'))
+				if tmdb == '' or tmdb is None or tmdb == 'None':
+					tmdb = '0'
 
 			if 'premiered' not in self.list[i] or self.list[i]['premiered'] == '0':
 				premiered = item.get('released', '0')
@@ -1114,31 +1151,36 @@ class Movies:
 			try: plot = plot.encode('utf-8')
 			except: pass
 
-
 #########################################
 			from resources.lib.indexers.tmdb import Movies
 			tmdb_Item = cache.get(Movies().get_details, 168, tmdb, imdb)
 
 			castandart = []
-			for person in tmdb_Item['credits']['cast']:
-				try:
-					try:
-						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-					except:
-						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-				except:
-					castandart = []
-				if len(castandart) == 200: break
-
 			director = writer = '0'
-			for person in tmdb_Item['credits']['crew']:
-				if 'Director' in person['job']:
-					director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
-				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-					writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+			poster3 = fanart3 = '0'
+			try:
+				if tmdb_Item is None:
+					raise Exception()
+				for person in tmdb_Item['credits']['cast']:
+					try:
+						try:
+							castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+						except:
+							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart = []
+					if len(castandart) == 150: break
 
-			poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
-			fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
+				for person in tmdb_Item['credits']['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+				poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
+				fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
+			except:
+				pass
 ########################################
 
 			try:
@@ -1150,6 +1192,7 @@ class Movies:
 				tagline = trans_item.get('tagline') or tagline
 				plot = trans_item.get('overview') or plot
 			except:
+				log_utils.error()
 				pass
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
@@ -1348,6 +1391,7 @@ class Movies:
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
 			except:
+				log_utils.error()
 				pass
 
 		if next:
@@ -1381,6 +1425,7 @@ class Movies:
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'movies')
@@ -1442,6 +1487,7 @@ class Movies:
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'addons')

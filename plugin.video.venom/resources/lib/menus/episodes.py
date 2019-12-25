@@ -8,14 +8,16 @@ import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime, copy
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
+from resources.lib.modules import trakt
 from resources.lib.modules import views
+from resources.lib.modules import workers
+
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -128,6 +130,8 @@ class Episodes:
 		try:
 			attribute = int(control.setting('sort.%s.type' % type))
 			reverse = int(control.setting('sort.%s.order' % type)) == 1
+			if self.list is None:
+				return
 			if attribute > 0:
 				if attribute == 1:
 					try:
@@ -156,8 +160,7 @@ class Episodes:
 			elif reverse:
 				self.list = reversed(self.list)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
@@ -224,8 +227,7 @@ class Episodes:
 
 			return self.list
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			try:
 				invalid = (self.list is None or len(self.list) == 0)
 			except:
@@ -302,8 +304,7 @@ class Episodes:
 											items[index]['year'], items[index]['imdb'],
 											items[index]['tvdb'], items[index]['season'])
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def widget(self):
@@ -534,8 +535,8 @@ class Episodes:
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], lang)
 				data = urllib2.urlopen(url, timeout=10).read()
-
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
+
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
@@ -546,6 +547,7 @@ class Episodes:
 				item2 = result[0]
 
 				num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
+				# TVDb index out of order for Seasons and Episodes now.  This now fails allot getting next episode in index and no simple fix
 				item = [y for x,y in enumerate(item) if x > num][0]
 
 				artwork = artwork.split('<Banner>')
@@ -699,8 +701,7 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
-
+					if len(castandart) == 150: break
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -729,7 +730,7 @@ class Episodes:
 			except:
 				pass
 
-		items = items[:100]
+		items = items[:len(items)]
 		threads = []
 		for i in items:
 			threads.append(workers.Thread(items_list, i))
@@ -864,8 +865,7 @@ class Episodes:
 					if 'airzone' not in item or item['airzone'] is None or item['airzone'] == '':
 						values['airzone'] = air['timezone']
 				except:
-					import traceback
-					traceback.print_exc()
+					log_utils.error()
 					pass
 
 				itemlist.append(values)
@@ -873,8 +873,7 @@ class Episodes:
 					self.seasonCount(itemlist, len(itemlist) - 1)
 
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		if count:
@@ -1053,7 +1052,7 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				plot = client.parseDOM(item, 'Overview')[0]
 				if not plot:
@@ -1078,8 +1077,7 @@ class Episodes:
 					if 'airzone' in i and i['airzone'] is not None and i['airzone'] != '':
 						values['airzone'] = i['airzone']
 				except:
-					import traceback
-					traceback.print_exc()
+					log_utils.error()
 					pass
 
 				self.list.append(values)
@@ -1237,8 +1235,7 @@ class Episodes:
 				# if count:
 					# self.seasonCount(itemlist, len(itemlist) - 1)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		# if count:
@@ -1248,13 +1245,9 @@ class Episodes:
 			self.list = []
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], self.lang)
-
-				try:
-					data = urllib2.urlopen(url, timeout=10).read()
-				except:
-					raise Exception()
-
+				data = urllib2.urlopen(url, timeout=10).read()
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
+
 				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
@@ -1409,7 +1402,7 @@ class Episodes:
 							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				airday = i['airday'] or ''
 				airtime = i['airtime'] or client.parseDOM(item2, 'Airs_Time')[0] or ''
@@ -1431,8 +1424,7 @@ class Episodes:
 				# values = dict((k,v) for k, v in values.iteritems() if v != '0')
 				self.list.append(values)
 			except:
-				# import traceback
-				# traceback.print_exc()
+				log_utils.error()
 				pass
 
 		items = itemlist[:len(itemlist)]
@@ -1463,8 +1455,7 @@ class Episodes:
 				for i in range(len(self.list)):
 					self.list[i] = dict(show.list[i].items() + self.list[i].items())
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		sysaddon = sys.argv[0]
@@ -1808,8 +1799,7 @@ class Episodes:
 				if playlistcreate == 'true':
 					control.playlist.add(url=url, listitem=item)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		if next:

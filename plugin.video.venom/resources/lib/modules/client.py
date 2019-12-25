@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import re, sys, cookielib, urllib, urllib2, urlparse, gzip
-import StringIO, HTMLParser, time, random, base64
-
+import re, sys, time, cookielib
+import urllib, urllib2, urlparse, gzip
+import StringIO, HTMLParser, random, base64
 
 from resources.lib.modules import cache
-from resources.lib.modules import dom_parser
-from resources.lib.modules import workers
-from resources.lib.modules import log_utils
 from resources.lib.modules import control
+from resources.lib.modules import dom_parser
+from resources.lib.modules import log_utils
+from resources.lib.modules import workers
 
 
 def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, XHR=False, limit=None, referer=None, cookie=None, compression=True, output='', timeout='30', ignoreSsl=False, flare=True, ignoreErrors=None):
@@ -144,11 +144,9 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 							try:
 								cookies = response.request._cookies
 							except:
-								import traceback
-								traceback.print_exc()
+								log_utils.error()
 						except:
-							import traceback
-							traceback.print_exc()
+							log_utils.error()
 
 					elif 'cf-browser-verification' in cf_result:
 						netloc = '%s://%s' % (urlparse.urlparse(url).scheme, urlparse.urlparse(url).netloc)
@@ -283,8 +281,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 			return result
 
 	except Exception as e:
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		log_utils.log('Request-Error: (%s) => %s' % (str(e), url), log_utils.LOGDEBUG)
 		return
 

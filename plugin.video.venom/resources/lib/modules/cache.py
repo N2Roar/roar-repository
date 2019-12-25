@@ -8,7 +8,9 @@ import ast
 import hashlib
 import re
 import time
+
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 
 try:
 	from sqlite3 import dbapi2 as db, OperationalError
@@ -60,6 +62,7 @@ def get(function, duration, *args):
 
 		return ast.literal_eval(fresh_result.encode('utf-8'))
 	except:
+		log_utils.error()
 		return None
 
 
@@ -69,9 +72,10 @@ def remove(function, *args):
 		cursor = _get_connection_cursor()
 		cursor.execute("DELETE FROM %s WHERE key = ?" % cache_table, [key])
 		cursor.connection.commit()
-		cursor.close()
 	except:
+		log_utils.error()
 		pass
+	cursor.close()
 
 
 def timeout(function, *args):
@@ -92,20 +96,22 @@ def cache_existing(function, *args):
 
 
 def cache_get(key):
-	# type: (str, str) -> dict or None
 	try:
 		cursor = _get_connection_cursor()
 		cursor.execute("SELECT * FROM %s WHERE key = ?" % cache_table, [key])
 		results = cursor.fetchone()
 		cursor.close()
 		return results
-	except OperationalError:
+	except:
+		try:
+			cursor.close()
+		except:
+			pass
 		return None
 
 
 def cache_insert(key, value):
 	try:
-		# type: (str, str) -> None
 		cursor = _get_connection_cursor()
 		now = int(time.time())
 
@@ -117,13 +123,11 @@ def cache_insert(key, value):
 			cursor.execute("INSERT INTO %s Values (?, ?, ?)" % cache_table, (key, value, now))
 
 		cursor.connection.commit()
-		cursor.close()
 	except:
-		try:cursor.close()
-		except: pass
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		pass
+	cursor.close()
+
 
 # Remove very old entries to reduce the file size.
 # The cache DB can grow very larger with advanced caching.
@@ -134,13 +138,10 @@ def cache_clean(duration = 1209600):
 		cursor.execute("DELETE FROM %s WHERE date < %d" % (cache_table, now - duration))
 		cursor.execute("VACUUM")
 		cursor.connection.commit()
-		cursor.close()
 	except:
-		cursor.close()
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		pass
-
+	cursor.close()
 
 
 #######################################
@@ -160,64 +161,52 @@ def cache_clear_all():
 
 def cache_clear_providers():
 	cursor = _get_connection_cursor_providers()
-
 	for t in ['rel_src', 'rel_url']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
 			cursor.connection.commit()
 		except:
-			cursor.close()
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 	cursor.close()
 
 
 def cache_clear_meta():
 	cursor = _get_connection_cursor_meta()
-
 	for t in ['meta']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
 			cursor.connection.commit()
 		except:
-			cursor.close()
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 	cursor.close()
 
 
 def cache_clear():
 	cursor = _get_connection_cursor()
-
 	for t in [cache_table, 'rel_list', 'rel_lib']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
 			cursor.connection.commit()
 		except:
-			cursor.close()
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 	cursor.close()
 
 
 def cache_clear_search():
 	cursor = _get_connection_cursor_search()
-
 	for t in ['tvshow', 'movies']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
 			cursor.connection.commit()
 		except:
-			cursor.close()
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 	cursor.close()
 	control.execute('Container.Refresh')
@@ -225,14 +214,11 @@ def cache_clear_search():
 
 def cache_clear_SearchPhrase(table, key):
 	cursor = _get_connection_cursor_search()
-
 	try:
 		cursor.execute('DELETE FROM %s WHERE term IS "%s";' % (table, key))
 		cursor.connection.commit()
 	except:
-		cursor.close()
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		pass
 	cursor.close()
 	control.execute('Container.Refresh')
@@ -240,16 +226,13 @@ def cache_clear_SearchPhrase(table, key):
 
 def cache_clear_bookmarks():
 	cursor = _get_connection_cursor_bookmarks()
-
 	for t in ['bookmark']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
 			cursor.connection.commit()
 		except:
-			cursor.close()
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 	cursor.close()
 
@@ -347,12 +330,11 @@ def _is_cache_valid(cached_time, cache_timeout):
 def _find_cache_version():
 	import os
 	versionFile = os.path.join(control.dataPath, 'cache.v')
-
 	try:
 		if not os.path.exists(versionFile):
 			f = open(versionFile, 'w')
 			f.close()
-	except Exception:
+	except:
 		import xbmc
 		print 'Venom Addon Data Path Does not Exist. Creating Folder....'
 		ad_folder = xbmc.translatePath('special://home/userdata/addon_data/plugin.video.venom')
@@ -366,7 +348,6 @@ def _find_cache_version():
 
 	try:
 		curVersion = control.addon('plugin.video.venom').getAddonInfo('version')
-
 		if oldVersion != curVersion:
 			with open(versionFile, 'wb') as fh:
 				fh.write(curVersion)
@@ -374,4 +355,5 @@ def _find_cache_version():
 		else:
 			return False
 	except:
+		log_utils.error()
 		return False

@@ -4,7 +4,8 @@ import re, xbmc
 import urllib, urllib2
 import requests, json
 
-from resources.lib.modules import control, client
+from resources.lib.modules import control
+from resources.lib.modules import client
 from resources.lib.modules import log_utils
 
 # from resolveurl import common
@@ -151,8 +152,7 @@ class PremiumizeMe:
 					if isinstance(response, list):
 						return response[0]
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		return False
@@ -171,5 +171,6 @@ class PremiumizeMe:
 						log_utils.log('Transfer successfully started to the Premiumize.me cloud', log_utils.LOGDEBUG)
 						return result.get('id', "")
 			except:
+				log_utils.error()
 				pass
 		return ""

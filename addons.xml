@@ -337,7 +337,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.3.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.3.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -374,9 +374,10 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.3.4 - Dec. 02, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed typo effecting all IMDb TV Show lists not loading. Sorry folks
-    was pretty sad seeing it.[/I]
+[B][COLOR red]Update - v3.3.9 - Dec. 23, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed broken for loop from previous update preventing
+    Library Updates from completing.[/I]
+[COLOR yellow]--[/COLOR][I] Added Disney+ and Showcase to TVShows Networks.[/I]
 		</news>
 	</extension>
 </addon>

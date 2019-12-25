@@ -8,6 +8,7 @@ import json, xbmc
 
 from resources.lib.modules import control
 # from resources.lib.modules import cleantitle
+from resources.lib.modules import log_utils
 
 Id = xbmc.PLAYLIST_VIDEO
 videoplaylist = 10028
@@ -47,8 +48,7 @@ def playlistManager(name = None, url = None, meta = None, art = None):
 				playlistClear()
 				control.hide()
 	except:
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		control.hide()
 
 

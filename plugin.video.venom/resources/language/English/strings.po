@@ -331,6 +331,42 @@ msgctxt "#32074"
 msgid "[B]HELP[/B]"
 msgstr ""
 
+msgctxt "#32075"
+msgid "Auto update User Lists"
+msgstr ""
+
+msgctxt "#32076"
+msgid ""
+msgstr ""
+
+msgctxt "#32077"
+msgid ""
+msgstr ""
+
+msgctxt "#32078"
+msgid "Show general notifications"
+msgstr ""
+
+msgctxt "#32079"
+msgid ""
+msgstr ""
+
+msgctxt "#32080"
+msgid ""
+msgstr ""
+
+msgctxt "#32081"
+msgid ""
+msgstr ""
+
+msgctxt "#32082"
+msgid ""
+msgstr ""
+
+msgctxt "#32083"
+msgid ""
+msgstr ""
+
 
 
 
@@ -1282,11 +1318,11 @@ msgid "TV"
 msgstr ""
 
 msgctxt "#32545"
-msgid "Auto update TV Shows"
+msgid "Auto Update Service"
 msgstr ""
 
 msgctxt "#32546"
-msgid "Show notifications during update"
+msgid "Show service notifications during update"
 msgstr ""
 
 msgctxt "#32547"
@@ -1310,7 +1346,7 @@ msgid "Add to Library"
 msgstr ""
 
 msgctxt "#32552"
-msgid "Adding to library..."
+msgid "Checking library..."
 msgstr ""
 
 msgctxt "#32553"
@@ -1318,7 +1354,7 @@ msgid "Updating TV Shows In Local Library..."
 msgstr ""
 
 msgctxt "#32554"
-msgid "Process Complete"
+msgid "Adding to Library..."
 msgstr ""
 
 msgctxt "#32555"
@@ -1346,11 +1382,11 @@ msgid "[B]VENOM[/B] : TV folder..."
 msgstr ""
 
 msgctxt "#32561"
-msgid "[B]TRAKT[/B] : Import Collection..."
+msgid "[B]TRAKT[/B] : Import Movie Collection..."
 msgstr ""
 
 msgctxt "#32562"
-msgid "[B]TRAKT[/B] : Import Watchlist..."
+msgid "[B]TRAKT[/B] : Import Movie Watchlist..."
 msgstr ""
 
 msgctxt "#32563"
@@ -1658,7 +1694,7 @@ msgid "[B][COLOR red]Open Scrapers[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32652"
-msgid ""
+msgid "Title Already Exists in Library"
 msgstr ""
 
 msgctxt "#32653"
@@ -1694,19 +1730,19 @@ msgid "Resume Point Saved..."
 msgstr ""
 
 msgctxt "#32661"
-msgid ""
+msgid "Importing Trakt Collection..."
 msgstr ""
 
 msgctxt "#32662"
-msgid ""
+msgid "Importing Trakt Watchlist..."
 msgstr ""
 
 msgctxt "#32663"
-msgid ""
+msgid "Importing Trakt User List..."
 msgstr ""
 
 msgctxt "#32664"
-msgid ""
+msgid "Importing Trakt Liked List..."
 msgstr ""
 
 msgctxt "#32665"
@@ -1738,16 +1774,69 @@ msgid "[COLOR whitesmoke]White Smoke[/COLOR]"
 msgstr ""
 
 msgctxt "#32672"
-msgid ""
+msgid "[B]TRAKT[/B] : Import Movie User List..."
 msgstr ""
 
 msgctxt "#32673"
-msgid ""
+msgid "[B]TRAKT[/B] : Import Movie Liked List..."
 msgstr ""
 
 msgctxt "#32674"
+msgid "[B]TRAKT[/B] : Import TV User List..."
+msgstr ""
+
+msgctxt "#32675"
+msgid "[B]TRAKT[/B] : Import TV Liked List..."
+msgstr ""
+
+msgctxt "#32676"
+msgid "[B]VENOM[/B] : Clean library..."
+msgstr ""
+
+msgctxt "#32677"
+msgid "    Add folders to Kodi Sources Now..."
+msgstr ""
+
+msgctxt "#32678"
+msgid "Updated TV Show title"
+msgstr ""
+
+msgctxt "#32679"
+msgid "Importing TMDb Watchlist..."
+msgstr ""
+
+msgctxt "#32680"
+msgid "Importing TMDb Favorites..."
+msgstr ""
+
+msgctxt "#32681"
+msgid "Importing TMDb Userlist..."
+msgstr ""
+
+msgctxt "#32682"
 msgid ""
 msgstr ""
+
+msgctxt "#32683"
+msgid ""
+msgstr ""
+
+msgctxt "#32684"
+msgid ""
+msgstr ""
+
+msgctxt "#32685"
+msgid ""
+msgstr ""
+
+msgctxt "#32686"
+msgid ""
+msgstr ""
+
+
+
+
+
 
 
 
@@ -2261,6 +2350,19 @@ msgstr ""
 
 
 
+msgctxt "#33786"
+msgid "No Trakt Result"
+msgstr ""
+
+msgctxt "#33787"
+msgid "Trakt Rate Limit Reached"
+msgstr ""
+
+
+
+
+
+
 msgctxt "#33890"
 msgid "Season Count"
 msgstr ""
@@ -2274,6 +2376,11 @@ msgid "Unwatched Limit"
 msgstr ""
 
 
+
+
+msgctxt "#33942"
+msgid "The Venom library path does not appear in the Kodi file sources and automatic library updates are therefore not possible. Please manually add the library path from Venom's settings to the Kodi file sources. If the path in the settings were not changed, Venom will use a directory in the addon profile to store library data."
+msgstr ""
 
 
 

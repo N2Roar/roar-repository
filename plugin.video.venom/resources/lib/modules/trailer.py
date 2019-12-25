@@ -9,6 +9,7 @@ import urllib
 
 from resources.lib.modules import client
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 
 
 class Trailer:
@@ -47,8 +48,7 @@ class Trailer:
 
 				control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def worker(self, name, url):
@@ -91,8 +91,7 @@ class Trailer:
 				if url:
 					return url
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			return
 
 	def resolve(self, url):
@@ -114,6 +113,5 @@ class Trailer:
 			url = 'plugin://plugin.video.youtube/play/?video_id=%s' % id
 			return url
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			return

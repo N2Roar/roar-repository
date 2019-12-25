@@ -8,15 +8,17 @@ import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
+from resources.lib.modules import trakt
 from resources.lib.modules import views
+from resources.lib.modules import workers
+
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -114,15 +116,10 @@ class TVshows:
 
 	def get(self, url, idx=True):
 		try:
-			try:
-				url = getattr(self, url + '_link')
-			except:
-				pass
-
-			try:
-				u = urlparse.urlparse(url).netloc.lower()
-			except:
-				pass
+			try: url = getattr(self, url + '_link')
+			except: pass
+			try: u = urlparse.urlparse(url).netloc.lower()
+			except: pass
 
 			if u in self.trakt_link and '/users/' in url:
 				# urls = []
@@ -163,7 +160,6 @@ class TVshows:
 					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
 				except:
 					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
-
 				self.sort()
 				if idx is True:
 					self.worker()
@@ -213,25 +209,21 @@ class TVshows:
 					control.notification(title=32002, message=33049, icon='INFO', sound=notificationSound)
 
 
-	def getTMDb(self, url, idx=True):
+	def getTMDb(self, url, idx=True, cached=True):
 		try:
-			try:
-				url = getattr(self, url + '_link')
-			except:
-				pass
+			try: url = getattr(self, url + '_link')
+			except: pass
+			try: u = urlparse.urlparse(url).netloc.lower()
+			except: pass
 
-			try:
-				u = urlparse.urlparse(url).netloc.lower()
-			except:
-				pass
-
-			if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
+			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.TVshows().tmdb_collections_list, 24, url)
+				self.list = cache.get(tmdb.TVshows().tmdb_collections_list, 0, url)
 
-			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
+			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
-				self.list = cache.get(tmdb.TVshows().tmdb_list, 168, url)
+				duration = 168 if cached else 0
+				self.list = cache.get(tmdb.TVshows().tmdb_list, duration, url)
 
 			if self.list is None:
 				self.list = []
@@ -315,8 +307,7 @@ class TVshows:
 			elif reverse:
 				self.list = reversed(self.list)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -352,8 +343,7 @@ class TVshows:
 			dbcur.executescript("CREATE TABLE IF NOT EXISTS tvshow (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
 			dbcur.connection.commit()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		dbcur.execute("SELECT * FROM tvshow ORDER BY ID DESC")
@@ -510,6 +500,40 @@ class TVshows:
 		return self.list
 
 
+	def tvshowsListToLibrary(self, url):
+		url = getattr(self, url + '_link')
+		u = urlparse.urlparse(url).netloc.lower()
+
+		try:
+			control.idle()
+			if u in self.tmdb_link:
+				from resources.lib.indexers import tmdb
+				items = tmdb.userlists(url)
+
+			elif u in self.trakt_link:
+				items = self.trakt_user_list(url, self.trakt_user)
+
+			items = [(i['name'], i['url']) for i in items]
+
+			select = control.selectDialog([i[0] for i in items], control.lang(32663).encode('utf-8'))
+			list_name = items[select][0]
+
+			if select == -1:
+				return
+
+			link = items[select][1]
+			link = link.split('&sort_by')[0]
+
+			from resources.lib.modules import libtools
+			libtools.libtvshows().range(link, list_name)
+
+			# url = '%s?action=tvshowsToLibrary&url=%s&list_name=%s' % (sys.argv[0], link, list_name)
+			# control.execute('RunPlugin(%s)' % url)
+		except:
+			log_utils.error()
+			return
+
+
 	def userlists(self):
 		userlists = []
 		try:
@@ -619,12 +643,10 @@ class TVshows:
 		list = []
 		try:
 			dupes = []
-
 			q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
 			q.update({'extended': 'full'})
 			q = (urllib.urlencode(q)).replace('%2C', ',')
 			u = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
-
 			result = trakt.getTraktAsJson(u)
 
 			items = []
@@ -636,6 +658,7 @@ class TVshows:
 			if len(items) == 0:
 				items = result
 		except:
+			log_utils.error()
 			return
 
 		try:
@@ -700,6 +723,7 @@ class TVshows:
 				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
 										'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
 			except:
+				log_utils.error()
 				pass
 
 		return list
@@ -711,6 +735,7 @@ class TVshows:
 			result = trakt.getTrakt(url)
 			items = json.loads(result)
 		except:
+			log_utils.error()
 			pass
 
 		for item in items:
@@ -732,6 +757,7 @@ class TVshows:
 
 				list.append({'name': name, 'url': url, 'context': url})
 			except:
+				log_utils.error()
 				pass
 
 		list = sorted(list, key=lambda k: re.sub('(^the |^a |^an )', '', k['name'].lower()))
@@ -761,6 +787,7 @@ class TVshows:
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
 			items += client.parseDOM(result, 'div', attrs = {'class': 'list_item.+?'})
 		except:
+			log_utils.error()
 			return
 
 		try:
@@ -877,7 +904,6 @@ class TVshows:
 					director = '0'
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
-				# log_utils.log('director = %s' % director, __name__, log_utils.LOGDEBUG)
 
 				plot = '0'
 				try:
@@ -898,6 +924,7 @@ class TVshows:
 									'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0',
 									'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
 			except:
+				log_utils.error()
 				pass
 		return list
 
@@ -909,8 +936,7 @@ class TVshows:
 			result = result.decode('iso-8859-1').encode('utf-8')
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 		for item in items:
 			try:
@@ -931,9 +957,7 @@ class TVshows:
 
 				list.append({'name': name, 'url': url, 'image': image})
 			except:
-				import traceback
-				traceback.print_exc()
-
+				log_utils.error()
 		return list
 
 
@@ -946,6 +970,7 @@ class TVshows:
 			# Gaia uses this but breaks the IMDb user list
 			# items = client.parseDOM(result, 'div', attrs = {'class': 'list_name'})
 		except:
+			log_utils.error()
 			pass
 
 		for item in items:
@@ -963,6 +988,7 @@ class TVshows:
 
 				list.append({'name': name, 'url': url, 'context': url})
 			except:
+				log_utils.error()
 				pass
 
 		list = sorted(list, key=lambda k: re.sub('(^the |^a |^an )', '', k['name'].lower()))
@@ -984,7 +1010,8 @@ class TVshows:
 			for r in range(0, total, 40):
 				threads = []
 				for i in range(r, r + 40):
-					if i <= total:
+					# if i <= total: # this is wrong loop counts 0 but len() does not
+					if i < total:
 						threads.append(workers.Thread(self.super_info, i, total))
 				[i.start() for i in threads]
 				[i.join() for i in threads]
@@ -995,18 +1022,30 @@ class TVshows:
 			self.list = [i for i in self.list if i['tvdb'] != '0']
 
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def super_info(self, i, total):
 		try:
 			if self.list[i]['metacache'] is True:
-				raise Exception()
+				return
 
 			imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
 			tmdb = self.list[i]['tmdb'] if 'tmdb' in self.list[i] else '0'
 			tvdb = self.list[i]['tvdb'] if 'tvdb' in self.list[i] else '0'
+
+			if (tvdb == '0' or tmdb == '0') and imdb != '0':
+				trakt_ids = trakt.IdLookup('show', 'imdb', imdb)
+
+				if tvdb == '0':
+					tvdb = str(trakt_ids.get('tvdb', '0'))
+					if tvdb == '' or tvdb is None or tvdb == 'None':
+						tvdb = '0'
+
+				if tmdb == '0':
+					tmdb = str(trakt_ids.get('tmdb', '0'))
+					if tvdb == '' or tvdb is None or tvdb == 'None':
+						tvdb = '0'
 
 			if imdb == '0' or tmdb == '0' or tvdb == '0':
 				try:
@@ -1019,37 +1058,16 @@ class TVshows:
 							imdb = '0'
 
 					if tmdb == '0':
-						tmdb = str(trakt_ids.get('ids', {}).get('tmdb', 0))
+						tmdb = str(trakt_ids.get('ids', {}).get('tmdb', '0'))
 						if tmdb == '' or tmdb is None or tmdb == 'None':
 							tmdb = '0'
 
 					if tvdb == '0':
-						tvdb = str(trakt_ids.get('ids', {}).get('tvdb', 0))
+						tvdb = str(trakt_ids.get('ids', {}).get('tvdb', '0'))
 						if tvdb == '' or tvdb is None or tvdb == 'None':
 							tvdb = '0'
 				except:
 					pass
-
-			if tvdb == '0' and imdb != '0':
-				url = self.tvdb_by_imdb % imdb
-
-				result = client.request(url, timeout='10')
-
-				try:
-					tvdb = client.parseDOM(result, 'seriesid')[0]
-				except:
-					tvdb = '0'
-
-				try:
-					name = client.parseDOM(result, 'SeriesName')[0]
-				except:
-					name = '0'
-
-				dupe = re.findall('[***]Duplicate (\d*)[***]', name)
-				if dupe:
-					tvdb = str(dupe[0])
-				if tvdb == '':
-					tvdb = '0'
 
 ###--Check TVDb for missing info
 			if tvdb == '0' or imdb == '0':
@@ -1077,17 +1095,15 @@ class TVshows:
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
 			# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
-
 			item = client.request(url, timeout='10', error = True)
 
-			# url = self.tvdb_info_link % (tvdb, 'en')
+			# url = self.tvdb_zip_link % (tvdb, 'en')
 			# data = urllib2.urlopen(url, timeout=30).read()
 			# zip = zipfile.ZipFile(StringIO.StringIO(data))
 			# result = zip.read('en.xml')
 			# artwork = zip.read('banners.xml')
 			# actors = zip.read('actors.xml')
 			# zip.close()
-
 			# item = result.split('<Series>')
 
 			if item is None:
@@ -1173,8 +1189,7 @@ class TVshows:
 								castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 						except:
 							castandart = []
-						if len(castandart) == 200: break
-
+						if len(castandart) == 150: break
 			else:
 				castandart = self.list[i]['castandart']
 
@@ -1232,10 +1247,11 @@ class TVshows:
 				# if total <= 40:
 				from resources.lib.indexers.tmdb import TVshows
 				tmdb_art = TVshows().get_art(tmdb)
-				item.update(tmdb_art)
-				if item.get('landscape', '0') == '0':
-					landscape = item.get('fanart3', '0')
-					item.update({'landscape': landscape})
+				if tmdb_art is not None:
+					item.update(tmdb_art)
+					if item.get('landscape', '0') == '0':
+						landscape = item.get('fanart3', '0')
+						item.update({'landscape': landscape})
 				meta.update(item)
 
 			item = dict((k,v) for k, v in item.iteritems() if v != '0')
@@ -1243,6 +1259,7 @@ class TVshows:
 
 			self.meta.append(meta)
 		except:
+			log_utils.error()
 			pass
 
 
@@ -1311,15 +1328,10 @@ class TVshows:
 				except:
 					pass
 
-				try:
-					meta.update({'duration': str(int(meta['duration']) * 60)})
-				except:
-					pass
-				try:
-					meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
-				except:
-					pass
-
+				try: meta.update({'duration': str(int(meta['duration']) * 60)})
+				except: pass
+				try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
+				except: pass
 				try:
 					if not 'tvshowtitle' in meta: meta.update({'tvshowtitle': title})
 				except: pass
@@ -1421,8 +1433,7 @@ class TVshows:
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		if next:
@@ -1458,6 +1469,7 @@ class TVshows:
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'tvshows')
@@ -1522,6 +1534,7 @@ class TVshows:
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'addons')

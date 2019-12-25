@@ -33,6 +33,7 @@ query = params.get('query')
 source = params.get('source')
 content = params.get('content')
 table = params.get('table')
+list_name = params.get('list_name')
 
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
@@ -45,7 +46,7 @@ if action is None:
 	if run == '':
 		run = 'true' #clean install scenerio
 	if cache._find_cache_version():
-		run = 'true'  #check whether plugin.video.venom has been updated-use to be for script.module.venom
+		run = 'true'
 	if run == 'true':
 		from resources.lib.modules import changelog
 		changelog.get()
@@ -674,7 +675,11 @@ elif action == 'movieToLibrary':
 
 elif action == 'moviesToLibrary':
 	from resources.lib.modules import libtools
-	libtools.libmovies().range(url)
+	libtools.libmovies().range(url, list_name)
+
+elif action == 'moviesListToLibrary':
+	from resources.lib.menus import movies
+	movies.Movies().moviesListToLibrary(url)
 
 elif action == 'moviesToLibrarySilent':
 	from resources.lib.modules import libtools
@@ -686,7 +691,11 @@ elif action == 'tvshowToLibrary':
 
 elif action == 'tvshowsToLibrary':
 	from resources.lib.modules import libtools
-	libtools.libtvshows().range(url)
+	libtools.libtvshows().range(url, list_name)
+
+elif action == 'tvshowsListToLibrary':
+	from resources.lib.menus import tvshows
+	tvshows.TVshows().tvshowsListToLibrary(url)
 
 elif action == 'tvshowsToLibrarySilent':
 	from resources.lib.modules import libtools
@@ -694,12 +703,19 @@ elif action == 'tvshowsToLibrarySilent':
 
 elif action == 'updateLibrary':
 	from resources.lib.modules import libtools
-	libtools.libepisodes().update(query)
+	libtools.libepisodes().update()
+
+elif action == 'cleanLibrary':
+	from resources.lib.modules import libtools
+	libtools.lib_tools().clean()
+
+elif action == 'librarySetup':
+	from resources.lib.modules import libtools
+	libtools.lib_tools().total_setup()
 
 elif action == 'service':
 	from resources.lib.modules import libtools
-	libtools.libepisodes().service()
-
+	libtools.lib_tools().service()
 
 
 ####################################################

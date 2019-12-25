@@ -8,6 +8,7 @@ except:
 	from pysqlite2 import dbapi2 as database
 
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 
 notificationSound = False if control.setting('notification.sound') == 'false' else True
 
@@ -50,8 +51,7 @@ def clearViews():
 		skinIcon = control.addon(skin).getAddonInfo('icon')
 		control.notification(title = skinName, message = 'View Types Successfully Cleared!', icon = skinIcon, sound = notificationSound)
 	except:
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		pass
 
 
@@ -76,6 +76,7 @@ def addView(content):
 
 		control.infoDialog(viewName, heading=skinName, sound=notificationSound, icon=skinIcon)
 	except:
+		log_utils.error()
 		return
 
 

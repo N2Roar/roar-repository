@@ -7,15 +7,16 @@
 import os, sys, re, datetime
 import urllib, urlparse, json
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
+from resources.lib.modules import trakt
 from resources.lib.modules import views
+from resources.lib.modules import workers
 
 sysaddon = sys.argv[0]
 syshandle = int(sys.argv[1])
@@ -734,6 +735,7 @@ class Collections:
 				self.movieDirectory(self.list)
 			return self.list
 		except:
+			log_utils.error()
 			pass
 
 
@@ -773,8 +775,7 @@ class Collections:
 			elif reverse:
 				self.list = reversed(self.list)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -963,6 +964,7 @@ class Collections:
 											'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'plot': plot, 'tagline': '0', 'imdb': imdb,
 											'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
+				log_utils.error()
 				pass
 
 		return list
@@ -983,7 +985,8 @@ class Collections:
 			for r in range(0, total, 40):
 				threads = []
 				for i in range(r, r + 40):
-					if i <= total:
+					# if i <= total: # this is wrong loop counts 0 but len() does not
+					if i < total:
 						threads.append(workers.Thread(self.super_imdb_info, i))
 				[i.start() for i in threads]
 				[i.join() for i in threads]
@@ -991,79 +994,120 @@ class Collections:
 			if self.meta:
 				metacache.insert(self.meta)
 
-			self.list = [i for i in self.list]
+			self.list = [i for i in self.list if (i['imdb'] and i['tmdb'] != '0')]
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 
 	def super_imdb_info(self, i):
 		try:
 			if self.list[i]['metacache'] is True:
-				raise Exception()
+				return
 
-			imdb = self.list[i]['imdb']
+			imdb = self.list[i]['imdb'] or '0'
+			tmdb = self.list[i]['tmdb'] or '0'
+			id = (self.list[i]['title'].lower() + '-' + self.list[i]['year']) if imdb == '0' else imdb
 
-			item = trakt.getMovieSummary(id = imdb)
+# look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
+# maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
+			# item = trakt.getMovieSummary(id=imdb)
+			item = trakt.getMovieSummary(id)
 
 			title = item.get('title')
 
 			originaltitle = title
 
-			year = str(item.get('year', 0))
+			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
+				year = str(item.get('year', '0'))
+			else:
+				year = self.list[i]['year']
 
 			if imdb == '0' or imdb is None:
 				imdb = item.get('ids', {}).get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
-			tmdb = str(item.get('ids', {}).get('tmdb', 0))
-			if tmdb == '' or tmdb is None or tmdb == 'None':
-				tmdb = '0'
+			if tmdb == '0' or tmdb is None:
+				tmdb = str(item.get('ids', {}).get('tmdb', 0))
+				if tmdb == '' or tmdb is None or tmdb == 'None':
+					tmdb = '0'
 
-			premiered = item.get('released', '0')
+			if 'premiered' not in self.list[i] or self.list[i]['premiered'] == '0':
+				premiered = item.get('released', '0')
+			else:
+				premiered = self.list[i]['premiered']
 
-			genre = []
-			for x in item['genres']:
-				genre.append(x.title())
-			if genre == []: genre = 'NA'
+			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
+				genre = []
+				for x in item['genres']:
+					genre.append(x.title())
+				if genre == []: genre = 'NA'
+			else:
+				genre = self.list[i]['genre']
 
-			duration = str(item.get('runtime', '0'))
+			if 'duration' not in self.list[i] or self.list[i]['duration'] == '0':
+				duration = str(item.get('runtime', '0'))
+			else:
+				duration = self.list[i]['duration']
 
-			rating = str(item.get('rating', '0'))
-			votes = str(format(int(item.get('votes', '0')),',d'))
+			if 'rating' not in self.list[i] or self.list[i]['rating'] == '0':
+				rating = str(item.get('rating', '0'))
+			else:
+				rating = self.list[i]['rating']
 
-			mpaa = item.get('certification', '0')
-			if not mpaa:
-				mpaa = '0'
+			if 'votes' not in self.list[i] or self.list[i]['votes'] == '0':
+				votes = str(format(int(item.get('votes', '0')),',d'))
+			else:
+				votes = self.list[i]['votes']
 
-			tagline = item.get('tagline', '0')
+			if 'mpaa' not in self.list[i] or self.list[i]['mpaa'] == '0' or self.list[i]['mpaa'] == 'NR':
+				mpaa = item.get('certification', '0')
+			else:
+				mpaa = self.list[i]['mpaa']
 
-			plot = item.get('overview', '0')
+			if 'tagline' not in self.list[i] or self.list[i]['tagline'] == '0':
+				tagline = item.get('tagline', '0')
+			else:
+				tagline = self.list[i]['tagline']
 
+			if 'plot' not in self.list[i] or self.list[i]['plot'] == '0':
+				plot = item.get('overview', '0')
+			else:
+				plot = self.list[i]['plot']
+			try: plot = plot.encode('utf-8')
+			except: pass
+
+#########################################
 			from resources.lib.indexers.tmdb import Movies
 			tmdb_Item = cache.get(Movies().get_details, 168, tmdb, imdb)
 
 			castandart = []
-			for person in tmdb_Item['credits']['cast']:
-				try:
-					try:
-						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-					except:
-						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-				except:
-					castandart = []
-				if len(castandart) == 200: break
-
 			director = writer = '0'
-			for person in tmdb_Item['credits']['crew']:
-				if 'Director' in person['job']:
-					director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
-				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-					writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+			poster3 = fanart3 = '0'
+			try:
+				if tmdb_Item is None:
+					raise Exception()
+				for person in tmdb_Item['credits']['cast']:
+					try:
+						try:
+							castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+						except:
+							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart = []
+					if len(castandart) == 150: break
 
-			poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
-			fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
+				for person in tmdb_Item['credits']['crew']:
+					if 'Director' in person['job']:
+						director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
+					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+						writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+				poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
+				fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
+			except:
+				pass
+########################################
 
 			try:
 				if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
@@ -1074,6 +1118,7 @@ class Collections:
 				tagline = trans_item.get('tagline') or tagline
 				plot = trans_item.get('overview') or plot
 			except:
+				log_utils.error()
 				pass
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
@@ -1261,6 +1306,7 @@ class Collections:
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
 			except:
+				log_utils.error()
 				pass
 
 		if next:
@@ -1288,6 +1334,7 @@ class Collections:
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'movies')
@@ -1296,10 +1343,13 @@ class Collections:
 
 
 	def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-		if type(name) is str or type(name) is unicode:
-			name = str(name)
-		if type(name) is int:
-			name = control.lang(name).encode('utf-8')
+		try:
+			if type(name) is str or type(name) is unicode:
+				name = str(name)
+			if type(name) is int:
+				name = control.lang(name).encode('utf-8')
+		except:
+			log_utils.error()
 
 		url = '%s?action=%s' % (sysaddon, query) if isAction else query
 

@@ -7,11 +7,12 @@
 import json, re, urllib
 import datetime
 
-from resources.lib.modules import control
-from resources.lib.modules import client
-from resources.lib.modules import workers
 from resources.lib.modules import cache
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import metacache
+from resources.lib.modules import workers
 
 
 networks_this_season = [
@@ -50,6 +51,7 @@ networks_this_season = [
 			('DC Universe', '/webchannels/187/dc-universe', 'https://i.imgur.com/bhWIubn.png'),
 			('Discovery Channel', '/networks/66/discovery-channel', 'https://i.imgur.com/8UrXnAB.png'),
 			('Discovery ID', '/networks/89/investigation-discovery', 'https://i.imgur.com/07w7BER.png'),
+			('Disney+', '/webchannels/287/disney', 'https://i.postimg.cc/SQ8fG2qF/435560.jpg'),
 			('Disney Channel', '/networks/78/disney-channel', 'https://i.imgur.com/ZCgEkp6.png'),
 			('Disney Junior', '/networks/1039/disney-junior', 'https://i.imgur.com/EqPPq5S.png'),
 			('Disney XD', '/networks/25/disney-xd', 'https://i.imgur.com/PAJJoqQ.png'),
@@ -78,6 +80,7 @@ networks_this_season = [
 			('Oxygen', '/networks/79/oxygen', 'https://i.imgur.com/uFCQvbR.png'),
 			('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
 			# ('Playboy TV', '/networks/1035/playboy-tv', 'https://static.tvmaze.com/uploads/images/original_untouched/46/115366.jpg'),
+			('Showcase', '/networks/270/showcase', 'https://i.postimg.cc/CKN3Ph8S/66074.jpg'),
 			('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
 			('Sky1', '/networks/63/sky-1', 'https://i.imgur.com/xbgzhPU.png'),
 			('Starz', '/networks/17/starz', 'https://i.imgur.com/Z0ep2Ru.png'),
@@ -135,6 +138,7 @@ networks_view_all = [
 			('DC Universe', '/shows?Show%5BwebChannel_id%5D=187&page=1', 'https://i.imgur.com/bhWIubn.png'),
 			('Discovery Channel', '/shows?Show[network_id]=66&page=1', 'https://i.imgur.com/8UrXnAB.png'),
 			('Discovery ID', '/shows?Show[network_id]=89&page=1', 'https://i.imgur.com/07w7BER.png'),
+			('Disney+', '/shows?Show[webChannel_id]=287&page=1', 'https://i.postimg.cc/SQ8fG2qF/435560.jpg'),
 			('Disney Channel', '/shows?Show[network_id]=78&page=1', 'https://i.imgur.com/ZCgEkp6.png'),
 			('Disney Junior', '/shows?Show[network_id]=1039&page=1', 'https://i.imgur.com/EqPPq5S.png'),
 			('Disney XD', '/shows?Show[network_id]=25&page=1', 'https://i.imgur.com/PAJJoqQ.png'),
@@ -163,6 +167,7 @@ networks_view_all = [
 			('Oxygen', '/shows?Show[network_id]=79&page=1', 'https://i.imgur.com/uFCQvbR.png'),
 			# ('Playboy TV', '/shows?Show[network_id]=1035&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/46/115366.jpg'),
 			('PBS', '/shows?Show[network_id]=85&page=1', 'https://i.imgur.com/r9qeDJY.png'),
+			('Showcase', '/shows?Show[network_id]=270&page=1', 'https://i.postimg.cc/CKN3Ph8S/66074.jpg'),
 			('Showtime', '/shows?Show[network_id]=9&page=1', 'https://i.imgur.com/SawAYkO.png'),
 			('Sky1', '/shows?Show[network_id]=63&page=1', 'https://i.imgur.com/xbgzhPU.png'),
 			('Starz', '/shows?Show[network_id]=17&page=1', 'https://i.imgur.com/Z0ep2Ru.png'),
@@ -261,8 +266,7 @@ class tvshows:
 			items = [i[0] for i in items if len(i) > 0]
 			items = items[:list_count]
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			return
 
 		def items_list(i):
@@ -321,7 +325,7 @@ class tvshows:
 					except:
 						castandart = []
 						pass
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
@@ -426,8 +430,7 @@ class tvshows:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		try:
@@ -443,6 +446,5 @@ class tvshows:
 
 			return self.list
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			return

@@ -9,7 +9,7 @@ try:
 except:
 	pass
 
-from resources.lib.modules import cleantitle, control, playcount
+from resources.lib.modules import cleantitle, control, playcount, log_utils
 
 try:
 	sysaddon = sys.argv[0]
@@ -93,38 +93,33 @@ class Player(xbmc.Player):
 			else:
 				item.setUniqueIDs(self.ids)
 
+			if 'castandart' in meta:
+				item.setCast(meta.get('castandart', ''))
+
 			item.setInfo(type='video', infoLabels=control.metadataClean(meta))
-			if self.media_type == 'episode':
-				if ('plugin' not in control.infoLabel('Container.PluginName') or control.setting('enable.upnext') == 'true' or control.setting('hosts.mode') == '0') or select != '1':
-					if control.window.getProperty('infodialogs.active'):
-						control.closeAll()
-					control.resolve(syshandle, True, item)
 
-				elif (control.setting('enable.upnext') == 'false' and control.setting('hosts.mode') == '1') or select == '1':
+			if 'plugin' not in control.infoLabel('Container.PluginName') or select != '1':
+				if control.window.getProperty('infodialogs.active'):
 					control.closeAll()
-					control.player.play(url, item)
+				control.resolve(syshandle, True, item)
 
-			elif self.media_type == 'movie':
-				if ('plugin' not in control.infoLabel('Container.PluginName') or control.setting('hosts.mode') == '0') or select != '1':
-					if control.window.getProperty('infodialogs.active'):
-						control.closeAll()
-					control.resolve(syshandle, True, item)
-
-				elif control.setting('hosts.mode') == '1' or select == '1':
-					control.closeAll()
-					control.player.play(url, item)
+			elif select == '1':
+				control.closeAll()
+				control.player.play(url, item)
 
 			self.keepAlive()
 			control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
 			control.window.clearProperty('script.trakt.ids')
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			return	control.cancelPlayback()
 
 
 	def getMeta(self, meta):
 		try:
+			if meta is None:
+				raise Exception()
+
 			poster1 = meta.get('poster')
 			poster2 = meta.get('poster2')
 			poster3 = meta.get('poster3')
@@ -150,11 +145,11 @@ class Player(xbmc.Player):
 
 			return (poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
+			raise Exception() #kodi seems to use scraped artwork so retrival from library not needed
 			if self.media_type != 'movie':
 				raise Exception()
 
@@ -183,29 +178,32 @@ class Player(xbmc.Player):
 				self.DBID = meta.get('movieid')
 
 			poster = thumb = meta.get('thumbnail')
-			return (poster, thumb, '', '', '', '', '', '', meta)
+
+			# return (poster, thumb, '', '', '', '', '', '', meta)
+			return (poster, '', '', '', '', '', '', '', meta)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
+			raise Exception() #kodi seems to use scraped artwork so retrival from library not needed
 			if self.media_type != 'episode':
 				raise Exception()
 
-			meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "year", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year) + 1), str(int(self.year) - 1)))
+			meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "year", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year)+1), str(int(self.year)-1)))
 			meta = unicode(meta, 'utf-8', errors = 'ignore')
 			meta = json.loads(meta)['result']['tvshows']
 
 			t = cleantitle.get(self.title)
 			meta = [i for i in meta if self.year == str(i['year']) and t == cleantitle.get(i['title'])][0]
 
-			tvshowid = meta.get('tvshowid')
-			poster = meta.get('thumbnail')
+			tvshowid = meta['tvshowid']
+			poster = meta['thumbnail']
 
 			meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
 			meta = unicode(meta, 'utf-8', errors = 'ignore')
 			meta = json.loads(meta)['result']['episodes'][0]
+
 			if 'mediatype' not in meta:
 				meta.update({'mediatype': 'episode'})
 
@@ -224,12 +222,12 @@ class Player(xbmc.Player):
 			if 'plugin' not in control.infoLabel('Container.PluginName'):
 				self.DBID = meta.get('episodeid')
 
-			thumb = meta.get('thumbnail')
-
-			return (poster, thumb, '', '', '', '', '', '', meta)
+			thumb = meta['thumbnail']
+			# return (poster, thumb, '', '', '', '', '', '', meta) # poster gets dropped if also passed thumb from episode
+			return (poster, '', '', '', '', '', '', '', meta)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
+			pass
 			poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta = '', '', '', '', '', '', '', '', {'title': self.name}
 			return (poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta)
 
@@ -256,8 +254,7 @@ class Player(xbmc.Player):
 				if watched_percent > 100:
 					watched_percent = 100
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 		return watched_percent
 
@@ -322,8 +319,7 @@ class Player(xbmc.Player):
 					xbmc.sleep(2000)
 
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				xbmc.sleep(1000)
 				continue
 
@@ -365,13 +361,11 @@ class Player(xbmc.Player):
 						# psources = sources.Sources().preScrape(title=next_info['next_episode']['title'], year=next_info['next_episode']['year'], imdb=next_info['next_episode']['tvshowimdb'], tvdb=next_info['next_episode']['tvshowid'], season=next_info['next_episode']['season'], episode=next_info['next_episode']['episode'], tvshowtitle=next_info['next_episode']['showtitle'], premiered=next_info['next_episode']['firstaired'])
 
 				except:
-					import traceback
-					traceback.print_exc()
+					log_utils.error()
 					pass
 
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -386,8 +380,7 @@ class Player(xbmc.Player):
 			control.jsonrpc(rpc)
 			control.refresh()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -466,8 +459,7 @@ class Player(xbmc.Player):
 
 	def onPlayBackError(self):
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
-		import traceback
-		traceback.print_exc()
+		log_utils.error()
 		sys.exit(1)
 		xbmc.log('onPlayBackError callback', 2)
 
@@ -536,10 +528,8 @@ class Player(xbmc.Player):
 		next_episode["rating"] = next_info.get('rating')
 		next_episode["firstaired"] = next_info.get('tvshowyear')
 
-
 		next_episode["tvshowimdb"] = next_info.get('imdb')
 		next_episode["year"] = next_info.get('year')
-
 
 		play_info = {}
 		play_info["item_id"] = current_info.get('episodeIDS', {}).get('trakt')
@@ -642,8 +632,7 @@ class Subtitles:
 			xbmc.sleep(1000)
 			xbmc.Player().setSubtitles(subtitle)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 

@@ -61,6 +61,7 @@ def userlists(url):
 	except:
 		return
 
+# This is actual wrong but may not be used so look into 
 	try:
 		page = int(result['page'])
 		total = int(result['total_pages'])
@@ -78,7 +79,6 @@ def userlists(url):
 		list_id =  item.get('id')
 		url = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=%s&page=1' % (list_id, API_key, tmdb_sort())
 		item = {'media_type': media_type, 'name': name, 'list_id': list_id, 'url': url, 'context': url, 'next': next}
-
 		list.append(item)
 	return list
 
@@ -171,11 +171,15 @@ class Movies:
 				tagline = '0'
 
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
-							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
+							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline, 'metacache': False}
 
-			list.append(values)
+			# list.append(values)
+			self.list.append(values)
 
 		def items_list(i):
+			if i['metacache'] is True:
+				return
+
 			try:
 				next, title, originaltitle, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = i['next'], i['title'], i['originaltitle'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
 
@@ -227,7 +231,7 @@ class Movies:
 							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((poster_path + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				values = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered,
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
@@ -245,7 +249,11 @@ class Movies:
 						meta.update(values)
 
 				values = dict((k,v) for k, v in values.iteritems() if v != '0')
-				self.list.append(values)
+				# self.list.append(values)
+
+				for i in range(0, len(self.list)):
+					if str(self.list[i]['tmdb']) == str(tmdb):
+						self.list[i].update(values)
 
 				if 'next' in meta.get('item'):
 					del meta['item']['next']
@@ -255,18 +263,22 @@ class Movies:
 			except:
 				pass
 
-		# items = list[:100]
-		items = list[:len(list)]
+		self.list = metacache.fetch(self.list, self.lang, API_key)
+		# items = list[:len(list)]
+		items = self.list[:len(self.list)]
+		# log_utils.log('len(items) = %s' % len(items), __name__, log_utils.LOGDEBUG)
+
 		threads = []
 		for i in items:
 			threads.append(workers.Thread(items_list, i))
 		[i.start() for i in threads]
 		[i.join() for i in threads]
+		# log_utils.log('len(self.list) = %s' % len(self.list), __name__, log_utils.LOGDEBUG)
+		# log_utils.log('len(threads) = %s' % len(threads), __name__, log_utils.LOGDEBUG)
 
 		sorted_list = []
 		for i in sortList:
-			sorted_list += [item for item in self.list if item['tmdb'] == i]
-
+			sorted_list += [item for item in self.list if str(item['tmdb']) == str(i)]
 		return sorted_list
 
 
@@ -331,7 +343,6 @@ class Movies:
 
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
-
 			list.append(values)
 
 		def items_list(i):
@@ -386,7 +397,7 @@ class Movies:
 							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((poster_path + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				values = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered,
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
@@ -421,7 +432,6 @@ class Movies:
 			threads.append(workers.Thread(items_list, i))
 		[i.start() for i in threads]
 		[i.join() for i in threads]
-
 		return self.list
 
 
@@ -598,7 +608,7 @@ class TVshows:
 							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((poster_path + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				values = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
 								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
@@ -695,10 +705,9 @@ class TVshows:
 			except:
 				tagline = '0'
 
-		values = {'next': next, 'title': title, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
-						'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
-
-		list.append(values)
+			values = {'next': next, 'title': title, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
+							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
+			list.append(values)
 
 		def items_list(i):
 			try:
@@ -753,13 +762,13 @@ class TVshows:
 							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((poster_path + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 					except:
 						castandart = []
-					if len(castandart) == 200: break
+					if len(castandart) == 150: break
 
 				values = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
-				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
+				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': API_key, 'item': values}
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
@@ -779,7 +788,6 @@ class TVshows:
 			except:
 				pass
 
-		# items = list[:100]
 		items = list[:len(list)]
 		threads = []
 		for i in items:
@@ -790,8 +798,8 @@ class TVshows:
 		sorted_list = []
 		for i in sortList:
 			sorted_list += [item for item in self.list if item['tmdb'] == i]
-
 		return sorted_list
+		# return self.list
 
 
 	def get_details(self, tmdb, imdb):

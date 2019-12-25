@@ -6,12 +6,12 @@
 
 import re, json, urlparse, datetime
 
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import client
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import metacache
 from resources.lib.modules import trakt
-
 
 
 class movies:
@@ -229,8 +229,7 @@ class movies:
 			# items = client.parseDOM(result, 'div', attrs = {'class': '.+?etail'})
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 		for item in items:
 			try:

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 
+
 <!-- General - 0 -->
 	<category label="32310">
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
@@ -31,7 +32,6 @@
 		<setting id="navi.youtube" type="bool" label="40061" default="false" />
 		<setting id="navi.news" type="bool" label="32013" default="true" />
 		<setting id="navi.changelog" type="bool" label="32014" default="true" />
-
 		<setting type="lsep" label="32001" />
 		<setting id="navi.movie.imdb.intheater" type="bool" label="32421" default="true" />
 		<setting id="navi.movie.tmdb.nowplaying" type="bool" label="32423" default="true" />
@@ -56,7 +56,6 @@
 		<setting id="navi.movie.imdb.people" type="bool" label="32460" default="true" />
 		<setting id="navi.movie.imdb.languages" type="bool" label="32462" default="true" />
 		<setting id="navi.movie.imdb.certificates" type="bool" label="32464" default="true" />
-
 		<setting type="lsep" label="32002" />
 		<setting id="navi.originals" type="bool" label="40069" default="false" />
 		<setting id="navi.tv.imdb.popular" type="bool" label="32429" default="true" />
@@ -217,6 +216,7 @@
 
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
+		<setting id="tvdb.jw" type="text" default="" visible="false" />
 
 		<setting type="lsep" label="IMDb" />
 		<setting id="imdb.user" type="text" label="32303" default="" />
@@ -227,10 +227,12 @@
 	<category label="32541">
 		<setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.venom/Movies" />
 		<setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.venom/TVShows" />
+<!-- 		<setting id="library.tv.scraper" type="select" label="   TV Show scraper" values="TMDb|TVDb" default="TVDb" /> -->
+		<setting type="action" label="32677" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=librarySetup)" />
 		<setting type="lsep" label="32542" />
-		<setting type="sep" />
-		<setting id="library.service.update" type="bool" label="32545" default="true" />
-		<setting id="library.service.notification" type="bool" label="32546" default="true" />
+		<setting id="library.service.update" type="bool" label="32545" default="false" />
+		<setting id="library.service.notification" type="bool" label="32546" enable="eq(-1,true)"default="true" />
+		<setting id="library.general.notification" type="bool" label="32078" enable="eq(-2,true)"default="true" />
 		<setting type="sep" />
 		<setting id="library.update" type="bool" label="32547" default="true" />
 		<setting id="library.check" type="bool" label="32548" default="true" />

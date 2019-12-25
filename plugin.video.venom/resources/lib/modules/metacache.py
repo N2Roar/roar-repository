@@ -8,6 +8,7 @@ except:
 	from pysqlite2 import dbapi2 as database
 
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 
 
 def fetch(items, lang = 'en', user=''):
@@ -22,6 +23,11 @@ def fetch(items, lang = 'en', user=''):
 		dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
 		dbcur.connection.commit()
 	except:
+		log_utils.error()
+		try:
+			dbcon.close()
+		except:
+			pass
 		return items
 
 	for i in range(0, len(items)):
@@ -49,7 +55,7 @@ def fetch(items, lang = 'en', user=''):
 			if match is not None:
 				update = (abs(t2 - t1) / 3600) >= 720
 				if update is True:
-					raise Exception()
+					continue
 
 				item = eval(match[5].encode('utf-8'))
 				item = dict((k, v) for k, v in item.iteritems() if v != '0')
@@ -57,11 +63,13 @@ def fetch(items, lang = 'en', user=''):
 				items[i].update(item)
 				items[i].update({'metacache': True})
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
-	dbcon.close()
+	try:
+		dbcon.close()
+	except:
+		pass
 	return items
 
 
@@ -81,29 +89,30 @@ def insert(meta):
 				m["lang"] = 'en'
 			i = repr(m['item'])
 
-			# Look for exact match to what is about to be written.
-			try:
-				dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'])).fetchone()[0] # Try to find entry.
-				dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user']))
-				# log_utils.log("metacache exact match found and deleted", __name__, log_utils.LOGDEBUG)
-			except:
-				# log_utils.log("no exact metacache match", __name__, log_utils.LOGDEBUG)
-				pass
+			# # Look for exact match to what is about to be written.
+			# try:
+				# dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'])).fetchone()[0] # Try to find entry.
+				# dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user']))
+			# except:
+				# pass
 
 			try:
-				dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
-				# log_utils.log("metacache written", __name__, log_utils.LOGDEBUG)
+				# dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
+				dbcur.execute("INSERT OR REPLACE INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
+
 			except:
-				# log_utils.log("metacache write failed", __name__, log_utils.LOGDEBUG)
 				pass
 
 		dbcur.connection.commit()
+	except:
+		log_utils.error()
+		pass
+
+	try:
 		dbcon.close()
 	except:
-		dbcon.close()
-		import traceback
-		traceback.print_exc()
-		return
+		pass
+	return
 
 
 def local(items, link, poster, fanart):

@@ -84,8 +84,7 @@ class Sources:
 			player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta, select)
 
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -176,8 +175,7 @@ class Sources:
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		control.content(syshandle, 'files')
@@ -329,8 +327,7 @@ class Sources:
 
 			self.errorForSources()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -659,8 +656,7 @@ class Sources:
 						break
 				time.sleep(0.5)
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		try:
@@ -751,8 +747,7 @@ class Sources:
 			dbcur.connection.commit()
 			dbcon.close()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -774,8 +769,7 @@ class Sources:
 					source, imdb, '', ''))
 				dbcur.connection.commit()
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 		''' END '''
 
@@ -793,8 +787,7 @@ class Sources:
 					sources = eval(match[4].encode('utf-8'))
 					return self.sources.extend(sources)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -806,8 +799,7 @@ class Sources:
 			if url is not None:
 				url = eval(url[4].encode('utf-8'))
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -820,8 +812,7 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
 				dbcur.connection.commit()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -838,12 +829,12 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)",
 							(source, imdb, '', '', repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
 				dbcur.connection.commit()
-			dbcon.close()
+			# dbcon.close()
 		except:
-			import traceback
-			traceback.print_exc()
-			dbcon.close()
+			log_utils.error()
+			# dbcon.close()
 			pass
+		dbcon.close()
 
 
 	def getEpisodeSource(self, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, source, call):
@@ -867,8 +858,7 @@ class Sources:
 					sources = eval(match[4].encode('utf-8'))
 					return self.sources.extend(sources)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -879,8 +869,7 @@ class Sources:
 			if url is not None:
 				url = eval(url[4].encode('utf-8'))
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -894,8 +883,7 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
 				dbcur.connection.commit()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -907,8 +895,7 @@ class Sources:
 			if ep_url is not None:
 				ep_url = eval(ep_url[4].encode('utf-8'))
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -923,8 +910,7 @@ class Sources:
 								(source, imdb, season, episode, repr(ep_url)))
 					dbcur.connection.commit()
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 		try:
@@ -941,12 +927,12 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (
 				source, imdb, season, episode, repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
 				dbcur.connection.commit()
-			dbcon.close()
+			# dbcon.close()
 		except:
-			import traceback
-			traceback.print_exc()
-			dbcon.close()
+			log_utils.error()
+			# dbcon.close()
 			pass
+		dbcon.close()
 
 
 	def alterSources(self, url, meta):
@@ -1038,8 +1024,7 @@ class Sources:
 
 			# self.sources = pm_filter
 		# except:
-			# import traceback
-			# traceback.print_exc()
+			# log_utils.error()
 			# pass
 		# # ###---------
 
@@ -1055,8 +1040,7 @@ class Sources:
 			try:
 				self.sources = [i for i in self.sources if '3D' not in i.get('info', '')]
 			except:
-				import traceback
-				traceback.print_exc()
+				log_utils.error()
 				pass
 
 		random.shuffle(self.sources)

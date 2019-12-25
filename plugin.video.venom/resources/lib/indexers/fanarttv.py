@@ -8,6 +8,7 @@ import json
 
 from resources.lib.modules import client
 from resources.lib.modules import control
+# from resources.lib.modules import log_utils
 
 user = control.setting('fanart.tv.user')
 if user == '' or user is None:
@@ -130,8 +131,8 @@ def get_tvshow_art(tvdb):
 	url = base_url % ('tv', '%s')
 	art = client.request(url % tvdb, headers=headers, timeout='10', error=True)
 	art = json.loads(art)
-	if 'error message' in art and art['error message'].lower() == 'not found':
 
+	if 'error message' in art and art['error message'].lower() == 'not found':
 		return None
 
 	try:

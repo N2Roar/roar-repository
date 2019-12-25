@@ -7,6 +7,7 @@
 import os, sys
 
 from resources.lib.modules import control
+from resources.lib.modules import log_utils
 from resources.lib.modules import trakt
 
 try:
@@ -19,6 +20,7 @@ except:
 
 artPath = control.artPath()
 imdbCredentials = False if control.setting('imdb.user') == '' else True
+tmdbSessionID = False if control.setting('tmdb.session_id') == '' else True
 traktCredentials = trakt.getTraktCredentialsInfo()
 traktIndicators = trakt.getTraktIndicatorsInfo()
 indexLabels = False if control.setting('index.labels') == 'false' else True
@@ -311,15 +313,33 @@ class Navigator:
 	def library(self):
 	# -- Library - 9
 		self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-		self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
+		self.addDirectoryItem(32558, 'updateLibrary', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
+		self.addDirectoryItem(32676, 'cleanLibrary', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
+
 		self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
 		self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 
 		if traktCredentials is True:
 			self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png', isFolder=False)
 			self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem(32672, 'moviesListToLibrary&url=traktlists', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem(32673, 'moviesListToLibrary&url=traktlikedlists', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+
+		if tmdbSessionID is True:
+			self.addDirectoryItem('TMDb: Import Movie Watchlist...', 'moviesToLibrary&url=tmdb_watchlist', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem('TMDb: Import Movie Favorites...', 'moviesToLibrary&url=tmdb_favorites', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem('TMDb: Import Movie User list...', 'moviesListToLibrary&url=tmdb_userlists', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
+
+		if traktCredentials is True:
 			self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
 			self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
+			self.addDirectoryItem(32674, 'tvshowsListToLibrary&url=traktlists', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem(32675, 'tvshowsListToLibrary&url=traktlikedlists', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+
+		if tmdbSessionID is True:
+			self.addDirectoryItem('TMDb: Import TV Watchlist...', 'tvshowsToLibrary&url=tmdb_watchlist', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem('TMDb: Import TV Favorites...', 'tvshowsToLibrary&url=tmdb_favorites', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
+			self.addDirectoryItem('TMDb: Import TV User list...', 'tvshowsListToLibrary&url=tmdb_userlists', 'tmdb.png', 'DefaultMovies.png', isFolder=False)
 		self.endDirectory()
 
 
@@ -372,6 +392,7 @@ class Navigator:
 			from resources.lib.modules import views
 			views.setView(content, {})
 		except:
+			log_utils.error()
 			return
 
 
@@ -402,8 +423,7 @@ class Navigator:
 			cache.cache_clear_all()
 			control.notification(title='default', message='All Cache Successfully Cleared!', icon='default', sound=notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -419,8 +439,7 @@ class Navigator:
 			cache.cache_clear_providers()
 			control.notification(title='default', message='Provider Cache Successfully Cleared!', icon='default', sound=notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -436,8 +455,7 @@ class Navigator:
 			cache.cache_clear_meta()
 			control.notification(title = 'default', message = 'Metadata Cache Successfully Cleared!', icon = 'default', sound = notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -453,8 +471,7 @@ class Navigator:
 			cache.cache_clear()
 			control.notification(title = 'default', message = 'Cache Successfully Cleared!', icon = 'default', sound = notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -470,8 +487,7 @@ class Navigator:
 			cache.cache_clear_search()
 			control.notification(title = 'default', message = 'Search History Successfully Cleared!', icon = 'default', sound = notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -487,8 +503,7 @@ class Navigator:
 			cache.cache_clear_SearchPhrase(table, name)
 			control.notification(title = 'default', message = 'Search Phrase Successfully Cleared!', icon = 'default', sound = notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -504,8 +519,7 @@ class Navigator:
 			cache.cache_clear_bookmarks()
 			control.notification(title = 'default', message = 'Bookmarks Successfully Cleared!', icon = 'default', sound = notificationSound)
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 			pass
 
 
@@ -516,8 +530,7 @@ class Navigator:
 			if type(name) is int:
 				name = control.lang(name).encode('utf-8')
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 		url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
@@ -540,7 +553,6 @@ class Navigator:
 
 		cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
-
 
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)

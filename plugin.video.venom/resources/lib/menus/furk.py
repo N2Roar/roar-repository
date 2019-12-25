@@ -2,8 +2,11 @@
 	Venom Add-on
 '''
 
+import sys, os
+import requests, json, urllib, urlparse
+
 from resources.lib.modules import control
-import sys, requests, json, urllib, urlparse, os
+from resources.lib.modules import log_utils
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 accepted_extensions = ['mkv','mp4','avi', 'm4v']
@@ -21,10 +24,6 @@ class Furk:
 		self.add_download_link = "/api/dl/add?"
 		self.api_key = control.setting('furk.api')
 		self.list = []
-
-# This looks wrong so check it
-		test = os.
-
 
 		def user_files(self):
 		if self.api_key == '':
@@ -58,6 +57,7 @@ class Furk:
 			self.endDirectory()
 			return ''
 		except:
+			log_utils.error()
 			pass
 
 	def search(self):
@@ -155,6 +155,7 @@ class Furk:
 			self.endDirectory()
 			return ''
 		except:
+			log_utils.error()
 			pass
 
 	def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
@@ -164,8 +165,7 @@ class Furk:
 			if type(name) is int:
 				name = control.lang(name).encode('utf-8')
 		except:
-			import traceback
-			traceback.print_exc()
+			log_utils.error()
 
 			url = '%s?action=%s' % (sysaddon, query) if isAction else query
 			item = control.item(label=name)
