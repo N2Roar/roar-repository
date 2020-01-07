@@ -248,14 +248,18 @@ class Episodes:
 			direct = False if control.setting('tvshows.direct') == 'false' else True
 
 			if self.trakt_link in url and url == self.progress_link:
-				try:
-					activity = trakt.getWatchedActivity()
-					if activity > cache.timeout(self.trakt_progress_list, url, self.trakt_user, self.lang, direct):
-						raise Exception()
-					self.list = cache.get(self.trakt_progress_list, 24, url, self.trakt_user, self.lang, direct)
-				except:
-					self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang, direct)
+				# try:
+					# activity = trakt.getWatchedActivity()
+					# if activity > cache.timeout(self.trakt_progress_list, url, self.trakt_user, self.lang, direct):
+						# raise Exception()
+					# self.list = cache.get(self.trakt_progress_list, 12, url, self.trakt_user, self.lang, direct)
+				# except:
+					# self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang, direct)
+				# self.sort(type = 'progress')
+
+				self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang, direct)
 				self.sort(type = 'progress')
+
 
 			elif self.trakt_link in url and url == self.mycalendar_link:
 				self.list = cache.get(self.trakt_episodes_list, 0.3, url, self.trakt_user, self.lang)
@@ -450,7 +454,6 @@ class Episodes:
 			url += '?extended=full'
 			result = trakt.getTrakt(url)
 			result = json.loads(result)
-
 			items = []
 		except:
 			return
@@ -547,7 +550,7 @@ class Episodes:
 				item2 = result[0]
 
 				num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
-				# TVDb index out of order for Seasons and Episodes now.  This now fails allot getting next episode in index and no simple fix
+				# TVDb index out of order for Season0 and Episodes now.  This now fails allot getting next episode in index and no simple fix to fetch next episode when we don't know when a season ends. Index based is right way but TVDb fucked us!!
 				item = [y for x,y in enumerate(item) if x > num][0]
 
 				artwork = artwork.split('<Banner>')
@@ -1520,6 +1523,8 @@ class Episodes:
 			watchedMenu = control.lang(32066).encode('utf-8')
 			unwatchedMenu = control.lang(32067).encode('utf-8')
 
+		traktManagerMenu = control.lang(32070).encode('utf-8')
+
 		playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
 
@@ -1641,11 +1646,8 @@ class Episodes:
 							air = air = ' '.join(air)
 
 						if airLocation == '0' or airLocation == '1':
-							# air = '[%s]' % air
 							air = '[COLOR skyblue][%s][/COLOR]' % air
-
-						if airBold: air = '[B]' + str(air) + '[/B]'
-
+						if airBold == 'true': air = '[B]%s[/B]' % str(air)
 						if airLocation == '0':
 							labelProgress = '%s %s' % (air, labelProgress)
 						elif airLocation == '1':
@@ -1688,7 +1690,6 @@ class Episodes:
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
-					traktManagerMenu = control.lang(32070).encode('utf-8')
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s&episode=%s)' % (
 										sysaddon, systvshowtitle, imdb, tvdb, season, episode)))
 
@@ -1703,12 +1704,12 @@ class Episodes:
 
 					if watched:
 						meta.update({'playcount': 1, 'overlay': 7})
-						cm.append((unwatchedMenu, 'RunPlugin(%s?action=episodePlaycount&imdb=%s&tvdb=%s&season=%s&episode=%s&query=6)' % (
-												sysaddon, imdb, tvdb, season, episode)))
+						cm.append((unwatchedMenu, 'RunPlugin(%s?action=episodePlaycount&name=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&query=6)' % (
+												sysaddon, systvshowtitle, imdb, tvdb, season, episode)))
 					else:
 						meta.update({'playcount': 0, 'overlay': 6})
-						cm.append((watchedMenu, 'RunPlugin(%s?action=episodePlaycount&imdb=%s&tvdb=%s&season=%s&episode=%s&query=7)' % (
-												sysaddon, imdb, tvdb, season, episode)))
+						cm.append((watchedMenu, 'RunPlugin(%s?action=episodePlaycount&name=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&query=7)' % (
+												sysaddon, systvshowtitle, imdb, tvdb, season, episode)))
 				except:
 					pass
 
@@ -1756,8 +1757,9 @@ class Episodes:
 						cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
 											sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
 
-				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
-										sysaddon, systvshowtitle, year, imdb, tvdb)))
+				if control.setting('library.service.update') == 'true':
+					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
+											sysaddon, systvshowtitle, year, imdb, tvdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 
 				# cm.append(('PlayAll', 'RunPlugin(%s?action=playAll)' % sysaddon))
@@ -1817,7 +1819,6 @@ class Episodes:
 					page = '  [I](%s)[/I]' % str(((start - 1) / self.count) + 1)
 				else:
 					page = url_params.get('page')
-					# page = '  [I](%s)[/I]' % str(url.split('&page=', 1)[1])
 					page = '  [I](%s)[/I]' % page
 
 				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'

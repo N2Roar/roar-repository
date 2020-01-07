@@ -1,3 +1,55 @@
+[B][COLOR red]Update - v3.4.4 - Jan. 03, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt watch/unwatched context menu options.[/I]
+
+[B][COLOR red]Update - v3.4.3 - Jan. 02, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed loop issue with re-occurring library yes/no dialog.[/I]
+
+[B][COLOR red]Update - v3.4.2 - Dec. 31, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added "Add Show to Watchlist" and "Remove Show
+    from Watchlist" options to Trakt Manager when
+    viewing seasons or episodes.[/I]
+[COLOR yellow]--[/COLOR][I] Added "Hide Movie" or "Hide Show" options to Trakt
+    Manager to hide from Progress and Calendar.  Use
+    to cleanup within the addon folks!  Load time can be
+    sped up cleaning out old itmes you may never finish
+    a series of.[/I]
+[COLOR yellow]--[/COLOR][I] Made separate notifications settings for Trakt Server
+    Notifications and General Notifications.  General Notifications
+    covers Trakt Manager functions only and can now be turned
+    off independently of Trakt Server/Timeout issues.[/I]
+[COLOR yellow]--[/COLOR][I] Added widget refresh function for Trakt changes done
+    within the addon.[/I]
+[COLOR yellow]--[/COLOR][I] Removed caching of Trakt Progress list so item changes
+    are shown immediately.  This does cause reloading of Progress
+    list to load no faster on subsequent loading of the list.[/I]
+
+[B][COLOR red]Update - v3.4.1 - Dec. 29, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt/TMDb list imports not adding "list_name"
+    to database when imported from My Movies or My TVShows.
+    This caused service update failures.[/I]
+
+[B][COLOR red]Update - v3.4.0 - Dec. 26, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added 2nd notification to library folder check notification
+    for auto folder setup.  Now if you answer "no" to the auto
+    folder setup you will be presented with a 2nd yes-no dialog
+    asking if you'd also like to disable the "Auto Update Service".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed Update Service failure if no user lists were
+    previously imported under the new system. The failure
+    occurred because the db table was only written during
+    the import process so service update checks did not
+    find this table and halted the entire update process.
+    This has been fixed.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed occasional duplicate folder entries in the Kodi
+    "MyVideos*.db" file.  This occurs because Kodi does
+    not fully remove path table entries when manually
+    deleted but instead Kodi zeroes out the values so it's
+    not seen.  This has been fixed to remove those old
+    entries when using the auto folder setup process.[/I]
+[COLOR yellow]--[/COLOR][I] Removed link caching process outside of Venom due
+    to no global context menu to "Rescrape".  Global
+    context menu options are in the works so this is a
+    temp solution.[/I]
+
 [B][COLOR red]Update - v3.3.9 - Dec. 23, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed broken for loop from previous update preventing
     Library Updates from completing.[/I]

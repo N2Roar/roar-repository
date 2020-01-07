@@ -544,7 +544,10 @@ class Movies:
 
 			items = [(i['name'], i['url']) for i in items]
 
-			select = control.selectDialog([i[0] for i in items], control.lang(32663).encode('utf-8'))
+			message = 32663
+			if 'themoviedb' in url: message = 32681
+
+			select = control.selectDialog([i[0] for i in items], control.lang(message).encode('utf-8'))
 			list_name = items[select][0]
 
 			if select == -1:
@@ -555,9 +558,6 @@ class Movies:
 
 			from resources.lib.modules import libtools
 			libtools.libmovies().range(link, list_name)
-
-			# url = '%s?action=moviesToLibrary&url=%s&list_name=%s' % (sys.argv[0], link, list_name)
-			# control.execute('RunPlugin(%s)' % url)
 		except:
 			log_utils.error()
 			return
@@ -1346,12 +1346,12 @@ class Movies:
 					except: pass
 
 					if watched:
-						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
+						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&name=%s&imdb=%s&query=6)' % (sysaddon, sysname, imdb)))
 						meta.update({'playcount': 1, 'overlay': 7})
 						# lastplayed = trakt.watchedMoviesTime(imdb)
 						# meta.update({'lastplayed': lastplayed})
 					else:
-						cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
+						cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&name=%s&imdb=%s&query=7)' % (sysaddon, sysname, imdb)))
 						meta.update({'playcount': 0, 'overlay': 6})
 				except:
 					pass
@@ -1372,7 +1372,8 @@ class Movies:
 				elif control.setting('hosts.mode') != '1':
 					cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
 
-				cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+				if control.setting('library.service.update') == 'true':
+					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
@@ -1474,9 +1475,9 @@ class Movies:
 					cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
 				try:
-					cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
-				except:
-					pass
+					if control.setting('library.service.update') == 'true':
+						cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s&list_name=%s)' % (sysaddon, urllib.quote_plus(i['context']), name)))
+				except: pass
 
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))

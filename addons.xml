@@ -337,7 +337,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 	</extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.3.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.4.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -348,6 +348,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 		<import addon="script.module.resolveurl" version="5.0.27"/>
 		<import addon="script.module.openscrapers" />
 		<import addon="script.module.addon.signals" version="0.0.3"/>
+<!-- 		<import addon="context.venom" version="1.0.0"/> -->
 	</requires>
 
 	<extension point="xbmc.python.pluginsource" library="venom.py">
@@ -358,6 +359,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 	<extension point="xbmc.python.module" library="resources/lib/"/>
 
 	<extension point="xbmc.addon.metadata">
+		<reuselanguageinvoker>false</reuselanguageinvoker> <!-- You can enable this if you want, expect some instability but much faster menu speeds -->
 		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] - We do not host any of the contents streamed</summary>
 		<description lang="en">[B]Venom[/B][CR] This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels.[CR]The author does not host any of the content in this addon and takes no responsibility for content found.</description>
 		<platform>all</platform>
@@ -374,10 +376,8 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.3.9 - Dec. 23, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed broken for loop from previous update preventing
-    Library Updates from completing.[/I]
-[COLOR yellow]--[/COLOR][I] Added Disney+ and Showcase to TVShows Networks.[/I]
+[B][COLOR red]Update - v3.4.4 - Jan. 03, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Trakt watch/unwatched context menu options.[/I]
 		</news>
 	</extension>
 </addon>

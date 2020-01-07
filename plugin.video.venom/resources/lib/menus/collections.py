@@ -1261,12 +1261,12 @@ class Collections:
 					watched = (overlay == 7)
 
 					if watched:
-						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
+						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&name=%s&imdb=%s&query=6)' % (sysaddon, sysname, imdb)))
 						meta.update({'playcount': 1, 'overlay': 7})
 						# lastplayed = trakt.watchedMoviesTime(imdb)
 						# meta.update({'lastplayed': lastplayed})
 					else:
-						cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
+						cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&name=%s&imdb=%s&query=7)' % (sysaddon, sysname, imdb)))
 						meta.update({'playcount': 0, 'overlay': 6})
 				except:
 					pass
@@ -1287,7 +1287,8 @@ class Collections:
 				elif control.setting('hosts.mode') != '1':
 					cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
 
-				cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+				if control.setting('library.service.update') == 'true':
+					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))

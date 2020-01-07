@@ -2048,6 +2048,49 @@ msgctxt "#33050"
 msgid "Notifications"
 msgstr ""
 
+msgctxt "#33051"
+msgid "Server Notifications"
+msgstr ""
+
+msgctxt "#33052"
+msgid "General Notifications"
+msgstr ""
+
+msgctxt "#33053"
+msgid "%s has been hidden from your %s"
+msgstr ""
+
+msgctxt "#33054"
+msgid ""
+msgstr ""
+
+msgctxt "#33055"
+msgid ""
+msgstr ""
+
+msgctxt "#33055"
+msgid ""
+msgstr ""
+
+msgctxt "#33056"
+msgid ""
+msgstr ""
+
+msgctxt "#33057"
+msgid ""
+msgstr ""
+
+msgctxt "#33058"
+msgid ""
+msgstr ""
+
+msgctxt "#33059"
+msgid ""
+msgstr ""
+
+
+
+
 
 
 
@@ -2153,11 +2196,11 @@ msgid ""
 msgstr ""
 
 msgctxt "#33573"
-msgid ""
+msgid "Add Show to your [COLOR red][B]Watchlist[/B][/COLOR]"
 msgstr ""
 
 msgctxt "#33574"
-msgid ""
+msgid "Remove Show from your [COLOR red][B]Watchlist[/B][/COLOR]"
 msgstr ""
 
 msgctxt "#33575"
@@ -2209,8 +2252,23 @@ msgid "Error Connecting to TMDB"
 msgstr ""
 
 msgctxt "#33587"
+msgid "Install Venom Global Context menu Addon..."
+msgstr ""
+
+msgctxt "#33588"
+msgid "Enable Venom Global Context menu"
+msgstr ""
+
+msgctxt "#33589"
 msgid ""
 msgstr ""
+
+msgctxt "#33590"
+msgid ""
+msgstr ""
+
+
+
 
 
 
@@ -2699,11 +2757,11 @@ msgid "Rate"
 msgstr ""
 
 msgctxt "#35502"
-msgid "Marked As Watched On Trakt"
+msgid "%s Marked As Watched On Trakt"
 msgstr ""
 
 msgctxt "#35503"
-msgid "Marked As Unwatched On Trakt"
+msgid "%s Marked As Unwatched On Trakt"
 msgstr ""
 
 msgctxt "#35504"
@@ -3064,6 +3122,18 @@ msgid "Originals (TVMaze)"
 msgstr ""
 
 msgctxt "#40072"
-msgid ""
+msgid "Watched Progress"
+msgstr ""
+
+msgctxt "#40073"
+msgid "Calendar"
+msgstr ""
+
+msgctxt "#40074"
+msgid "Select Menu type to hide from"
+msgstr ""
+
+msgctxt "#40075"
+msgid "Hide %s"
 msgstr ""
 

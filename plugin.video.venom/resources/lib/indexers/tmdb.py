@@ -308,7 +308,7 @@ class Movies:
 		for item in items:
 			media_type = item.get('media_type', '0')
 			if media_type == 'tv':
-				raise Exception()
+				continue
 
 			try:
 				title = item.get('title').encode('utf-8')
@@ -674,9 +674,9 @@ class TVshows:
 			next = ''
 
 		for item in items:
-			media_type = item.get('media_type')
+			media_type = item.get('media_type', '0')
 			if media_type == 'movie':
-				raise Exception()
+				continue
 
 			try:
 				title = item.get('name').encode('utf-8')
@@ -874,7 +874,7 @@ class Auth:
 
 			if result3.get('success') is True:
 				session_id = result3.get('session_id')
-				control.setSetting('tmdb.session_id', session_id)
+			if control.yesnoDialog(msg, '', ''):
 				control.notification(title='default', message='TMDb Successfully Authorized', icon='default')
 			else:
 				control.notification(title='default', message='TMDb Authorization FAILED', icon='ERROR')

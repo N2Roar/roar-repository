@@ -485,11 +485,11 @@ elif action == 'urlResolverRDTorrent':
 ####################################################
 elif action == 'moviePlaycount':
 	from resources.lib.modules import playcount
-	playcount.movies(imdb, query)
+	playcount.movies(name, imdb, query)
 
 elif action == 'episodePlaycount':
 	from resources.lib.modules import playcount
-	playcount.episodes(imdb, tvdb, season, episode, query)
+	playcount.episodes(name, imdb, tvdb, season, episode, query)
 
 elif action == 'tvPlaycount':
 	from resources.lib.modules import playcount
@@ -675,6 +675,8 @@ elif action == 'movieToLibrary':
 
 elif action == 'moviesToLibrary':
 	from resources.lib.modules import libtools
+	xbmc.log('url=%s' % url, 2)
+	xbmc.log('list_name=%s' % list_name, 2)
 	libtools.libmovies().range(url, list_name)
 
 elif action == 'moviesListToLibrary':
@@ -704,6 +706,8 @@ elif action == 'tvshowsToLibrarySilent':
 elif action == 'updateLibrary':
 	from resources.lib.modules import libtools
 	libtools.libepisodes().update()
+	libtools.libmovies().list_update()
+	libtools.libtvshows().list_update()
 
 elif action == 'cleanLibrary':
 	from resources.lib.modules import libtools

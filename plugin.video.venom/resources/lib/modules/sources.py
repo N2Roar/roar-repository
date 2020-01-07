@@ -32,7 +32,10 @@ class Sources:
 			if rescrape:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 			else:
-				items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+				if 'plugin' not in control.infoLabel('Container.PluginName'):
+					items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+				else:
+					items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
 			if items is None:
 				self.url = url

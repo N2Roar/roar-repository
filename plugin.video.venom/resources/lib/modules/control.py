@@ -33,6 +33,9 @@ XBFONT_CENTER_X = 0x00000002
 XBFONT_CENTER_Y = 0x00000004
 XBFONT_TRUNCATED = 0x00000008
 window = xbmcgui.Window(10000)
+homeWindow = xbmcgui.Window(10000)
+# xbmcgui.Window(10000).setProperty('VenomGlobalContextEnabled', setting('enable.venom.context'))
+
 windowDialog = xbmcgui.WindowDialog()
 dialog = xbmcgui.Dialog()
 progressDialog = xbmcgui.DialogProgress()
@@ -575,6 +578,7 @@ def add_source(source_name, source_path, source_content, source_thumbnail, type=
 	if existing_source and existing_source != source_path and source_content != '':
 		_remove_source_content(existing_source)
 	if _add_source_xml(xml_file, source_name, source_path, source_thumbnail, type=type) and source_content != '':
+		_remove_source_content(source_path) # Added to also rid any remains because manual delete sources and kodi leaves behind a record in MyVideos*.db
 		_set_source_content(source_content)
 
 
