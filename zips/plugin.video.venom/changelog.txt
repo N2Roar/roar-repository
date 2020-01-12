@@ -1,3 +1,18 @@
+[B][COLOR red]Update - v3.4.5 - Jan. 11, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fix for TVDB latest change to SSL requirement.
+    Thank you ruiner!![/I]
+[COLOR yellow]--[/COLOR][I] Few settings tweaks for non Trakt users to hide
+    options not pertaining to them.[/I]
+[COLOR yellow]--[/COLOR][I] Added new Tools option to clean, remove old deprecated
+    settings from userdata settings.xml.  New option will clean
+    both Venom and OpenScrapers.  Please note that until
+    OpenScrapers pushes the PR request this only works
+    for Venom at this time.  Openscrapers update is coming
+    for this to also work there.  This tool will also auto run
+    upon new Venom update. Courtesy of FEN!![/I]
+[COLOR yellow]--[/COLOR][I] Few tweaks to TV Shows - Networks to fix random
+    dropped titles due to None types in api response.[/I]
+
 [B][COLOR red]Update - v3.4.4 - Jan. 03, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed Trakt watch/unwatched context menu options.[/I]
 

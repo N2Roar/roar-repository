@@ -8,6 +8,8 @@ import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime
 
+import requests
+
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
 from resources.lib.modules import client
@@ -50,7 +52,6 @@ class TVshows:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
 
@@ -1069,11 +1070,13 @@ class TVshows:
 				except:
 					pass
 
-###--Check TVDb for missing info
+###--Check TVDb for missing ID's
 			if tvdb == '0' or imdb == '0':
 				url = self.tvdb_by_query % (urllib.quote_plus(self.list[i]['title']))
+				# item2 = client.request(url, timeout='10')
+				item2 = requests.get(url).content
+				# log_utils.log('item2 = %s' % str(item2), __name__, log_utils.LOGDEBUG)
 
-				item2 = client.request(url, timeout='10')
 				item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
 				item2 = client.replaceHTMLCodes(item2)
 				item2 = client.parseDOM(item2, 'Series')
@@ -1089,17 +1092,18 @@ class TVshows:
 						imdb = client.parseDOM(item2, 'IMDB_ID')[0]
 					except:
 						imdb = '0'
+#################################
 
 			if tvdb == '0' or tvdb is None:
 				raise Exception()
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
-			# log_utils.log('url = %s' % str(url), __name__, log_utils.LOGDEBUG)
-			item = client.request(url, timeout='10', error = True)
+			item = requests.get(url).content
+			# log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
 
 			# url = self.tvdb_zip_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# data = requests.get(url)
+			# zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 			# result = zip.read('en.xml')
 			# artwork = zip.read('banners.xml')
 			# actors = zip.read('actors.xml')
@@ -1167,7 +1171,7 @@ class TVshows:
 
 			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == []:
 				url2 = self.tvdb_info_link % (tvdb, 'actors')
-				actors = client.request(url2, timeout='10', error=True)
+				actors = requests.get(url2).content
 				castandart = []
 				if actors is not None:
 					import xml.etree.ElementTree as ET

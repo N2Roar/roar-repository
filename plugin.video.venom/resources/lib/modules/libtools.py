@@ -142,7 +142,7 @@ class lib_tools:
 		# If not, ask user to run full auto setup or turn off service.
 		contains = False
 		try:
-			if paths == None:
+			if paths is None:
 				paths = []
 				movie_LibraryFolder = os.path.join(control.transPath(control.setting('library.movie')), '')
 				special_movie_LibraryFolder = os.path.join(control.setting('library.movie'), '')
@@ -288,10 +288,8 @@ class libmovies:
 			source_name = 'Venom Movies'
 			source_content = "('%s','movies','metadata.themoviedb.org','',2147483647,1,'<settings version=\"2\"><setting id=\"certprefix\" default=\"true\">Rated </setting><setting id=\"fanart\">true</setting><setting id=\"imdbanyway\">true</setting><setting id=\"keeporiginaltitle\" default=\"true\">false</setting><setting id=\"language\" default=\"true\">en</setting><setting id=\"RatingS\" default=\"true\">TMDb</setting><setting id=\"tmdbcertcountry\" default=\"true\">us</setting><setting id=\"trailer\">true</setting></settings>',0,0,NULL,NULL)" % self.library_folder
 			control.add_source(source_name, self.library_folder, source_content, icon)
-			return True
 		except:
 			log_utils.error()
-			False
 
 
 	def list_update(self):
@@ -436,7 +434,7 @@ class libmovies:
 			try:
 				if xbmc.abortRequested is True:
 					return sys.exit()
-				file_added = self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range=True)
+				files_added = self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range=True)
 				if general_notification and files_added > 0:
 					control.notification(title = '%s (%s)' % (i['title'], i['year']), message = 32554, icon = 'default', time = 1000, sound = notificationSound)
 					total_added += 1
@@ -604,10 +602,8 @@ class libtvshows:
 			# TMDb scraper
 			# source_content = "('%s','tvshows','metadata.tvshows.themoviedb.org','',0,0,'<settings version=\"2\"><setting id=\"alsoimdb\" default=\"true\">false</setting><setting id=\"certprefix\" default=\"true\"></setting><setting id=\"fallback\">true</setting><setting id=\"fanarttvart\">true</setting><setting id=\"keeporiginaltitle\" default=\"true\">false</setting><setting id=\"language\" default=\"true\">en</setting><setting id=\"RatingS\" default=\"true\">Themoviedb</setting><setting id=\"tmdbart\">true</setting><setting id=\"tmdbcertcountry\" default=\"true\">us</setting></settings>',0,0,NULL,NULL)" % self.library_folder
 			control.add_source(source_name, self.library_folder, source_content, icon)
-			return True
 		except:
 			log_utils.error()
-			False
 
 
 	def list_update(self):

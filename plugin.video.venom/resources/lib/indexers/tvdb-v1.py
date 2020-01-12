@@ -38,8 +38,11 @@ def getZip(tvdb):
 	url = zip_link % (tvdb, lang)
 
 	try:
-		data = urllib2.urlopen(url, timeout=30).read()
-		zip = zipfile.ZipFile(StringIO.StringIO(data))
+		# data = urllib2.urlopen(url, timeout=30).read()
+		# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+		data = requests.get(url)
+		zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 		if zip is None:
 			raise Exception()
@@ -65,8 +68,11 @@ def parseAll(tvdb):
 			tvdb = str(dupe[0]).encode('utf-8')
 
 			url = zip_link % (tvdb, 'en')
-			data = urllib2.urlopen(url, timeout=30).read()
-			zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# data = urllib2.urlopen(url, timeout=30).read()
+			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+			data = requests.get(url)
+			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -75,8 +81,12 @@ def parseAll(tvdb):
 
 		# if lang != 'en':
 			# url = zip_link % (tvdb, lang)
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# # data = urllib2.urlopen(url, timeout=30).read()
+			# # zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+			# data = requests.get(url)
+			# zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 			# result2 = zip.read('%s.xml' % lang)
 			# zip.close()
 		# else:
@@ -225,7 +235,8 @@ def parseAll(tvdb):
 
 
 		actors = getActors(tvdb)
-		castandart = parseActors(actors
+		castandart = parseActors(actors)
+
 
 
 

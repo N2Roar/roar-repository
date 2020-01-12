@@ -8,6 +8,8 @@ import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime, copy
 
+import requests
+
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
 from resources.lib.modules import client
@@ -259,7 +261,6 @@ class Episodes:
 
 				self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang, direct)
 				self.sort(type = 'progress')
-
 
 			elif self.trakt_link in url and url == self.mycalendar_link:
 				self.list = cache.get(self.trakt_episodes_list, 0.3, url, self.trakt_user, self.lang)
@@ -537,8 +538,11 @@ class Episodes:
 		def items_list(i):
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], lang)
-				data = urllib2.urlopen(url, timeout=10).read()
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				# data = urllib2.urlopen(url, timeout=10).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -903,9 +907,12 @@ class Episodes:
 
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], lang)
-				data = urllib2.urlopen(url, timeout=10).read()
+				# data = urllib2.urlopen(url, timeout=10).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
 
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
@@ -1248,8 +1255,12 @@ class Episodes:
 			self.list = []
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], self.lang)
-				data = urllib2.urlopen(url, timeout=10).read()
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				# data = urllib2.urlopen(url, timeout=10).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 
 				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')

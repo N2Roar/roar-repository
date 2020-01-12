@@ -688,3 +688,54 @@ def _set_source_content(content):
 	q = 'INSERT OR REPLACE INTO path (strPath,strContent,strScraper,strHash,scanRecursive,useFolderNames,strSettings,noUpdate,exclude,dateAdded,idParentPath) VALUES '
 	q += content
 	return _db_execute('MyVideos*.db', q)
+
+
+def clean_settings():
+	import xml.etree.ElementTree as ET
+	def _make_content(dict_object):
+		content = '<settings version="2">'
+		for item in dict_object:
+			if item['id'] in active_settings:
+				if 'default' in item and 'value' in item: content += '\n    <setting id="%s" default="%s">%s</setting>' % (item['id'], item['default'], item['value'])
+				elif 'default' in item: content += '\n    <setting id="%s" default="%s"></setting>' % (item['id'], item['default'])
+				elif 'value' in item: content += '\n    <setting id="%s">%s</setting>' % (item['id'], item['value'])
+				else: content += '\n    <setting id="%s"></setting>'
+			else: removed_settings.append(item)
+		content += '\n</settings>'
+		return content
+
+	for addon_id in ('plugin.video.venom', 'script.module.openscrapers'):
+		try:
+			removed_settings = []
+			active_settings = []
+			current_user_settings = []
+			addon = xbmcaddon.Addon(id=addon_id)
+			addon_name = addon.getAddonInfo('name')
+			addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
+			profile_dir = xbmc.translatePath(addon.getAddonInfo('profile'))
+			active_settings_xml = os.path.join(addon_dir, 'resources', 'settings.xml')
+			root = ET.parse(active_settings_xml).getroot()
+			for item in root.findall('./category/setting'):
+				setting_id = item.get('id')
+				if setting_id: active_settings.append(setting_id)
+			settings_xml = os.path.join(profile_dir, 'settings.xml')
+			root = ET.parse(settings_xml).getroot()
+			for item in root:
+				dict_item = {}
+				setting_id = item.get('id')
+				setting_default = item.get('default')
+				setting_value = item.text
+				dict_item['id'] = setting_id
+				if setting_value: dict_item['value'] = setting_value
+				if setting_default: dict_item['default'] = setting_default
+				current_user_settings.append(dict_item)
+			new_content = _make_content(current_user_settings)
+			nfo_file = xbmcvfs.File(settings_xml, 'w')
+			nfo_file.write(new_content)
+			nfo_file.close()
+			sleep(200)
+			notification(title = addon_name, message = lang(32084).encode('utf-8').format(str(len(removed_settings))), icon = 'INFO', sound=False)
+		except:
+			import traceback
+			traceback.print_exc()
+			notification(title = addon_name, message = 'Error Cleaning Settings.xml. Old settings.xml files Restored.', icon = 'INFO', sound=False)

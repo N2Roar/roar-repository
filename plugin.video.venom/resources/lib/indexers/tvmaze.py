@@ -6,6 +6,7 @@
 
 import json, re, urllib
 import datetime
+import requests
 
 from resources.lib.modules import cache
 from resources.lib.modules import client
@@ -285,7 +286,10 @@ class tvshows:
 				premiered = item.get('premiered', '0')
 
 				year = str(item.get('premiered', '0'))
-				year = re.search(r"(\d{4})", year).group(1)
+				if year is not None and year != 'None' and year != '0':
+					year = re.search(r"(\d{4})", year).group(1)
+				else:
+					year = '0'
 
 				imdb = item.get('externals').get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
@@ -295,7 +299,7 @@ class tvshows:
 				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
-				# TVMaze does not have tmdb in api
+				# TVMaze does not have tmdb_id in api
 				tmdb = '0'
 
 				studio = item.get('network', {}) or item.get('webChannel', {})
@@ -327,9 +331,11 @@ class tvshows:
 						pass
 					if len(castandart) == 150: break
 
-				poster = item.get('image').get('original')
+				image = item.get('image')
+				poster = image.get('original', '0') if image is not None else '0'
 				fanart = '0' ; banner = '0'
 				mpaa = '0' ; votes = '0'
+				airday = '0' ; airtime = '0'
 
 ###--Check TVDb for missing info
 				# self.list = metacache.fetch(self.list, self.lang, self.user)
@@ -337,7 +343,9 @@ class tvshows:
 					# raise Exception()
 				if tvdb == '0' and imdb != '0':
 					url = self.tvdb_by_imdb % imdb
-					result = client.request(url)
+					# result = client.request(url)
+					result = requests.get(url).content
+
 					try:
 						tvdb = client.parseDOM(result, 'seriesid')[0]
 					except:
@@ -345,22 +353,31 @@ class tvshows:
 
 				if tvdb == '0' or imdb == '0':
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
-					item2 = client.request(url, timeout='20', error=True)
+					# item2 = client.request(url, timeout='20', error=True)
+					item2 = requests.get(url).content
+
 					item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
 					item2 = client.replaceHTMLCodes(item2)
 					item2 = client.parseDOM(item2, 'Series')
 
 					if tvdb == '0': 
-						tvdb = client.parseDOM(item2, 'seriesid')[0] or '0'
+						try:
+							tvdb = client.parseDOM(item2, 'seriesid')[0] or '0'
+						except:
+							tvdb = '0'
 
 					if imdb == '0':
-						imdb = client.parseDOM(item2, 'IMDB_ID')[0] or '0'
+						try:
+							imdb = client.parseDOM(item2, 'IMDB_ID')[0] or '0'
+						except:
+							imdb = '0'
 
 				try:
 					if self.tvdb_key == '' or tvdb == '0':
 						raise Exception()
 					url = self.tvdb_info_link % (tvdb, self.lang)
-					item3 = client.request(url, timeout='20', error=True)
+					item3 = requests.get(url).content
+
 				except:
 					item3 = None
 
@@ -392,8 +409,9 @@ class tvshows:
 						status = client.parseDOM(item3, 'Status')[0] or '0'
 
 					if year == '0':
-						year = client.parseDOM(item3, 'FirstAired')[0]
-						year = re.compile('(\d{4})').findall(year)[0] or '0'
+						year = client.parseDOM(item3, 'FirstAired')[0] or '0'
+						if year != '0':
+							year = re.compile('(\d{4})').findall(year)[0] or '0'
 
 					if plot == '0':
 						plot = client.parseDOM(item3, 'Overview')[0] or '0'
@@ -402,14 +420,14 @@ class tvshows:
 						except: pass
 
 					airday = client.parseDOM(item3, 'Airs_DayOfWeek')[0] or '0'
+					# log_utils.log('airday = %s' % str(airday), __name__, log_utils.LOGDEBUG)
 					airtime = client.parseDOM(item3, 'Airs_Time')[0] or '0'
 ###-----
 
 				item = {}
 				item = {'content': content, 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 
 							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'airday': airday, 'airtime': airtime, 'poster': poster,
-							'poster2': '0', 'banner': banner,
-							'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+							'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {}
 				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}

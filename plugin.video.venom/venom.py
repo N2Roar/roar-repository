@@ -48,6 +48,7 @@ if action is None:
 	if cache._find_cache_version():
 		run = 'true'
 	if run == 'true':
+		control.execute('RunPlugin(plugin://plugin.video.venom/?action=cleanSettings)')
 		from resources.lib.modules import changelog
 		changelog.get()
 		control.setSetting(id='first.info', value='false')
@@ -441,6 +442,10 @@ elif action == 'viewsNavigator':
 elif action == 'resetViewTypes':
 	from resources.lib.modules import views
 	views.clearViews()
+
+elif action == 'cleanSettings':
+	from resources.lib.modules import control
+	control.clean_settings()
 
 elif action == 'addView':
 	from resources.lib.modules import views

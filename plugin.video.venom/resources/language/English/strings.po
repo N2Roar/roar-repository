@@ -364,6 +364,34 @@ msgid ""
 msgstr ""
 
 msgctxt "#32083"
+msgid "Clean Settings file: [B]VENOM[/B] and "[B]OpenScrapers[/B]"
+msgstr ""
+
+msgctxt "#32084"
+msgid "{} Obsolete Settings Entries Removed"
+msgstr ""
+
+msgctxt "#32085"
+msgid ""
+msgstr ""
+
+msgctxt "#32086"
+msgid ""
+msgstr ""
+
+msgctxt "#32087"
+msgid ""
+msgstr ""
+
+msgctxt "#32088"
+msgid ""
+msgstr ""
+
+msgctxt "#32089"
+msgid ""
+msgstr ""
+
+msgctxt "#32090"
 msgid ""
 msgstr ""
 
@@ -2680,8 +2708,17 @@ msgctxt "#35397"
 msgid ""
 msgstr ""
 
+msgctxt "#35398"
+msgid ""
+msgstr ""
 
+msgctxt "#35399"
+msgid ""
+msgstr ""
 
+msgctxt "#35400"
+msgid ""
+msgstr ""
 
 
 

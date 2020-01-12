@@ -8,6 +8,8 @@ import sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime
 
+import requests
+
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
 from resources.lib.modules import cleantitle
@@ -234,7 +236,8 @@ class Seasons:
 
 			if tvdb == '0' and imdb != '0':
 				url = self.tvdb_by_imdb % imdb
-				result = client.request(url, timeout='10')
+				# result = client.request(url, timeout='10')
+				result = requests.get(url).content
 
 				try:
 					tvdb = client.parseDOM(result, 'seriesid')[0]
@@ -254,11 +257,12 @@ class Seasons:
 					tvdb = '0'
 
 			if tvdb == '0':
-				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
-
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
+				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
+				# tvdb = client.request(url, timeout='10')
 
-				tvdb = client.request(url, timeout='10')
+				tvdb = requests.get(url).content
+
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
 				tvdb = client.replaceHTMLCodes(tvdb)
 				tvdb = client.parseDOM(tvdb, 'Series')
@@ -278,8 +282,11 @@ class Seasons:
 			if tvdb == '0':
 				return
 			url = self.tvdb_info_link % (tvdb, 'en')
-			data = urllib2.urlopen(url, timeout=30).read()
-			zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# data = urllib2.urlopen(url, timeout=30).read()
+			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+			data = requests.get(url)
+			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -293,8 +300,11 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 
 				url = self.tvdb_info_link % (tvdb, 'en')
-				data = urllib2.urlopen(url, timeout=30).read()
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
@@ -303,8 +313,12 @@ class Seasons:
 
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
-				data = urllib2.urlopen(url, timeout=30).read()
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 				result2 = zip.read('%s.xml' % lang)
 				zip.close()
 			else:
@@ -778,7 +792,8 @@ class Seasons:
 
 			if tvdb == '0' and imdb != '0':
 				url = self.tvdb_by_imdb % imdb
-				result = client.request(url, timeout='10')
+				# result = client.request(url, timeout='10')
+				result = requests.get(url).content
 
 				try:
 					tvdb = client.parseDOM(result, 'seriesid')[0]
@@ -797,9 +812,12 @@ class Seasons:
 					tvdb = '0'
 
 			if tvdb == '0':
-				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
-				tvdb = client.request(url, timeout='10')
+				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
+				# tvdb = client.request(url, timeout='10')
+
+				tvdb = requests.get(url).content
+
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
 				tvdb = client.replaceHTMLCodes(tvdb)
 				tvdb = client.parseDOM(tvdb, 'Series')
@@ -818,8 +836,12 @@ class Seasons:
 				return None
 
 			url = self.tvdb_info_link % (tvdb, 'en')
-			data = urllib2.urlopen(url, timeout=30).read()
-			zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# data = urllib2.urlopen(url, timeout=30).read()
+			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+			data = requests.get(url)
+			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 			result = zip.read('%s.xml' % 'en')
 			zip.close()
 
@@ -829,8 +851,12 @@ class Seasons:
 			if len(dupe) > 0:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
-				data = urllib2.urlopen(url, timeout=30).read()
-				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+
 				result = zip.read('%s.xml' % 'en')
 				zip.close()
 
