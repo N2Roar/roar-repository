@@ -44,13 +44,9 @@ class Episodes:
 		self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
-		# self.tvdb_key = control.setting('tvdb.user')
-		# if self.tvdb_key == '' or self.tvdb_key is None:
-			# self.tvdb_key = '1D62F2F90030C444'
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
 		self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'
 
@@ -58,13 +54,10 @@ class Episodes:
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
 
 		self.trakt_link = 'http://api.trakt.tv'
-		# self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/episodes?page=1&limit=%d' % ('%s', '%s', self.count)
 		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/episodes'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		# self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes?page=1&limit=%d' % self.count
 		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes'
-		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?page=1&limit=%d' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?limit=200'
 		self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
 		self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
@@ -538,11 +531,17 @@ class Episodes:
 		def items_list(i):
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], lang)
-				# data = urllib2.urlopen(url, timeout=10).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -907,11 +906,17 @@ class Episodes:
 
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], lang)
-				# data = urllib2.urlopen(url, timeout=10).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -1255,12 +1260,17 @@ class Episodes:
 			self.list = []
 			try:
 				url = self.tvdb_info_link % (i['tvdb'], self.lang)
-				# data = urllib2.urlopen(url, timeout=10).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')

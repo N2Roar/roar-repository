@@ -364,7 +364,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#32083"
-msgid "Clean Settings file: [B]VENOM[/B] and "[B]OpenScrapers[/B]"
+msgid "Clean Settings file: [B]VENOM[/B] and [B]OpenScrapers[/B]"
 msgstr ""
 
 msgctxt "#32084"

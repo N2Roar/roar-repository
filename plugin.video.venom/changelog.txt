@@ -1,3 +1,16 @@
+[B][COLOR red]Update - v3.4.6 - Jan. 16, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Another fix for this weeks TVDB change to SSL.
+    Seems this week some shows are back to working with
+    legacy SSL support while others do not.  What this now
+    means is urllib2.urlopen() request works for some shows
+    while requests.get() works for others.  When the request
+    does not satisfy the SSL requirement the response xml's
+    are empty yet server still responds with <Response 200>
+    I've now coded a check for the first request and if the xml's
+    are empty then we'll use requests.get().  This appears to now
+    get all shows back to laoding season/episode lists.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed settings.xml typo from last update.[/I]
+
 [B][COLOR red]Update - v3.4.5 - Jan. 11, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fix for TVDB latest change to SSL requirement.
     Thank you ruiner!![/I]

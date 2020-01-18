@@ -1073,9 +1073,14 @@ class TVshows:
 ###--Check TVDb for missing ID's
 			if tvdb == '0' or imdb == '0':
 				url = self.tvdb_by_query % (urllib.quote_plus(self.list[i]['title']))
-				# item2 = client.request(url, timeout='10')
-				item2 = requests.get(url).content
-				# log_utils.log('item2 = %s' % str(item2), __name__, log_utils.LOGDEBUG)
+				try:
+					item2 = client.request(url, timeout='10')
+					test = client.parseDOM(item2, 'Data')[0]
+					if test == '':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						item2 = requests.get(url).content
+				except:
+					item2 = requests.get(url).content
 
 				item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
 				item2 = client.replaceHTMLCodes(item2)
@@ -1098,8 +1103,14 @@ class TVshows:
 				raise Exception()
 
 			url = self.tvdb_info_link % (tvdb, self.lang)
-			item = requests.get(url).content
-			# log_utils.log('item = %s' % str(item), __name__, log_utils.LOGDEBUG)
+			try:
+				item = client.request(url, timeout='10', error = True)
+				test = client.parseDOM(item, 'id')[0]
+				if test == '0':
+					log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+					item = requests.get(url).content
+			except:
+				item = requests.get(url).content
 
 			# url = self.tvdb_zip_link % (tvdb, 'en')
 			# data = requests.get(url)
@@ -1171,7 +1182,15 @@ class TVshows:
 
 			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == []:
 				url2 = self.tvdb_info_link % (tvdb, 'actors')
-				actors = requests.get(url2).content
+				try:
+					actors = client.request(url2, timeout='10', error=True)
+					test = client.parseDOM(actors, 'Actors')[0]
+					if test == '':
+						log_utils.log('actors.xml is empty with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						actors = requests.get(url2).content
+				except:
+					actors = requests.get(url2).content
+
 				castandart = []
 				if actors is not None:
 					import xml.etree.ElementTree as ET

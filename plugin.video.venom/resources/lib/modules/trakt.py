@@ -113,9 +113,7 @@ def getTrakt(url, post = None, cache = True, check = False, timestamp = None, ex
 def getTraktAsJson(url, post = None, authentication = None):
 	try:
 		res_headers = {}
-
 		r = getTrakt(url = url, post = post, extended = True, authentication = authentication)
-
 		if isinstance(r, tuple) and len(r) == 2:
 			res_headers = r[1]
 			r = r[0]

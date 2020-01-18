@@ -9,9 +9,7 @@
 [COLOR yellow]--[/COLOR][I] - 2.) add service, and option to enable, to
     notify user of new updates for those that turn
     off auto updates.[/I]
-[COLOR yellow]--[/COLOR][I] - 2.) Add service to rebuild user_data
-    "settings.xml" to remove deprecated settings that
-    Kodi does not remove.[/I]
+
 
 [B][COLOR red]October 9, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Wow, I did not realize it's been months

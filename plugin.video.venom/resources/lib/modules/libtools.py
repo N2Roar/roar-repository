@@ -228,6 +228,7 @@ class lib_tools:
 		try:
 			control.window.setProperty(self.property, last_service)
 		except:
+			log_utils.error()
 			return
 
 		while not xbmc.Monitor().abortRequested():
@@ -236,10 +237,14 @@ class lib_tools:
 					break
 
 				last_service = control.window.getProperty(self.property)
+				log_utils.log('last_service = %s' % last_service, log_utils.LOGDEBUG)
 
 				t1 = datetime.timedelta(hours=6)
+				# log_utils.log('t1 = %s' % t1, log_utils.LOGDEBUG)
 				t2 = datetime.datetime.strptime(last_service, '%Y-%m-%d %H:%M:%S.%f')
+				log_utils.log('t2 = %s' % t2, log_utils.LOGDEBUG)
 				t3 = datetime.datetime.now()
+				# log_utils.log('t3 = %s' % t3, log_utils.LOGDEBUG)
 				check = abs(t3 - t2) >= t1
 				if check is False:
 					continue
@@ -1083,9 +1088,10 @@ class libepisodes:
 					raise Exception()
 
 				it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], idx = False)
+				# if it == []: raise Exception()
+				if it == []: continue
 
 				status = it[0]['status'].lower()
-
 				it = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in it]
 
 				if status == 'continuing': raise Exception()

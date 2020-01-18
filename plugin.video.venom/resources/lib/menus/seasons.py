@@ -209,12 +209,15 @@ class Seasons:
 
 	def tvdb_list(self, tvshowtitle, year, imdb, tvdb, lang, limit = ''):
 		tmdb = '0'
+
 		try:
 			# if imdb == '0' or tmdb == '0' or tvdb == '0':
 			if imdb == '0' or tvdb == '0':
 				try:
-					trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
-					trakt_ids = trakt_ids.get('show', '0')
+					trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)
+					if not trakt_ids:
+						raise Exception()
+					trakt_ids = trakt_ids[0].get('show', '0')
 
 					if imdb == '0':
 						imdb = trakt_ids.get('ids', {}).get('imdb', '0')
@@ -236,8 +239,14 @@ class Seasons:
 
 			if tvdb == '0' and imdb != '0':
 				url = self.tvdb_by_imdb % imdb
-				# result = client.request(url, timeout='10')
-				result = requests.get(url).content
+				try:
+					result = client.request(url, timeout='10')
+					test = client.parseDOM(result, 'Data')[0]
+					if test == '':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						result = requests.get(url).content
+				except:
+					result = requests.get(url).content
 
 				try:
 					tvdb = client.parseDOM(result, 'seriesid')[0]
@@ -259,9 +268,18 @@ class Seasons:
 			if tvdb == '0':
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
 				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
-				# tvdb = client.request(url, timeout='10')
+				try:
+					tvdb = client.request(url, timeout='10', error=True)
+					test = client.parseDOM(tvdb, 'Data')[0]
+					if test == '':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						tvdb = requests.get(url).content
+				except:
+					tvdb = requests.get(url).content
 
-				tvdb = requests.get(url).content
+				if (client.parseDOM(tvdb, 'Data')[0]) == '':
+					log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
+					raise Exception()
 
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
 				tvdb = client.replaceHTMLCodes(tvdb)
@@ -271,22 +289,26 @@ class Seasons:
 				tvdb = [x for x in tvdb if cleantitle.get(tvshowtitle) == cleantitle.get(x[1])]
 				tvdb = [x[0][0] for x in tvdb if any(y in x[2] for y in years)][0]
 				tvdb = client.parseDOM(tvdb, 'seriesid')[0]
-
-				if tvdb == '':
-					tvdb = '0'
+				if tvdb == '': tvdb = '0'
 		except:
 			log_utils.error()
-			return
+			return None
 
 		try:
 			if tvdb == '0':
 				return
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-			data = requests.get(url)
-			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			try:
+				data = urllib2.urlopen(url, timeout=30).read()
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				chk = zip.read('en.xml')
+				test = client.parseDOM(chk, 'id')[0]
+				if test == '0':
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			except:
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -298,13 +320,18 @@ class Seasons:
 
 			if len(dupe) > 0:
 				tvdb = str(dupe[0]).encode('utf-8')
-
 				url = self.tvdb_info_link % (tvdb, 'en')
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
@@ -313,11 +340,17 @@ class Seasons:
 
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result2 = zip.read('%s.xml' % lang)
 				zip.close()
@@ -565,6 +598,7 @@ class Seasons:
 											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
 											'thumb': thumb, 'unaired': unaired})
 				self.list = sorted(self.list, key=lambda k: int(k['season'])) # Temp fix for TVDb fucked up index, does not fix Trakt-Progress
+
 			except:
 				log_utils.error()
 				pass
@@ -792,8 +826,14 @@ class Seasons:
 
 			if tvdb == '0' and imdb != '0':
 				url = self.tvdb_by_imdb % imdb
-				# result = client.request(url, timeout='10')
-				result = requests.get(url).content
+				try:
+					result = client.request(url, timeout='10')
+					test = client.parseDOM(result, 'Data')[0]
+					if test == '':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						result = requests.get(url).content
+				except:
+					result = requests.get(url).content
 
 				try:
 					tvdb = client.parseDOM(result, 'seriesid')[0]
@@ -814,9 +854,18 @@ class Seasons:
 			if tvdb == '0':
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
 				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
-				# tvdb = client.request(url, timeout='10')
+				try:
+					tvdb = client.request(url, timeout='10', error=True)
+					test = client.parseDOM(tvdb, 'Data')[0]
+					if test == '':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+						tvdb = requests.get(url).content
+				except:
+					tvdb = requests.get(url).content
 
-				tvdb = requests.get(url).content
+				if (client.parseDOM(tvdb, 'Data')[0]) == '':
+					log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
+					raise Exception()
 
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
 				tvdb = client.replaceHTMLCodes(tvdb)
@@ -836,11 +885,17 @@ class Seasons:
 				return None
 
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-			data = requests.get(url)
-			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			try:
+				data = urllib2.urlopen(url, timeout=30).read()
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
+				chk = zip.read('en.xml')
+				test = client.parseDOM(chk, 'id')[0]
+				if test == '0':
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			except:
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 			result = zip.read('%s.xml' % 'en')
 			zip.close()
@@ -851,11 +906,17 @@ class Seasons:
 			if len(dupe) > 0:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				try:
+					data = urllib2.urlopen(url, timeout=30).read()
+					zip = zipfile.ZipFile(StringIO.StringIO(data))
+					chk = zip.read('en.xml')
+					test = client.parseDOM(chk, 'id')[0]
+					if test == '0':
+						data = requests.get(url)
+						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				except:
+					data = requests.get(url)
+					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % 'en')
 				zip.close()

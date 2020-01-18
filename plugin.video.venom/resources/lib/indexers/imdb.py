@@ -368,35 +368,8 @@ class tvshows:
 		self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
 		self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
-		# self.tvdb_key = control.setting('tvdb.user')
-		# if self.tvdb_key == '' or self.tvdb_key is None:
-			# self.tvdb_key = '1D62F2F90030C444'
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
-
-##--TMDb artwork
-			try:
-				if self.tmdb_key == '': raise Exception()
-				art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
-				art2 = json.loads(art2)
-			except:
-				pass
-
-			try:
-				poster3 = art2['posters']
-				poster3 = [(x['width'], x['file_path']) for x in poster3]
-				poster3 = [x[1] for x in poster3]
-				poster3 = self.tmdb_poster + poster3[0]
-			except:
-				poster3 = '0'
-
-			try:
-				fanart2 = art2['backdrops']
-				fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-				fanart2 = [x[1] for x in fanart2]
-				fanart2 = self.tmdb_fanart + fanart2[0]
-			except:
-				fanart2 = '0'

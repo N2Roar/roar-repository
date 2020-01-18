@@ -18,11 +18,11 @@ traktCredentials = trakt.getTraktCredentialsInfo()
 try:
 	AddonVersion = control.addon('plugin.video.venom').getAddonInfo('version')
 	RepoVersion = control.addon('repository.venom').getAddonInfo('version')
-	log_utils.log('################### Venom ######################', log_utils.LOGNOTICE)
-	log_utils.log('####### CURRENT Venom VERSIONS REPORT ##########', log_utils.LOGNOTICE)
-	log_utils.log('######### Venom PLUGIN VERSION: %s #########' % str(AddonVersion), log_utils.LOGNOTICE)
-	log_utils.log('####### Venom REPOSITORY VERSION: %s #######' % str(RepoVersion), log_utils.LOGNOTICE)
-	log_utils.log('################################################', log_utils.LOGNOTICE)
+	log_utils.log('###################   Venom   ##################', log_utils.LOGNOTICE)
+	log_utils.log('#####   CURRENT Venom VERSIONS REPORT   #####', log_utils.LOGNOTICE)
+	log_utils.log('########   Venom PLUGIN VERSION: %s   ########' % str(AddonVersion), log_utils.LOGNOTICE)
+	log_utils.log('#####   Venom REPOSITORY VERSION: %s   #######' % str(RepoVersion), log_utils.LOGNOTICE)
+	log_utils.log('############################################', log_utils.LOGNOTICE)
 
 except:
 	log_utils.log('############################# Venom ############################', log_utils.LOGNOTICE)

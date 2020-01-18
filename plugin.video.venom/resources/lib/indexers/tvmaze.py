@@ -315,7 +315,8 @@ class tvshows:
 				rating = str(item.get('rating').get('average', '0'))
 
 				plot = item.get('summary', '0')
-				plot = re.sub('<.+?>|</.+?>|\n', '', plot)
+				if plot:
+					plot = re.sub('<.+?>|</.+?>|\n', '', plot)
 
 				status = item.get('status', '0')
 
@@ -343,8 +344,14 @@ class tvshows:
 					# raise Exception()
 				if tvdb == '0' and imdb != '0':
 					url = self.tvdb_by_imdb % imdb
-					# result = client.request(url)
-					result = requests.get(url).content
+					try:
+						result = client.request(url, timeout='10')
+						test = client.parseDOM(result, 'Data')[0]
+						if test == '':
+							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+							result = requests.get(url).content
+					except:
+						result = requests.get(url).content
 
 					try:
 						tvdb = client.parseDOM(result, 'seriesid')[0]
@@ -353,8 +360,18 @@ class tvshows:
 
 				if tvdb == '0' or imdb == '0':
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
-					# item2 = client.request(url, timeout='20', error=True)
-					item2 = requests.get(url).content
+					try:
+						item2 = client.request(url, timeout='10', error=True)
+						test = client.parseDOM(tvdb, 'Data')[0]
+						if test == '':
+							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+							item2 = requests.get(url).content
+					except:
+						item2 = requests.get(url).content
+
+					if (client.parseDOM(tvdb, 'Data')[0]) == '':
+						log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
+						raise Exception()
 
 					item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
 					item2 = client.replaceHTMLCodes(item2)
@@ -376,7 +393,14 @@ class tvshows:
 					if self.tvdb_key == '' or tvdb == '0':
 						raise Exception()
 					url = self.tvdb_info_link % (tvdb, self.lang)
-					item3 = requests.get(url).content
+					try:
+						item3 = client.request(url, timeout='10', error = True)
+						test = client.parseDOM(item, 'id')[0]
+						if test == '0':
+							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
+							item3 = requests.get(url).content
+					except:
+						item3 = requests.get(url).content
 
 				except:
 					item3 = None
@@ -413,7 +437,7 @@ class tvshows:
 						if year != '0':
 							year = re.compile('(\d{4})').findall(year)[0] or '0'
 
-					if plot == '0':
+					if not plot:
 						plot = client.parseDOM(item3, 'Overview')[0] or '0'
 						plot = client.replaceHTMLCodes(plot)
 						try: plot = plot.encode('utf-8')
