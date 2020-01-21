@@ -8,7 +8,7 @@ import json
 
 from resources.lib.modules import client
 from resources.lib.modules import control
-# from resources.lib.modules import log_utils
+from resources.lib.modules import log_utils
 
 user = control.setting('fanart.tv.user')
 if user == '' or user is None:
@@ -25,12 +25,15 @@ lang = control.apiLanguage()['trakt']
 def get_movie_art(imdb, tmdb):
 	url = base_url % ('movies', '%s')
 	art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
-	art = json.loads(art)
+	try: art = json.loads(art)
+	except: pass
+
 
 	# Check IMDb ID if TMDb ID not found.
 	if 'error message' in art and art['error message'].lower() == 'not found' and (imdb != '0' and imdb is not None):
 		art = client.request(url % imdb, headers=headers, timeout='10', error=True)
-		art = json.loads(art)
+		try: art = json.loads(art)
+		except: pass
 		if 'error message' in art and art['error message'].lower() == 'not found':
 			return None
 
@@ -130,8 +133,8 @@ def get_movie_art(imdb, tmdb):
 def get_tvshow_art(tvdb):
 	url = base_url % ('tv', '%s')
 	art = client.request(url % tvdb, headers=headers, timeout='10', error=True)
-	art = json.loads(art)
-
+	try: art = json.loads(art)
+	except: pass
 	if 'error message' in art and art['error message'].lower() == 'not found':
 		return None
 

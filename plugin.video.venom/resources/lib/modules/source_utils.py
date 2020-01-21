@@ -47,9 +47,17 @@ MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng'
 							'esp.eng', 'fin.eng', 'fra.eng', 'fre.eng', 'frn.eng', 'gai.eng', 'ger.eng', 'gle.eng', 'gre.eng', 'gtm.eng',
 							'heb.eng', 'hin.eng', 'hun.eng', 'ind.eng', 'iri.eng', 'ita.eng', 'jap.eng', 'jpn.eng', 'kor.eng', 'lat.eng',
 							'lebb.eng', 'lit.eng', 'nor.eng', 'pol.eng', 'por.eng', 'rus.eng', 'som.eng', 'spa.eng', 'sve.eng',
-							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio', 'dual.audio']
+							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio',
+							'dual.audio', 'multi']
 
-LANG = ['french', 'italian', 'spanish', 'truefrech', 'german', 'arabic', 'dutch', 'portuguese', 'greek', 'arabic', 'finnish', 'hebrew']
+LANG = ['arabic', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'spanish',
+				'truefrench', 'truespanish', 'hebrew']
+
+UNDESIREABLES = ['baibako', 'coldfilm', 'jaskier', 'ideafilm', 'lakefilm', 'lostfilm', 'newstudio', 'vostfr', 'hamsterstudio']
+
+DUBBED = ['dublado', 'dubbed']
+
+SUBS = ['subs', 'subtitula', 'subfrench', 'subspanish', 'swesub']
 
 ADDS = ['1xbet']
 
@@ -145,10 +153,6 @@ def getFileType(url):
 	try:
 		url = url.lower()
 		url = url.replace(' ', '.')
-
-		# url = fmt.replace('7.1', '7-1').replace('6.1', '6-1').replace('5.1', '5-1')
-		# url = re.split('\.|\(|\)|\[|\]|\s|', url)
-
 	except:
 		url = str(url)
 
@@ -178,7 +182,10 @@ def getFileType(url):
 	if any(value in url for value in ['hd-rip', 'hd.rip', 'hdrip']):
 		type += ' HDRIP /'
 
-	if any(value in url for value in ['dd5.1', 'dd-5.1', 'dolby-digital', 'dolby.digital']):
+	if 'hdr.' in url:
+		type += ' HDR /'
+
+	if any(value in url for value in ['dd5.1', 'dd-5.1', 'dd5-1', 'dolby-digital', 'dolby.digital']):
 		type += ' DOLBYDIGITAL /'
 
 	if any(value in url for value in ['.ddex', 'dd-ex', 'dolby-ex', 'dolby.digital.ex']):
@@ -253,7 +260,7 @@ def getFileType(url):
 	if any(value in url for value in ADDS):
 		type += ' 1XBET /'
 
-	if 'subs' in url: 
+	if any(value in url for value in SUBS):
 		if type != '':
 			type += ' WITH SUBS'
 		else:
@@ -544,6 +551,26 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
 		derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
 		number_of_derived_words += len(block) / 4
 	return {"key": derived_bytes[0: key_size * 4], "iv": derived_bytes[key_size * 4:]}
+
+
+def remove_lang(name):
+	try:
+		name = name.lower()
+		name = name.replace(' ', '.')
+	except:
+		name = str(name)
+
+	if any(value in name for value in LANG):
+		return True
+	elif any(value in name for value in UNDESIREABLES):
+		return True
+	elif any(value in name for value in DUBBED):
+		return True
+	# elif 'rus' in name and 'eng' not in name:
+	elif 'rus' in name and any(value in name for value in ['eng', 'multi']):
+		return True
+	else:
+		return False
 
 
 def ck_CamSd():

@@ -694,8 +694,11 @@ class libtvshows:
 					control.notification(title = tvshowtitle, message = 32552, icon = 'default', time = 1000, sound =notificationSound )
 
 			try:
-				from resources.lib.menus import episodes
-				items = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, idx=False)
+				# from resources.lib.menus import episodes
+				# items = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, idx=False)
+
+				from resources.lib.menus import seasons
+				items = seasons.Seasons().tvdb_list(tvshowtitle, year, imdb, tvdb, control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
 			except:
 				log_utils.error()
 				return
@@ -1054,6 +1057,7 @@ class libepisodes:
 
 		try:
 			from resources.lib.menus import episodes
+			# from resources.lib.menus import seasons
 		except:
 			return
 
@@ -1088,7 +1092,7 @@ class libepisodes:
 					raise Exception()
 
 				it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], idx = False)
-				# if it == []: raise Exception()
+				# it = seasons.Seasons().tvdb_list(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
 				if it == []: continue
 
 				status = it[0]['status'].lower()

@@ -38,12 +38,10 @@ class Seasons:
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
-		# self.tvdb_key = control.setting('tvdb.user')
-		# if self.tvdb_key == '' or self.tvdb_key is None:
-		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
-		# decoded key above = 1D62F2F90030C444
+		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
+
 		# Test for api response
-		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.zip
+		# http://thetvdb.com/api/7R8SZZX90UA9YMBU/series/121361/all/en.zip
 
 		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -304,6 +302,7 @@ class Seasons:
 				chk = zip.read('en.xml')
 				test = client.parseDOM(chk, 'id')[0]
 				if test == '0':
+					log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 					data = requests.get(url)
 					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 			except:
@@ -311,6 +310,11 @@ class Seasons:
 				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 			result = zip.read('en.xml')
+			test = client.parseDOM(result, 'id')[0]
+			if test == '0':
+				log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
+				raise Exception()
+
 			artwork = zip.read('banners.xml')
 			actors = zip.read('actors.xml')
 			zip.close()
@@ -327,6 +331,7 @@ class Seasons:
 					chk = zip.read('en.xml')
 					test = client.parseDOM(chk, 'id')[0]
 					if test == '0':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 						data = requests.get(url)
 						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 				except:
@@ -346,6 +351,7 @@ class Seasons:
 					chk = zip.read('en.xml')
 					test = client.parseDOM(chk, 'id')[0]
 					if test == '0':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 						data = requests.get(url)
 						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 				except:
@@ -891,6 +897,7 @@ class Seasons:
 				chk = zip.read('en.xml')
 				test = client.parseDOM(chk, 'id')[0]
 				if test == '0':
+					log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 					data = requests.get(url)
 					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 			except:
@@ -912,6 +919,7 @@ class Seasons:
 					chk = zip.read('en.xml')
 					test = client.parseDOM(chk, 'id')[0]
 					if test == '0':
+						log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 						data = requests.get(url)
 						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 				except:

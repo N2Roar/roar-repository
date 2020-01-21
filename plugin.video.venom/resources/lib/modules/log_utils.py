@@ -14,6 +14,7 @@ from xbmc import LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO, LOGNONE, LOGNOTICE, LOGS
 
 from resources.lib.modules import control
 
+
 name = control.addonInfo('name')
 DEBUGPREFIX = '[COLOR red][ Venom DEBUG ][/COLOR]'
 LOGPATH = xbmc.translatePath('special://logpath/')
@@ -106,7 +107,6 @@ def error(message=None, exception=True):
 		else:
 			caller = None
 		log(msg=message, caller=caller, level = LOGERROR)
-
 	except:
 		pass
 

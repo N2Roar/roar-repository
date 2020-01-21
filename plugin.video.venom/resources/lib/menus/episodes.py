@@ -44,7 +44,7 @@ class Episodes:
 		self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
-		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_image = 'http://thetvdb.com/banners/'

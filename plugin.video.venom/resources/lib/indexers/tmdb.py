@@ -128,7 +128,10 @@ class Movies:
 
 		try:
 			page = int(result['page'])
+			log_utils.log('page = %s' % str(page), __name__, log_utils.LOGDEBUG)
 			total = int(result['total_pages'])
+			log_utils.log('total = %s' % str(total), __name__, log_utils.LOGDEBUG)
+
 			if page >= total:
 				raise Exception()
 			if 'page=' not in url:
@@ -266,7 +269,6 @@ class Movies:
 		self.list = metacache.fetch(self.list, self.lang, API_key)
 		# items = list[:len(list)]
 		items = self.list[:len(self.list)]
-		# log_utils.log('len(items) = %s' % len(items), __name__, log_utils.LOGDEBUG)
 
 		threads = []
 		for i in items:

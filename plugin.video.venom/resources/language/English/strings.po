@@ -240,7 +240,7 @@ msgid "Remove 3D Sources"
 msgstr ""
 
 msgctxt "#32052"
-msgid ""
+msgid "Enable Resolution Quality Icons"
 msgstr ""
 
 msgctxt "#32053"
@@ -1590,7 +1590,7 @@ msgid "Debugging"
 msgstr ""
 
 msgctxt "#32617"
-msgid "Debug Log"
+msgid "Logging Location"
 msgstr ""
 
 msgctxt "#32618"
@@ -2878,11 +2878,11 @@ msgid "Playlist Manager"
 msgstr ""
 
 msgctxt "#35523"
-msgid ""
+msgid "A new verison of Venom is available from the repository. Please consider updating to v%s"
 msgstr ""
 
 msgctxt "#35524"
-msgid ""
+msgid "Notify Me About Available Updates"
 msgstr ""
 
 msgctxt "#35525"
@@ -2921,9 +2921,57 @@ msgctxt "#35533"
 msgid ""
 msgstr ""
 
+msgctxt "#35534"
+msgid ""
+msgstr ""
 
+msgctxt "#35535"
+msgid ""
+msgstr ""
 
+msgctxt "#35536"
+msgid ""
+msgstr ""
 
+msgctxt "#35537"
+msgid ""
+msgstr ""
+
+msgctxt "#35538"
+msgid ""
+msgstr ""
+
+msgctxt "#35539"
+msgid ""
+msgstr ""
+
+msgctxt "#35540"
+msgid ""
+msgstr ""
+
+msgctxt "#35541"
+msgid ""
+msgstr ""
+
+msgctxt "#35542"
+msgid ""
+msgstr ""
+
+msgctxt "#35543"
+msgid ""
+msgstr ""
+
+msgctxt "#35544"
+msgid ""
+msgstr ""
+
+msgctxt "#35545"
+msgid ""
+msgstr ""
+
+msgctxt "#35546"
+msgid ""
+msgstr ""
 
 msgctxt "#35547"
 msgid "Force"

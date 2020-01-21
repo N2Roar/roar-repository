@@ -40,13 +40,8 @@ class TVshows:
 
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 
-		# self.tvdb_key = control.setting('tvdb.user')
-		# if self.tvdb_key == '' or self.tvdb_key is None:
-			# self.tvdb_key = '1D62F2F90030C444'
-		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
-
+		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 		self.imdb_user = control.setting('imdb.user').replace('ur', '')
-
 		self.user = str(self.imdb_user) + str(self.tvdb_key)
 
 		self.disable_fanarttv = control.setting('disable.fanarttv')

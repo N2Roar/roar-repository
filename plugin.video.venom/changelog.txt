@@ -1,3 +1,17 @@
+[B][COLOR red]Update - v3.4.7 - Jan. 21, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added setting to check for Venom updates at
+    startup. Useful for those that turn off Auto Updates.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting to enable-disable resolution icons
+    in source select dialog.[/I]
+[COLOR yellow]--[/COLOR][I] Added sort() method to TV Shows-Network
+    (TVMaze) to maintain consistency with TVMaze api
+    response.[/I]
+[COLOR yellow]--[/COLOR][I] Changed Library import method from reading
+    selected item to now fetch new meta.  This now better
+    respects on the fly changes made to "Enable Special
+    Season(0) and "Show unaired season/episodes".[/I]
+[COLOR yellow]--[/COLOR][I] New TVDB api key in use.[/I]
+
 [B][COLOR red]Update - v3.4.6 - Jan. 16, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Another fix for this weeks TVDB change to SSL.
     Seems this week some shows are back to working with

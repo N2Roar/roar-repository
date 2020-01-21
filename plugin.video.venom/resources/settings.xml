@@ -16,6 +16,7 @@
 		<setting id="hidecinema.rollback" type="slider" label="40063" enable="eq(-1,true)" default="6" range="1,12" option="int" />
 		<setting id="newmovies.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />
 		<setting id="notification.sound" type="bool" label="Enable Notification Sound" default="false" />
+		<setting id="general.checkAddonUpdates" type="bool" label="35524" default="true" />
 		<!-- <setting type="action" action="InstallAddon(context.venom)" label="33587" option="close" visible="!System.HasAddon(context.venom)"/>
 		<setting id="enable.venom.context" type="bool" default="false" label="33588" visible="System.HasAddon(context.venom)" /> -->
 		<setting type = "lsep" label="32003" />
@@ -133,14 +134,15 @@
 		<setting id="clear.sources" type="action" label="32611" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&amp;opensettings=true&amp;query=4.2)" />
 	</category>
 
-	<!-- Source Filters - 5 -->
-	<category label="Source Filters">
+	<!-- Source Options - 5 -->
+	<category label="Source Options">
 		<setting id="providers.lang" type="select" label="32360" values="English|German|Greek|Polish|Spanish|German+English|Greek+English|Polish+English|Spanish+English" default="English" />
 		<setting id="scrapers.timeout.1" type="slider" label="32312" default="30" range="10,60" option="int" />
-		<setting id="debrid.only" type="bool" label="32653" default="false" enable="true" />
+		<setting id="debrid.only" type="bool" label="32653" default="false" />
 		<setting id="hosts.mode" type="select" label="32331" lvalues="32332|32333|32334" default="1" />
 		<setting id="sourcelist.multiline" type="bool" label="Multiline source list" default="true" enable="eq(-1,1)" />
 		<setting id="sec.identify" type="select" label="Secondary Line Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671|32598" default="4" enable="eq(-1,true)" />
+		<setting id="enable.resquality.icons" type="bool" label="32052" default="false" />
 		<setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
 		<setting id="progress.dialog.prem.color" type="select" label="Progress Dialog Premium Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671" default="5" enable="eq(-1,0)" />
 		<setting id="progress.dialog.free.color" type="select" label="Progress Dialog Free Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671" default="1" enable="eq(-2,0)" />
@@ -201,7 +203,7 @@
 		<setting id="tmdb.message" type="action" label="  [COLOR FFA0C12C]Authorization rq'd to retrieve user lists[/COLOR]" default="[B][COLOR FFA0C12C]$ADDON[plugin.video.venom 35397][/COLOR][/B]" enable="true" />
 		<setting type="action" label="Authorize TMDb" option="close" enable="!eq(-3,) + !eq(-2,)" action="RunPlugin(plugin://plugin.video.venom/?action=authTMDb&amp;opensettings=true&amp;query=8.5)" />
 		<setting id="tmdb.session_id" type="text" default="" label="session_id" enable="false" />
-		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,true)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&amp;opensettings=true&amp;query=8.7)" />
+		<setting type="action" label="Revoke TMDb session_id" option="close" enable="!eq(-1,)" action="RunPlugin(plugin://plugin.video.venom/?action=revokeTMDb&amp;opensettings=true&amp;query=8.7)" />
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
 		<setting id="tvdb.jw" type="text" default="" visible="false" />

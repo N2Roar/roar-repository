@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.4.6" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.4.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -38,18 +38,19 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.4.6 - Jan. 16, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Another fix for this weeks TVDB change to SSL.
-    Seems this week some shows are back to working with
-    legacy SSL support while others do not.  What this now
-    means is urllib2.urlopen() request works for some shows
-    while requests.get() works for others.  When the request
-    does not satisfy the SSL requirement the response xml's
-    are empty yet server still responds with &lt;Response 200&gt;
-    I've now coded a check for the first request and if the xml's
-    are empty then we'll use requests.get().  This appears to now
-    get all shows back to laoding season/episode lists.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed settings.xml typo from last update.[/I]
+[B][COLOR red]Update - v3.4.7 - Jan. 21, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added setting to check for Venom updates at
+    startup. Useful for those that turn off Auto Updates.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting to enable-disable resolution icons
+    in source select dialog.[/I]
+[COLOR yellow]--[/COLOR][I] Added sort() method to TV Shows-Network
+    (TVMaze) to maintain consistency with TVMaze api
+    response.[/I]
+[COLOR yellow]--[/COLOR][I] Changed Library import method from reading
+    selected item to now fetch new meta.  This now better
+    respects on the fly changes made to "Enable Special
+    Season(0) and "Show unaired season/episodes".[/I]
+[COLOR yellow]--[/COLOR][I] New TVDB api key in use.[/I]
 		</news>
 	</extension>
 </addon>

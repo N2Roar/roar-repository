@@ -218,10 +218,8 @@ class tvshows:
 
 		self.tvmaze_link = 'http://www.tvmaze.com'
 		self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s?embed=cast'
-		# self.tvdb_key = control.setting('tvdb.user')
-		# if self.tvdb_key == '' or self.tvdb_key is None:
-			# self.tvdb_key = '1D62F2F90030C444'
-		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		# self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 
 		self.imdb_user = control.setting('imdb.user').replace('ur', '')
 
@@ -250,9 +248,6 @@ class tvshows:
 				items = client.parseDOM(result, 'span', attrs = {'class': 'title'})
 
 				list_count = 25
-				# from urlparse import parse_qsl
-				# url_params = dict(parse_qsl(url))
-				# page = url_params.get('page')
 				page = int(str(url.split('&page=', 1)[1]))
 				next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 
@@ -266,12 +261,15 @@ class tvshows:
 			items = [re.findall('/(\d+)/', i) for i in items]
 			items = [i[0] for i in items if len(i) > 0]
 			items = items[:list_count]
+			sortList = items
+
 		except:
 			log_utils.error()
 			return
 
 		def items_list(i):
 			try:
+				tvmaze = i
 				url = self.tvmaze_info_link % i
 				item = client.request(url, timeout='20', error=True)
 				item = json.loads(item)
@@ -362,14 +360,14 @@ class tvshows:
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
 					try:
 						item2 = client.request(url, timeout='10', error=True)
-						test = client.parseDOM(tvdb, 'Data')[0]
+						test = client.parseDOM(item2, 'Data')[0]
 						if test == '':
 							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
 							item2 = requests.get(url).content
 					except:
 						item2 = requests.get(url).content
 
-					if (client.parseDOM(tvdb, 'Data')[0]) == '':
+					if (client.parseDOM(item2, 'Data')[0]) == '':
 						log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
 						raise Exception()
 
@@ -450,7 +448,7 @@ class tvshows:
 
 				item = {}
 				item = {'content': content, 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 
-							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'airday': airday, 'airtime': airtime, 'poster': poster,
+							'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'tagline': '0', 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'tvmaze': tvmaze, 'airday': airday, 'airtime': airtime, 'poster': poster,
 							'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
 				meta = {}
@@ -482,11 +480,10 @@ class tvshows:
 			[i.start() for i in threads]
 			[i.join() for i in threads]
 
-			filter = [i for i in self.list if i['content'] == 'scripted']
-			filter += [i for i in self.list if not i['content'] == 'scripted']
-			self.list = filter
-
-			return self.list
+			sorted_list = []
+			for i in sortList:
+				sorted_list += [item for item in self.list if str(item['tvmaze']) == str(i)]
+			return sorted_list
 		except:
 			log_utils.error()
 			return

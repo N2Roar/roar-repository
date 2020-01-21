@@ -137,9 +137,6 @@ class Sources:
 		if control.setting('fanart') != 'true':
 			fanart = '0'
 
-		# thumb = meta.get('thumb')
-		# thumb = thumb or poster or fanart or control.addonThumb()
-
 		sysimage = urllib.quote_plus(poster.encode('utf-8'))
 		downloadMenu = control.lang(32403).encode('utf-8')
 
@@ -160,11 +157,15 @@ class Sources:
 					cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' %
 							(sysaddon, sysname, sysimage, syssource)))
 
-				quality = items[i]['quality']
-				# if quality == 'SCR': quality = 'CAM'
-				thumb = quality + '.png'
-				artPath = control.artPath()
-				thumb = os.path.join(artPath, thumb) if artPath is not None else ''
+				if control.setting('enable.resquality.icons') == 'true':
+					quality = items[i]['quality']
+					thumb = '%s%s' % (quality, '.png')
+					artPath = control.artPath()
+					thumb = os.path.join(artPath, thumb) if artPath is not None else ''
+
+				else:
+					thumb = meta.get('thumb')
+					thumb = thumb or poster or fanart or control.addonThumb()
 
 				item = control.item(label=label)
 				item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
@@ -832,10 +833,8 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)",
 							(source, imdb, '', '', repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
 				dbcur.connection.commit()
-			# dbcon.close()
 		except:
 			log_utils.error()
-			# dbcon.close()
 			pass
 		dbcon.close()
 
@@ -930,10 +929,8 @@ class Sources:
 				dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (
 				source, imdb, season, episode, repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
 				dbcur.connection.commit()
-			# dbcon.close()
 		except:
 			log_utils.error()
-			# dbcon.close()
 			pass
 		dbcon.close()
 

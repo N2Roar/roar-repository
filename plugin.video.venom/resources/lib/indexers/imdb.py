@@ -368,7 +368,8 @@ class tvshows:
 		self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
 		self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
-		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		# self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'

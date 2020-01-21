@@ -116,15 +116,12 @@ class Movies:
 		self.search_link = 'http://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
 		self.traktlistsearch_link = 'http://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
 
-		# self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies?limit=%d&page=1' % ('%s', '%s', self.count)
 		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
 
-		# self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies?limit=%d&page=1' % self.count
 		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
 		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=%d&page=1' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
 		self.traktonDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
@@ -133,7 +130,6 @@ class Movies:
 		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
 		self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
 		self.traktpopular_link = 'http://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
-		# self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=%d&page=1' % self.count
 		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
 
 

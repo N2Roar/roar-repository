@@ -136,13 +136,35 @@ def sleep2(seconds):
 	time.sleep(seconds)
 
 
+def getCurrentViewId():
+	win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+	return str(win.getFocusId())
+
+
 def getKodiVersion():
 	return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 
 
-def getCurrentViewId():
-	win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
-	return str(win.getFocusId())
+def check_version_numbers(current, new):
+	# Compares version numbers and return True if new version is newer
+	current = current.split('.')
+	new = new.split('.')
+	step = 0
+	for i in current:
+		if int(new[step]) > int(i):
+			return True
+		if int(i) == int(new[step]):
+			step += 1
+			continue
+	return False
+
+
+def getVenomVersion():
+	return xbmcaddon.Addon('plugin.video.venom').getAddonInfo('version')
+
+
+def addonVersion(addon):
+	return xbmcaddon.Addon(addon).getAddonInfo('version')
 
 
 def get_plugin_url(queries):
@@ -157,20 +179,6 @@ def get_plugin_url(queries):
 	if not addon_id:
 		addon_id = addonId()
 	return addon_id + '?' + query
-
-
-def version():
-	num = ''
-	try:
-		version = addon('xbmc.addon').getAddonInfo('version')
-	except:
-		version = '999'
-	for i in version:
-		if i.isdigit():
-			num += i
-		else:
-			break
-	return int(num)
 
 
 def addonId():
@@ -191,10 +199,6 @@ def addonPath(addon):
 		return ''
 	else:
 		return xbmc.translatePath(addonID.getAddonInfo('path').decode('utf-8'))
-
-
-def addonVersion(addon):
-	return xbmcaddon.Addon(addon).getAddonInfo('version')
 
 
 def artPath():
