@@ -4,11 +4,15 @@
 	Venom Add-on
 '''
 
-import json, re, urllib
+
+import re
+import urllib
+# import json
 import datetime
 import requests
 
 from resources.lib.modules import cache
+from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
@@ -213,19 +217,14 @@ class tvshows:
 		self.type = type
 		self.lang = control.apiLanguage()['tvdb']
 		self.notifications = notifications
-
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvmaze_link = 'http://www.tvmaze.com'
 		self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s?embed=cast'
-		# self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
-
 		self.imdb_user = control.setting('imdb.user').replace('ur', '')
-
 		self.user = str(self.imdb_user) + str(self.tvdb_key)
-
-		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -244,7 +243,6 @@ class tvshows:
 
 			if control.setting('tvshows.networks.view') == '1':
 				result = client.parseDOM(result, 'div', attrs = {'id': 'w1'})
-				# result = client.parseDOM(result, 'div', attrs = {'class': 'content auto cell'})
 				items = client.parseDOM(result, 'span', attrs = {'class': 'title'})
 
 				list_count = 25
@@ -262,7 +260,6 @@ class tvshows:
 			items = [i[0] for i in items if len(i) > 0]
 			items = items[:list_count]
 			sortList = items
-
 		except:
 			log_utils.error()
 			return
@@ -271,8 +268,7 @@ class tvshows:
 			try:
 				tvmaze = i
 				url = self.tvmaze_info_link % i
-				item = client.request(url, timeout='20', error=True)
-				item = json.loads(item)
+				item = requests.get(url, timeout=10).json()
 
 				content = item.get('type', '0').lower()
 
@@ -336,86 +332,92 @@ class tvshows:
 				mpaa = '0' ; votes = '0'
 				airday = '0' ; airtime = '0'
 
-###--Check TVDb for missing info
 				# self.list = metacache.fetch(self.list, self.lang, self.user)
 				# if self.list['metacache'] is True:
 					# raise Exception()
-				if tvdb == '0' and imdb != '0':
-					url = self.tvdb_by_imdb % imdb
-					try:
-						result = client.request(url, timeout='10')
-						test = client.parseDOM(result, 'Data')[0]
-						if test == '':
-							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
-							result = requests.get(url).content
-					except:
-						result = requests.get(url).content
 
-					try:
-						tvdb = client.parseDOM(result, 'seriesid')[0]
-					except:
-						tvdb = '0'
-
-				if tvdb == '0' or imdb == '0':
-					url = self.tvdb_by_query % (urllib.quote_plus(title))
-					try:
-						item2 = client.request(url, timeout='10', error=True)
-						test = client.parseDOM(item2, 'Data')[0]
-						if test == '':
-							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
-							item2 = requests.get(url).content
-					except:
-						item2 = requests.get(url).content
-
-					if (client.parseDOM(item2, 'Data')[0]) == '':
-						log_utils.log('xml still empty after requests.get()', __name__, log_utils.LOGDEBUG)
-						raise Exception()
-
-					item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
-					item2 = client.replaceHTMLCodes(item2)
-					item2 = client.parseDOM(item2, 'Series')
-
-					if tvdb == '0': 
-						try:
-							tvdb = client.parseDOM(item2, 'seriesid')[0] or '0'
-						except:
+				if (tvdb == '0' or tmdb == '0') and imdb != '0':
+					from resources.lib.modules import trakt
+					trakt_ids = trakt.IdLookup('show', 'imdb', imdb)
+					if tvdb == '0':
+						tvdb = str(trakt_ids.get('tvdb', '0'))
+						if tvdb == '' or tvdb is None or tvdb == 'None':
+							tvdb = '0'
+					if tmdb == '0':
+						tmdb = str(trakt_ids.get('tmdb', '0'))
+						if tvdb == '' or tvdb is None or tvdb == 'None':
 							tvdb = '0'
 
-					if imdb == '0':
-						try:
-							imdb = client.parseDOM(item2, 'IMDB_ID')[0] or '0'
-						except:
-							imdb = '0'
+###--Check TVDb by IMDB_ID for missing ID's
+				if tvdb == '0' and imdb != '0':
+					try:
+						url = self.tvdb_by_imdb % imdb
+						result = requests.get(url).content
+						result = re.sub(r'[^\x00-\x7F]+', '', result)
+						result = client.replaceHTMLCodes(result)
+						result = client.parseDOM(result, 'Series')
+						result = [(client.parseDOM(x, 'SeriesName'), client.parseDOM(x, 'FirstAired'), client.parseDOM(x, 'seriesid'), client.parseDOM(x, 'AliasNames')) for x in result]
+						years = [str(year), str(int(year)+1), str(int(year)-1)]
+						item = [(x[0], x[1], x[2], x[3]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[0][0])) and any(y in str(x[1][0]) for y in years)]
+						if item == []:
+							item = [(x[0], x[1], x[2], x[3]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[3][0]))]
+						if item == []:
+							item = [(x[0], x[1], x[2], x[3]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[0][0]))]
+						if item == []:
+							raise Exception()
+						tvdb = item[0][2]
+						tvdb = tvdb[0] or '0'
+					except:
+						log_utils.error()
+						pass
+
+###--Check TVDb by seriesname
+				if tvdb == '0' or imdb == '0':
+					try:
+						url = self.tvdb_by_query % (urllib.quote_plus(title))
+						result = requests.get(url).content
+						result = re.sub(r'[^\x00-\x7F]+', '', result)
+						result = client.replaceHTMLCodes(result)
+						result = client.parseDOM(result, 'Series')
+						result = [(client.parseDOM(x, 'SeriesName'), client.parseDOM(x, 'FirstAired'), client.parseDOM(x, 'seriesid'), client.parseDOM(x, 'IMDB_ID'), client.parseDOM(x, 'AliasNames')) for x in result]
+						years = [str(year), str(int(year)+1), str(int(year)-1)]
+						item = [(x[0], x[1], x[2], x[3], x[4]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[0][0])) and any(y in str(x[1][0]) for y in years)]
+						if item == []:
+							item = [(x[0], x[1], x[2], x[3], x[4]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[4][0]))]
+						if item == []:
+							item = [(x[0], x[1], x[2], x[3], x[4]) for x in result if cleantitle.get(title) == cleantitle.get(str(x[0][0]))]
+						if item == []:
+							raise Exception()
+						if tvdb == '0':
+							tvdb = item[0][2]
+							tvdb = tvdb[0] or '0'
+						if imdb == '0':
+							imdb = item[0][3]
+							imdb = imdb[0] or '0'
+					except:
+						log_utils.error()
+						pass
+#################################
+
+				if tvdb == '0':
+					raise Exception()
 
 				try:
-					if self.tvdb_key == '' or tvdb == '0':
-						raise Exception()
 					url = self.tvdb_info_link % (tvdb, self.lang)
-					try:
-						item3 = client.request(url, timeout='10', error = True)
-						test = client.parseDOM(item, 'id')[0]
-						if test == '0':
-							log_utils.log('empty xml with urllib2.urlopen() - trying requests.get()', __name__, log_utils.LOGDEBUG)
-							item3 = requests.get(url).content
-					except:
-						item3 = requests.get(url).content
-
+					item3 = requests.get(url).content
 				except:
 					item3 = None
 
 				if item3 is not None:
 					if poster == '0':
 						poster = client.parseDOM(item3, 'poster')[0]
-						if poster != '' or poster is not None:
-							poster = self.tvdb_image + poster
+						poster = '%s%s' % (self.tvdb_image, poster) if poster else '0'
 
 					fanart = client.parseDOM(item3, 'fanart')[0]
-					if fanart != '' or fanart is not None:
-						fanart = self.tvdb_image + fanart
+					fanart = '%s%s' % (self.tvdb_image, fanart) if fanart else '0'
 
 					banner = client.parseDOM(item3, 'banner')[0]
-					if banner != '' or banner is not None:
-						banner = self.tvdb_image + banner
+					banner = '%s%s' % (self.tvdb_image, banner) if banner else '0'
 
 					mpaa = client.parseDOM(item3, 'ContentRating')[0] or '0'
 
@@ -444,7 +446,6 @@ class tvshows:
 					airday = client.parseDOM(item3, 'Airs_DayOfWeek')[0] or '0'
 					# log_utils.log('airday = %s' % str(airday), __name__, log_utils.LOGDEBUG)
 					airtime = client.parseDOM(item3, 'Airs_Time')[0] or '0'
-###-----
 
 				item = {}
 				item = {'content': content, 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 
@@ -456,7 +457,8 @@ class tvshows:
 
 				if self.disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
+					# extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
+					extended_art = fanarttv.get_tvshow_art(tvdb)
 					if extended_art is not None:
 						item.update(extended_art)
 						meta.update(item)

@@ -408,6 +408,7 @@ class Movies:
 
 
 	def search_new(self):
+# need fix for when context menu returns here bring keyboard input back up
 		t = control.lang(32010).encode('utf-8')
 		k = control.keyboard('', t)
 		k.doModal()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.4.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.4.8" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -38,19 +38,17 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.4.7 - Jan. 21, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added setting to check for Venom updates at
-    startup. Useful for those that turn off Auto Updates.[/I]
-[COLOR yellow]--[/COLOR][I] Added setting to enable-disable resolution icons
-    in source select dialog.[/I]
-[COLOR yellow]--[/COLOR][I] Added sort() method to TV Shows-Network
-    (TVMaze) to maintain consistency with TVMaze api
-    response.[/I]
-[COLOR yellow]--[/COLOR][I] Changed Library import method from reading
-    selected item to now fetch new meta.  This now better
-    respects on the fly changes made to "Enable Special
-    Season(0) and "Show unaired season/episodes".[/I]
-[COLOR yellow]--[/COLOR][I] New TVDB api key in use.[/I]
+[B][COLOR red]Update - v3.4.8 - Jan. 27, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Changed query check for TVDB SeriesName and IMDB_ID
+    for a more accurate title match for missing ID's .[/I]
+[COLOR yellow]--[/COLOR][I] Revert solely to using requests.get() for 1-23 changes
+    to TVDB legacy SSL support.[/I]
+[COLOR yellow]--[/COLOR][I] fanart.tv module changed to using requests.get() with
+    added response checks[/I]
+[COLOR yellow]--[/COLOR][I] Added notification for fanart.tv requests when server
+    errors occur.  I suggest upon seeing this notification to
+    disable extended artwork to combat the server
+    errors until normal operation resumes.[/I]
 		</news>
 	</extension>
 </addon>

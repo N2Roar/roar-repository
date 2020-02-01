@@ -45,7 +45,6 @@ class Episodes:
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
-
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_image = 'http://thetvdb.com/banners/'
 		self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'
@@ -158,15 +157,19 @@ class Episodes:
 			log_utils.error()
 
 
-	def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
+	# def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
+	def get(self, tvshowtitle, year, imdb, tmdb, tvdb, season=None, episode=None, idx=True):
 		from resources.lib.menus import seasons
 		try:
 			if season is None and episode is None:
-				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
+				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
+				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, '-1')
 			elif episode is None:
-				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, season)
+				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, season)
+				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, season)
 			else:
-				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
+				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
+				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, '-1')
 				num = [x for x, y in enumerate(self.list) if y['season'] == str(season) and y['episode'] == str(episode)][-1]
 				self.list = [y for x, y in enumerate(self.list) if x >= num]
 
@@ -529,19 +532,15 @@ class Episodes:
 			pass
 
 		def items_list(i):
+			tvshowtitle = i['tvshowtitle']
+			year = str(i.get('year'))
+			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 			try:
-				url = self.tvdb_info_link % (i['tvdb'], lang)
-				try:
-					data = urllib2.urlopen(url, timeout=30).read()
-					zip = zipfile.ZipFile(StringIO.StringIO(data))
-					chk = zip.read('en.xml')
-					test = client.parseDOM(chk, 'id')[0]
-					if test == '0':
-						data = requests.get(url)
-						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-				except:
-					data = requests.get(url)
-					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				url = self.tvdb_info_link % (tvdb, lang)
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -606,10 +605,6 @@ class Episodes:
 				seasoncount = '0'
 				# seasoncount = seasons.Seasons.seasonCountParse(season=season, items=result)
 				# log_utils.log('seasoncount = %s for title = %s' % (str(seasoncount), str(title)), __name__, log_utils.LOGDEBUG)
-
-				tvshowtitle = i['tvshowtitle']
-				year = str(i.get('year'))
-				imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 				poster = client.parseDOM(item2, 'poster')[0]
 				if poster and poster != '':
@@ -904,19 +899,15 @@ class Episodes:
 			# except:
 				# pass
 
+			tvshowtitle = i['tvshowtitle']
+			year = str(i.get('year'))
+			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 			try:
-				url = self.tvdb_info_link % (i['tvdb'], lang)
-				try:
-					data = urllib2.urlopen(url, timeout=30).read()
-					zip = zipfile.ZipFile(StringIO.StringIO(data))
-					chk = zip.read('en.xml')
-					test = client.parseDOM(chk, 'id')[0]
-					if test == '0':
-						data = requests.get(url)
-						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-				except:
-					data = requests.get(url)
-					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				url = self.tvdb_info_link % (tvdb, lang)
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -954,10 +945,6 @@ class Episodes:
 
 				seasoncount = '0'
 				# seasoncount = seasons.Seasons.seasonCountParse(season=season, items=result)
-
-				tvshowtitle = i['tvshowtitle']
-				year = str(i.get('year'))
-				imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 				try:
 					progress = i['progress']
@@ -1182,7 +1169,7 @@ class Episodes:
 						if tmdb == '0':
 							tmdb = str(trakt_ids.get('tmdb', '0'))
 							if tmdb == '' or tmdb is None or tmdb == 'None':
-								ztmdb = '0'
+								tmdb = '0'
 
 						if tvdb == '0':
 							tvdb = str(trakt_ids.get('tvdb', '0'))
@@ -1258,19 +1245,16 @@ class Episodes:
 
 		def items_list(i):
 			self.list = []
+			tvshowtitle = i['tvshowtitle']
+			premiered = i['premiered']
+			year = i['year']
+			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 			try:
-				url = self.tvdb_info_link % (i['tvdb'], self.lang)
-				try:
-					data = urllib2.urlopen(url, timeout=30).read()
-					zip = zipfile.ZipFile(StringIO.StringIO(data))
-					chk = zip.read('en.xml')
-					test = client.parseDOM(chk, 'id')[0]
-					if test == '0':
-						data = requests.get(url)
-						zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-				except:
-					data = requests.get(url)
-					zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				url = self.tvdb_info_link % (tvdb, self.lang)
+				# data = urllib2.urlopen(url, timeout=30).read()
+				# zip = zipfile.ZipFile(StringIO.StringIO(data))
+				data = requests.get(url)
+				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
 				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')
@@ -1300,11 +1284,6 @@ class Episodes:
 
 				seasoncount = '0'
 				# seasoncount = seasons.Seasons.seasonCountParse(season=season, items=result)
-
-				tvshowtitle = i['tvshowtitle']
-				premiered = i['premiered']
-				year = i['year']
-				imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 				episodeIDS = i['episodeIDS']
 
@@ -1560,7 +1539,7 @@ class Episodes:
 
 		for i in items:
 			try:
-				imdb, tvdb, year, season, episode, premiered = i.get('imdb', '0'), i.get('tvdb', '0'), i['year'], i['season'], i['episode'], i['premiered']
+				imdb, tmdb, tvdb, year, season, episode, premiered = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i['year'], i['season'], i['episode'], i['premiered']
 				if 'label' not in i:
 					i['label'] = i['title']
 
@@ -1742,8 +1721,12 @@ class Episodes:
 										sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
-				Folderurl = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
-										sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
+				# Folderurl = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
+										# sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
+				Folderurl = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s&season=%s&episode=%s' % (
+										sysaddon, systvshowtitle, year, imdb, tmdb, tvdb, season, episode)
+
+
 
 				if isFolder is True:
 					if traktProgress is True:
@@ -1779,8 +1762,8 @@ class Episodes:
 											sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)))
 
 				if control.setting('library.service.update') == 'true':
-					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
-											sysaddon, systvshowtitle, year, imdb, tvdb)))
+					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (
+											sysaddon, systvshowtitle, year, imdb, tmdb, tvdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 
 				# cm.append(('PlayAll', 'RunPlugin(%s?action=playAll)' % sysaddon))

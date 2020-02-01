@@ -567,7 +567,7 @@ def remove_lang(name):
 	elif any(value in name for value in DUBBED):
 		return True
 	# elif 'rus' in name and 'eng' not in name:
-	elif 'rus' in name and any(value in name for value in ['eng', 'multi']):
+	elif 'rus' in name and not any(value in name for value in ['eng', 'multi']):
 		return True
 	else:
 		return False

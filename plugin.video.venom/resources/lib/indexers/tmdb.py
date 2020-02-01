@@ -128,9 +128,7 @@ class Movies:
 
 		try:
 			page = int(result['page'])
-			log_utils.log('page = %s' % str(page), __name__, log_utils.LOGDEBUG)
 			total = int(result['total_pages'])
-			log_utils.log('total = %s' % str(total), __name__, log_utils.LOGDEBUG)
 
 			if page >= total:
 				raise Exception()
@@ -246,7 +244,8 @@ class Movies:
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
+					# extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
+					extended_art = fanarttv.get_movie_art(imdb, tmdb)
 					if extended_art is not None:
 						values.update(extended_art)
 						meta.update(values)
@@ -452,7 +451,7 @@ class Movies:
 
 
 	def get_art(self, tmdb):
-		if (API_key == '') or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 
 		art3 = get_request(self.tmdb_art_link % tmdb)
@@ -481,7 +480,7 @@ class Movies:
 
 	def get_credits(self, tmdb):
 		url = base_link + '/3/movie/%s/credits?api_key=%s' % ('%s', API_key)
-		if (API_key == '') or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 		people = get_request(url % tmdb)
 		if people is None:
@@ -811,7 +810,7 @@ class TVshows:
 
 
 	def get_art(self, tmdb):
-		if (API_key == '') or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 
 		art3 = get_request(self.tmdb_art_link % tmdb)
@@ -840,7 +839,7 @@ class TVshows:
 
 	def get_credits(self, tmdb):
 		url = base_link + '/3/tv/%s/credits?api_key=%s' % ('%s', API_key)
-		if (API_key == '') or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 		people = get_request(url % tmdb)
 		if people is None:

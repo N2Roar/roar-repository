@@ -1,3 +1,15 @@
+[B][COLOR red]Update - v3.4.8 - Jan. 27, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Changed query check for TVDB SeriesName and IMDB_ID
+    for a more accurate title match for missing ID's .[/I]
+[COLOR yellow]--[/COLOR][I] Revert solely to using requests.get() for 1-23 changes
+    to TVDB legacy SSL support.[/I]
+[COLOR yellow]--[/COLOR][I] fanart.tv module changed to using requests.get() with
+    added response checks[/I]
+[COLOR yellow]--[/COLOR][I] Added notification for fanart.tv requests when server
+    errors occur.  I suggest upon seeing this notification to
+    disable extended artwork to combat the server
+    errors until normal operation resumes.[/I]
+
 [B][COLOR red]Update - v3.4.7 - Jan. 21, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added setting to check for Venom updates at
     startup. Useful for those that turn off Auto Updates.[/I]

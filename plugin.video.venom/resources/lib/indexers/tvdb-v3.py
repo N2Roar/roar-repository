@@ -25,8 +25,8 @@ class TVDBAPI:
 	def __init__(self):
 		self.apiKey = control.setting('tvdb.user')
 		if self.apiKey == '':
-			# self.apiKey = "43VPI0R8323FB7TI"
 			self.apiKey = "7R8SZZX90UA9YMBU"
+			# self.apiKey = 'N1I4U1paWDkwVUE5WU1CVQ=='
 
 		self.baseUrl = 'https://api.thetvdb.com/'
 		self.jwToken = control.setting('tvdb.jw')

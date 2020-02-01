@@ -670,7 +670,7 @@ class libtvshows:
 				if xbmc.Monitor().abortRequested():
 					return sys.exist()
 				try:
-					files_added = self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range=True)
+					files_added = self.add(i['title'], i['year'], i['imdb'], i['tmdb'], i['tvdb'], range=True)
 					if general_notification and files_added > 0:
 						control.notification(title = i['title'], message = 32554, icon = 'default', time = 1000, sound = notificationSound)
 						total_added += 1
@@ -686,7 +686,7 @@ class libtvshows:
 				control.notification(title = 'default', message = 'strm files written but library cannot be updated', icon = 'default', time = 2000, sound = notificationSound)
 
 
-	def add(self, tvshowtitle, year, imdb, tvdb, range=False):
+	def add(self, tvshowtitle, year, imdb, tmdb, tvdb, range=False):
 		try:
 			contains = lib_tools().ckKodiSources()
 			if general_notification:
@@ -695,10 +695,10 @@ class libtvshows:
 
 			try:
 				# from resources.lib.menus import episodes
-				# items = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, idx=False)
+				# items = episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, idx=False)
 
 				from resources.lib.menus import seasons
-				items = seasons.Seasons().tvdb_list(tvshowtitle, year, imdb, tvdb, control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
+				items = seasons.Seasons().tvdb_list(tvshowtitle, year, imdb, tmdb, tvdb, control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
 			except:
 				log_utils.error()
 				return
@@ -706,7 +706,7 @@ class libtvshows:
 			status = items[0]['status'].lower()
 
 			try:
-				items = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in items]
+				items = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tmdb': i['tmdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in items]
 			except:
 				items = []
 
@@ -802,7 +802,7 @@ class libtvshows:
 			if xbmc.Monitor().abortRequested():
 				return sys.exist()
 			try:
-				files_added = self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range=True)
+				files_added = self.add(i['title'], i['year'], i['imdb'], i['tmdb'], i['tvdb'], range=True)
 				if general_notification and files_added > 0:
 					control.notification(title = i['title'], message = 32554, icon = 'default', time = 1000, sound = notificationSound)
 					total_added += 1
@@ -889,7 +889,7 @@ class libtvshows:
 			if xbmc.Monitor().abortRequested():
 				return sys.exist()
 			try:
-				files_added = self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range=True)
+				files_added = self.add(i['title'], i['year'], i['imdb'], i['tmdb'], i['tvdb'], range=True)
 				if general_notification and files_added > 0:
 					control.notification(title = i['title'], message = 32554, icon = 'default', time = 1000, sound = notificationSound)
 					total_added += 1
@@ -1056,8 +1056,8 @@ class libepisodes:
 			return
 
 		try:
-			from resources.lib.menus import episodes
-			# from resources.lib.menus import seasons
+			# from resources.lib.menus import episodes
+			from resources.lib.menus import seasons
 		except:
 			return
 
@@ -1091,12 +1091,13 @@ class libepisodes:
 				if it is not None:
 					raise Exception()
 
-				it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], idx = False)
-				# it = seasons.Seasons().tvdb_list(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
+				# it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tmdb'], item['tvdb'], idx = False)
+				it = seasons.Seasons().tvdb_list(item['tvshowtitle'], item['year'], item['imdb'], item['tmdb'], item['tvdb'], control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
+				# log_utils.log('it = %s' % it, __name__, log_utils.LOGDEBUG)
 				if it == []: continue
 
 				status = it[0]['status'].lower()
-				it = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in it]
+				it = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tmdb': i['tmdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in it]
 
 				if status == 'continuing': raise Exception()
 				dbcur.execute("INSERT INTO tvshows Values (?, ?)", (item['tvdb'], repr(it)))

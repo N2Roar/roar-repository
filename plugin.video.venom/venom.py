@@ -18,8 +18,8 @@ name = params.get('name')
 title = params.get('title')
 year = params.get('year')
 imdb = params.get('imdb')
-tvdb = params.get('tvdb')
 tmdb = params.get('tmdb')
+tvdb = params.get('tvdb')
 season = params.get('season')
 episode = params.get('episode')
 tvshowtitle = params.get('tvshowtitle')
@@ -323,8 +323,8 @@ elif action == 'tvUserlists':
 ####################################################
 elif action == 'seasons':
 	from resources.lib.menus import seasons
-	seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
-	# seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb)
+	# seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
+	seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb)
 
 elif action == 'seasonsUserlists':
 	from resources.lib.indexers import seasons
@@ -341,12 +341,13 @@ elif action == 'seasonsList':
 ####################################################
 elif action == 'episodes':
 	from resources.lib.menus import episodes
-	episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
-	# episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
+	# episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+	episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
 elif action == 'episodesPage':
 	from resources.lib.menus import episodes
-	episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+	# episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+	episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
 elif action == 'tvWidget':
 	from resources.lib.menus import episodes
@@ -617,12 +618,12 @@ elif action == 'random':
 
 	elif rtype == 'episode':
 		from resources.lib.menus import episodes
-		rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, idx=False)
+		rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, idx=False)
 		r = argv[0]+"?action=play"
 
 	elif rtype == 'season':
 		from resources.lib.menus import seasons
-		rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tvdb, idx=False)
+		rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb, idx=False)
 		r = argv[0]+"?action=random&rtype=episode"
 
 	elif rtype == 'show':
@@ -694,7 +695,7 @@ elif action == 'moviesToLibrarySilent':
 
 elif action == 'tvshowToLibrary':
 	from resources.lib.modules import libtools
-	libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
+	libtools.libtvshows().add(tvshowtitle, year, imdb, tmdb, tvdb)
 
 elif action == 'tvshowsToLibrary':
 	from resources.lib.modules import libtools

@@ -159,11 +159,13 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 					else:
 						log_utils.log('Request-Error (%s): %s' % (str(response.code), url), log_utils.LOGDEBUG)
 						if error is False:
-							return
+							# return
+							return None
 				else:
 					log_utils.log('Request-Error (%s): %s' % (str(response.code), url), log_utils.LOGDEBUG)
 					if error is False:
-						return
+						# return
+						return None
 
 		if output == 'cookie':
 			try:
@@ -283,8 +285,8 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 	except Exception as e:
 		log_utils.error()
 		log_utils.log('Request-Error: (%s) => %s' % (str(e), url), log_utils.LOGDEBUG)
-		return
-
+		# return
+		return None
 
 def _basic_request(url, headers=None, post=None, timeout='30', limit=None):
 	try:
