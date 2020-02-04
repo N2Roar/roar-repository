@@ -220,16 +220,17 @@ class tvshows:
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
-		self.tvmaze_link = 'http://www.tvmaze.com'
-		self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s?embed=cast'
+		self.tvmaze_link = 'https://www.tvmaze.com'
+		self.tvmaze_info_link = 'https://api.tvmaze.com/shows/%s?embed=cast'
+
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 		self.imdb_user = control.setting('imdb.user').replace('ur', '')
 		self.user = str(self.imdb_user) + str(self.tvdb_key)
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
-		self.tvdb_image = 'http://thetvdb.com/banners/'
+		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+		self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
+		self.tvdb_image = 'https://thetvdb.com/banners/'
 
 
 	def tvmaze_list(self, url):

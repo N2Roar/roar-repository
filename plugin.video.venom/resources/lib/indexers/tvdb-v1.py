@@ -21,7 +21,7 @@ self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 imdb_user = control.setting('imdb.user').replace('ur', '')
 user = str(imdb_user) + str(api_key)
 
-baseUrl = 'http://thetvdb.com'
+baseUrl = 'https://thetvdb.com'
 info_link = '%s/api/%s/series/%s/%s.xml' % (baseUrl, api_key.decode('base64'), '%s', '%s')
 zip_link = '%s/api/%s/series/%s/all/%s.zip' % (baseUrl, api_key.decode('base64'), '%s', '%s')
 by_imdb = '%s/api/GetSeriesByRemoteID.php?imdbid=%s' % (baseUrl, '%s')

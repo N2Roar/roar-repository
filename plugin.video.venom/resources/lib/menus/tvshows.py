@@ -44,50 +44,50 @@ class TVshows:
 		self.imdb_user = control.setting('imdb.user').replace('ur', '')
 		self.user = str(self.imdb_user) + str(self.tvdb_key)
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
+		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-		self.tvdb_image = 'http://thetvdb.com/banners/'
+		self.tvdb_image = 'https://thetvdb.com/banners/'
 
-		self.imdb_link = 'http://www.imdb.com'
-		self.persons_link = 'http://www.imdb.com/search/name?count=100&name='
-		self.personlist_link = 'http://www.imdb.com/search/name?count=100&gender=male,female'
-		self.popular_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
-		self.airing_link = 'http://www.imdb.com/search/title?title_type=tv_episode&release_date=date[1],date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
-		self.active_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=10,&production_status=active&sort=moviemeter,asc&count=%d&start=1' % self.count
-		self.premiere_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=release_date,desc&count=%d&start=1' % self.count
-		self.rating_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=5000,&release_date=,date[0]&sort=user_rating,desc&count=%d&start=1' % self.count
-		self.views_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=num_votes,desc&count=%d&start=1' % self.count
-		self.person_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&role=%s&sort=year,desc&count=%d&start=1' % ('%s', self.count)
-		self.genre_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&genres=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
-		self.keyword_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
-		self.language_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
-		self.certification_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&certificates=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
+		self.imdb_link = 'https://www.imdb.com'
+		self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
+		self.personlist_link = 'https://www.imdb.com/search/name?count=100&gender=male,female'
+		self.popular_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
+		self.airing_link = 'https://www.imdb.com/search/title?title_type=tv_episode&release_date=date[1],date[0]&sort=moviemeter,asc&count=%d&start=1' % self.count
+		self.active_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=10,&production_status=active&sort=moviemeter,asc&count=%d&start=1' % self.count
+		self.premiere_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=release_date,desc&count=%d&start=1' % self.count
+		self.rating_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=5000,&release_date=,date[0]&sort=user_rating,desc&count=%d&start=1' % self.count
+		self.views_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&release_date=,date[0]&sort=num_votes,desc&count=%d&start=1' % self.count
+		self.person_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&role=%s&sort=year,desc&count=%d&start=1' % ('%s', self.count)
+		self.genre_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&genres=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
+		self.keyword_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
+		self.language_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
+		self.certification_link = 'https://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&certificates=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 
-		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
-		self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
-		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=tvSeries,tvMiniSeries&start=1' % ('%s', self.imdb_sort())
+		self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
+		self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
+		self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=tvSeries,tvMiniSeries&start=1' % ('%s', self.imdb_sort())
 		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filter in imdb_list() function
 
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=tvSeries,miniSeries&sort=moviemeter,asc&count=%d&start=1' % self.count
 
 		self.trakt_user = control.setting('trakt.user').strip()
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
-		self.trakt_link = 'http://api.trakt.tv'
-		self.search_link = 'http://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
+		self.trakt_link = 'https://api.trakt.tv'
+		self.search_link = 'https://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
 
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/shows'
-		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
+		self.traktlist_link = 'https://api.trakt.tv/users/%s/lists/%s/items/shows'
+		self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
+		self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
 
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows'
-		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
+		self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/shows'
+		self.traktcollection_link = 'https://api.trakt.tv/users/me/collection/shows'
 
-		self.trakttrending_link = 'http://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
-		self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
-		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?limit=40'
+		self.trakttrending_link = 'https://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
+		self.traktpopular_link = 'https://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
+		self.traktrecommendations_link = 'https://api.trakt.tv/recommendations/shows?limit=40'
 
-		self.tvmaze_link = 'http://www.tvmaze.com'
+		self.tvmaze_link = 'https://www.tvmaze.com'
 
 		self.tmdb_key = control.setting('tm.user')
 		if self.tmdb_key == '' or self.tmdb_key is None:
@@ -95,15 +95,15 @@ class TVshows:
 
 		self.tmdb_session_id = control.setting('tmdb.session_id')
 
-		self.tmdb_link = 'http://api.themoviedb.org'
-		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
-		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_link = 'https://api.themoviedb.org'
+		self.tmdb_userlists_link = 'https://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_watchlist_link = 'https://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
 
-		self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&language=en-US&region=US&page=1'
-		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&language=en-US&region=US&page=1'
-		self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&page=1'
-		self.tmdb_airingtoday_link = 'http://api.themoviedb.org/3/tv/airing_today?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_popular_link = 'https://api.themoviedb.org/3/tv/popular?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_toprated_link = 'https://api.themoviedb.org/3/tv/top_rated?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_ontheair_link = 'https://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_airingtoday_link = 'https://api.themoviedb.org/3/tv/airing_today?api_key=%s&language=en-US&region=US&page=1'
 
 
 	def get(self, url, idx=True):
@@ -1191,6 +1191,14 @@ class TVshows:
 			else:
 				plot = self.list[i]['plot']
 
+			if self.lang != 'en':
+				try:
+					trans_item = trakt.getTVShowTranslation(imdb, self.lang, full=True)
+					title = trans_item.get('title') or title
+					plot = trans_item.get('overview') or plot
+				except:
+					pass
+
 			status = client.parseDOM(item, 'Status')[0]
 			if not status:
 				status = 'Ended'
@@ -1292,9 +1300,7 @@ class TVshows:
 
 		for i in items:
 			try:
-				# imdb, tvdb, year = i.get('imdb', '0'), i.get('tvdb', '0'), i.get('year', '0')
 				imdb, tmdb, tvdb, year = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0')
-
 
 				try: title = i['originaltitle']
 				except: title = i['title']
@@ -1360,10 +1366,8 @@ class TVshows:
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
 
 				if flatten is True:
-					# url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb)
 				else:
-					# url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
 					url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb)
 
 ####-Context Menu and Overlays-####
@@ -1384,8 +1388,7 @@ class TVshows:
 					pass
 
 				# sysmeta = urllib.quote_plus(json.dumps(meta))
-
-				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=http://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
+				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=https://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
 									sysaddon, systitle, year, imdb, tvdb)))
 

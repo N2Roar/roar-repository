@@ -311,9 +311,9 @@ class indexer:
 
 			url, imdb, tvdb, tvshowtitle, year, thumbnail, fanart = re.findall('<url>(.+?)</url>', url)[0], re.findall('<imdb>(.+?)</imdb>', url)[0], re.findall('<tvdb>(.+?)</tvdb>', url)[0], re.findall('<tvshowtitle>(.+?)</tvshowtitle>', url)[0], re.findall('<year>(.+?)</year>', url)[0], re.findall('<thumbnail>(.+?)</thumbnail>', url)[0], re.findall('<fanart>(.+?)</fanart>', url)[0]
 
-			tvm = client.request('http://api.tvmaze.com/lookup/shows?thetvdb=%s' % tvdb)
-			if tvm  is None: tvm = client.request('http://api.tvmaze.com/lookup/shows?imdb=%s' % imdb)
-			tvm ='http://api.tvmaze.com/shows/%s/episodes' % str(json.loads(tvm).get('id'))
+			tvm = client.request('https://api.tvmaze.com/lookup/shows?thetvdb=%s' % tvdb)
+			if tvm  is None: tvm = client.request('https://api.tvmaze.com/lookup/shows?imdb=%s' % imdb)
+			tvm ='https://api.tvmaze.com/shows/%s/episodes' % str(json.loads(tvm).get('id'))
 			items = json.loads(client.request(tvm))
 			items = [(str(i.get('season')), str(i.get('number')), i.get('name').strip(), i.get('airdate')) for i in items]
 
@@ -403,7 +403,7 @@ class indexer:
 					section = 0
 			except: section = 0
 
-			link = 'http://t2k-repository.ml/IT/IT/tRmKGjTbr/xmls/clowns.xml'
+			link = 'https://t2k-repository.ml/IT/IT/tRmKGjTbr/xmls/clowns.xml'
 
 			if skip == 0:
 				if section == 1:
@@ -524,7 +524,7 @@ class indexer:
 
 				if any(f for f in ['all','data','images'] if f == tmdb_get.lower()):         
 					try:
-						url_api = 'http://api.themoviedb.org/3/movie/' + imdb + '?api_key=' + tmdb_api
+						url_api = 'https://api.themoviedb.org/3/movie/' + imdb + '?api_key=' + tmdb_api
 						item_json = client.request(url_api, timeout='5')
 
 						item_json = json.loads(item_json)
@@ -582,7 +582,7 @@ class indexer:
 					if any(f for f in ['all','images'] if f == tmdb_get.lower()):         
 
 						try:
-							if item_json['backdrop_path'] is not None: fanart2 = 'http://image.tmdb.org/t/p/original/' + item_json['backdrop_path']
+							if item_json['backdrop_path'] is not None: fanart2 = 'https://image.tmdb.org/t/p/original/' + item_json['backdrop_path']
 							else: 
 								try: fanart2 = re.findall('<fanart>(.+?)</fanart>', item)[0]
 								except: fanart2 = fanart
@@ -591,7 +591,7 @@ class indexer:
 							except: fanart2 = fanart
 
 						try:
-							if item_json['poster_path'] is not None: image2 = 'http://image.tmdb.org/t/p/original/' + item_json['poster_path']
+							if item_json['poster_path'] is not None: image2 = 'https://image.tmdb.org/t/p/original/' + item_json['poster_path']
 							else: 
 								try: image2 = re.findall('<thumbnail>(.+?)</thumbnail>', item)[0]
 								except: image2 = image
@@ -692,8 +692,8 @@ class indexer:
 	def worker(self):
 		if not control.setting('metadata') == 'true': return
 
-		self.imdb_info_link = 'http://www.omdbapi.com/?i=%s&plot=full&r=json'
-		self.tvmaze_info_link = 'http://api.tvmaze.com/lookup/shows?thetvdb=%s'
+		self.imdb_info_link = 'https://www.omdbapi.com/?i=%s&plot=full&r=json'
+		self.tvmaze_info_link = 'https://api.tvmaze.com/lookup/shows?thetvdb=%s'
 		self.lang = 'en'
 
 		self.meta = []

@@ -1078,30 +1078,32 @@ class Sources:
 		filter = []
 		filter += local
 
-		if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and 'debrid' in i]
-		if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i and 'memberonly' in i]
-		if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i and not 'memberonly' in i]
+		if quality in ['0']:
+			filter += [i for i in self.sources if i['quality'] == '4K' and 'debrid' in i]
+			filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i]
 
-		if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
-		if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i and 'memberonly' in i]
-		if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i and not 'memberonly' in i]
+		if quality in ['0', '1']:
+			filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
+			filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i]
 
-		if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
-		if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i and 'memberonly' in i]
-		if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i and not 'memberonly' in i]
+		if quality in ['0', '1', '2']:
+			filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
+			filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i]
 
-		if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
-		if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i and 'memberonly' in i]
-		if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i and not 'memberonly' in i]
+		if quality in ['0', '1', '2', '3']:
+			filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
+			filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i]
 
-		filter += [i for i in self.sources if i['quality'] in ['SD', 'SCR', 'CAM']]
+		filter += [i for i in self.sources if i['quality'] == 'SCR']
+		filter += [i for i in self.sources if i['quality'] == 'SD']
+		filter += [i for i in self.sources if i['quality'] == 'CAM']
 		self.sources = filter
 
 		if captcha != 'true':
 			filter = [i for i in self.sources if i['source'].lower() in self.hostcapDict and not 'debrid' in i]
 			self.sources = [i for i in self.sources if not i in filter]
 
-		filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict and not 'debrid' in i]
+		filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict]# and not 'debrid' in i]
 		self.sources = [i for i in self.sources if not i in filter]
 
 		multi = [i['language'] for i in self.sources]
@@ -1529,7 +1531,7 @@ class Sources:
 		except:
 			self.hostDict = []
 
-		self.hostprDict = ['1fichier.com', 'filefactory.com', 'multiup.org', 'nitroflare.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'turbobit.net',
+		self.hostprDict = ['1fichier.com', 'extabit.com', 'filefactory.com', 'filefreak.com', 'multiup.org', 'nitroflare.com', 'oboom.com', 'rapidgator.net', 'rapidshare.com', 'rg.to', 'turbobit.net',
 									'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'uploadrocket.net']
 
 		self.hostcapDict = ['flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc', 'hugefiles.net', 'kingfiles.net', 'streamin.to',

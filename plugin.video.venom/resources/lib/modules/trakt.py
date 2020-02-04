@@ -16,8 +16,8 @@ from resources.lib.modules import utils
 
 from resources.lib.extensions import database
 
-BASE_URL = 'http://api.trakt.tv'
-V2_BASE_URL = 'http://api-v2launch.trakt.tv'
+BASE_URL = 'https://api.trakt.tv'
+V2_BASE_URL = 'https://api-v2launch.trakt.tv'
 V2_API_KEY = 'c622fa66e6cdd783b23f2fc1a1abedc1f1e6ea739d8755248487d1dcfeda66e5'
 CLIENT_SECRET = '3430dbd20bd3eb55c0f4e3dc05c7cbbadaf1fd4b8e2a572f4200e482a2041bd8'
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'

@@ -10,6 +10,7 @@
     notify user of new updates for those that turn
     off auto updates.[/I]
 
+
 [B][COLOR red]October 9, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Wow, I did not realize it's been months
     since I added comments here.  I wanted to inform

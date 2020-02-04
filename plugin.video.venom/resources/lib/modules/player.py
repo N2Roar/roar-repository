@@ -578,7 +578,7 @@ class Subtitles:
 			if subLang == langs[0]:
 				raise Exception()
 
-			server = xmlrpclib.Server('http://api.opensubtitles.org/xml-rpc', verbose=0)
+			server = xmlrpclib.Server('https://api.opensubtitles.org/xml-rpc', verbose=0)
 			token = server.LogIn('', '', 'en', 'XBMC_Subtitles_v1')
 			token = token['token']
 			sublanguageid = ','.join(langs)

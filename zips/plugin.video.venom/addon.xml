@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.4.8" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.4.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -38,17 +38,13 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.4.8 - Jan. 27, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Changed query check for TVDB SeriesName and IMDB_ID
-    for a more accurate title match for missing ID's .[/I]
-[COLOR yellow]--[/COLOR][I] Revert solely to using requests.get() for 1-23 changes
-    to TVDB legacy SSL support.[/I]
-[COLOR yellow]--[/COLOR][I] fanart.tv module changed to using requests.get() with
-    added response checks[/I]
-[COLOR yellow]--[/COLOR][I] Added notification for fanart.tv requests when server
-    errors occur.  I suggest upon seeing this notification to
-    disable extended artwork to combat the server
-    errors until normal operation resumes.[/I]
+[B][COLOR red]Update - v3.4.9 - Feb. 3, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Trakt Progress fix to resolve random incorrect NextUp
+    items to watch due to TVDB v1 api season/episodes out
+    of order in xml.  The xml sort order was changed to be
+    based on ID's and no longer sorted by season/episode.[/I]
+[COLOR yellow]--[/COLOR][I] Added translation lookup for title and plot when language
+ changed from English.[/I]
 		</news>
 	</extension>
 </addon>

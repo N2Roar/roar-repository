@@ -492,17 +492,17 @@ class libmovies:
 		try:
 			if 'trakt' in url:
 				if 'traktcollection' in url:
-					url = 'http://api.trakt.tv/users/me/collection/movies'
+					url = 'https://api.trakt.tv/users/me/collection/movies'
 				if 'traktwatchlist' in url:
-					url = 'http://api.trakt.tv/users/me/watchlist/movies'
+					url = 'https://api.trakt.tv/users/me/watchlist/movies'
 				from resources.lib.menus import movies
 				items = movies.Movies().trakt_list(url, control.setting('trakt.user').strip())
 
 			if 'tmdb' in url:
 				if 'tmdb_watchlist' in url:
-					url = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s' % ('%s', tmdb_session_id)
+					url = 'https://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s' % ('%s', tmdb_session_id)
 				if 'tmdb_favorites' in url: 
-					url = 'http://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s' % ('%s', tmdb_session_id) 
+					url = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s' % ('%s', tmdb_session_id) 
 				from resources.lib.indexers import tmdb
 				items = tmdb.Movies().tmdb_list(url)
 
@@ -855,15 +855,15 @@ class libtvshows:
 		try:
 			if 'trakt' in url:
 				if 'traktcollection' in url:
-					url = 'http://api.trakt.tv/users/me/collection/shows'
+					url = 'https://api.trakt.tv/users/me/collection/shows'
 				if 'traktwatchlist' in url:
-					url = 'http://api.trakt.tv/users/me/watchlist/shows'
+					url = 'https://api.trakt.tv/users/me/watchlist/shows'
 				from resources.lib.menus import tvshows
 				items = tvshows.TVshows().trakt_list(url, control.setting('trakt.user').strip())
 
 			if 'tmdb' in url:
 				if 'tmdb_watchlist' in url:
-					url = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s' % ('%s', tmdb_session_id)
+					url = 'https://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s' % ('%s', tmdb_session_id)
 				if 'tmdb_favorites' in url: 
 					url = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv?api_key=%s&session_id=%s' % ('%s', tmdb_session_id) 
 				from resources.lib.indexers import tmdb

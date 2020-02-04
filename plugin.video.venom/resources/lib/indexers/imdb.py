@@ -32,12 +32,12 @@ class movies:
 
 		self.user = str(self.imdb_user) + str(self.tmdb_key)
 
-		self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
-		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
+		self.tmdb_poster = 'https://image.tmdb.org/t/p/w500'
+		self.tmdb_fanart = 'https://image.tmdb.org/t/p/w1280'
 
-		self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.lang)
+		self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.lang)
 																	# other	"append_to_response"options		alternative_titles,videos,images
-		self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
+		self.tmdb_art_link = 'https://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
 
 	def imdb_list(self, url):
@@ -365,12 +365,10 @@ class tvshows:
 		if self.fanart_tv_user == '' or self.fanart_tv_user is None:
 			self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
 		self.user = self.fanart_tv_user + str('')
-		self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
-		self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
-		# self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
-		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
-		self.tvdb_image = 'http://thetvdb.com/banners/'
+		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+		self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
+		self.tvdb_image = 'https://thetvdb.com/banners/'

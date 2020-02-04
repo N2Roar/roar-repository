@@ -10,7 +10,7 @@ class youtube(object):
 	def __init__(self, key=''):
 		self.list = []
 		self.data = []
-		self.base_link = 'http://www.youtube.com'
+		self.base_link = 'https://www.youtube.com'
 		self.key_link = '&key=%s' % key
 		self.playlists_link = 'https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&channelId=%s'
 		self.playlist_link = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=%s'

@@ -7,7 +7,6 @@
 import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime, copy
-
 import requests
 
 from resources.lib.modules import cache
@@ -18,8 +17,7 @@ from resources.lib.modules import log_utils
 from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import views
-from resources.lib.modules import workers
-
+from resources.lib.modules import workers, log_utils
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -45,30 +43,27 @@ class Episodes:
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
-		self.tvdb_image = 'http://thetvdb.com/banners/'
-		self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'
+		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_image = 'https://thetvdb.com/banners/'
+		self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
 		self.trakt_user = control.setting('trakt.user').strip()
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
+		self.trakt_link = 'https://api.trakt.tv'
+		self.traktlist_link = 'https://api.trakt.tv/users/%s/lists/%s/items/episodes'
+		self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
+		self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
+		self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/episodes'
+		self.trakthistory_link = 'https://api.trakt.tv/users/me/history/shows?limit=200'
+		self.progress_link = 'https://api.trakt.tv/users/me/watched/shows'
+		self.hiddenprogress_link = 'https://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
+		self.traktonDeck_link = 'https://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
+		self.traktunfinished_link = 'https://api.trakt.tv/sync/playback/episodes'
+		self.mycalendar_link = 'https://api.trakt.tv/calendars/my/shows/date[30]/31/'
 
-		self.trakt_link = 'http://api.trakt.tv'
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/episodes'
-		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes'
-		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?limit=200'
-		self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
-		self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
-
-		self.traktonDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
-		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes'
-
-		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[30]/31/'
-
-		self.tvmaze_link = 'http://api.tvmaze.com'
-		self.added_link = 'http://api.tvmaze.com/schedule'
-		self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
+		self.tvmaze_link = 'https://api.tvmaze.com'
+		self.added_link = 'https://api.tvmaze.com/schedule'
+		self.calendar_link = 'https://api.tvmaze.com/schedule?date=%s'
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
@@ -157,18 +152,14 @@ class Episodes:
 			log_utils.error()
 
 
-	# def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
 	def get(self, tvshowtitle, year, imdb, tmdb, tvdb, season=None, episode=None, idx=True):
 		from resources.lib.menus import seasons
 		try:
 			if season is None and episode is None:
-				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
 				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, '-1')
 			elif episode is None:
-				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, season)
 				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, season)
 			else:
-				# self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
 				self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tmdb, tvdb, self.lang, '-1')
 				num = [x for x, y in enumerate(self.list) if y['season'] == str(season) and y['episode'] == str(episode)][-1]
 				self.list = [y for x, y in enumerate(self.list) if x >= num]
@@ -548,12 +539,21 @@ class Episodes:
 				zip.close()
 
 				result = result.split('<Episode>')
+
 				item = [x for x in result if '<EpisodeNumber>' in x]
 				item2 = result[0]
 
-				num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
-				# TVDb index out of order for Season0 and Episodes now.  This now fails allot getting next episode in index and no simple fix to fetch next episode when we don't know when a season ends. Index based is right way but TVDb fucked us!!
-				item = [y for x,y in enumerate(item) if x > num][0]
+				try:
+					sorted_item = [y for y in item if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum'])]
+					sorted_item += [y for y in item if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(int(i['snum']) + 1)]
+					sorted_item = [re.sub('<SeasonNumber>(.+?)</SeasonNumber>', '<SeasonNumber>%02d</SeasonNumber>' % int(client.parseDOM(y, 'SeasonNumber')[0]), y) for y in sorted_item]
+					sorted_item = [re.sub('<EpisodeNumber>(.+?)</EpisodeNumber>', '<EpisodeNumber>%02d</EpisodeNumber>' % int(client.parseDOM(y, 'EpisodeNumber')[0]), y) for y in sorted_item]
+					sorted_item = sorted(sorted_item, key= lambda t: (re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(t), re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(t)))
+				except:
+					log_utils.error()
+
+				num = [x for x,y in enumerate(sorted_item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str('%02d' % int(i['snum'])) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str('%02d' % int(i['enum']))][-1]
+				item = [y for x,y in enumerate(sorted_item) if x > num][0]
 
 				artwork = artwork.split('<Banner>')
 				artwork = [x for x in artwork if '<Language>en</Language>' in x and '<BannerType>season</BannerType>' in x]
@@ -842,6 +842,15 @@ class Episodes:
 				except:
 					pass
 
+				if self.lang != 'en':
+					try:
+						trans_item = trakt.getTVShowTranslation(imdb, lang=self.lang, season=season, episode=episode,  full=True)
+						title = trans_item.get('title') or title
+						plot = trans_item.get('overview') or plot
+						tvshowtitle = trakt.getTVShowTranslation(imdb, lang=self.lang) or tvshowtitle
+					except:
+						pass
+
 				trailer = item['show']['trailer']
 
 				values = {'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle,
@@ -886,9 +895,9 @@ class Episodes:
 
 	def trakt_episodes_list(self, url, user, lang, direct=True):
 		# from resources.lib.menus import seasons
-
 		self.list = []
 		items = self.trakt_list(url, user)
+
 		def items_list(i):
 			# try:
 				# item = [x for x in self.blist if x['tvdb'] == i['tvdb'] and x['season'] == i['season'] and x['episode'] == i['episode']][0]

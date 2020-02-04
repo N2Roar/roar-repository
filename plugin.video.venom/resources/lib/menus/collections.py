@@ -46,8 +46,8 @@ class Collections:
 		self.user = str(self.tmdb_key)
 
 		self.tmdb_link = 'https://api.themoviedb.org'
-		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
-		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
+		self.tmdb_poster = 'https://image.tmdb.org/t/p/w300'
+		self.tmdb_fanart = 'https://image.tmdb.org/t/p/w1280'
 		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=release_date.asc&page=1' % ('%s', self.tmdb_key)
 
 		self.imdb_link = 'https://www.imdb.com'

@@ -63,18 +63,18 @@ class Movies:
 		self.hidecinema_rollback2 = self.hidecinema_rollback * 30
 		self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
 
-		self.tmdb_link = 'http://api.themoviedb.org'
-		self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
-		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
-		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
-		self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_link = 'https://api.themoviedb.org'
+		self.tmdb_popular_link = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
+		self.tmdb_toprated_link = 'https://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
+		self.tmdb_upcoming_link = 'https://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
+		self.tmdb_nowplaying_link = 'https://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
-		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_watchlist_link = 'https://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
-		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_userlists_link = 'https://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 
-		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
-		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
+		self.tmdb_poster = 'https://image.tmdb.org/t/p/w300'
+		self.tmdb_fanart = 'https://image.tmdb.org/t/p/w1280'
 
 		self.imdb_link = 'https://www.imdb.com'
 		self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
@@ -105,32 +105,32 @@ class Movies:
 
 		self.added_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&languages=en&num_votes=500,&production_status=released&release_date=%s,%s&sort=release_date,desc&count=%d&start=1' % (self.year_date, self.today_date, self.count)
 
-		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
-		self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
-		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=movie,short,video,tvShort,tvMovie,tvSpecial&start=1' % ('%s', self.imdb_sort())
+		self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
+		self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
+		self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=movie,short,video,tvShort,tvMovie,tvSpecial&start=1' % ('%s', self.imdb_sort())
 		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filter is in imdb_list() function
 
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=movie,tvMovie&sort=moviemeter,asc&count=%d&start=1' % self.count
 
-		self.trakt_link = 'http://api.trakt.tv'
-		self.search_link = 'http://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
-		self.traktlistsearch_link = 'http://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
+		self.trakt_link = 'https://api.trakt.tv'
+		self.search_link = 'https://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
+		self.traktlistsearch_link = 'https://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
 
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/movies'
-		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
+		self.traktlist_link = 'https://api.trakt.tv/users/%s/lists/%s/items/movies'
+		self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
+		self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
 
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
-		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
-		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
-		self.traktonDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+		self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/movies'
+		self.traktcollection_link = 'https://api.trakt.tv/users/me/collection/movies'
+		self.trakthistory_link = 'https://api.trakt.tv/users/me/history/movies?limit=40&page=1'
+		self.traktunfinished_link = 'https://api.trakt.tv/sync/playback/movies?limit=100'
+		self.traktonDeck_link = 'https://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
 
-		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
-		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
-		self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
-		self.traktpopular_link = 'http://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
-		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
+		self.traktanticipated_link = 'https://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
+		self.trakttrending_link = 'https://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
+		self.traktboxoffice_link = 'https://api.trakt.tv/movies/boxoffice'
+		self.traktpopular_link = 'https://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
+		self.traktrecommendations_link = 'https://api.trakt.tv/recommendations/movies?limit=40'
 
 
 	def get(self, url, idx=True):
@@ -1371,7 +1371,7 @@ class Movies:
 
 				if control.setting('library.service.update') == 'true':
 					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
+				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################

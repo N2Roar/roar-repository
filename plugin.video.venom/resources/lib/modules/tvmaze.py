@@ -2,7 +2,6 @@
 
 import urllib
 import json
-# import base64
 
 from resources.lib.modules import client
 from resources.lib.modules import cache
@@ -10,7 +9,7 @@ from resources.lib.modules import cache
 
 class tvMaze:
 	def __init__(self, show_id = None):
-		self.api_url = 'http://api.tvmaze.com/%s%s'
+		self.api_url = 'https://api.tvmaze.com/%s%s'
 		self.show_id = show_id
 
 
@@ -98,7 +97,7 @@ class tvMaze:
 
 	def episodeAbsoluteNumber(self, thetvdb, season, episode):
 		try:
-			url = 'http://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('MUQ2MkYyRjkwMDMwQzQ0NA=='.decode('base64'), thetvdb, int(season), int(episode))
+			url = 'https://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('N1I4U1paWDkwVUE5WU1CVQ=='.decode('base64'), thetvdb, int(season), int(episode))
 			r = client.request(url, error=True)
 			episode = client.parseDOM(r, 'absolute_number')[0]
 			return int(episode)
@@ -109,7 +108,7 @@ class tvMaze:
 
 	def getTVShowTranslation(self, thetvdb, lang):
 		try:
-			url = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % ('MUQ2MkYyRjkwMDMwQzQ0NA=='.decode('base64'), thetvdb, lang)
+			url = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % ('N1I4U1paWDkwVUE5WU1CVQ=='.decode('base64'), thetvdb, lang)
 			r = client.request(url, error=True)
 			title = client.parseDOM(r, 'SeriesName')[0]
 			title = client.replaceHTMLCodes(title)

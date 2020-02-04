@@ -13,7 +13,7 @@ class Time(object):
 
 	# Use time.clock() instead of time.time() for processing time.
 	# NB: Do not use time.clock(). Gives the wrong answer in timestamp() AND runs very fast in Linux. Hence, in the stream finding dialog, for every real second, Linux progresses 5-6 seconds.
-	# http://stackoverflow.com/questions/85451/python-time-clock-vs-time-time-accuracy
+	# https://stackoverflow.com/questions/85451/python-time-clock-vs-time-time-accuracy
 	# https://www.tutorialspoint.com/python/time_clock.htm
 
 	ZoneUtc = 'utc'

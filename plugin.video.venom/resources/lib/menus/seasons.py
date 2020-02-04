@@ -7,12 +7,11 @@
 import sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime
-
 import requests
 
+from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
-from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
@@ -47,9 +46,9 @@ class Seasons:
 
 		self.trakt_user = control.setting('trakt.user').strip()
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
-		self.traktwatchlist_link = 'http://api-v2launch.trakt.tv/users/me/watchlist/seasons'
-		self.traktlist_link = 'http://api-v2launch.trakt.tv/users/%s/lists/%s/items'
-		self.traktlists_link = 'http://api-v2launch.trakt.tv/users/me/lists'
+		self.traktwatchlist_link = 'https://api-v2launch.trakt.tv/users/me/watchlist/seasons'
+		self.traktlist_link = 'https://api-v2launch.trakt.tv/users/%s/lists/%s/items'
+		self.traktlists_link = 'https://api-v2launch.trakt.tv/users/me/lists'
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
@@ -101,15 +100,12 @@ class Seasons:
 		interface.Dialog.notification(title = 35513, message = 35511, icon = interface.Dialog.IconSuccess)
 
 
-	# def get(self, tvshowtitle, year, imdb, tvdb, idx=True):
 	def get(self, tvshowtitle, year, imdb, tmdb, tvdb, idx=True):
 		if idx is True:
-			# self.list = cache.get(self.tvdb_list, 24, tvshowtitle, year, imdb, tvdb, self.lang)
 			self.list = cache.get(self.tvdb_list, 24, tvshowtitle, year, imdb, tmdb, tvdb, self.lang)
 			self.seasonDirectory(self.list)
 			return self.list
 		else:
-			# self.list = self.tvdb_list(tvshowtitle, year, imdb, tvdb, 'en')
 			self.list = self.tvdb_list(tvshowtitle, year, imdb, tmdb, tvdb, 'en')
 			return self.list
 
@@ -299,10 +295,8 @@ class Seasons:
 
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
 			# data = urllib2.urlopen(url, timeout=30).read()
 			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
 			data = requests.get(url)
 			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
@@ -319,7 +313,6 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, 'en')
 				# data = urllib2.urlopen(url, timeout=30).read()
 				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
 				data = requests.get(url)
 				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
@@ -332,7 +325,6 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, lang)
 				# data = requests.get(url)
 				# zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-
 				data = requests.get(url)
 				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 

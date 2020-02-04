@@ -22,10 +22,9 @@ if API_key == '' or API_key is None:
 
 disable_fanarttv = control.setting('disable.fanarttv')
 
-base_link = 'http://api.themoviedb.org'
-
-poster_path = 'http://image.tmdb.org/t/p/w300'
-fanart_path = 'http://image.tmdb.org/t/p/w1280'
+base_link = 'https://api.themoviedb.org'
+poster_path = 'https://image.tmdb.org/t/p/w300'
+fanart_path = 'https://image.tmdb.org/t/p/w1280'
 
 
 def get_request(url):
