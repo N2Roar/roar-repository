@@ -20,12 +20,12 @@ from resources.lib.modules import control
 from resources.lib.modules import cleantitle
 from resources.lib.modules import log_utils
 
+folder_setup = False
 service_update = True if control.setting('library.service.update') == 'true' else False
 service_notification = True if control.setting('library.service.notification') == 'true' else False
 general_notification = True if control.setting('library.general.notification') == 'true' else False
 notificationSound = True if control.setting('notification.sound') == 'true' else False
 tmdb_session_id = control.setting('tmdb.session_id')
-folder_setup = False
 
 
 class lib_tools:
@@ -237,14 +237,12 @@ class lib_tools:
 					break
 
 				last_service = control.window.getProperty(self.property)
-				log_utils.log('last_service = %s' % last_service, log_utils.LOGDEBUG)
+				# log_utils.log('last_service = %s' % last_service, log_utils.LOGDEBUG)
 
 				t1 = datetime.timedelta(hours=6)
-				# log_utils.log('t1 = %s' % t1, log_utils.LOGDEBUG)
 				t2 = datetime.datetime.strptime(last_service, '%Y-%m-%d %H:%M:%S.%f')
-				log_utils.log('t2 = %s' % t2, log_utils.LOGDEBUG)
+				# log_utils.log('t2 = %s' % t2, log_utils.LOGDEBUG)
 				t3 = datetime.datetime.now()
-				# log_utils.log('t3 = %s' % t3, log_utils.LOGDEBUG)
 				check = abs(t3 - t2) >= t1
 				if check is False:
 					continue

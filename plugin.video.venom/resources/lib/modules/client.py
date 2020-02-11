@@ -128,7 +128,8 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
 					if flare and 'cloudflare' in str(response.info()).lower():
 						try:
-							from resources.lib.modules import cfscrape
+							# from resources.lib.modules import cfscrape
+							from openscrapers.modules import cfscrape
 							if isinstance(post, dict):
 								data = post
 							else:
@@ -137,7 +138,8 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 								except:
 									data = None
 
-							scraper = cfscrape.CloudflareScraper()
+							# scraper = cfscrape.CloudflareScraper()
+							scraper = cfscrape.CloudScraper()
 							response = scraper.request(method = 'GET' if post is None else 'POST', url = url, headers = headers, data = data, timeout = int(timeout))
 							result = response.content
 							flare = 'cloudflare' # Used below

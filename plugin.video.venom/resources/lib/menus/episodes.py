@@ -17,13 +17,15 @@ from resources.lib.modules import log_utils
 from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import views
-from resources.lib.modules import workers, log_utils
+from resources.lib.modules import workers
+
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
 disable_fanarttv = control.setting('disable.fanarttv')
+is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
 
 
 class Episodes:
@@ -1730,12 +1732,8 @@ class Episodes:
 										sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
 
-				# Folderurl = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
-										# sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
 				Folderurl = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s&season=%s&episode=%s' % (
 										sysaddon, systvshowtitle, year, imdb, tmdb, tvdb, season, episode)
-
-
 
 				if isFolder is True:
 					if traktProgress is True:
@@ -1805,6 +1803,8 @@ class Episodes:
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
+				if is_widget:
+					item.setProperty('isVenom_widget', 'true')
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)

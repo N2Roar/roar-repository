@@ -25,6 +25,7 @@ from resources.lib.menus import tvshows as tvshowsx
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
+is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
 
 
 class Seasons:
@@ -323,8 +324,8 @@ class Seasons:
 
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
-				# data = requests.get(url)
-				# zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				#data = urllib2.urlopen(url, timeout=30).read()
+				#zip = zipfile.ZipFile(StringIO.StringIO(data))
 				data = requests.get(url)
 				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
@@ -852,7 +853,6 @@ class Seasons:
 			url = self.tvdb_info_link % (tvdb, 'en')
 			# data = urllib2.urlopen(url, timeout=30).read()
 			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
 			data = requests.get(url)
 			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
@@ -867,7 +867,6 @@ class Seasons:
 				url = self.tvdb_info_link % (tvdb, 'en')
 				# data = urllib2.urlopen(url, timeout=30).read()
 				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
 				data = requests.get(url)
 				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
 
@@ -1074,6 +1073,8 @@ class Seasons:
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', 'false')
+				if is_widget:
+					item.setProperty('isVenom_widget', 'true')
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				item.addContextMenuItems(cm)
 				video_streaminfo = {'codec': 'h264'}

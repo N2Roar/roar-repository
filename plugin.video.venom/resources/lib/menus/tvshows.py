@@ -9,6 +9,8 @@ import StringIO, urllib, urllib2, urlparse
 import datetime
 import requests
 
+from resources.lib.menus import navigator
+
 from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
@@ -21,11 +23,12 @@ from resources.lib.modules import trakt
 from resources.lib.modules import views
 from resources.lib.modules import workers
 
-from resources.lib.menus import navigator
+
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
+is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
 
 
 class TVshows:
@@ -1425,6 +1428,8 @@ class TVshows:
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', 'false')
+				if is_widget:
+					item.setProperty('isVenom_widget', 'true')
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)

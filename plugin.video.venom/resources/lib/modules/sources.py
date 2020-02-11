@@ -6,7 +6,7 @@ import re, urllib, urlparse, random, json
 
 from resources.lib.modules import client, cleantitle, control, workers
 from resources.lib.modules import trakt, source_utils, log_utils
-from resources.lib.modules import debrid, cache
+from resources.lib.modules import debrid, cache, providerscache
 
 try:
 	from sqlite3 import dbapi2 as database
@@ -32,10 +32,7 @@ class Sources:
 			if rescrape:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 			else:
-				if 'plugin' not in control.infoLabel('Container.PluginName'):
-					items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-				else:
-					items = cache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+				items = providerscache.get(self.getSources, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
 			if items is None:
 				self.url = url
@@ -956,9 +953,13 @@ class Sources:
 		if debrid_only == '':
 			debrid_only = 'false'
 
-		sortthemup = control.setting('torrent.sort.them.up')
-		if sortthemup == '':
-			sortthemup = 'false'
+		# sortthemup = control.setting('torrent.sort.them.up')
+		# if sortthemup == '':
+			# sortthemup = 'false'
+
+		group_sort = control.setting('torrent.group.sort')
+		if group_sort == '':
+			group_sort = '1'
 
 		quality = control.setting('hosts.quality')
 		if quality == '':
@@ -1058,17 +1059,20 @@ class Sources:
 			valid_hoster = set([i['source'] for i in self.sources])
 			valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-			if sortthemup == 'true':
-				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
-				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
-			else:
-				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster or 'magnet:' in i['url']]
+			filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+			filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
 		if debrid_only == 'false' or debrid.status() is False:
 			filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] is False]
+
 		self.sources = filter
 
-		# log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
+		if group_sort == '1':
+			sorted_filter = []
+			sorted_filter += [i for i in filter if 'torrent' in i['source'].lower()] #torrents first
+			sorted_filter += [i for i in filter if 'torrent' not in i['source'].lower() and i['debridonly'] is True] #prem. next
+			sorted_filter += [i for i in filter if 'torrent' not in i['source'].lower() and i['debridonly'] is False] #free hosters fucking last
+			self.sources = sorted_filter
 
 		for i in range(len(self.sources)):
 			q = self.sources[i]['quality']
@@ -1160,6 +1164,8 @@ class Sources:
 				d = 'RD'
 			if d.lower() == 'simply-debrid':
 				d = 'SD'
+			if d.lower() == 'zevera':
+				d = 'ZVR'
 
 			prem_color = 'nocolor'
 			if d:

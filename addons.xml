@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
+<addon id="context.venom" version="1.0.1" name="Venom - Global Context Menu Items" provider-name="Venom">
+	<requires>
+		<import addon="xbmc.python" version="2.23.0" />
+	</requires>
+	<extension point="kodi.context.item">
+		<menu id="kodi.core.main">
+			<item library="traktManager.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Trakt Manager</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,season) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+
+			<item library="rescrape.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Rescrape Item</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+
+			<item library="clearProviders.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Clear Providers</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+
+<!-- 			<item library="autoPlay.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Auto Play</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item> -->
+
+<!-- 			<item library="sourceSelect.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Source Select</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item> -->
+
+			<item library="findSimilar.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Find Similar</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+
+			<item library="browseSeries.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Browse Series</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,tvshow)]
+				</visible>
+			</item>
+
+			<item library="browseEpisodes.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Browse Episodes</label>
+				<visible>
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					String.IsEqual(ListItem.dbtype,episode)
+				</visible>
+			</item> -->
+
+		</menu>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Venom - This Addon is currently in beta. Please be aware there may be bugs present</summary>
+		<description lang="en">Adds Global Contextual Menu Items for Venom menu items throughout Kodi
+		</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en"></disclaimer>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.png</fanart>
+		</assets>
+		<news>
+		</news>
+	</extension>
+</addon>
+
 <addon id="doko.repository" name="Doko Repository" version="0.1.0" provider-name="doko">
     <extension point="xbmc.addon.repository" name="Doko Repository">
         <info compressed="false">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml</info>
@@ -316,7 +407,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
     </extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.4.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.5.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -327,7 +418,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 		<import addon="script.module.resolveurl" version="5.0.27"/>
 		<import addon="script.module.openscrapers" />
 		<import addon="script.module.addon.signals" version="0.0.3"/>
-<!-- 		<import addon="context.venom" version="1.0.0"/> -->
+		<import addon="context.venom" version="1.0.0"/>
 	</requires>
 
 	<extension point="xbmc.python.pluginsource" library="venom.py">
@@ -355,13 +446,17 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.4.9 - Feb. 3, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Trakt Progress fix to resolve random incorrect NextUp
-    items to watch due to TVDB v1 api season/episodes out
-    of order in xml.  The xml sort order was changed to be
-    based on ID's and no longer sorted by season/episode.[/I]
-[COLOR yellow]--[/COLOR][I] Added translation lookup for title and plot when language
- changed from English.[/I]
+[B][COLOR red]Update - v3.5.1 - Feb. 8, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Scraper function cache now written to the providers.db
+    instead of cache.db.  Now using "Clear Providers" will
+    wipe both links and function cache with no need to use
+    "Clear cache". This will help preserve meta data.[/I]
+[COLOR yellow]--[/COLOR][I] Updated "context.venom" addon to now include the
+    following new global context options as follows.
+    "Clear Providers"
+    "Find Similar"
+    "Browse Series"
+    "Browse Episodes"[/I]
 		</news>
 	</extension>
 </addon>

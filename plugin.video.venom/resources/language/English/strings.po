@@ -116,11 +116,11 @@ msgid "Box Office"
 msgstr ""
 
 msgctxt "#32021"
-msgid ""
+msgid "Torrent/Hoster (group by Prem.)"
 msgstr ""
 
 msgctxt "#32022"
-msgid ""
+msgid "Torrent/Hoster (ignore Prem.)"
 msgstr ""
 
 msgctxt "#32023"

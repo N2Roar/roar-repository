@@ -26,6 +26,7 @@ syshandle = int(sys.argv[1])
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
+is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
 
 
 class Movies:
@@ -1383,6 +1384,8 @@ class Movies:
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
+				if is_widget:
+					item.setProperty('isVenom_widget', 'true')
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)
