@@ -2,7 +2,7 @@
 <addon
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.3"
+  version="0.0.4"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
@@ -11,7 +11,7 @@
 		<import addon="plugin.program.autocompletion"/>
 		<import addon="service.subtitles.rvm.addic7ed"/>
 		<!-- 3rd Party Useful Addons -->
-		<import addon="plugin.video.openmeta"/>
+		<!-- <import addon="plugin.video.openmeta"/> -->
 		<!-- 3rd Party Useful Modules -->
 		<import addon="service.subtitles.opensubtitles_by_opensubtitles"/>
 	</requires>

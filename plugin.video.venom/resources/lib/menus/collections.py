@@ -24,6 +24,7 @@ syshandle = int(sys.argv[1])
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
+is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
 
 
 class Collections:
@@ -1010,12 +1011,13 @@ class Collections:
 
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
 # maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
-			# item = trakt.getMovieSummary(id=imdb)
 			item = trakt.getMovieSummary(id)
 
 			title = item.get('title')
-
 			originaltitle = title
+
+			try: trailer = control.trailer % item['trailer'].split('v=')[1]
+			except: trailer = ''
 
 			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
 				year = str(item.get('year', '0'))
@@ -1113,7 +1115,6 @@ class Collections:
 				if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
 					raise Exception()
 				trans_item = trakt.getMovieTranslation(imdb, self.lang, full = True)
-
 				title = trans_item.get('title') or title
 				tagline = trans_item.get('tagline') or tagline
 				plot = trans_item.get('overview') or plot
@@ -1125,7 +1126,7 @@ class Collections:
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
 						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
 						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
-						'discart': '0', 'metacache': False}
+						'discart': '0', 'trailer': trailer, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
@@ -1191,19 +1192,23 @@ class Collections:
 					# title = i['originaltitle']
 				# except:
 					# title = i['title']
-
 				label = '%s (%s)' % (title, year)
-
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
+				trailer = i.get('trailer')
 
-				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
-				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tmdb_id': tmdb})
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
+				meta.update({'code': imdb, 'imdbnumber': imdb})
+				# meta.update({'tmdb_id': tmdb}) # key not used and metadatclean() removes it anyway
 				meta.update({'mediatype': 'movie'})
-				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
+				try: meta.update({'tag': [imdb, tmdb]})
+				except: pass
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
-				# Some descriptions have a link at the end that. Remove it.
+				# Some descriptions have a link at the end. Remove it.
 				try:
 					plot = meta['plot']
 					index = plot.rfind('See full summary')
@@ -1295,12 +1300,21 @@ class Collections:
 ####################################
 
 				item = control.item(label=label)
-
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
+				if is_widget:
+					item.setProperty('isVenom_widget', 'true')
+
+				from resources.lib.modules.player import Bookmarks
+				resumetime = Bookmarks().get(label, str(year), ck=True)
+				# item.setProperty('totaltime', str(meta['duration']))
+				item.setProperty('resumetime', str(resumetime))
+				# watched_percent = int(float(resumetime) / float(meta['duration']) * 100)
+				# item.setProperty('percentplayed', str(watched_percent))
+
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)

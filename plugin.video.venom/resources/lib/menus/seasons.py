@@ -18,9 +18,11 @@ from resources.lib.modules import log_utils
 from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import views
-
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
+
+sysaddon = sys.argv[0]
+syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -886,9 +888,6 @@ class Seasons:
 			control.notification(title = 32054, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
-
 		settingFanart = control.setting('fanart')
 
 		addonPoster = control.addonPoster()
@@ -931,9 +930,8 @@ class Seasons:
 			try:
 				imdb, tmdb, tvdb, year, season = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0'), i['season']
 				title = i['tvshowtitle']
-
 				label = '%s %s' % (labelMenu, i['season'])
-
+				trailer = i.get('trailer')
 				if self.season_special is False and control.setting('tv.specials') == 'true':
 					self.season_special = True if int(season) == 0 else False
 
@@ -945,12 +943,16 @@ class Seasons:
 
 				systitle = urllib.quote_plus(title)
 
-				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
-				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tmdb_id': tmdb})
-				meta.update({'tvdb_id': tvdb})
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
+				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
-				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
+				try: meta.update({'tag': [imdb, tvdb]})
+				except: pass
+
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1027,9 +1029,7 @@ class Seasons:
 
 				# sysmeta = urllib.quote_plus(json.dumps(meta))
 				# sysart = urllib.quote_plus(json.dumps(art))
-				# url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s' % (sysaddon, systitle, year, imdb, tvdb, season)
 				url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s&season=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb, season)
-
 				# sysurl = urllib.quote_plus(url)
 
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=episode&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s)' % (

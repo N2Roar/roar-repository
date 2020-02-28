@@ -39,6 +39,7 @@
 		<setting id="navi.movie.tmdb.popular" type="bool" label="32431" default="true" />
 		<setting id="navi.movie.trakt.popular" type="bool" label="32433" default="true" />
 		<setting id="navi.movie.imdb.boxoffice" type="bool" label="32435" default="true" />
+		<setting id="navi.movie.tmdb.boxoffice" type="bool" label="32436" default="true" />
 		<setting id="navi.movie.trakt.boxoffice" type="bool" label="32437" default="true" />
 		<setting id="navi.movie.imdb.mostvoted" type="bool" label="32439" default="true" />
 		<setting id="navi.movie.tmdb.toprated" type="bool" label="32441" default="true" />

@@ -108,7 +108,7 @@ class Movies:
 
 		self.lang = control.apiLanguage()['trakt']
 
-		self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates' % ('%s', API_key, self.lang)
+		self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,videos' % ('%s', API_key, self.lang)
 ###                                                                             other "append_to_response" options                             external_ids,alternative_titles,videos,images
 
 		self.tmdb_art_link = base_link + '/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
@@ -173,7 +173,6 @@ class Movies:
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline, 'metacache': False}
 
-			# list.append(values)
 			self.list.append(values)
 
 		def items_list(i):
@@ -233,24 +232,28 @@ class Movies:
 						castandart = []
 					if len(castandart) == 150: break
 
+				try:
+					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube'][0]['key']
+					trailer = control.trailer % trailer
+				except:
+					trailer = ''
+
 				values = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered,
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
 							'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
-							'landscape': fanart, 'metacache': False, 'next': next}
+							'landscape': fanart, 'trailer': trailer, 'metacache': False, 'next': next}
 
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					# extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
-					extended_art = fanarttv.get_movie_art(imdb, tmdb)
+					extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 					if extended_art is not None:
 						values.update(extended_art)
 						meta.update(values)
 
 				values = dict((k,v) for k, v in values.iteritems() if v != '0')
-				# self.list.append(values)
 
 				for i in range(0, len(self.list)):
 					if str(self.list[i]['tmdb']) == str(tmdb):
@@ -262,10 +265,10 @@ class Movies:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
+				log_utils.error()
 				pass
 
 		self.list = metacache.fetch(self.list, self.lang, API_key)
-		# items = list[:len(list)]
 		items = self.list[:len(self.list)]
 
 		threads = []
@@ -273,8 +276,6 @@ class Movies:
 			threads.append(workers.Thread(items_list, i))
 		[i.start() for i in threads]
 		[i.join() for i in threads]
-		# log_utils.log('len(self.list) = %s' % len(self.list), __name__, log_utils.LOGDEBUG)
-		# log_utils.log('len(threads) = %s' % len(threads), __name__, log_utils.LOGDEBUG)
 
 		sorted_list = []
 		for i in sortList:
@@ -290,6 +291,7 @@ class Movies:
 			else:
 				items = result['results']
 		except:
+			log_utils.error()
 			return
 
 		list = []
@@ -399,11 +401,17 @@ class Movies:
 						castandart = []
 					if len(castandart) == 150: break
 
+				try:
+					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube'][0]['key']
+					trailer = control.trailer % trailer
+				except:
+					trailer = ''
+
 				values = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered,
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
 							'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
-							'landscape': fanart, 'metacache': False, 'next': next}
+							'landscape': fanart, 'trailer': trailer, 'metacache': False, 'next': next}
 
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
 
@@ -423,9 +431,9 @@ class Movies:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
+				log_utils.error()
 				pass
 
-		# items = list[:100]
 		items = list[:len(list)]
 		threads = []
 		for i in items:
@@ -633,7 +641,6 @@ class TVshows:
 			except:
 				pass
 
-		# items = list[:100]
 		items = list[:len(list)]
 		threads = []
 		for i in items:
@@ -798,7 +805,6 @@ class TVshows:
 		for i in sortList:
 			sorted_list += [item for item in self.list if item['tmdb'] == i]
 		return sorted_list
-		# return self.list
 
 
 	def get_details(self, tmdb, imdb):

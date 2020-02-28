@@ -101,13 +101,14 @@ existsPath =  xbmcvfs.exists
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"
 
+trailer = 'plugin://plugin.video.youtube/play/?video_id=%s'
+
 
 # def lang(language_id):
 	# text = getLangString(language_id)
 	# text = text.encode('utf-8', 'replace')
 	# text = display_string(text)
 	# return text
-
 
 # def display_string(object):
 	# if type(object) is str or type(object) is unicode:
@@ -117,7 +118,6 @@ iv = "p2s5v8y/B?E(H+Mb"
 	# if type(object) is bytes:
 		# object = ''.join(chr(x) for x in object)
 		# return object
-
 
 # def deaccentString(text):
 	# text = u'%s' % text

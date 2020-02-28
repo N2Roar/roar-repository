@@ -942,7 +942,7 @@ msgid "Box Office (IMDb)"
 msgstr ""
 
 msgctxt "#32436"
-msgid "Box Office"
+msgid "Box Office (TMDb)"
 msgstr ""
 
 msgctxt "#32437"

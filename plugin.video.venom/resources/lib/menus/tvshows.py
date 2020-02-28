@@ -23,7 +23,8 @@ from resources.lib.modules import trakt
 from resources.lib.modules import views
 from resources.lib.modules import workers
 
-
+sysaddon = sys.argv[0]
+syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -698,8 +699,9 @@ class TVshows:
 				dupes.append(tvdb)
 
 				premiered = item.get('first_aired', '0')
-
 				studio = item.get('network', '0')
+				try: trailer = control.trailer % item.get('trailer').split('v=')[1]
+				except: trailer = ''
 
 				genre = []
 				for i in item['genres']:
@@ -717,7 +719,7 @@ class TVshows:
 				try: plot = plot.encode('utf-8')
 				except: pass
 
-				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'trailer': trailer, 'genre': genre, 'duration': duration, 'rating': rating,
 										'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
 			except:
 				log_utils.error()
@@ -1269,9 +1271,6 @@ class TVshows:
 			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
-
 		settingFanart = control.setting('fanart')
 
 		addonPoster = control.addonPoster()
@@ -1308,15 +1307,19 @@ class TVshows:
 				try: title = i['originaltitle']
 				except: title = i['title']
 				label = title
-
 				systitle = urllib.quote_plus(title)
+				trailer = i.get('trailer')
 
-				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
-				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tvdb_id': tvdb})
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
+				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
-				# meta.update({'tvshowtitle': i['originaltitle']})
-				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
+				try: meta.update({'tag': [imdb, tvdb]})
+				except: pass
+
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1398,8 +1401,8 @@ class TVshows:
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, systitle)))
 				cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
 				cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
-				# if control.setting('library.service.update') == 'true':
-				cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tmdb, tvdb)))
+				if control.setting('library.service.update') == 'true':
+					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tmdb, tvdb)))
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
@@ -1486,9 +1489,6 @@ class TVshows:
 			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
-
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()
 
@@ -1531,7 +1531,6 @@ class TVshows:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 				item = control.item(label=name)
-				# item = control.item(label=name, offscreen=True)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

@@ -952,8 +952,8 @@ class indexer:
 
 				folder = i['folder'] if 'folder' in i else True
 
-				meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
-
+				# meta = dict((k, v) for k, v in i.iteritems() if v != '0')
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0' and v != '')
 				cm = []
 
 				if content in ['movies', 'tvshows']:
@@ -1265,7 +1265,7 @@ class player(xbmc.Player):
 			for i in ['title', 'originaltitle', 'tvshowtitle', 'year', 'season', 'episode', 'genre', 'rating', 'votes', 'director', 'writer', 'plot', 'tagline']:
 				try: meta[i] = control.infoLabel('listitem.%s' % i)
 				except: pass
-			meta = dict((k,v) for k, v in meta.iteritems() if not v == '')
+			meta = dict((k, v) for k, v in meta.iteritems() if v != '')
 			if not 'title' in meta: meta['title'] = control.infoLabel('listitem.label')
 			icon = control.infoLabel('listitem.icon')
 

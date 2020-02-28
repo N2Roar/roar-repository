@@ -69,11 +69,10 @@ class Movies:
 		self.tmdb_toprated_link = 'https://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
 		self.tmdb_upcoming_link = 'https://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
 		self.tmdb_nowplaying_link = 'https://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
-
+		self.tmdb_boxoffice_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&language=en-US&region=US&sort_by=revenue.desc&page=1'
 		self.tmdb_watchlist_link = 'https://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
 		self.tmdb_userlists_link = 'https://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
-
 		self.tmdb_poster = 'https://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'https://image.tmdb.org/t/p/w1280'
 
@@ -742,13 +741,10 @@ class Movies:
 				rating = str(item.get('rating', '0'))
 				votes = str(format(int(item.get('votes', '0')),',d'))
 
-				# try:
-					# mpaa = item['certification']
-					# mpaa = mpaa.encode('utf-8')
-				# except:
-					# mpaa = '0'
-
 				mpaa = item.get('certification', '0')
+
+				try: trailer = control.trailer % item['trailer'].split('v=')[1]
+				except: trailer = ''
 
 				plot = item.get('overview')
 				try: plot = plot.encode('utf-8')
@@ -758,7 +754,7 @@ class Movies:
 
 				self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration,
 											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb,
-											'tvdb': '0', 'poster': '0', 'fanart': '0', 'next': next, 'progress': progress})
+											'tvdb': '0', 'poster': '0', 'fanart': '0', 'trailer': trailer, 'next': next, 'progress': progress})
 			except:
 				pass
 		return self.list
@@ -1086,8 +1082,10 @@ class Movies:
 			item = trakt.getMovieSummary(id)
 
 			title = item.get('title')
-
 			originaltitle = title
+
+			try: trailer = control.trailer % item['trailer'].split('v=')[1]
+			except: trailer = ''
 
 			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
 				year = str(item.get('year', '0'))
@@ -1197,7 +1195,7 @@ class Movies:
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
 						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
 						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
-						'discart': '0', 'metacache': False}
+						'discart': '0', 'trailer': trailer, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
@@ -1263,24 +1261,27 @@ class Movies:
 					# title = i['originaltitle']
 				# except:
 					# title = i['title']
-
 				label = '%s (%s)' % (title, year)
-
 				try:
 					labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
 				except:
 					labelProgress = label
-
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
+				trailer = i.get('trailer')
 
-				meta = dict((k,v) for k, v in i.iteritems() if v != '0')
-				meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
-				meta.update({'tmdb_id': tmdb})
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
+				meta.update({'code': imdb, 'imdbnumber': imdb})
+				# meta.update({'tmdb_id': tmdb}) # key not used and metadatclean() removes it anyway
 				meta.update({'mediatype': 'movie'})
-				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
+				try: meta.update({'tag': [imdb, tmdb]})
+				except: pass
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
-				# Some descriptions have a link at the end that. Remove it.
+				# Some descriptions have a link at the end. Remove it.
 				try:
 					plot = meta['plot']
 					index = plot.rfind('See full summary')
@@ -1378,7 +1379,6 @@ class Movies:
 ####################################
 
 				item = control.item(label=labelProgress)
-				# item = control.item(label=labelProgress, offscreen=True)
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 
@@ -1386,6 +1386,14 @@ class Movies:
 				item.setProperty('IsPlayable', isPlayable)
 				if is_widget:
 					item.setProperty('isVenom_widget', 'true')
+
+				from resources.lib.modules.player import Bookmarks
+				resumetime = Bookmarks().get(label, str(year), ck=True)
+				# item.setProperty('totaltime', str(meta['duration']))
+				item.setProperty('resumetime', str(resumetime))
+				# watched_percent = int(float(resumetime) / float(meta['duration']) * 100)
+				# item.setProperty('percentplayed', str(watched_percent))
+
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)

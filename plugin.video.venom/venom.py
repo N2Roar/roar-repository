@@ -445,7 +445,6 @@ elif action == 'resetViewTypes':
 	views.clearViews()
 
 elif action == 'cleanSettings':
-	from resources.lib.modules import control
 	control.clean_settings()
 
 elif action == 'addView':
@@ -571,19 +570,10 @@ elif action == 'queueItem':
 #---Player
 ####################################################
 elif action == 'play':
-	# playlistStarted = False
-	# try:
-		# import xbmc
-		# if not xbmc.Player().isPlayingVideo():
-			# r = argv[0]+"?action=playAll"
-			# control.execute('RunPlugin(%s)' % r)
-			# playlistStarted = True
-	# except:
-		# pass
-	# if playlistStarted == False:
-
+	# control.busy()
 	from resources.lib.modules import sources
 	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False)
+	# control.idle()
 
 elif action == 'playAll':
 	control.player2().play(control.playlist)
@@ -593,8 +583,10 @@ elif action == 'playItem':
 	sources.Sources().playItem(title, source)
 
 elif action == 'reScrape':
+	# control.busy()
 	from resources.lib.modules import sources
 	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=True)
+	# control.idle()
 
 elif action == 'addItem':
 	from resources.lib.modules import sources

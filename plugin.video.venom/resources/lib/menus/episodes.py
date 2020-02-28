@@ -18,8 +18,10 @@ from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import views
 from resources.lib.modules import workers
-
 from resources.lib.extensions import tools
+
+sysaddon = sys.argv[0]
+syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -498,10 +500,12 @@ class Episodes:
 
 				studio = item.get('show').get('network', '0')
 				status = item.get('show').get('status', '0')
-				trailer =  item.get('show').get('trailer', '0')
+
+				try: trailer = control.trailer % item['show']['trailer'].split('v=')[1]
+				except: trailer = ''
 
 				values = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
-								'enum': episode, 'added': added, 'lastplayed': lastplayed, 'studio': studio, 'status': status, 'episodeIDS': episodeIDS}
+								'enum': episode, 'added': added, 'lastplayed': lastplayed, 'studio': studio, 'status': status, 'trailer': trailer, 'episodeIDS': episodeIDS}
 
 				try:
 					air = item['show']['airs']
@@ -528,6 +532,7 @@ class Episodes:
 			tvshowtitle = i['tvshowtitle']
 			year = str(i.get('year'))
 			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
+			trailer = i.get('trailer')
 			try:
 				url = self.tvdb_info_link % (tvdb, lang)
 				# data = urllib2.urlopen(url, timeout=30).read()
@@ -718,7 +723,7 @@ class Episodes:
 								'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
 								'writer': writer, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
 								'poster': poster, 'season_poster': season_poster,  'banner': banner, 'fanart': fanart, 'thumb': thumb,
-								'snum': i['snum'], 'enum': i['enum'], 'unaired': unaired, 'episodeIDS': episodeIDS, 'traktProgress': True}
+								'snum': i['snum'], 'enum': i['enum'], 'unaired': unaired, 'trailer': trailer, 'episodeIDS': episodeIDS, 'traktProgress': True}
 
 				if not direct:
 					values['action'] = 'episodes'
@@ -853,13 +858,14 @@ class Episodes:
 					except:
 						pass
 
-				trailer = item['show']['trailer']
+				try: trailer = control.trailer % item['show']['trailer'].split('v=')[1]
+				except: trailer = ''
 
 				values = {'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle,
 							'year': year, 'premiered': premiered, 'added': added, 'lastplayed': lastplayed,
 							'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
 							'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb,
-							'tvdb': tvdb, 'progress': progress, 'episodeIDS': episodeIDS, 'next': next}
+							'tvdb': tvdb, 'progress': progress, 'trailer': trailer, 'episodeIDS': episodeIDS, 'next': next}
 
 				if 'airday' in item and not item['airday'] is None and item['airday'] != '':
 					values['airday'] = item['airday']
@@ -913,6 +919,7 @@ class Episodes:
 			tvshowtitle = i['tvshowtitle']
 			year = str(i.get('year'))
 			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
+			trailer = i.get('trailer')
 			try:
 				url = self.tvdb_info_link % (tvdb, lang)
 				# data = urllib2.urlopen(url, timeout=30).read()
@@ -1077,7 +1084,7 @@ class Episodes:
 								'tvshowyear': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
 								'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot,
 								'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'progress': progress, 'added': added, 'lastplayed': lastplayed, 'poster': poster,
-								'season_poster': season_poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
+								'season_poster': season_poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'trailer': trailer, 'episodeIDS': episodeIDS}
 
 				if not direct:
 					values['action'] = 'episodes'
@@ -1472,11 +1479,7 @@ class Episodes:
 			log_utils.error()
 			pass
 
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
-
 		settingFanart = control.setting('fanart')
-
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
 		addonBanner = control.addonBanner()
@@ -1550,25 +1553,29 @@ class Episodes:
 
 		for i in items:
 			try:
-				imdb, tmdb, tvdb, year, season, episode, premiered = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i['year'], i['season'], i['episode'], i['premiered']
+				tvshowtitle, title, imdb, tmdb, tvdb = i.get('tvshowtitle'), i.get('title'), i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0')
+				year, season, episode, premiered = i['year'], i['season'], i['episode'], i['premiered']
+
 				if 'label' not in i:
-					i['label'] = i['title']
+					i['label'] = title
 
 				if i['label'] == '0':
-					label = '%sx%02d . %s %s' % (i['season'], int(i['episode']), 'Episode', i['episode'])
+					label = '%sx%02d . %s %s' % (season, int(episode), 'Episode', episode)
 				else:
-					label = '%sx%02d . %s' % (i['season'], int(i['episode']), i['label'])
+					label = '%sx%02d . %s' % (season, int(episode), i['label'])
 
 				# if self.season_special is False and control.setting('tv.specials') == 'true':
 					# self.season_special = True if int(season) == 0 else False
 
 				if multi is True:
-					label = '%s - %s' % (i['tvshowtitle'], label)
+					label = '%s - %s' % (tvshowtitle, label)
 
 				try:
 					labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
 				except:
 					labelProgress = label
+
+				trailer = i.get('trailer')
 
 				try:
 					if i['unaired'] == 'true':
@@ -1576,19 +1583,24 @@ class Episodes:
 				except:
 					pass
 
-				systitle = urllib.quote_plus(i['title'])
-				systvshowtitle = urllib.quote_plus(i['tvshowtitle'])
-				syspremiered = urllib.quote_plus(i['premiered'])
+				systitle = urllib.quote_plus(title)
+				systvshowtitle = urllib.quote_plus(tvshowtitle)
+				syspremiered = urllib.quote_plus(premiered)
 
 				try:
 					seasoncount = i['seasoncount']
 				except:
 					seasoncount = None
 
-				meta = dict((k, v) for k, v in i.iteritems() if v != '0' and v != '')
-				# meta = dict((k, v) for k, v in i.iteritems())
+				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'mediatype': 'episode'})
-				meta.update({'trailer': '%s?action=trailer&name=%s&imdb=%s' % (sysaddon, systvshowtitle, imdb)})
+				try: meta.update({'tag': [imdb, tvdb]})
+				except: pass
+
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systvshowtitle)})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1805,6 +1817,15 @@ class Episodes:
 				item.setProperty('IsPlayable', isPlayable)
 				if is_widget:
 					item.setProperty('isVenom_widget', 'true')
+
+				from resources.lib.modules.player import Bookmarks
+				blabel = i['tvshowtitle'] + ' S%02dE%02d' % (int(season), int(episode))
+				resumetime = Bookmarks().get(blabel, str(year), ck=True)
+				# item.setProperty('totaltime', str(meta['duration']))
+				item.setProperty('resumetime', str(resumetime))
+				# watched_percent = int(float(resumetime) / float(meta['duration']) * 100)
+				# item.setProperty('percentplayed', str(watched_percent))
+
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)
@@ -1865,9 +1886,6 @@ class Episodes:
 			control.hide()
 			control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 			sys.exit()
-
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
 
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()

@@ -291,7 +291,7 @@ class Player(xbmc.Player):
 				except:
 					pass
 
-				watcher = (self.getWatchedPercent() >= 90)
+				watcher = (self.getWatchedPercent() >= 80)
 				property = control.window.getProperty(pname)
 
 				if self.media_type == 'movie':
@@ -299,9 +299,9 @@ class Player(xbmc.Player):
 						if watcher is True and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markMovieDuringPlayback(self.imdb, '7')
-						elif watcher is False and property != '6':
-							control.window.setProperty(pname, '6')
-							playcount.markMovieDuringPlayback(self.imdb, '6')
+						# elif watcher is False and property != '6':
+							# control.window.setProperty(pname, '6')
+							# playcount.markMovieDuringPlayback(self.imdb, '6')
 					except:
 						continue
 					xbmc.sleep(2000)
@@ -311,9 +311,9 @@ class Player(xbmc.Player):
 						if watcher is True and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '7')
-						elif watcher is False and property != '6':
-							control.window.setProperty(pname, '6')
-							playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '6')
+						# elif watcher is False and property != '6':
+							# control.window.setProperty(pname, '6')
+							# playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '6')
 					except:
 						continue
 					xbmc.sleep(2000)
@@ -437,14 +437,13 @@ class Player(xbmc.Player):
 	def onPlayBackStopped(self):
 		# xbmc.sleep(3000)
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
-		if control.setting('crefresh') == 'true':
-			xbmc.executebuiltin('Container.Refresh')
 		try:
-			if self.current_time != 0 and self.media_length == 0:
-				if (self.current_time / self.media_length) >= .90:
-					self.libForPlayback()
+			if (self.current_time / self.media_length) >= .80:
+				self.libForPlayback()
 		except:
 			pass
+		if control.setting('crefresh') == 'true':
+			xbmc.executebuiltin('Container.Refresh')
 		# control.playlist.clear()
 		xbmc.log('onPlayBackStopped callback', 2)
 
@@ -641,7 +640,7 @@ class Bookmarks:
 		self.offset = '0'
 
 
-	def get(self, name, year='0'):
+	def get(self, name, year='0', ck=False):
 		if control.setting('bookmarks') != 'true':
 			return self.offset
 
@@ -666,7 +665,9 @@ class Bookmarks:
 			return self.offset
 
 		self.offset = str(match[1])
-		# dbcon.commit()
+
+		if ck:
+			return self.offset
 
 		minutes, seconds = divmod(float(self.offset), 60)
 		hours, minutes = divmod(minutes, 60)
@@ -703,7 +704,6 @@ class Bookmarks:
 		control.makeFile(control.dataPath)
 		dbcon = database.connect(control.bookmarksFile)
 		dbcur = dbcon.cursor()
-
 		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
 		dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
 

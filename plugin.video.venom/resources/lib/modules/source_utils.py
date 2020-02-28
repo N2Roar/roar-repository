@@ -53,7 +53,9 @@ MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng'
 LANG = ['arabic', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'spanish',
 				'truefrench', 'truespanish', 'hebrew']
 
-UNDESIREABLES = ['baibako', 'coldfilm', 'jaskier', 'ideafilm', 'lakefilm', 'lostfilm', 'newstudio', 'vostfr', 'hamsterstudio']
+
+UNDESIREABLES = ['baibako', 'coldfilm', 'jaskier', 'hamsterstudio', 'ideafilm', 'lakefilm', 'lostfilm', 'sample', 'newstudio', 'vostfr']
+
 
 DUBBED = ['dublado', 'dubbed']
 

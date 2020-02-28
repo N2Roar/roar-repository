@@ -1,3 +1,16 @@
+[B][COLOR red]Update - v3.5.2 - Feb. 22, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Trailer module updated with new api keys to fix google
+    search of youtube for trailers[/I]
+[COLOR yellow]--[/COLOR][I] Changed how restarting a previousely watched movie
+    or episode is handled. Previousely the title would be
+    marked unwatched upon replaying a previousely
+    watched item. Now the watched indicator is not
+    changed.[/I]
+[COLOR yellow]--[/COLOR][I] Added ability to pass to skin resume points.  This now
+    allows for skin to use a watched progress indicator.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDB Box Office to Movie Menu and
+    setting page option to remove item from navigation.[/I]
+
 [B][COLOR red]Update - v3.5.1 - Feb. 8, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Scraper function cache now written to the providers.db
     instead of cache.db.  Now using "Clear Providers" will
