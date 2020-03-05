@@ -2,14 +2,15 @@
 <addon
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.4"
+  version="0.0.5"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
 		<import addon="inputstream.adaptive"/>
-		<import addon="inputstream.rtmp"/>
+		<!-- <import addon="inputstream.rtmp"/> -->
 		<import addon="plugin.program.autocompletion"/>
 		<import addon="service.subtitles.rvm.addic7ed"/>
+		<import addon="plugin.video.themoviedb.helper"/>
 		<!-- 3rd Party Useful Addons -->
 		<!-- <import addon="plugin.video.openmeta"/> -->
 		<!-- 3rd Party Useful Modules -->
@@ -20,7 +21,7 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">ROAR Build</summary>
-		<description lang="en">OpenMeta and other useful stuff</description>
+		<description lang="en">TheMovieDb Helper and other useful stuff</description>
 		<disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
 		<language>en</language>
 		<platform>all</platform>

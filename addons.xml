@@ -128,14 +128,15 @@
 <addon
   id="plugin.roarbuild"
   name="ROAR Build"
-  version="0.0.4"
+  version="0.0.5"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Useful Modules -->
 		<import addon="inputstream.adaptive"/>
-		<import addon="inputstream.rtmp"/>
+		<!-- <import addon="inputstream.rtmp"/> -->
 		<import addon="plugin.program.autocompletion"/>
 		<import addon="service.subtitles.rvm.addic7ed"/>
+		<import addon="plugin.video.themoviedb.helper"/>
 		<!-- 3rd Party Useful Addons -->
 		<!-- <import addon="plugin.video.openmeta"/> -->
 		<!-- 3rd Party Useful Modules -->
@@ -146,7 +147,7 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">ROAR Build</summary>
-		<description lang="en">OpenMeta and other useful stuff</description>
+		<description lang="en">TheMovieDb Helper and other useful stuff</description>
 		<disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
 		<language>en</language>
 		<platform>all</platform>
@@ -319,7 +320,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
   </extension>
 </addon>
 
-<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.14.01" provider-name="A4K">
+<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.14" provider-name="A4K">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0"/>
 		<import addon="metadata.tvdb.com" version="3.0.14"/>
@@ -408,7 +409,7 @@ Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B]
 </addon>
 
 <addon id="plugin.video.themoviedb.helper"
-version="2.2.73"
+version="2.2.73.01"
 name="TheMovieDb Helper"
 provider-name="jurialmunkey">
 <requires>
@@ -623,7 +624,7 @@ Add-on by doko.
 	</extension>
 </addon>
 
-<addon id="repository.jewrepo" name="[COLOR purple]JewRepo[/COLOR]" version="1.5.4" provider-name="JewBMX">
+<addon id="repository.jewrepo" name="[COLOR purple]JewRepo[/COLOR]" version="1.5.5" provider-name="JewBMX">
     <requires>
         <import addon="xbmc.addon" version="12.0.0"/>
     </requires>
@@ -632,16 +633,6 @@ Add-on by doko.
             <checksum>https://raw.githubusercontent.com/jewbmx/repo/master/zips/addons.xml.md5</checksum>
             <datadir zip="true">https://raw.githubusercontent.com/jewbmx/repo/master/zips/</datadir>
         <hashes>false</hashes>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/jewbmx/JewBackD/master/zips/</datadir>
-        </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
-        </dir>
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
             <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
