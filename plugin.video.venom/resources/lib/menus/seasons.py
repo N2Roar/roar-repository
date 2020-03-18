@@ -884,7 +884,7 @@ class Seasons:
 
 	def seasonDirectory(self, items):
 		if items is None or len(items) == 0:
-			control.idle()
+			control.hide()
 			control.notification(title = 32054, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
@@ -946,13 +946,9 @@ class Seasons:
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
-				try: meta.update({'tag': [imdb, tvdb]})
+				meta.update({'tag': [imdb, tvdb]})
+				try: del meta['trailer']
 				except: pass
-
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
-					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1046,8 +1042,12 @@ class Seasons:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
-				item = control.item(label = label)
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(label), year, imdb)})
 
+				item = control.item(label = label)
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 

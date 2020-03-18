@@ -24,6 +24,7 @@ season = params.get('season')
 episode = params.get('episode')
 tvshowtitle = params.get('tvshowtitle')
 premiered = params.get('premiered')
+type = params.get('type')
 url = params.get('url')
 image = params.get('image')
 meta = params.get('meta')
@@ -323,7 +324,6 @@ elif action == 'tvUserlists':
 ####################################################
 elif action == 'seasons':
 	from resources.lib.menus import seasons
-	# seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
 	seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb)
 
 elif action == 'seasonsUserlists':
@@ -341,12 +341,10 @@ elif action == 'seasonsList':
 ####################################################
 elif action == 'episodes':
 	from resources.lib.menus import episodes
-	# episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
 	episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
 elif action == 'episodesPage':
 	from resources.lib.menus import episodes
-	# episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
 	episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
 elif action == 'tvWidget':
@@ -573,7 +571,7 @@ elif action == 'play':
 	# control.busy()
 	from resources.lib.modules import sources
 	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=False)
-	# control.idle()
+	# control.hide()
 
 elif action == 'playAll':
 	control.player2().play(control.playlist)
@@ -586,7 +584,7 @@ elif action == 'reScrape':
 	# control.busy()
 	from resources.lib.modules import sources
 	sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select, rescrape=True)
-	# control.idle()
+	# control.hide()
 
 elif action == 'addItem':
 	from resources.lib.modules import sources
@@ -598,7 +596,7 @@ elif action == 'alterSources':
 
 elif action == 'trailer':
 	from resources.lib.modules import trailer
-	trailer.Trailer().play(name, url, windowedtrailer)
+	trailer.Trailer().play(type, name, year, url, imdb, windowedtrailer)
 
 elif action == 'random':
 	rtype = params.get('rtype')

@@ -157,7 +157,7 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.7"
+  version="0.0.8"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
@@ -166,14 +166,14 @@
 		<import addon="plugin.video.ctoonkodi" optional="true"/>
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
-		<import addon="plugin.video.wonderfulsubs"/>
+		<!-- <import addon="plugin.video.wonderfulsubs"/> -->
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">WatchNixtoons2[CR]WonderfulSubs</description>
+        <description lang="en">WatchNixtoons2[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -465,7 +465,7 @@ provider-name="jurialmunkey">
 </extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.5.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.5.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -504,18 +504,17 @@ provider-name="jurialmunkey">
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.5.2 - Feb. 22, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Trailer module updated with new api keys to fix google
-    search of youtube for trailers[/I]
-[COLOR yellow]--[/COLOR][I] Changed how restarting a previousely watched movie
-    or episode is handled. Previousely the title would be
-    marked unwatched upon replaying a previousely
-    watched item. Now the watched indicator is not
-    changed.[/I]
-[COLOR yellow]--[/COLOR][I] Added ability to pass to skin resume points.  This now
-    allows for skin to use a watched progress indicator.[/I]
-[COLOR yellow]--[/COLOR][I] Added TMDB Box Office to Movie Menu and
-    setting page option to remove item from navigation.[/I]
+[B][COLOR red]Update - v3.5.3 - March 16, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Google api for trailer search now checks if user entered
+    own key in youtube addon.  That key will now take
+    priority.[/I]
+[COLOR yellow]--[/COLOR][I] Added torrent cache checking, and removal settings,
+    for RD and PM. The new settings are found under
+    "Torrent Settings" and are enabled by default to
+    cache check and remove uncached torrents.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting to not log removed duplicate sources.
+    Logging the removed duplicates was causing
+    excessive log spamming.[/I]
 		</news>
 	</extension>
 </addon>
@@ -567,48 +566,6 @@ Add-on by doko.
         <platform lang="en">all</platform>
         <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
     </extension>
-</addon>
-
-<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.28">
-  <requires>
-    <import addon="xbmc.python" version="2.25.0" />
-    <import addon="script.module.requests" version="2.12.4" />
-    <import addon="script.module.beautifulsoup4" version="4.5.3" />
-    <import addon="script.common.plugin.cache" version="2.5.5" />
-    <import addon="script.module.inputstreamhelper" version="0.3.3" />
-  </requires>
-  <extension library="default.py" point="xbmc.python.pluginsource">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary lang="en">WonderfulSubs : Anime Subs &amp; Dubs</summary>
-    <description lang="en">HD Animes</description>
-    <source>https://github.com/DxCx/plugin.video.wonderfulsubs</source>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="repo.plugin.video.9anime" name="DxCx Kodi Repository" version="0.0.4" provider-name="DxCx">
-	<requires>
-		<import addon="xbmc.addon" version="12.0.0"/>
-	</requires>
-	<extension point="xbmc.addon.repository" name="DxCx Kodi Repository">
-			<info compressed="false">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master</datadir>
-			<hashes>false</hashes>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Repository for DxCx video plugin</summary>
-		<description lang="en">Download and install DxCx's addons repository.</description>
-		<source>https://github.com/DxCx/repo.plugin.video.9anime</source>
-		<platform>all</platform>
-		<assets>
-		   <icon>resources/icon.png</icon>
-		   <fanart>resources/fanart.jpg</fanart>
-		</assets>
-		<news>[B]0.0.1[/B][CR]• Initial release</news>
-	</extension>
 </addon>
 
 <addon id="repository.aznhusband-kodi-repo" version="1.0.1" name="aznhusband-kodi-repo" provider-name="aznhusband">

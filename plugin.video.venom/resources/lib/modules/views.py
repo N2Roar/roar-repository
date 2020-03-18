@@ -16,7 +16,7 @@ notificationSound = False if control.setting('notification.sound') == 'false' el
 def clearViews():
 	try:
 		skin = control.skin
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:

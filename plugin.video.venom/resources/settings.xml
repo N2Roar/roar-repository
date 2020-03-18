@@ -146,10 +146,10 @@
 		<setting id="progress.dialog.prem.color" type="select" label="Progress Dialog Premium Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671" default="5" enable="eq(-1,0)" />
 		<setting id="progress.dialog.free.color" type="select" label="Progress Dialog Free Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671" default="1" enable="eq(-2,0)" />
 		<setting type="lsep" label="32338" />
-		<setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
+		<setting id="hosts.quality" type="enum" label="32339" values="4K|1080p|720p|480p" default="0" />
 		<setting id="preemptive.termination" type="bool" label="32654" default="false" />
 		<setting id="preemptive.limit" type="slider" label="32655" default="25" range="1,50" option="int" visible="eq(-1,true)" />
-		<setting id="preemptive.res" type="enum" label="32659" values="4K|1440p|1080p|720p|480p" default="2" visible="eq(-2,true)" />
+		<setting id="preemptive.res" type="enum" label="32659" values="4K|1080p|720p|480p" default="2" visible="eq(-2,true)" />
 		<setting id="prem.identify" type="select" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32598" default="6" />
 		<setting id="autoplay.sd" type="bool" label="32656" default="false" />
 		<setting id="sources.extrainfo" type="bool" label="32587" default="true" />
@@ -157,6 +157,7 @@
 		<setting id="hosts.captcha" type="bool" label="32341" default="false" />
 		<setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
 		<setting id="remove.duplicates" type="bool" label="32035" default="true" />
+		<setting id="remove.duplicates.logging" type="bool" label="   Do not spam log with removed duplicates" default="true" enable="eq(-1,true)" />
 		<setting id="remove.CamSd.sources" type="bool" label="32050" default="false" />
 		<setting id="remove.3D.sources" type="bool" label="32051" default="false" />
 	</category>
@@ -170,6 +171,10 @@
 		<setting id="torrent.group.sort" type="select" label="Torent/Hoster sorting method" lvalues="32021|32022" enable="eq(-3,true)"  default="1" visible = "true" />
 		<setting id="torrent.resolveurl2" type="action" label="32640" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.42)" />
 		<setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-5,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.52)" />
+		<setting id="pm.chk.cached" type="bool" label="PM cached torrent check" default="true" />
+		<setting id="pm.remove.uncached" type="bool" label="   PM remove uncached torrents" default="true" enable="eq(-1,true)" />
+		<setting id="rd.chk.cached" type="bool" label="RD cached torrent check" default="true" />
+		<setting id="rd.remove.uncached" type="bool" label="   RD remove uncached torrents" default="true" enable="eq(-1,true)" />
 	</category>
 
 	<!-- Trakt - 7 -->

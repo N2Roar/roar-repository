@@ -196,7 +196,7 @@ class Movies:
 			except:
 				invalid = True
 			if invalid:
-				control.idle()
+				control.hide()
 				if self.notifications:
 					control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 
@@ -233,7 +233,7 @@ class Movies:
 			except:
 				invalid = True
 			if invalid:
-				control.idle()
+				control.hide()
 				if self.notifications:
 					control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 
@@ -280,7 +280,7 @@ class Movies:
 			except:
 				invalid = True
 			if invalid:
-				control.idle()
+				control.hide()
 				if self.notifications:
 					control.notification(title=32001, message=33049, icon='INFO', sound=notificationSound)
 
@@ -531,7 +531,7 @@ class Movies:
 		u = urlparse.urlparse(url).netloc.lower()
 
 		try:
-			control.idle()
+			control.hide()
 			if u in self.tmdb_link:
 				from resources.lib.indexers import tmdb
 				items = tmdb.userlists(url)
@@ -1078,7 +1078,6 @@ class Movies:
 
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
 # maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
-			# item = trakt.getMovieSummary(id=imdb)
 			item = trakt.getMovieSummary(id)
 
 			title = item.get('title')
@@ -1219,7 +1218,7 @@ class Movies:
 
 	def movieDirectory(self, items, unfinished=False, next=True):
 		if items is None or len(items) == 0:
-			control.idle()
+			control.hide()
 			control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
@@ -1272,14 +1271,8 @@ class Movies:
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
-				# meta.update({'tmdb_id': tmdb}) # key not used and metadatclean() removes it anyway
 				meta.update({'mediatype': 'movie'})
-				try: meta.update({'tag': [imdb, tmdb]})
-				except: pass
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
-					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
+				meta.update({'tag': [imdb, tmdb]})
 
 				# Some descriptions have a link at the end. Remove it.
 				try:
@@ -1330,6 +1323,13 @@ class Movies:
 				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
 								'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
+				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				for k in remove_keys:
+					meta.pop(k, None)
+				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
+				# try: del meta['trailer']
+				# except: pass
+
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
@@ -1377,6 +1377,11 @@ class Movies:
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
+
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'movie', sysname, year, imdb)})
 
 				item = control.item(label=labelProgress)
 				if 'castandart' in i:
@@ -1444,7 +1449,7 @@ class Movies:
 
 	def addDirectory(self, items, queue=False):
 		if items is None or len(items) == 0:
-			control.idle()
+			control.hide()
 			control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 

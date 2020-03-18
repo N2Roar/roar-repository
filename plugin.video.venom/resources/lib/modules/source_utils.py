@@ -9,7 +9,6 @@ import re
 
 from resources.lib.modules import client
 from resources.lib.modules import directstream
-from resources.lib.modules import trakt
 from resources.lib.modules import pyaes
 
 
@@ -50,21 +49,23 @@ MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng'
 							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio',
 							'dual.audio', 'multi']
 
-LANG = ['arabic', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'spanish',
-				'truefrench', 'truespanish', 'hebrew']
+LANG = ['arabic', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'russian', 'spanish',
+				'truefrech', 'truespanish', 'turkish', 'hebrew']
 
 
-UNDESIREABLES = ['baibako', 'coldfilm', 'jaskier', 'hamsterstudio', 'ideafilm', 'lakefilm', 'lostfilm', 'sample', 'newstudio', 'vostfr']
+UNDESIREABLES = ['baibako', 'coldfilm', 'extras.only', 'jaskier', 'hamsterstudio', 'ideafilm', 'lakefilm', 'lostfilm',
+									'newstudio', 'sample', 'soundtrack', 'teaser', 'vostfr']
 
 
 DUBBED = ['dublado', 'dubbed']
 
 SUBS = ['subs', 'subtitula', 'subfrench', 'subspanish', 'swesub']
 
-ADDS = ['1xbet']
+ADDS = ['1xbet', 'betwin']
 
 
 def is_anime(content, type, type_id):
+	from openscrapers.modules import trakt
 	try:
 		r = trakt.getGenre(content, type, type_id)
 		return 'anime' in r or 'animation' in r
@@ -107,6 +108,9 @@ def get_release_quality(release_name, release_link=None):
 		elif any(value in fmt for value in CAM):
 			quality = 'CAM'
 
+		elif any(value in fmt for value in HDCAM):
+			quality = 'CAM'
+
 		if not quality:
 			if release_link:
 				release_link = release_link.lower()
@@ -131,6 +135,9 @@ def get_release_quality(release_name, release_link=None):
 					quality = "SD"
 
 				elif any(value in release_link for value in CAM):
+					quality = 'CAM'
+
+				elif any(value in release_link for value in HDCAM):
 					quality = 'CAM'
 
 				else:
@@ -260,7 +267,7 @@ def getFileType(url):
 		type += ' MULTI-LANG /'
 
 	if any(value in url for value in ADDS):
-		type += ' 1XBET /'
+		type += ' ADDS /'
 
 	if any(value in url for value in SUBS):
 		if type != '':
@@ -460,28 +467,43 @@ def append_headers(headers):
 	return '|%s' % '&'.join(['%s=%s' % (key, urllib.quote_plus(headers[key])) for key in headers])
 
 
-def get_size(url):
+def _size(siz):
+	if siz in ['0', 0, '', None]: return 0, ''
+	div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
+	# float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))) / div
+	float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', ''))) / div
+
+	# siz = re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))
+	# siz = re.sub('(\d+\.\d+)(\.)', '\\1', siz)
+	# float_size = float(siz) / div
+
+	str_size = '%.2f GB' % float_size
+	return float_size, str_size
+
+
+def get_size(url): # not called
 	try:
 		size = client.request(url, output='file_size')
 		if size == '0':
 			size = False
-		size = convert_size(size)
-		return size
+		float_size, str_size = convert_size(size)
+		return float_size, str_size
 	except:
 		return False
 
 
-def convert_size(size_bytes):
+def convert_size(size_bytes, to='GB'):
 	import math
 	if size_bytes == 0:
-		return "0B"
-	size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-	i = int(math.floor(math.log(size_bytes, 1024)))
+		return 0, ''
+	power = {'B' : 0, 'KB': 1, 'MB' : 2, 'GB': 3, 'TB' : 4, 'EB' : 5, 'ZB' : 6, 'YB': 7}
+	i = power[to]
 	p = math.pow(1024, i)
-	s = round(size_bytes / p, 2)
-	if size_name[i] == 'B' or size_name[i] == 'KB':
-		return None
-	return "%s %s" % (s, size_name[i])
+	float_size = round(size_bytes / p, 2)
+	# if to == 'B' or to  == 'KB':
+		# return 0, ''
+	str_size = "%s %s" % (float_size, to)
+	return float_size, str_size
 
 
 def check_directstreams(url, hoster='', quality='SD'):
@@ -568,7 +590,6 @@ def remove_lang(name):
 		return True
 	elif any(value in name for value in DUBBED):
 		return True
-	# elif 'rus' in name and 'eng' not in name:
 	elif 'rus' in name and not any(value in name for value in ['eng', 'multi']):
 		return True
 	else:

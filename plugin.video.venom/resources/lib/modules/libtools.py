@@ -422,7 +422,7 @@ class libmovies:
 
 
 	def silent(self, url):
-		control.idle()
+		control.hide()
 		contains = lib_tools().ckKodiSources()
 		if service_notification and not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
 			control.notification(title = 'default', message = 32645, icon = 'default', time = 1000, sound = notificationSound)
@@ -457,7 +457,7 @@ class libmovies:
 
 
 	def range(self, url, list_name):
-		control.idle()
+		control.hide()
 		if not control.yesnoDialog(control.lang(32555).encode('utf-8'), '', ''):
 			return
 
@@ -785,7 +785,7 @@ class libtvshows:
 
 
 	def silent(self, url):
-		control.idle()
+		control.hide()
 		contains = lib_tools().ckKodiSources()
 		if service_notification and not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
 			control.notification(title = 'default', message = 32645, icon = 'default', time = 1000, sound = notificationSound)
@@ -820,7 +820,7 @@ class libtvshows:
 
 
 	def range(self, url, list_name):
-		control.idle()
+		control.hide()
 		if not control.yesnoDialog(control.lang(32555).encode('utf-8'), '', ''):
 			return
 

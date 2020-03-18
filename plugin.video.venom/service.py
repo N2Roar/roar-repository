@@ -82,6 +82,3 @@ if int(control.setting('schedTraktTime')) > 0:
 	timeout = 3600 * int(control.setting('schedTraktTime'))
 	schedTrakt = threading.Timer(timeout, syncTraktLibrary)
 	schedTrakt.start()
-
-
-

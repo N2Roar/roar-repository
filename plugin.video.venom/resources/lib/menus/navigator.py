@@ -366,7 +366,7 @@ class Navigator:
 
 	def views(self):
 		try:
-			control.idle()
+			control.hide()
 			items = [ (control.lang(32001).encode('utf-8'), 'movies'), (control.lang(32002).encode('utf-8'), 'tvshows'),
 							(control.lang(32054).encode('utf-8'), 'seasons'), (control.lang(32038).encode('utf-8'), 'episodes') ]
 
@@ -401,7 +401,7 @@ class Navigator:
 
 	def accountCheck(self):
 		if traktCredentials is False and imdbCredentials is False:
-			control.idle()
+			control.hide()
 			control.notification(title='default', message=32042, icon='WARNING', sound=notificationSound)
 			sys.exit()
 
@@ -415,7 +415,7 @@ class Navigator:
 
 
 	def clearCacheAll(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -431,7 +431,7 @@ class Navigator:
 
 
 	def clearCacheProviders(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -447,7 +447,7 @@ class Navigator:
 
 
 	def clearCacheMeta(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -463,7 +463,7 @@ class Navigator:
 
 
 	def clearCache(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -479,7 +479,7 @@ class Navigator:
 
 
 	def clearCacheSearch(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -495,7 +495,7 @@ class Navigator:
 
 
 	def clearCacheSearchPhrase(self, table, name):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:
@@ -511,7 +511,7 @@ class Navigator:
 
 
 	def clearBookmarks(self):
-		control.idle()
+		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 
 		if not yes:

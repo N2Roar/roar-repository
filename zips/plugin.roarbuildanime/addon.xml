@@ -2,7 +2,7 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.7"
+  version="0.0.8"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
@@ -11,14 +11,14 @@
 		<import addon="plugin.video.ctoonkodi" optional="true"/>
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
-		<import addon="plugin.video.wonderfulsubs"/>
+		<!-- <import addon="plugin.video.wonderfulsubs"/> -->
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">WatchNixtoons2[CR]WonderfulSubs</description>
+        <description lang="en">WatchNixtoons2[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>

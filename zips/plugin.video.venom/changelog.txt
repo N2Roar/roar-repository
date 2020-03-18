@@ -1,3 +1,15 @@
+[B][COLOR red]Update - v3.5.3 - March 16, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Google api for trailer search now checks if user entered
+    own key in youtube addon.  That key will now take
+    priority.[/I]
+[COLOR yellow]--[/COLOR][I] Added torrent cache checking, and removal settings,
+    for RD and PM. The new settings are found under
+    "Torrent Settings" and are enabled by default to
+    cache check and remove uncached torrents.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting to not log removed duplicate sources.
+    Logging the removed duplicates was causing
+    excessive log spamming.[/I]
+
 [B][COLOR red]Update - v3.5.2 - Feb. 22, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Trailer module updated with new api keys to fix google
     search of youtube for trailers[/I]

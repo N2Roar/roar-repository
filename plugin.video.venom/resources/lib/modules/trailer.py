@@ -15,15 +15,19 @@ from resources.lib.modules import log_utils
 class Trailer:
 	def __init__(self):
 		self.base_link = 'https://www.youtube.com'
-		self.key_link = random.choice(['QUl6YVN5RGdjcmk1QWlwYTlFQmVFNDhJSkFZeWQ3MWFpUE9wd1d3', 'QUl6YVN5QTBMaVM3Ry1LbHJsZm1SRWNDQVhqeUdxYV9oX3pmclNF'])
-		self.key_link = '&key=%s' % base64.urlsafe_b64decode(self.key_link)
+		self.ytkey_link = control.addon('plugin.video.youtube').getSetting('youtube.api.key')
+		self.rckey_link = random.choice(['AIzaSyA0LiS7G-KlrlfmREcCAXjyGqa_h_zfrSE', 'AIzaSyBOXZVC-xzrdXSAmau5UM3rG7rc8eFIuFw'])
+		if self.ytkey_link != '':
+			self.key_link = '&key=%s' % self.ytkey_link
+		else:
+			self.key_link = '&key=%s' % self.rckey_link
 		self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&q=%s' + self.key_link
 		self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
 
 
-	def play(self, name='', url='', windowedtrailer=0):
+	def play(self, type='', name='', year='', url='', imdb='', windowedtrailer=0):
 		try:
-			url = self.worker(name, url)
+			url = self.worker(type, name, year, url, imdb)
 			if not url:
 				return
 
@@ -51,7 +55,7 @@ class Trailer:
 			log_utils.error()
 
 
-	def worker(self, name, url):
+	def worker(self, type, name, year, url, imdb):
 		try:
 			if url.startswith(self.base_link):
 				url = self.resolve(url)
@@ -71,20 +75,22 @@ class Trailer:
 		except:
 			query = name + ' trailer'
 			query = self.search_link % urllib.quote_plus(query)
-			return self.search(query)
+			return self.search(query, type, name, year, imdb)
 
 
-	def search(self, url):
+	def search(self, url, type, name, year, imdb):
 		try:
 			apiLang = control.apiLanguage().get('youtube', 'en')
-
 			if apiLang != 'en':
 				url += "&relevanceLanguage=%s" % apiLang
-
-			result = client.request(url)
-
-			items = json.loads(result).get('items', [])
-			items = [i.get('id', {}).get('videoId') for i in items]
+			result = client.request(url, error=True)
+			if 'error' in result:
+				items = json.loads(result).get('error', []).get('errors', [])
+				log_utils.log('message = %s' % str(items[0].get('message')), __name__, log_utils.LOGDEBUG)
+				items = self.trakt_trailer(type, name, year, imdb)
+			else:
+				items = json.loads(result).get('items', [])
+				items = [i.get('id', {}).get('videoId') for i in items]
 
 			for vid_id in items:
 				url = self.resolve(vid_id)
@@ -93,6 +99,25 @@ class Trailer:
 		except:
 			log_utils.error()
 			return
+
+
+	def trakt_trailer(self, type, name, year, imdb):
+		from resources.lib.modules import trakt
+		#check if this needs .replace(' ', '-') between title spaces
+		id = (name.lower() + '-' + year) if imdb == '0' else imdb
+
+		if type == 'movie':
+			item = trakt.getMovieSummary(id)
+		else:
+			item = trakt.getTVShowSummary(id)
+
+		try:
+			trailer_id = item.get('trailer').split('v=')
+			trailer_id = [trailer_id[1]]
+		except:
+			trailer_id = ''
+		return trailer_id
+
 
 	def resolve(self, url):
 		try:

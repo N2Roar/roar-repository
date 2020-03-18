@@ -8,6 +8,9 @@ from resources.lib.modules import client, cleantitle, control, workers
 from resources.lib.modules import trakt, source_utils, log_utils
 from resources.lib.modules import debrid, cache, providerscache
 
+from resources.lib.modules import premiumize
+from resources.lib.modules import realdebrid
+
 try:
 	from sqlite3 import dbapi2 as database
 except:
@@ -92,7 +95,7 @@ class Sources:
 		def sourcesDirMeta(metadata):
 			if metadata is None:
 				return metadata
-			allowed = ['poster', 'poster2', 'poster3', 'season_poster', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
+			allowed = ['poster', 'poster2', 'poster3', 'season_poster', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'mediatype']
 			return {k: v for k, v in metadata.iteritems() if k in allowed}
 
 		control.playlist.clear()
@@ -100,7 +103,7 @@ class Sources:
 		items = json.loads(items)
 
 		if items is None or len(items) == 0:
-			control.idle()
+			control.hide()
 			sys.exit()
 
 		meta = control.window.getProperty(self.metaProperty)
@@ -435,16 +438,16 @@ class Sources:
 
 		for i in range(0, 4 * timeout):
 			if pre_emp == 'true':
-				if pre_emp_res in ['0','1']:
+				if pre_emp_res == '0':
 					if (source_4k + d_source_4k) >= pre_emp_limit:
 						break
-				elif pre_emp_res in ['2']:
+				elif pre_emp_res == '1':
 					if (source_1080 + d_source_1080) >= pre_emp_limit:
 						break
-				elif pre_emp_res in ['3']:
+				elif pre_emp_res == '2':
 					if (source_720 + d_source_720) >= pre_emp_limit:
 						break
-				elif pre_emp_res in ['4']:
+				elif pre_emp_res == ['3']:
 					if (source_sd + d_source_sd) >= pre_emp_limit:
 						break
 				else:
@@ -461,26 +464,18 @@ class Sources:
 					pass
 
 				if len(self.sources) > 0:
-					if quality in ['0']:
+					if quality == '0':
 						source_4k = len([e for e in self.sources if e['quality'] == '4K' and e['debridonly'] is False])
-						source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] is False])
-						source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
-						source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					elif quality in ['1']:
-						source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] is False])
+						source_1080 = len([e for e in self.sources if e['quality'] == '1080p' and e['debridonly'] is False])
 						source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
-
-					elif quality in ['2']:
-						source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] is False])
+					elif quality == '1':
+						source_1080 = len([e for e in self.sources if e['quality'] == '1080p' and e['debridonly'] is False])
 						source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
-
-					elif quality in ['3']:
+					elif quality == '2':
 						source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
-
 					else:
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
 
@@ -495,20 +490,16 @@ class Sources:
 				if debrid_status:
 					if len(self.sources) > 0:
 						for d in debrid_list:
-							if quality in ['0']:
+							if quality == '0':
 								d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url(e['url'], e['source'])])
-								d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(e['url'], e['source'])])
+								d_source_1080 = len([e for e in self.sources if e['quality'] == '1080p' and d.valid_url(e['url'], e['source'])])
 								d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
 								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
-							elif quality in ['1']:
-								d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(e['url'], e['source'])])
+							elif quality == '1':
+								d_source_1080 = len([e for e in self.sources if e['quality'] == '1080p' and d.valid_url(e['url'], e['source'])])
 								d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
 								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
-							elif quality in ['2']:
-								d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url(e['url'], e['source'])])
-								d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
-								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
-							elif quality in ['3']:
+							elif quality == '2':
 								d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
 								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
 							else:
@@ -523,90 +514,6 @@ class Sources:
 					d_total_label = total_format % ('red', d_total) if d_total == 0 else total_format % (pdpc, d_total)
 
 
-
-
-
-
-				# if len(self.sources) > 0:
-					# if quality in ['0']:
-						# source_4k = len([e for e in self.sources if e['quality'] == '4K' and e['debridonly'] is False])
-						# source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] is False])
-						# source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
-						# source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					# elif quality in ['1']:
-						# source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] is False])
-						# source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
-						# source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					# elif quality in ['2']:
-						# source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] is False])
-						# source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
-						# source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					# elif quality in ['3']:
-						# source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
-						# source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					# else:
-						# source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
-
-					# total = source_4k + source_1080 + source_720 + source_sd
-
-					# if debrid_status:
-						# if quality in ['0']:
-							# for d in debrid_list:
-								# d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url(e['url'], e['source'])])
-								# d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(e['url'], e['source'])])
-								# d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
-								# d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(e['url'], e['source'])])
-
-						# elif quality in ['1']:
-							# for d in debrid_list:
-								# d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(e['url'], e['source'])])
-								# d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
-								# d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(e['url'], e['source'])])
-
-						# elif quality in ['2']:
-							# for d in debrid_list:
-								# d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url(e['url'], e['source'])])
-								# d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
-								# d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(e['url'], e['source'])])
-
-						# elif quality in ['3']:
-							# for d in debrid_list:
-								# d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(e['url'], e['source'])])
-								# d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(e['url'], e['source'])])
-
-						# else:
-							# for d in debrid_list:
-								# d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(e['url'], e['source'])])
-
-						# d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
-
-				# if debrid_status:
-					# d_4k_label = total_format % ('red', d_source_4k) if d_source_4k == 0 else total_format % (pdpc, d_source_4k)
-					# d_1080_label = total_format % ('red', d_source_1080) if d_source_1080 == 0 else total_format % (pdpc, d_source_1080)
-					# d_720_label = total_format % ('red', d_source_720) if d_source_720 == 0 else total_format % (pdpc, d_source_720)
-					# d_sd_label = total_format % ('red', d_source_sd) if d_source_sd == 0 else total_format % (pdpc, d_source_sd)
-					# d_total_label = total_format % ('red', d_total) if d_total == 0 else total_format % (pdpc, d_total)
-
-				# source_4k_label = total_format % ('red', source_4k) if source_4k == 0 else total_format % (pdfc, source_4k)
-				# source_1080_label = total_format % ('red', source_1080) if source_1080 == 0 else total_format % (pdfc, source_1080)
-				# source_720_label = total_format % ('red', source_720) if source_720 == 0 else total_format % (pdfc, source_720)
-				# source_sd_label = total_format % ('red', source_sd) if source_sd == 0 else total_format % (pdfc, source_sd)
-				# source_total_label = total_format % ('red', total) if total == 0 else total_format % (pdfc, total)
-
-
-
-
-
-
-
-
-
-
-
 				if (i / 2) < timeout:
 					try:
 						mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() is True and x.getName() in mainsourceDict]
@@ -615,37 +522,28 @@ class Sources:
 							break
 
 						if debrid_status:
-							if quality in ['0']:
+							if quality == '0':
 								if progressDialog != control.progressDialogBG:
 									line1 = ('%s:' + '|'.join(pdiag_format)) % (string6, d_4k_label, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
 									line2 = ('%s:' + '|'.join(pdiag_format)) % (string7, source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-									# print line1, line2
 								else:
-									control.idle()
+									control.hide()
 									line1 = '|'.join(pdiag_bg_format[:-1]) % (source_4k_label, d_4k_label, source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label)
 
-							elif quality in ['1']:
+							elif quality == '1':
 								if progressDialog != control.progressDialogBG:
 									line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
 									line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
 								else:
-									control.idle()
+									control.hide()
 									line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
 
-							elif quality in ['2']:
-								if progressDialog != control.progressDialogBG:
-									line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
-									line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-								else:
-									control.idle()
-									line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
-
-							elif quality in ['3']:
+							elif quality == '2':
 								if progressDialog != control.progressDialogBG:
 									line1 = ('%s:' + '|'.join(pdiag_format[2:])) % (string6, d_720_label, d_sd_label, str(string4), d_total_label)
 									line2 = ('%s:' + '|'.join(pdiag_format[2:])) % (string7, source_720_label, source_sd_label, str(string4), source_total_label)
 								else:
-									control.idle()
+									control.hide()
 									line1 = '|'.join(pdiag_bg_format[2:]) % (source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
 
 							else:
@@ -653,16 +551,14 @@ class Sources:
 									line1 = ('%s:' + '|'.join(pdiag_format[3:])) % (string6, d_sd_label, str(string4), d_total_label)
 									line2 = ('%s:' + '|'.join(pdiag_format[3:])) % (string7, source_sd_label, str(string4), source_total_label)
 								else:
-									control.idle()
+									control.hide()
 									line1 = '|'.join(pdiag_bg_format[3:]) % (source_sd_label, d_sd_label, source_total_label, d_total_label)
 						else:
-							if quality in ['0']:
+							if quality == '0':
 								line1 = '|'.join(pdiag_format) % (source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-							elif quality in ['1']:
+							elif quality == '1':
 								line1 = '|'.join(pdiag_format[1:]) % (source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-							elif quality in ['2']:
-								line1 = '|'.join(pdiag_format[1:]) % (source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-							elif quality in ['3']:
+							elif quality == '2':
 								line1 = '|'.join(pdiag_format[2:]) % (source_720_label, source_sd_label, str(string4), source_total_label)
 							else:
 								line1 = '|'.join(pdiag_format[3:]) % (source_sd_label, str(string4), source_total_label)
@@ -733,7 +629,8 @@ class Sources:
 		except:
 			pass
 
-		self.sourcesFilter()
+		if len(self.sources) > 0:
+			self.sourcesFilter()
 		return self.sources
 
 
@@ -797,7 +694,6 @@ class Sources:
 
 		# mainsourceDict = [i[0] for i in s if i[2] == 0]
 		# sourcelabelDict = dict([(i[0], i[1].upper()) for i in s])
-
 
 
 	def prepareSources(self):
@@ -1042,54 +938,21 @@ class Sources:
 						if info_hash:
 							if info_hash.group(1) in b:
 								filter.remove(sublist)
-								log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (
+								if control.setting('remove.duplicates.logging') != 'true':
+									log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (
 													sublist['provider'], info_hash.group(1), i['provider']), log_utils.LOGDEBUG)
 								break
 					elif a == b:
 						filter.remove(sublist)
-						log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (
+						if control.setting('remove.duplicates.logging') != 'true':
+							log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (
 											sublist['source'], i['url'], i['provider']), log_utils.LOGDEBUG)
 						break
 				filter.append(i)
-			log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
+			if control.setting('remove.duplicates.logging') != 'true':
+				log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
 			self.sources = filter
 		###---------
-
-
-		# # ---Filter out uncached torrents
-		# pm_filter = self.sources
-		# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
-		# from resources.lib.modules import premiumize
-		# try:
-			# # list = []
-			# # paged_sources = self.paginate_sources(sources=self.sources, page=1, limit=40)
-			# # for i in paged_sources:
-				# # list.append(i['url'])
-			# # log_utils.log('list = %s' % list, __name__, log_utils.LOGDEBUG)
-
-			# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
-
-			# for i in pm_filter:
-				# if 'torrent' in i['source'].lower():
-				# # if 'magnet:' in a and debrid.status() is True:
-					# cached = str(premiumize.PremiumizeMe().check_cache(i['url'].lower()))
-					# # log_utils.log('cached = %s - %s - %s - %s' % (cached, i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-					# log_utils.log('cached = %s - %s - %s' % (cached, i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-					# if cached == 'False' or cached is False:
-						# pm_filter.remove(i) # seems to also be removing from self.sources
-						# # log_utils.log('Removing (%s uncached TORRENT) %s - %s' % (i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-						# log_utils.log('Removing (PM uncached TORRENT) %s - %s' % (i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-
-			# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
-			# log_utils.log('pm_filter = %s' % len(pm_filter), __name__, log_utils.LOGDEBUG)
-			# log_utils.log('Removed %s PM uncached TORRENT sources from list' % (len(self.sources) - len(pm_filter)), log_utils.LOGDEBUG)
-
-			# self.sources = pm_filter
-		# except:
-			# log_utils.error()
-			# pass
-		# # ###---------
-
 
 		if control.setting('HEVC') != 'true':
 			self.sources = [i for i in self.sources if not any(value in i['url'].lower() for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265'])]
@@ -1116,12 +979,48 @@ class Sources:
 		self.sources = [i for i in self.sources if not i in local]
 
 		filter = []
+		import copy
 		for d in debrid.debrid_resolvers:
 			valid_hoster = set([i['source'] for i in self.sources])
 			valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-			filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
-			filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+			control.busy()
+			if d.name == 'Premiumize.me':
+				if control.setting('pm.chk.cached') == 'true':
+					try:
+						pmTorrent_List = copy.deepcopy(self.sources)
+						pmTorrent_List = [i for i in pmTorrent_List if 'magnet:' in i['url']]
+						if pmTorrent_List == []:
+							raise Exception()
+						pmCached = self.pm_cache_chk_list(pmTorrent_List, d)
+						if control.setting('pm.remove.uncached') == 'true':
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in pmCached if i['source'] == 'cached torrent']
+						else:
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in pmCached if 'magnet:' in i['url']]
+					except:
+						pass
+				else:
+					filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+
+			if d.name == 'Real-Debrid':
+				if control.setting('rd.chk.cached') == 'true':
+					try:
+						rdTorrent_List = copy.deepcopy(self.sources)
+						rdTorrent_List = [i for i in rdTorrent_List if 'magnet:' in i['url']]
+						if rdTorrent_List == []:
+							raise Exception()
+						rdCached = self.rd_cache_chk_list(rdTorrent_List, d)
+						if control.setting('pm.remove.uncached') == 'true':
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in rdCached if i['source'] == 'cached torrent']
+						else:
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in rdCached if 'magnet:' in i['url']]
+					except:
+						pass
+				else:
+					filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+			control.hide()
 
 		if debrid_only == 'false' or debrid.status() is False:
 			filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] is False]
@@ -1148,14 +1047,10 @@ class Sources:
 			filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i]
 
 		if quality in ['0', '1']:
-			filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
-			filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i]
-
-		if quality in ['0', '1', '2']:
 			filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
 			filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i]
 
-		if quality in ['0', '1', '2', '3']:
+		if quality in ['0', '1', '2']:
 			filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
 			filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i]
 
@@ -1465,7 +1360,7 @@ class Sources:
 		items = [i for i in items if ('autoplay' in i and i['autoplay'] is True) or not 'autoplay' in i]
 
 		if control.setting('autoplay.sd') == 'true':
-			items = [i for i in items if not i['quality'] in ['4K', '1440p', '1080p', 'HD']]
+			items = [i for i in items if not i['quality'] in ['4K', '1080p', '720p', 'HD']]
 
 		u = None
 
@@ -1597,7 +1492,7 @@ class Sources:
 		except:
 			self.hostDict = []
 
-		self.hostprDict = ['1fichier.com', 'extabit.com', 'filefactory.com', 'filefreak.com', 'multiup.org', 'nitroflare.com', 'oboom.com', 'rapidgator.net', 'rapidshare.com', 'rg.to', 'turbobit.net',
+		self.hostprDict = ['1fichier.com', 'extabit.com', 'filefactory.com', 'filefreak.com', 'filerocks.pw', 'multiup.org', 'nitroflare.com', 'oboom.com', 'rapidgator.net', 'rapidshare.com', 'rg.to', 'turbobit.net',
 									'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'uploadrocket.net']
 
 		self.hostcapDict = ['flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc', 'hugefiles.net', 'kingfiles.net', 'streamin.to',
@@ -1648,6 +1543,64 @@ class Sources:
 
 	def paginate_sources(self, sources, page, limit):
 		pages = [sources[i:i + limit] for i in xrange(0, len(sources), limit)]
-		# log_utils.log('pages = %s' % str(pages), __name__, log_utils.LOGDEBUG)
+		log_utils.log('pages = %s' % str(pages), __name__, log_utils.LOGDEBUG)
 		# log_utils.log('sources = %s' % str(len(sources)), __name__, log_utils.LOGDEBUG)
 		return pages[page - 1]
+
+
+	def pm_cache_chk_item(self, i, d):
+		if 'magnet:' in self.sources[i]['url']:
+			self.sources[i].update({'debrid': d.name})
+			if self.sources[i]['debrid'].lower() == 'premiumize.me':
+				try:
+					cached = str(premiumize.Premiumize().check_cache_item(self.sources[i]['url'].lower()))
+					if cached == 'False' or cached is False:
+						self.sources[i].update({'source': 'uncached torrent'})
+						self.pm_filter.append(self.sources[i])
+					else:
+						self.sources[i].update({'source': 'cached torrent'})
+				except:
+					log_utils.error()
+					pass
+		return self.sources[i]
+
+
+	def pm_cache_chk_list(self, torrent_List, d):
+		if len(torrent_List) == 0:
+			return
+		try:
+			hashList = [i['url'] for i in torrent_List]
+			cached = premiumize.Premiumize().check_cache_list(hashList)
+			count = 0
+			for i in torrent_List:
+				if cached[count] is False:
+					i.update({'source': 'uncached torrent'})
+				else:
+					i.update({'source': 'cached torrent'})
+				count += 1
+			return torrent_List
+		except:
+			log_utils.error()
+			pass
+
+
+	def rd_cache_chk_list(self, torrent_List, d):
+		if len(torrent_List) == 0:
+			return
+		try:
+			for i in torrent_List:
+				i.update({'hash': re.findall('magnet:\?xt=urn:btih:(.*?)&', i['url'])[0]})
+			hashList = [i['hash'] for i in torrent_List]
+			cached = realdebrid.RealDebrid().check_cache_list(hashList)
+			for i in torrent_List:
+				if 'rd' not in cached.get(i['hash'], {}):
+					i.update({'source': 'uncached torrent'})
+					continue
+				elif len(cached[i['hash']]['rd']) >= 1:
+					i.update({'source': 'cached torrent'})
+				else:
+					i.update({'source': 'uncached torrent'})
+			return torrent_List
+		except:
+			log_utils.error()
+			pass

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.5.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.5.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -38,18 +38,17 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.5.2 - Feb. 22, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Trailer module updated with new api keys to fix google
-    search of youtube for trailers[/I]
-[COLOR yellow]--[/COLOR][I] Changed how restarting a previousely watched movie
-    or episode is handled. Previousely the title would be
-    marked unwatched upon replaying a previousely
-    watched item. Now the watched indicator is not
-    changed.[/I]
-[COLOR yellow]--[/COLOR][I] Added ability to pass to skin resume points.  This now
-    allows for skin to use a watched progress indicator.[/I]
-[COLOR yellow]--[/COLOR][I] Added TMDB Box Office to Movie Menu and
-    setting page option to remove item from navigation.[/I]
+[B][COLOR red]Update - v3.5.3 - March 16, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Google api for trailer search now checks if user entered
+    own key in youtube addon.  That key will now take
+    priority.[/I]
+[COLOR yellow]--[/COLOR][I] Added torrent cache checking, and removal settings,
+    for RD and PM. The new settings are found under
+    "Torrent Settings" and are enabled by default to
+    cache check and remove uncached torrents.[/I]
+[COLOR yellow]--[/COLOR][I] Added setting to not log removed duplicate sources.
+    Logging the removed duplicates was causing
+    excessive log spamming.[/I]
 		</news>
 	</extension>
 </addon>

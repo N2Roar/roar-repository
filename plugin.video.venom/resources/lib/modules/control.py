@@ -382,13 +382,6 @@ def busy():
 		return execute('ActivateWindow(busydialog)')
 
 
-def idle():
-	if int(getKodiVersion()) >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
-		return execute('Dialog.Close(busydialognocancel)')
-	else:
-		return execute('Dialog.Close(busydialog)')
-
-
 def hide():
 	if int(getKodiVersion()) >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
 		return execute('Dialog.Close(busydialognocancel)')
@@ -429,7 +422,7 @@ def queueItem():
 
 def openSettings(query=None, id=addonInfo('id')):
 	try:
-		idle()
+		hide()
 		execute('Addon.OpenSettings(%s)' % id)
 
 		if query is None:

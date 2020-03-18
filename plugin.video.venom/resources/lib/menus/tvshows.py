@@ -233,7 +233,7 @@ class TVshows:
 			except:
 				invalid = True
 			if invalid:
-				control.idle()
+				control.hide()
 				if self.notifications:
 					control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 
@@ -261,7 +261,7 @@ class TVshows:
 			except:
 				invalid = True
 			if invalid:
-				control.idle()
+				control.hide()
 				if self.notifications:
 					control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 
@@ -503,7 +503,7 @@ class TVshows:
 		u = urlparse.urlparse(url).netloc.lower()
 
 		try:
-			control.idle()
+			control.hide()
 			if u in self.tmdb_link:
 				from resources.lib.indexers import tmdb
 				items = tmdb.userlists(url)
@@ -1246,7 +1246,6 @@ class TVshows:
 			if (self.disable_fanarttv == 'true' and (poster == '0' or fanart == '0')) or (
 				self.disable_fanarttv != 'true' and ((poster == '0' and item.get('poster2') == '0') or (
 				fanart == '0' and item.get('fanart2') == '0'))):
-				# if total <= 40:
 				from resources.lib.indexers.tmdb import TVshows
 				tmdb_art = TVshows().get_art(tmdb)
 				if tmdb_art is not None:
@@ -1267,7 +1266,7 @@ class TVshows:
 
 	def tvshowDirectory(self, items, next=True):
 		if items is None or len(items) == 0:
-			control.idle()
+			control.hide()
 			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
@@ -1313,13 +1312,9 @@ class TVshows:
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
-				try: meta.update({'tag': [imdb, tvdb]})
+				meta.update({'tag': [imdb, tvdb]})
+				try: del meta['trailer']
 				except: pass
-
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
-					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1407,8 +1402,12 @@ class TVshows:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
-				item = control.item(label=label)
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(label), year, imdb)})
 
+				item = control.item(label=label)
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 
@@ -1485,7 +1484,7 @@ class TVshows:
 
 	def addDirectory(self, items, queue=False):
 		if items is None or len(items) == 0: 
-			control.idle()
+			control.hide()
 			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 

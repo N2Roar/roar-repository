@@ -445,6 +445,7 @@ class Player(xbmc.Player):
 		if control.setting('crefresh') == 'true':
 			xbmc.executebuiltin('Container.Refresh')
 		# control.playlist.clear()
+		control.trigger_widget_refresh()
 		xbmc.log('onPlayBackStopped callback', 2)
 
 
@@ -453,6 +454,7 @@ class Player(xbmc.Player):
 		self.libForPlayback()
 		if control.setting('crefresh') == 'true':
 			xbmc.executebuiltin('Container.Refresh')
+		control.trigger_widget_refresh()
 		xbmc.log('onPlayBackEnded callback', 2)
 
 

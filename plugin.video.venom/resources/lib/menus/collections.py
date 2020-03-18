@@ -1150,7 +1150,7 @@ class Collections:
 
 	def movieDirectory(self, items, next=True):
 		if items is None or len(items) == 0: 
-			control.idle()
+			control.hide()
 			control.notification(title = 32000, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
@@ -1201,12 +1201,7 @@ class Collections:
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				# meta.update({'tmdb_id': tmdb}) # key not used and metadatclean() removes it anyway
 				meta.update({'mediatype': 'movie'})
-				try: meta.update({'tag': [imdb, tmdb]})
-				except: pass
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
-					meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
+				meta.update({'tag': [imdb, tmdb]})
 
 				# Some descriptions have a link at the end. Remove it.
 				try:
@@ -1256,6 +1251,13 @@ class Collections:
 				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
 								'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
+				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				for k in remove_keys:
+					meta.pop(k, None)
+				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
+				# try: del meta['trailer']
+				# except: pass
+
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
@@ -1298,6 +1300,11 @@ class Collections:
 				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
+
+				if trailer != '' and trailer is not None:
+					meta.update({'trailer': trailer})
+				else:
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'movie', sysname, year, imdb)})
 
 				item = control.item(label=label)
 				if 'castandart' in i:
