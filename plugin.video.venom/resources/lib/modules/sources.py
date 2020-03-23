@@ -32,6 +32,7 @@ class Sources:
 		try:
 			url = None
 
+			self.title = title
 			if rescrape:
 				items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 			else:
@@ -634,68 +635,6 @@ class Sources:
 		return self.sources
 
 
-	def preScrape(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered):
-		return cache.get(self.silentScrape, 48, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-
-
-	# def silentScrape(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
-		# self.prepareSources()
-		# sourceDict = self.sourceDict
-
-		# content = 'movie' if tvshowtitle is None else 'episode'
-		# if content == 'movie':
-			# sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
-			# genres = trakt.getGenre('movie', 'imdb', imdb)
-		# else:
-			# sourceDict = [(i[0], i[1], getattr(i[1], 'tvshow', None)) for i in sourceDict]
-			# genres = trakt.getGenre('show', 'tvdb', tvdb)
-
-		# sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(
-								# x in i[1].genre_filter for x in genres)]
-		# sourceDict = [(i[0], i[1]) for i in sourceDict if i[2] is not None]
-
-		# language = self.getLanguage()
-
-		# sourceDict = [(i[0], i[1], i[1].language) for i in sourceDict]
-		# sourceDict = [(i[0], i[1]) for i in sourceDict if any(x in i[2] for x in language)]
-
-		# try:
-			# sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
-		# except:
-			# sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
-
-		# sourceDict = [(i[0], i[1]) for i in sourceDict if i[2] != 'false']
-		# sourceDict = [(i[0], i[1], i[1].priority) for i in sourceDict]
-
-		# random.shuffle(sourceDict)
-
-		# sourceDict = sorted(sourceDict, key=lambda i: i[2])
-
-		# threads = []
-
-		# if content == 'movie':
-			# title = self.getTitle(title)
-			# localtitle = self.getLocalTitle(title, imdb, tvdb, content)
-			# aliases = self.getAliasTitles(imdb, localtitle, content)
-
-			# for i in sourceDict:
-				# threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
-		# else:
-			# tvshowtitle = self.getTitle(tvshowtitle)
-			# localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
-			# aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
-
-			# for i in sourceDict:
-				# threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season,
-											# episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
-
-		# s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
-		# s = [(i[3].getName(), i[0], i[2]) for i in s]
-
-		# mainsourceDict = [i[0] for i in s if i[2] == 0]
-		# sourcelabelDict = dict([(i[0], i[1].upper()) for i in s])
-
-
 	def prepareSources(self):
 		try:
 			control.makeFile(control.dataPath)
@@ -939,18 +878,16 @@ class Sources:
 							if info_hash.group(1) in b:
 								filter.remove(sublist)
 								if control.setting('remove.duplicates.logging') != 'true':
-									log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (
-													sublist['provider'], info_hash.group(1), i['provider']), log_utils.LOGDEBUG)
+									log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (sublist['provider'], info_hash.group(1), i['provider']), log_utils.LOGDEBUG)
 								break
 					elif a == b:
 						filter.remove(sublist)
 						if control.setting('remove.duplicates.logging') != 'true':
-							log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (
-											sublist['source'], i['url'], i['provider']), log_utils.LOGDEBUG)
+							log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (sublist['source'], i['url'], i['provider']), log_utils.LOGDEBUG)
 						break
 				filter.append(i)
-			if control.setting('remove.duplicates.logging') != 'true':
-				log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
+			# if control.setting('remove.duplicates.logging') != 'true':
+			log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
 			self.sources = filter
 		###---------
 
@@ -972,6 +909,13 @@ class Sources:
 
 		if provider == 'true':
 			self.sources = sorted(self.sources, key=lambda k: k['provider'])
+
+		if control.setting('torrent.size.sort') == 'true':
+			filter = []
+			filter += [i for i in self.sources if 'magnet:' in i['url']]
+			filter.sort(key=lambda k: k.get('size', 0), reverse=True)
+			filter += [i for i in self.sources if 'magnet:' not in i['url']]
+			self.sources = filter
 
 		local = [i for i in self.sources if 'local' in i and i['local'] is True]
 		for i in local:
@@ -1022,17 +966,23 @@ class Sources:
 				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 			control.hide()
 
+			if d.name != 'Premiumize.me' and d.name != 'Real-Debrid':
+				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+
 		if debrid_only == 'false' or debrid.status() is False:
 			filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] is False]
 
 		self.sources = filter
 
 		if group_sort == '1':
-			sorted_filter = []
-			sorted_filter += [i for i in filter if 'torrent' in i['source'].lower()] #torrents first
-			sorted_filter += [i for i in filter if 'torrent' not in i['source'].lower() and i['debridonly'] is True] #prem. next
-			sorted_filter += [i for i in filter if 'torrent' not in i['source'].lower() and i['debridonly'] is False] #free hosters fucking last
-			self.sources = sorted_filter
+			filter = []
+			filter += [i for i in self.sources if 'torrent' in i['source'].lower()] #torrents first
+			if control.setting('torrent.size.sort') == 'true':
+				filter.sort(key=lambda k: k.get('size', 0), reverse=True)
+			filter += [i for i in self.sources if 'torrent' not in i['source'].lower() and i['debridonly'] is True] #prem. next
+			filter += [i for i in self.sources if 'torrent' not in i['source'].lower() and i['debridonly'] is False] #free hosters fucking last
+			self.sources = filter
 
 		for i in range(len(self.sources)):
 			q = self.sources[i]['quality']
@@ -1085,6 +1035,7 @@ class Sources:
 
 		sec_color = control.setting('sec.identify')
 		sec_identify = self.getPremColor(sec_color)
+		sec_identify2 = control.setting('sec.identify2')
 
 		for i in range(len(self.sources)):
 			if extra_info == 'true':
@@ -1140,6 +1091,8 @@ class Sources:
 				label += '[COLOR %s]  |  [B]%s[/B][/COLOR]' % (prem_color, l.upper())
 
 			multiline_label = label
+			mLabel = label
+			l1 = label
 
 			if t != '':
 				if f != '' and f != '0 ' and f != ' ':
@@ -1152,6 +1105,33 @@ class Sources:
 				if f != '' and f != '0 ' and f != ' ':
 					multiline_label += '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, f)
 					label += '[COLOR %s] / %s[/COLOR]' % (prem_color, f)
+
+			if sec_identify2 == 'magnet title':
+				if 'magnet:' in u:
+					link_title = u.split('&dn=')[1]
+					link_title = urllib.unquote_plus(link_title).replace('&amp;', '&').replace(' ', '.').replace('.-.', '.')
+					if '&tr=' in link_title:
+						link_title = link_title.split('&tr=')[0]
+					if link_title.startswith('['):
+						link_title = re.sub(r'\[.*?\]\.', '', link_title).replace('./.', '')
+					if link_title.startswith('www'):
+						link_title = re.sub(r'.*?'+self.title, self.title, link_title)
+					size = ''
+					if f:
+						size = f.split(' /', 1)[0]
+						l1 += '[COLOR %s]  |  %s[/COLOR]' % (prem_color, size)
+						l1l = len(l1)-58
+						# log_utils.log('l1l = %s' % str(l1l), __name__, log_utils.LOGDEBUG)
+						# log_utils.log('l1 = %s' % str(l1), __name__, log_utils.LOGDEBUG)
+						l2 = '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, link_title)
+						l2l = len(l2)-27
+						# log_utils.log('l2l = %s' % str(l2l), __name__, log_utils.LOGDEBUG)
+						# log_utils.log('l2 = %s' % l2, __name__, log_utils.LOGDEBUG)
+						if l2l > l1l:
+							adjust = l2l - l1l
+							l1 = l1.ljust(l1l+76+adjust)
+					multiline_label = l1 + l2
+					# multiline_label = mLabel + '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, link_title)
 
 			self.sources[i]['multiline_label'] = multiline_label
 			self.sources[i]['label'] = label
@@ -1226,7 +1206,11 @@ class Sources:
 
 	def sourcesDialog(self, items):
 		try:
-			labels = [i['label'] for i in items]
+			multiline = control.setting('sourcelist.multiline')
+			if multiline == 'true':
+				labels = [i['multiline_label'] for i in items]
+			else:
+				labels = [i['label'] for i in items]
 
 			select = control.selectDialog(labels)
 			if select == -1:
@@ -1386,6 +1370,7 @@ class Sources:
 			except:
 				progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 				pass
+
 			try:
 				if xbmc.abortRequested is True:
 					return sys.exit()

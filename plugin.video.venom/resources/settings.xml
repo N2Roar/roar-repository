@@ -139,8 +139,9 @@
 		<setting id="scrapers.timeout.1" type="slider" label="32312" default="30" range="10,60" option="int" />
 		<setting id="debrid.only" type="bool" label="32653" default="false" />
 		<setting id="hosts.mode" type="select" label="32331" lvalues="32332|32333|32334" default="1" />
-		<setting id="sourcelist.multiline" type="bool" label="Multiline source list" default="true" enable="eq(-1,1)" />
-		<setting id="sec.identify" type="select" label="Secondary Line Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671|32598" default="4" enable="eq(-1,true)" />
+		<setting id="sourcelist.multiline" type="bool" label="Multiline source list" default="true" enable="!eq(-1,2)" />
+		<setting id="sec.identify" type="select" label="   Secondary Line Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671|32598" default="4" enable="!eq(-2,2) + eq(-1,true)" />
+		<setting id="sec.identify2" type="select" label="   Secondary Line Torrent content" values="std info line|magnet title" default="magnet title" enable="!eq(-3,2) + eq(-2,true)" />
 		<setting id="enable.resquality.icons" type="bool" label="32052" default="false" />
 		<setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
 		<setting id="progress.dialog.prem.color" type="select" label="Progress Dialog Premium Color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671" default="5" enable="eq(-1,0)" />
@@ -169,8 +170,9 @@
 		<setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="1" range="1,100" option="int" visible = "false" /> <!-- Hard coded to 1 by OpenScrapers -->
 <!-- 		<setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="true" visible = "true" /> -->
 		<setting id="torrent.group.sort" type="select" label="Torent/Hoster sorting method" lvalues="32021|32022" enable="eq(-3,true)"  default="1" visible = "true" />
-		<setting id="torrent.resolveurl2" type="action" label="32640" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.42)" />
-		<setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-5,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.52)" />
+		<setting id="torrent.size.sort" type="bool" label="Sort torrents by size" default="true" />
+		<setting id="torrent.resolveurl2" type="action" label="32640" enable="eq(-5,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.42)" />
+		<setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-6,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&amp;query=1.52)" />
 		<setting id="pm.chk.cached" type="bool" label="PM cached torrent check" default="true" />
 		<setting id="pm.remove.uncached" type="bool" label="   PM remove uncached torrents" default="true" enable="eq(-1,true)" />
 		<setting id="rd.chk.cached" type="bool" label="RD cached torrent check" default="true" />
