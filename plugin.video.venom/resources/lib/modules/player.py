@@ -119,27 +119,15 @@ class Player(xbmc.Player):
 		try:
 			if meta is None:
 				raise Exception()
-
-			poster1 = meta.get('poster')
-			poster2 = meta.get('poster2')
-			poster3 = meta.get('poster3')
-			poster = poster3 or poster2 or poster1 or control.addonPoster()
-
+			poster = meta.get('poster')
 			thumb = meta.get('thumb')
 			thumb = thumb or poster or control.addonThumb()
-
 			season_poster = meta.get('season_poster') or poster
-
-			fanart1 = meta.get('fanart')
-			fanart2 = meta.get('fanart2')
-			fanart3 = meta.get('fanart3')
-			fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
-
+			fanart = meta.get('fanart')
 			banner = meta.get('banner')
 			clearart = meta.get('clearart')
 			clearlogo = meta.get('clearlogo')
 			discart = meta.get('discart')
-
 			if 'mediatype' not in meta:
 				meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})
 
@@ -323,7 +311,6 @@ class Player(xbmc.Player):
 				xbmc.sleep(1000)
 				continue
 
-		# xbmc.sleep(3000)
 		control.window.clearProperty(pname)
 		# self.onPlayBackEnded()
 
@@ -435,7 +422,6 @@ class Player(xbmc.Player):
 
 
 	def onPlayBackStopped(self):
-		# xbmc.sleep(3000)
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
 		try:
 			if (self.current_time / self.media_length) >= .80:
@@ -443,6 +429,7 @@ class Player(xbmc.Player):
 		except:
 			pass
 		if control.setting('crefresh') == 'true':
+			xbmc.sleep(1000)
 			xbmc.executebuiltin('Container.Refresh')
 		# control.playlist.clear()
 		control.trigger_widget_refresh()
@@ -453,6 +440,7 @@ class Player(xbmc.Player):
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
 		self.libForPlayback()
 		if control.setting('crefresh') == 'true':
+			xbmc.sleep(1000)
 			xbmc.executebuiltin('Container.Refresh')
 		control.trigger_widget_refresh()
 		xbmc.log('onPlayBackEnded callback', 2)

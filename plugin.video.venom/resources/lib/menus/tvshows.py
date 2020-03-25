@@ -361,7 +361,7 @@ class TVshows:
 
 
 	def search_new(self):
-# need fix for when context menu returns here bring keyboard input back up
+# need fix for when context menu returns here brings keyboard input back up
 		t = control.lang(32010).encode('utf-8')
 		k = control.keyboard('', t)
 		k.doModal()
@@ -1302,7 +1302,6 @@ class TVshows:
 		for i in items:
 			try:
 				imdb, tmdb, tvdb, year = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0')
-
 				try: title = i['originaltitle']
 				except: title = i['title']
 				label = title
@@ -1365,6 +1364,11 @@ class TVshows:
 				art = {}
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
+
+				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				for k in remove_keys:
+					meta.pop(k, None)
+				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
 
 				if flatten is True:
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb)

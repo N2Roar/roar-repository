@@ -454,13 +454,18 @@ class Episodes:
 			try:
 				num_1 = 0
 				for i in range(0, len(item['seasons'])):
-					num_1 += len(item['seasons'][i]['episodes'])
+					if item['seasons'][i]['number'] > 0: num_1 += len(item['seasons'][i]['episodes'])
 				num_2 = int(item['show']['aired_episodes'])
 				if num_1 >= num_2:
 					continue
 
-				season = str(item['seasons'][-1]['number'])
-				episode = str(item['seasons'][-1]['episodes'][-1]['number'])
+				# season = str(item['seasons'][-1]['number'])
+				# episode = str(item['seasons'][-1]['episodes'][-1]['number'])
+
+# trakt sometimes places season0 at end. So we sort it to be sure
+				season_sort = sorted(item['seasons'][:], key=lambda k: k['number'], reverse=False)
+				season = str(season_sort[-1]['number'])
+				episode = str(season_sort[-1]['episodes'][-1]['number'])
 
 				try:
 					tvshowtitle = (item['show']['title']).encode('utf-8')
@@ -1555,7 +1560,7 @@ class Episodes:
 			try:
 				tvshowtitle, title, imdb, tmdb, tvdb = i.get('tvshowtitle'), i.get('title'), i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0')
 				year, season, episode, premiered = i['year'], i['season'], i['episode'], i['premiered']
-
+				trailer = i.get('trailer')
 				if 'label' not in i:
 					i['label'] = title
 
@@ -1575,8 +1580,6 @@ class Episodes:
 				except:
 					labelProgress = label
 
-				trailer = i.get('trailer')
-
 				try:
 					if i['unaired'] == 'true':
 						labelProgress = '[COLOR %s][I]%s[/I][/COLOR]' % (self.unairedcolor, labelProgress)
@@ -1595,8 +1598,8 @@ class Episodes:
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'mediatype': 'episode'})
 				meta.update({'tag': [imdb, tvdb]})
-				try: del meta['trailer']
-				except: pass
+				# try: del meta['trailer']
+				# except: pass
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1705,6 +1708,11 @@ class Episodes:
 				art = {}
 				art.update({'poster': season_poster, 'tvshow.poster': poster, 'season.poster': season_poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
+
+				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				for k in remove_keys:
+					meta.pop(k, None)
+				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
 
 ####-Context Menu and Overlays-####
 				cm = []

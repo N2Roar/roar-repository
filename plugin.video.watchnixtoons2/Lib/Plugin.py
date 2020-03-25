@@ -547,6 +547,15 @@ def actionTraktList(params):
     xbmcplugin.endOfDirectory(PLUGIN_ID)
 
 
+def actionTraktAbout(params):
+    xbmcgui.Dialog().ok(
+        'WatchNixtoons2',
+        'To search for items in your Trakt lists in WNT2, go to [B]Search > Search by Trakt List[/B] and pair your ' \
+        'account. Searching for an item this way does a name search, same as if you went and searched for that ' \
+        'name manually.'
+    )
+
+
 def actionClearTrakt(params):
     if 'watchnixtoons2' in xbmc.getInfoLabel('Container.PluginName'):
         xbmc.executebuiltin('Dialog.Close(all)')

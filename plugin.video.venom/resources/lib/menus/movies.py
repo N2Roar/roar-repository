@@ -57,13 +57,14 @@ class Movies:
 
 		# self.user = str(self.imdb_user) + str(self.tmdb_key)
 		self.user = str(self.tmdb_key)
-
 		self.disable_fanarttv = control.setting('disable.fanarttv')
-
 		self.hidecinema = control.setting('hidecinema')
 		self.hidecinema_rollback = int(control.setting('hidecinema.rollback'))
 		self.hidecinema_rollback2 = self.hidecinema_rollback * 30
 		self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
+
+		self.unairedcolor = control.setting('movie.unaired.identify')
+		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
 
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_popular_link = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
@@ -133,6 +134,27 @@ class Movies:
 		self.traktboxoffice_link = 'https://api.trakt.tv/movies/boxoffice'
 		self.traktpopular_link = 'https://api.trakt.tv/movies/popular?limit=%d&page=1' % self.count
 		self.traktrecommendations_link = 'https://api.trakt.tv/recommendations/movies?limit=40'
+
+
+	def getUnairedColor(self, n):
+		if n == '0': n = 'blue'
+		elif n == '1': n = 'red'
+		elif n == '2': n = 'yellow'
+		elif n == '3': n = 'deeppink'
+		elif n == '4': n = 'cyan'
+		elif n == '5': n = 'lawngreen'
+		elif n == '6': n = 'gold'
+		elif n == '7': n = 'magenta'
+		elif n == '8': n = 'yellowgreen'
+		elif n == '9': n = 'skyblue'
+		elif n == '10': n = 'lime'
+		elif n == '11': n = 'limegreen'
+		elif n == '12': n = 'deepskyblue'
+		elif n == '13': n = 'white'
+		elif n == '14': n = 'whitesmoke'
+		elif n == '15': n = 'nocolor'
+		else: n == 'skyblue'
+		return n
 
 
 	def get(self, url, idx=True):
@@ -410,7 +432,7 @@ class Movies:
 
 
 	def search_new(self):
-# need fix for when context menu returns here bring keyboard input back up
+# need fix for when context menu returns here brings keyboard input back up
 		t = control.lang(32010).encode('utf-8')
 		k = control.keyboard('', t)
 		k.doModal()
@@ -1258,18 +1280,20 @@ class Movies:
 		for i in items:
 			try:
 				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
-				# try:
-					# title = i['originaltitle']
-				# except:
-					# title = i['title']
+				trailer = i.get('trailer')
+				# try: title = i['originaltitle']
+				# except: title = i['title']
 				label = '%s (%s)' % (title, year)
 				try:
 					labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
 				except:
 					labelProgress = label
+
+				if int(re.sub('[^0-9]', '', str(i['premiered']))) > int(re.sub('[^0-9]', '', str(self.today_date))):
+					labelProgress = '[COLOR %s][I]%s[/I][/COLOR]' % (self.unairedcolor, labelProgress)
+
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
-				trailer = i.get('trailer')
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
@@ -1329,8 +1353,6 @@ class Movies:
 				for k in remove_keys:
 					meta.pop(k, None)
 				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
-				# try: del meta['trailer']
-				# except: pass
 
 ####-Context Menu and Overlays-####
 				cm = []

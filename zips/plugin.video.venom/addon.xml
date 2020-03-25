@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.5.6" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.5.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -38,11 +38,18 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.5.6 - March 20, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed torrent cache check for when debrid service
-    is anything other than PM or RD it would drop other service.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed Movies-In Theaters. Some group advanced
-    filtering is currently no longer working on IMDB.[/I]
+[B][COLOR red]Update - v3.5.7 - March 24, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issue with random duplicate list items
+    after playback ends when Autoplay is enabled.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed trakt api issue randomly placing
+    Season0 at end of users watch list. This would
+    alter the Next Up-Progress item.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed trakt api episode count not including
+    Season0 when enabled. This would cause shows
+    to vanish from Trakt Progress when the count was
+    exceeded.[/I]
+[COLOR yellow]--[/COLOR][I] Added color setting for Movies who's theatrical
+    release date is greater than current date.[/I]
 		</news>
 	</extension>
 </addon>

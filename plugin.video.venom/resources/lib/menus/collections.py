@@ -33,7 +33,7 @@ class Collections:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
-
+		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 		self.lang = control.apiLanguage()['trakt']
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
 
@@ -45,6 +45,9 @@ class Collections:
 
 		# self.user = str(self.imdb_user) + str(self.tmdb_key)
 		self.user = str(self.tmdb_key)
+
+		self.unairedcolor = control.setting('movie.unaired.identify')
+		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
 
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'https://image.tmdb.org/t/p/w300'
@@ -700,6 +703,28 @@ class Collections:
 		self.endDirectory()
 
 
+	def getUnairedColor(self, n):
+		if n == '0': n = 'blue'
+		elif n == '1': n = 'red'
+		elif n == '2': n = 'yellow'
+		elif n == '3': n = 'deeppink'
+		elif n == '4': n = 'cyan'
+		elif n == '5': n = 'lawngreen'
+		elif n == '6': n = 'gold'
+		elif n == '7': n = 'magenta'
+		elif n == '8': n = 'yellowgreen'
+		elif n == '9': n = 'skyblue'
+		elif n == '10': n = 'lime'
+		elif n == '11': n = 'limegreen'
+		elif n == '12': n = 'deepskyblue'
+		elif n == '13': n = 'white'
+		elif n == '14': n = 'whitesmoke'
+		elif n == '15': n = 'nocolor'
+		else: n == 'skyblue'
+		return n
+
+
+
 	def get(self, url, idx=True):
 		try:
 			try: url = getattr(self, url + '_link')
@@ -1155,7 +1180,6 @@ class Collections:
 			sys.exit()
 
 		settingFanart = control.setting('fanart')
-
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
 		addonBanner = control.addonBanner()
@@ -1188,11 +1212,13 @@ class Collections:
 		for i in items:
 			try:
 				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
-				# try:
-					# title = i['originaltitle']
-				# except:
-					# title = i['title']
+				# try: title = i['originaltitle']
+				# except: title = i['title']
 				label = '%s (%s)' % (title, year)
+
+				if int(re.sub('[^0-9]', '', str(i['premiered']))) > int(re.sub('[^0-9]', '', str(self.today_date))):
+					label = '[COLOR %s][I]%s[/I][/COLOR]' % (self.unairedcolor, label)
+
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
 				trailer = i.get('trailer')
@@ -1255,8 +1281,6 @@ class Collections:
 				for k in remove_keys:
 					meta.pop(k, None)
 				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
-				# try: del meta['trailer']
-				# except: pass
 
 ####-Context Menu and Overlays-####
 				cm = []

@@ -535,7 +535,7 @@ class Seasons:
 					if self.showunaired != 'true':
 						continue
 
-				# # Show Unaired items.
+				# Show Unaired items.
 				# if status.lower() == 'ended':
 					# pass
 				# elif premiered == '0':
@@ -889,7 +889,6 @@ class Seasons:
 			sys.exit()
 
 		settingFanart = control.setting('fanart')
-
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
 		addonBanner = control.addonBanner()
@@ -947,8 +946,8 @@ class Seasons:
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
 				meta.update({'tag': [imdb, tvdb]})
-				try: del meta['trailer']
-				except: pass
+				# try: del meta['trailer']
+				# except: pass
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1006,6 +1005,11 @@ class Seasons:
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart})
 
+				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				for k in remove_keys:
+					meta.pop(k, None)
+				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
+
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
@@ -1045,7 +1049,7 @@ class Seasons:
 				if trailer != '' and trailer is not None:
 					meta.update({'trailer': trailer})
 				else:
-					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(label), year, imdb)})
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(title), year, imdb)})
 
 				item = control.item(label = label)
 				if 'castandart' in i:

@@ -24,6 +24,7 @@
         <setting id="updateFavourites" label="Update Favourites..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionUpdateFavourites)"/>
     </category>
     <category label="Trakt">
+        <setting id="trakt.about" label="About..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionTraktAbout)"/>
         <setting id="clearTrakt" label="Clear Trakt Token" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionClearTrakt)"/>
     </category>
 </settings>

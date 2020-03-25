@@ -14,6 +14,7 @@
 		<setting id="disable.player.art" type="bool" label="Disable clearart, clearlogo, and discart in player" default="false" />
 		<setting id="hidecinema" type="bool" label="32571" default="false" />
 		<setting id="hidecinema.rollback" type="slider" label="40063" enable="eq(-1,true)" default="6" range="1,12" option="int" />
+		<setting id="movie.unaired.identify" type="select" label="Movie theatrical unreleased color" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32666|32667|32668|32669|32670|32671|32598" default="8" />
 		<setting id="newmovies.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />
 		<setting id="notification.sound" type="bool" label="Enable Notification Sound" default="false" />
 		<setting id="general.checkAddonUpdates" type="bool" label="35524" default="true" />
