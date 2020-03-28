@@ -10,8 +10,8 @@
 		<!-- 3rd Party Anime (doko.repository) -->
 		<import addon="plugin.video.ctoonkodi" optional="true"/>
 		<import addon="plugin.video.watchnixtoons2"/>
-		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
-		<!-- <import addon="plugin.video.wonderfulsubs"/> -->
+		<!-- 3rd Party Anime (repository.wilson-magic) -->
+		<!-- <import addon="plugin.video.hummingbird"/> -->
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
