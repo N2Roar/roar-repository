@@ -54,7 +54,7 @@
         <setting label="$ADDON[plugin.video.themoviedb.helper 32027]" type="action" action="RunScript(plugin.video.themoviedb.helper, clear_defaultplayers)" />
         <setting label="$ADDON[plugin.video.themoviedb.helper 32036]" type="lsep"/>
         <setting label="$ADDON[plugin.video.themoviedb.helper 32037]" type="bool" id="bundled_players" default="True" />
-        <setting label="$ADDON[plugin.video.themoviedb.helper 32016]" type="action" action="RunScript(plugin.video.themoviedb.helper, update_players)" id="players_url"  default="bit.ly/tmdbplayers" />
+        <setting label="$ADDON[plugin.video.themoviedb.helper 32016]" type="action" action="RunScript(plugin.video.themoviedb.helper, update_players)" id="players_url"  default="http://bit.ly/tmdbplayers" />
         <setting label="$ADDON[plugin.video.themoviedb.helper 32067]" type="lsep"/>
         <setting label="$ADDON[plugin.video.themoviedb.helper 32068]" type="bool" id="fuzzymatch_movie" default="False" />
         <setting label="$ADDON[plugin.video.themoviedb.helper 32069]" type="bool" id="fuzzymatch_tv" default="False" />
