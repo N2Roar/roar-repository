@@ -1306,14 +1306,11 @@ class TVshows:
 				except: title = i['title']
 				label = title
 				systitle = urllib.quote_plus(title)
-				trailer = i.get('trailer')
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
 				meta.update({'tag': [imdb, tvdb]})
-				try: del meta['trailer']
-				except: pass
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1365,11 +1362,6 @@ class TVshows:
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
 
-				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
-				for k in remove_keys:
-					meta.pop(k, None)
-				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
-
 				if flatten is True:
 					url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb)
 				else:
@@ -1406,9 +1398,7 @@ class TVshows:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
+				if not i.get('trailer'):
 					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(label), year, imdb)})
 
 				item = control.item(label=label)
@@ -1428,7 +1418,7 @@ class TVshows:
 						total_seasons = [i['number'] for i in total_seasons]
 						season_special = True if 0 in total_seasons else False
 						total_seasons = len(total_seasons)
-						if control.setting('tv.specials') == 'false' or (control.setting('tv.specials') == 'true' and season_special is False):
+						if control.setting('tv.specials') == 'false' and season_special is True:
 							total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
 

@@ -1212,6 +1212,7 @@ class Collections:
 		for i in items:
 			try:
 				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
+				trailer = i.get('trailer')
 				# try: title = i['originaltitle']
 				# except: title = i['title']
 				label = '%s (%s)' % (title, year)
@@ -1221,11 +1222,9 @@ class Collections:
 
 				sysname = urllib.quote_plus(label)
 				systitle = urllib.quote_plus(title)
-				trailer = i.get('trailer')
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
-				# meta.update({'tmdb_id': tmdb}) # key not used and metadatclean() removes it anyway
 				meta.update({'mediatype': 'movie'})
 				meta.update({'tag': [imdb, tmdb]})
 

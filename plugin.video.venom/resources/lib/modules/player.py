@@ -77,21 +77,30 @@ class Player(xbmc.Player):
 			item = control.item(path=url)
 
 			if self.media_type == 'episode':
+				self.episodeIDS = meta.get('episodeIDS', '0')
+				item.setUniqueIDs(self.episodeIDS)
 				if control.setting('disable.player.art') == 'true':
 					item.setArt({'thumb': thumb, 'tvshow.poster': season_poster, 'season.poster': season_poster, 'tvshow.fanart': fanart})
 				else:
 					item.setArt({'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo, 'tvshow.discart': discart, 'thumb': thumb, 'tvshow.poster': season_poster, 'season.poster': season_poster, 'tvshow.fanart': fanart})
 			else:
+				item.setUniqueIDs(self.ids)
 				if control.setting('disable.player.art') == 'true':
 					item.setArt({'thumb': thumb, 'poster': poster, 'fanart': fanart})
 				else:
 					item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
 
-			if self.media_type == 'episode':
-				self.episodeIDS = meta.get('episodeIDS', '0')
-				item.setUniqueIDs(self.episodeIDS)
-			else:
-				item.setUniqueIDs(self.ids)
+			# self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
+			# self.imdb_user = control.setting('imdb.user').replace('ur', '')
+			# self.user = str(self.imdb_user) + str(self.tvdb_key)
+			# self.lang = control.apiLanguage()['tvdb']
+			# items = [{'imdb': imdb, 'tvdb': tvdb}]
+			# list = metacache.fetch(items, self.lang, self.user)
+			# if 'castandart' in str(list):
+				# item.setCast(list[0].get('castandart', ''))
+
+			# test = control.infoLabel('ListItem.thumb')
+			# log_utils.log('thumb = %s' % test, __name__, log_utils.LOGDEBUG)
 
 			if 'castandart' in meta:
 				item.setCast(meta.get('castandart', ''))
@@ -429,7 +438,7 @@ class Player(xbmc.Player):
 		except:
 			pass
 		if control.setting('crefresh') == 'true':
-			xbmc.sleep(1000)
+			xbmc.sleep(2000)
 			xbmc.executebuiltin('Container.Refresh')
 		# control.playlist.clear()
 		control.trigger_widget_refresh()
@@ -440,7 +449,7 @@ class Player(xbmc.Player):
 		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
 		self.libForPlayback()
 		if control.setting('crefresh') == 'true':
-			xbmc.sleep(1000)
+			xbmc.sleep(2000)
 			xbmc.executebuiltin('Container.Refresh')
 		control.trigger_widget_refresh()
 		xbmc.log('onPlayBackEnded callback', 2)
@@ -646,7 +655,8 @@ class Bookmarks:
 
 		dbcon = database.connect(control.bookmarksFile)
 		dbcur = dbcon.cursor()
-		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+		# dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
 		dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
 		match = dbcur.fetchone()
 		dbcon.close()
@@ -694,11 +704,14 @@ class Bookmarks:
 		control.makeFile(control.dataPath)
 		dbcon = database.connect(control.bookmarksFile)
 		dbcur = dbcon.cursor()
-		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+		# dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
 		dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
 
 		if ok:
-			dbcur.execute("INSERT INTO bookmark Values (?, ?)", (idFile, timeInSeconds))
+			# dbcur.execute("INSERT INTO bookmark Values (?, ?)", (idFile, timeInSeconds))
+			dbcur.execute("INSERT INTO bookmark Values (?, ?, ?, ?)", (idFile, timeInSeconds, name, year))
+
 
 			minutes, seconds = divmod(float(timeInSeconds), 60)
 			hours, minutes = divmod(minutes, 60)

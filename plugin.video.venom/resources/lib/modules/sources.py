@@ -96,7 +96,9 @@ class Sources:
 		def sourcesDirMeta(metadata):
 			if metadata is None:
 				return metadata
-			allowed = ['poster', 'poster2', 'poster3', 'season_poster', 'fanart', 'fanart2', 'fanart3', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'mediatype']
+			# allowed = ['poster', 'season_poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'mediatype']
+			allowed = ['poster', 'season_poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode']
+
 			return {k: v for k, v in metadata.iteritems() if k in allowed}
 
 		control.playlist.clear()
@@ -119,21 +121,14 @@ class Sources:
 
 		systitle = sysname = urllib.quote_plus(title)
 
+		poster = meta.get('poster') or control.addonPoster()
 		if 'tvshowtitle' in meta and 'season' in meta and 'episode' in meta:
+			poster = meta.get('season_poster') or control.addonPoster()
 			sysname += urllib.quote_plus(' S%02dE%02d' % (int(meta['season']), int(meta['episode'])))
 		elif 'year' in meta:
 			sysname += urllib.quote_plus(' (%s)' % meta['year'])
 
-		poster1 = meta.get('poster')
-		poster2 = meta.get('poster2')
-		poster3 = meta.get('poster3')
-		poster4 = meta.get('season_poster')
-		poster = poster4 or poster3 or poster2 or poster1 or control.addonPoster()
-
-		fanart1 = meta.get('fanart')
-		fanart2 = meta.get('fanart2')
-		fanart3 = meta.get('fanart3')
-		fanart = fanart3 or fanart2 or fanart1 or control.addonFanart()
+		fanart = meta.get('fanart')
 		if control.setting('fanart') != 'true':
 			fanart = '0'
 
@@ -192,6 +187,9 @@ class Sources:
 			meta = json.loads(meta)
 
 			year = meta['year'] if 'year' in meta else None
+			if 'tvshowtitle' in meta:
+				year = meta['tvshowyear'] if 'tvshowyear' in meta else None
+
 			season = meta['season'] if 'season' in meta else None
 			episode = meta['episode'] if 'episode' in meta else None
 
@@ -1156,19 +1154,16 @@ class Sources:
 
 			if not local:
 				url = url[8:] if url.startswith('stack:') else url
-
 				urls = []
 				for part in url.split(' , '):
 					u = part
 					if d != '':
 						part = debrid.resolver(part, d)
-
 					elif direct is not True:
 						hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=False)
 						if hmf.valid_url() is True:
 							part = hmf.resolve()
 					urls.append(part)
-
 				url = 'stack://' + ' , '.join(urls) if len(urls) > 1 else urls[0]
 
 			if url is False or url is None:
@@ -1200,7 +1195,8 @@ class Sources:
 			return url
 		except:
 			if info is True:
-				self.errorForSources()
+				control.infoDialog('Skipping unplayable resolveURL link', sound=False, icon='INFO')
+			log_utils.error()
 			return
 
 
@@ -1400,24 +1396,12 @@ class Sources:
 
 	def getLanguage(self):
 		langDict = {
-			'English': ['en'],
-			'German': ['de'],
-			'German+English': ['de', 'en'],
-			'French': ['fr'],
-			'French+English': ['fr', 'en'],
-			'Portuguese': ['pt'],
-			'Portuguese+English': ['pt', 'en'],
-			'Polish': ['pl'],
-			'Polish+English': ['pl', 'en'],
-			'Korean': ['ko'],
-			'Korean+English': ['ko', 'en'],
-			'Russian': ['ru'],
-			'Russian+English': ['ru', 'en'],
-			'Spanish': ['es'],
-			'Spanish+English': ['es', 'en'],
-			'Greek': ['gr'],
-			'Italian': ['it'],
-			'Italian+English': ['it', 'en'],
+			'English': ['en'], 'German': ['de'], 'German+English': ['de', 'en'],
+			'French': ['fr'], 'French+English': ['fr', 'en'], 'Portuguese': ['pt'],
+			'Portuguese+English': ['pt', 'en'], 'Polish': ['pl'], 'Polish+English': ['pl', 'en'],
+			'Korean': ['ko'], 'Korean+English': ['ko', 'en'], 'Russian': ['ru'],
+			'Russian+English': ['ru', 'en'], 'Spanish': ['es'], 'Spanish+English': ['es', 'en'],
+			'Greek': ['gr'], 'Italian': ['it'], 'Italian+English': ['it', 'en'],
 			'Greek+English': ['gr', 'en']}
 		name = control.setting('providers.lang')
 		return langDict.get(name, ['en'])
@@ -1427,13 +1411,11 @@ class Sources:
 		lang = self._getPrimaryLang()
 		if not lang:
 			return title
-
 		if content == 'movie':
 			t = trakt.getMovieTranslation(imdb, lang)
 		else:
 			from resources.lib.modules import tvmaze
 			t = tvmaze.tvMaze().getTVShowTranslation(tvdb, lang)
-
 		return t or title
 
 

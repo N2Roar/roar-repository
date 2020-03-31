@@ -698,6 +698,7 @@ class Episodes:
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
 				castandart = []
+
 				for actor in root.iter('Actor'):
 					person = [name.text for name in actor]
 					image = person[1]
@@ -1561,6 +1562,7 @@ class Episodes:
 				tvshowtitle, title, imdb, tmdb, tvdb = i.get('tvshowtitle'), i.get('title'), i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0')
 				year, season, episode, premiered = i['year'], i['season'], i['episode'], i['premiered']
 				trailer = i.get('trailer')
+
 				if 'label' not in i:
 					i['label'] = title
 
@@ -1598,8 +1600,6 @@ class Episodes:
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'mediatype': 'episode'})
 				meta.update({'tag': [imdb, tvdb]})
-				# try: del meta['trailer']
-				# except: pass
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1620,7 +1620,8 @@ class Episodes:
 				except: pass
 				try: meta.update({'title': i['label']})
 				except: pass
-				try: meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
+				try: 
+					meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
 				except: pass
 
 				try:
@@ -1815,9 +1816,10 @@ class Episodes:
 				# if seasoncountEnabled == 'true':
 					# total_seasons = trakt.getSeasons(imdb, full=False)
 					# if total_seasons is not None:
-						# total_seasons = [i['number'] for i in total_seasons]
+						# total_seasons = [x['number'] for x in total_seasons]
+						# season_special = True if 0 in total_seasons else False
 						# total_seasons = len(total_seasons)
-						# if control.setting('tv.specials') == 'false' or self.season_special is False:
+						# if control.setting('tv.specials') == 'false' and season_special is True:
 							# total_seasons = total_seasons - 1
 						# item.setProperty('TotalSeasons', str(total_seasons))
 
@@ -1827,7 +1829,7 @@ class Episodes:
 					item.setProperty('isVenom_widget', 'true')
 
 				from resources.lib.modules.player import Bookmarks
-				blabel = i['tvshowtitle'] + ' S%02dE%02d' % (int(season), int(episode))
+				blabel = tvshowtitle + ' S%02dE%02d' % (int(season), int(episode))
 				resumetime = Bookmarks().get(blabel, str(year), ck=True)
 				# item.setProperty('totaltime', str(meta['duration']))
 				item.setProperty('resumetime', str(resumetime))

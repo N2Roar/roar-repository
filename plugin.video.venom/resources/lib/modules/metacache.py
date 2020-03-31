@@ -89,17 +89,8 @@ def insert(meta):
 				m["lang"] = 'en'
 			i = repr(m['item'])
 
-			# # Look for exact match to what is about to be written.
-			# try:
-				# dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'])).fetchone()[0] # Try to find entry.
-				# dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and tmdb = '%s' and tvdb = '%s' and lang = '%s' and user = '%s')" % (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user']))
-			# except:
-				# pass
-
 			try:
-				# dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
 				dbcur.execute("INSERT OR REPLACE INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m.get('imdb', '0'), m.get('tmdb', '0'), m.get('tvdb', '0'), m['lang'], m['user'], i, t))
-
 			except:
 				pass
 

@@ -161,11 +161,6 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 				result = result[int(season)]
 			else:
 				result = result[int(season) - 1]
-
-				# if int(season) > 1:
-					# result = result[int(season) - 1]
-				# else:
-					# result = result[int(season)]
 			if limit:
 				result['unwatched'] = min(99, result['unwatched'])
 			return result

@@ -1257,7 +1257,8 @@ def actionResolve(params):
     if len(sourceURLs) == 1: # Only one quality available.
         mediaURL = sourceURLs[0][1]
     elif len(sourceURLs) > 0:
-        playbackMethod = ADDON.getSetting('playbackMethod')
+        # Always force "select quality" for now.
+        playbackMethod = '0' #ADDON.getSetting('playbackMethod')
         if playbackMethod == '0': # Select quality.
                 selectedIndex = xbmcgui.Dialog().select(
                     'Select Quality', [(sourceItem[0] or '?') for sourceItem in sourceURLs]

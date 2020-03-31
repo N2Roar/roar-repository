@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.wsbeta" name="WSBeta" version="0.2.0" provider-name="doko">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="script.module.requests"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="Default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <news>
+[COLOR orange][B]WS Beta[/B][/COLOR]
+[B]0.2.0:[/B]
+- Added a "Last Watched" menu item.
+- Added support for InputStream Adaptive. This lets you watch the Auto (DASH) sources.
+See the "Playback" category of the add-on settings for how to enable this.
+
+[B]0.1.2:[/B]
+- Fixed a bug with the A-Z category.
+
+[B]0.1.1:[/B]
+- Removed the Connection:keep-alive header, it was causing trouble.
+
+[B]0.1.0:[/B]
+- Initial release.
+        </news>
+        <description lang="en">
+Watch anime from [COLOR orange][B]beta.wonderfulsubs.com[/B][/COLOR].
+This add-on is really bare-bones and should not be used by anyone.
+
+Support the WonderfulSubs website with a donation:
+[COLOR khaki][B]https://blog.wonderfulsubs.com/donate[/B][/COLOR]
+
+Add-on by doko.
+        </description>
+        <platform lang="en">all</platform>
+        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
+    </extension>
+</addon>

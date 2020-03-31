@@ -315,9 +315,8 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
 				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 				result = zip.read('en.xml')
 				artwork = zip.read('banners.xml')
@@ -327,9 +326,8 @@ class Seasons:
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
 				#data = urllib2.urlopen(url, timeout=30).read()
-				#zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 				result2 = zip.read('%s.xml' % lang)
 				zip.close()
@@ -528,24 +526,14 @@ class Seasons:
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
+				# elif premiered == '0':
+					# continue
 				elif premiered == '0':
-					continue
+					pass
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
 					if self.showunaired != 'true':
 						continue
-
-				# Show Unaired items.
-				# if status.lower() == 'ended':
-					# pass
-				# elif premiered == '0':
-					# unaired = 'true'
-					# pass
-				# elif premiered != '0':
-					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
-						# unaired = 'true'
-						# if self.showunaired != 'true':
-							# continue
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -575,7 +563,7 @@ class Seasons:
 											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
 											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
 											'thumb': thumb, 'unaired': unaired})
-				self.list = sorted(self.list, key=lambda k: int(k['season'])) # Temp fix for TVDb fucked up index, does not fix Trakt-Progress
+				self.list = sorted(self.list, key=lambda k: int(k['season'])) # fix for TVDb new sort by ID
 
 			except:
 				log_utils.error()
@@ -592,25 +580,14 @@ class Seasons:
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
+				# elif premiered == '0':
+					# continue
 				elif premiered == '0':
-					continue
-
+					pass
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
 					if self.showunaired != 'true':
 						continue
-
-				# # Show Unaired items.
-				# if status.lower() == 'ended':
-					# pass
-				# elif premiered == '0':
-					# unaired = 'true'
-					# pass
-				# elif premiered != '0':
-					# if int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
-						# unaired = 'true'
-						# if self.showunaired != 'true':
-							# continue
 
 				season = client.parseDOM(item, 'SeasonNumber')[0]
 				season = '%01d' % int(season)
@@ -731,7 +708,7 @@ class Seasons:
 								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
 								'director': director, 'writer': writer, 'castandart': castandart, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
 								'fanart': fanart, 'thumb': thumb, 'season_poster': season_poster, 'unaired': unaired, 'episodeIDS': episodeIDS})
-				self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode']))) # Temp fix for TVDb fucked up index, does not fix Trakt-Progress
+				self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode']))) # fix for TVDb new sort by ID
 				# meta = {}
 				# meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tvdb_key, 'item': item}
 
@@ -854,9 +831,8 @@ class Seasons:
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
 			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-			data = requests.get(url)
-			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			data = requests.get(url).content
+			zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 			result = zip.read('%s.xml' % 'en')
 			zip.close()
@@ -868,9 +844,8 @@ class Seasons:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
 				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 				result = zip.read('%s.xml' % 'en')
 				zip.close()
@@ -930,7 +905,7 @@ class Seasons:
 				imdb, tmdb, tvdb, year, season = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0'), i['season']
 				title = i['tvshowtitle']
 				label = '%s %s' % (labelMenu, i['season'])
-				trailer = i.get('trailer')
+
 				if self.season_special is False and control.setting('tv.specials') == 'true':
 					self.season_special = True if int(season) == 0 else False
 
@@ -946,8 +921,6 @@ class Seasons:
 				meta.update({'code': imdb, 'imdbnumber': imdb})
 				meta.update({'mediatype': 'tvshow'})
 				meta.update({'tag': [imdb, tvdb]})
-				# try: del meta['trailer']
-				# except: pass
 
 				# Some descriptions have a link at the end that. Remove it.
 				try:
@@ -1005,10 +978,11 @@ class Seasons:
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart})
 
-				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
-				for k in remove_keys:
-					meta.pop(k, None)
-				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
+				# remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				# remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'castandart', 'trailer')
+				# for k in remove_keys:
+					# meta.pop(k, None)
+				# meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
 
 ####-Context Menu and Overlays-####
 				cm = []
@@ -1046,9 +1020,7 @@ class Seasons:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
-				if trailer != '' and trailer is not None:
-					meta.update({'trailer': trailer})
-				else:
+				if not i.get('trailer'):
 					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(title), year, imdb)})
 
 				item = control.item(label = label)
@@ -1069,9 +1041,9 @@ class Seasons:
 					total_seasons = trakt.getSeasons(imdb, full=False)
 					if total_seasons is not None:
 						total_seasons = [i['number'] for i in total_seasons]
+						season_special = True if 0 in total_seasons else False
 						total_seasons = len(total_seasons)
-						if control.setting('tv.specials') == 'false' or (control.setting('tv.specials') == 'true' and self.season_special is False):
-
+						if control.setting('tv.specials') == 'false' and season_special is True:
 							total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
 

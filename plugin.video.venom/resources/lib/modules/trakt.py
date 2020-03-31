@@ -662,6 +662,7 @@ def syncMovies():
 		indicators = [str(i['imdb']) for i in indicators if 'imdb' in i]
 		return indicators
 	except:
+		log_utils.error()
 		pass
 
 
@@ -682,6 +683,7 @@ def watchedMoviesTime(imdb):
 			if str(item['movie']['ids']['imdb']) == imdb:
 				return item['last_watched_at']
 	except:
+		log_utils.error()
 		pass
 
 
@@ -710,6 +712,7 @@ def syncTVShows():
 		indicators = [(str(i[0]), int(i[1]), i[2]) for i in indicators]
 		return indicators
 	except:
+		log_utils.error()
 		pass
 
 
@@ -719,6 +722,7 @@ def watchedShows():
 			return
 		return getTraktAsJson('/users/me/watched/shows?extended=full')
 	except:
+		log_utils.error()
 		pass
 
 
@@ -739,6 +743,7 @@ def watchedShowsTime(tvdb, season, episode):
 							if e['number'] == episode:
 								return e['last_watched_at']
 	except:
+		log_utils.error()
 		pass
 
 
@@ -760,13 +765,17 @@ def syncSeason(imdb):
 			indicators = getTraktAsJson('/shows/%s/progress/watched?specials=true&hidden=true' % imdb)
 		else:
 			indicators = getTraktAsJson('/shows/%s/progress/watched?specials=false&hidden=false' % imdb)
+		if indicators is None:
+			return None
 
 		indicators = indicators['seasons']
 		indicators = [(i['number'], [x['completed'] for x in i['episodes']]) for i in indicators]
 		indicators = ['%01d' % int(i[0]) for i in indicators if False not in i[1]]
 		return indicators
 	except:
-		pass
+		log_utils.error()
+		return None
+		# pass
 
 
 def showCount(imdb, refresh = True, wait = False):
@@ -776,6 +785,8 @@ def showCount(imdb, refresh = True, wait = False):
 
 		result = {'total': 0, 'watched': 0, 'unwatched': 0}
 		indicators = seasonCount(imdb = imdb, refresh = refresh, wait = wait)
+		if indicators is None:
+			return None
 
 		for indicator in indicators:
 			result['total'] += indicator['total']
@@ -783,6 +794,7 @@ def showCount(imdb, refresh = True, wait = False):
 			result['unwatched'] += indicator['unwatched']
 		return result
 	except:
+		log_utils.error()
 		return None
 
 
@@ -805,6 +817,7 @@ def seasonCount(imdb, refresh = True, wait = False):
 				indicators = cache.cache_existing(_seasonCountRetrieve, imdb)
 		return indicators
 	except:
+		log_utils.error()
 		return None
 
 
@@ -821,6 +834,8 @@ def _seasonCountRetrieve(imdb):
 			indicators = getTraktAsJson('/shows/%s/progress/watched?specials=true&hidden=false&count_specials=true' % imdb)
 		else:
 			indicators = getTraktAsJson('/shows/%s/progress/watched?specials=false&hidden=false' % imdb)
+		if indicators is None:
+			return None
 		seasons = indicators['seasons']
 
 		return [{'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons]

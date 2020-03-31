@@ -157,23 +157,23 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.8"
+  version="0.0.9"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
 		<!-- <import addon="plugin.video.aswim"/> -->
 		<!-- 3rd Party Anime (doko.repository) -->
-		<import addon="plugin.video.ctoonkodi" optional="true"/>
+		<import addon="plugin.video.wsbeta" optional="true"/>
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repository.wilson-magic) -->
-		<!-- <import addon="plugin.video.hummingbird"/> -->
+		<import addon="plugin.video.hummingbird"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">WatchNixtoons2[CR]</description>
+        <description lang="en">WatchNixtoons2[CR]Hummingbird[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -225,48 +225,6 @@
         <description lang="en">Scrubs v2[CR]Venom[CR]NiteCrawler</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
-        <platform>all</platform>
-    </extension>
-</addon>
-
-<addon id="plugin.video.ctoonkodi" name="CTOON Kodi" version="0.4.3" provider-name="doko, mkody, Tikipeter">
-    <requires>
-        <import addon="xbmc.python" version="2.20.0"/>
-        <import addon="script.module.requests" />
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="Main.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <description lang="en">
-[COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR]
-
-A simple addon for streaming cartoons from the [B]ctoon.party[/B] website.
-
-Help keep CTOON alive, donate to the host: [COLOR khaki][B]ko-fi.com/A637AV5[/B][/COLOR]
-        </description>
-        <news>
-[COLOR mediumpurple][B]CTOON Kodi[/B][/COLOR] - Cartoons
-
-[B]0.4.3:[/B]
-- Fixed a bug when loading seasons from favorite items.
-
-[B]0.4.2:[/B]
-- Fixed a bug with old cache files.
-- Added a warning on old favorite items (please recreate them).
-
-[B]0.4.1:[/B]
-- Fixed a bug with the Autoplay setting (thanks @WilsonMagic!).
-- Added the "List Qualities &amp; Subs" context menu, for choosing a different quality even with Autoplay on.
-
-[B]0.4.0:[/B]
-- Recreated the logo. That thing was annoying me with how distracting it was.
-
-[B]0.3.10:[/B]
-- Added support for episodes thumbnail and subtitles (see settings).
-- Adapt to API changes.
-- Code cleanup and refactor.
-        </news>
         <platform>all</platform>
     </extension>
 </addon>
@@ -501,7 +459,7 @@ provider-name="jurialmunkey">
 </extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.5.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.5.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -540,25 +498,20 @@ provider-name="jurialmunkey">
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.5.7 - March 24, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed issue with random duplicate list items
-    after playback ends when Autoplay is enabled.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed trakt api issue randomly placing
-    Season0 at end of users watch list. This would
-    alter the Next Up-Progress item.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed trakt api episode count not including
-    Season0 when enabled. This would cause shows
-    to vanish from Trakt Progress when the count was
-    exceeded.[/I]
-[COLOR yellow]--[/COLOR][I] Added color setting for Movies who's theatrical
-    release date is greater than current date.[/I]
+[B][COLOR red]Update - v3.5.9 - March 30, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Removed resolveURL notification of from previous
+    update.[/I]
+[COLOR yellow]--[/COLOR][I] Updated bookmarks caching method to now also
+    record show name and year for better tracking of
+    progress indicators.  This requires you to clear old
+    bookmarks for the new update to be in use.[/I]
 		</news>
 	</extension>
 </addon>
 
-<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.4.4" provider-name="doko">
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.4.6" provider-name="doko">
     <requires>
-        <import addon="xbmc.python" version="2.20.0"/>
+        <import addon="xbmc.python" version="2.25.0"/>
         <import addon="script.module.requests"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="Default.py">
@@ -567,6 +520,13 @@ provider-name="jurialmunkey">
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.4.6:[/B]
+- Add-on re-enabled. Their site is back to letting free users watch videos.
+- To avoid overwhelming their servers on these COVID-19 quarantine times, the "autoplay highest quality" add-on setting was removed. So when you play a video, you'll always be asked what quality to use.
+
+[B]0.4.5:[/B]
+- Temporary disabling of the add-on. If the source site ever comes back, we can enable it again.
+
 [B]0.4.4:[/B]
 - Added an "About" button to the Trakt tab of the add-on settings, explaining how to use it.
 
@@ -600,6 +560,45 @@ Watch cartoons and anime from [COLOR orange][B]www.TheWatchCartoonOnline.tv[/B][
 
 Support the WatchCartoonOnline website with a PayPal donation to:
 [COLOR khaki][B]wcohelp@yandex.com[/B][/COLOR]
+
+Add-on by doko.
+        </description>
+        <platform lang="en">all</platform>
+        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
+    </extension>
+</addon>
+
+<addon id="plugin.video.wsbeta" name="WSBeta" version="0.2.0" provider-name="doko">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="script.module.requests"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="Default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <news>
+[COLOR orange][B]WS Beta[/B][/COLOR]
+[B]0.2.0:[/B]
+- Added a "Last Watched" menu item.
+- Added support for InputStream Adaptive. This lets you watch the Auto (DASH) sources.
+See the "Playback" category of the add-on settings for how to enable this.
+
+[B]0.1.2:[/B]
+- Fixed a bug with the A-Z category.
+
+[B]0.1.1:[/B]
+- Removed the Connection:keep-alive header, it was causing trouble.
+
+[B]0.1.0:[/B]
+- Initial release.
+        </news>
+        <description lang="en">
+Watch anime from [COLOR orange][B]beta.wonderfulsubs.com[/B][/COLOR].
+This add-on is really bare-bones and should not be used by anyone.
+
+Support the WonderfulSubs website with a donation:
+[COLOR khaki][B]https://blog.wonderfulsubs.com/donate[/B][/COLOR]
 
 Add-on by doko.
         </description>

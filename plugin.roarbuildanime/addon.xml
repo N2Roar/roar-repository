@@ -2,23 +2,23 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.8"
+  version="0.0.9"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
 		<!-- <import addon="plugin.video.aswim"/> -->
 		<!-- 3rd Party Anime (doko.repository) -->
-		<import addon="plugin.video.ctoonkodi" optional="true"/>
+		<import addon="plugin.video.wsbeta" optional="true"/>
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repository.wilson-magic) -->
-		<!-- <import addon="plugin.video.hummingbird"/> -->
+		<import addon="plugin.video.hummingbird"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Anime Addons</summary>
-        <description lang="en">WatchNixtoons2[CR]</description>
+        <description lang="en">WatchNixtoons2[CR]Hummingbird[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
