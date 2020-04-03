@@ -7,7 +7,6 @@ import re, urllib, urlparse, random, json
 from resources.lib.modules import client, cleantitle, control, workers
 from resources.lib.modules import trakt, source_utils, log_utils
 from resources.lib.modules import debrid, cache, providerscache
-
 from resources.lib.modules import premiumize
 from resources.lib.modules import realdebrid
 
@@ -62,7 +61,6 @@ class Sources:
 				if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
 					control.window.clearProperty(self.itemProperty)
 					control.window.setProperty(self.itemProperty, json.dumps(items))
-
 					control.window.clearProperty(self.metaProperty)
 					control.window.setProperty(self.metaProperty, meta)
 

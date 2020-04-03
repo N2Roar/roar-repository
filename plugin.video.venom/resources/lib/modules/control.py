@@ -63,16 +63,12 @@ playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 jsonrpc = xbmc.executeJSONRPC
 skinPath = xbmc.translatePath('special://skin/')
 
-# addonPath = xbmc.translatePath(addonInfo('path'))
-
 try:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
 except:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path')
 
 menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
-# images_path = os.path.join(menus_path, 'images')
-
 SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
 
 try:
@@ -100,9 +96,7 @@ existsPath =  xbmcvfs.exists
 
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"
-
 trailer = 'plugin://plugin.video.youtube/play/?video_id=%s'
-
 
 # def lang(language_id):
 	# text = getLangString(language_id)
@@ -205,11 +199,6 @@ def artPath():
 	theme = appearance()
 	return os.path.join(xbmcaddon.Addon('plugin.video.venom').getAddonInfo('path'), 'resources', 'artwork', theme)
 
-	# if theme in ['-', '']:
-		# return
-	# elif condVisibility('System.HasAddon(script.venom.artwork)'):
-		# return os.path.join(xbmcaddon.Addon('script.venom.artwork').getAddonInfo('path'), 'resources', 'media', theme)
-
 
 def appearance():
 	appearance = setting('appearance.1').lower()
@@ -272,15 +261,12 @@ def addonNext():
 
 
 def metaFile():
-	# rid this fucking thing already!!
 	# if condVisibility('System.HasAddon(script.venom.metadata)'):
 		# return os.path.join(xbmcaddon.Addon('script.venom.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
 	return os.path.join(dataPath, 'metadata.db')
 
 
 def metadataClean(metadata):
-	# Filter out non-existing/custom keys.
-	# Otherise there are tons of errors in Kodi 18 log.
 	if metadata is None:
 		return metadata
 	allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink',
@@ -290,7 +276,6 @@ def metadataClean(metadata):
 					'tag', 'imdbnumber', 'code', 'aired', 'credits', 'lastplayed', 'album', 'artist', 'votes', 'path',
 					'trailer', 'dateadded', 'mediatype', 'dbid']
 	return {k: v for k, v in metadata.iteritems() if k in allowed}
-
 
 
 ####################################################
@@ -311,26 +296,20 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
 def notification(title=None, message=None, icon=None, time=3000, sound=False):
 	if title == 'default' or title is None:
 		title = addonName()
-
 	if isinstance(title, (int, long)):
 		heading = lang(title).encode('utf-8')
 	else:
 		heading = str(title)
-
 	if isinstance(message, (int, long)):
 		body = lang(message).encode('utf-8')
 	else:
 		body = str(message)
-
 	if icon is None or icon == '' or icon == 'default':
 		icon = addonIcon()
-
 	elif icon == 'INFO':
 		icon = xbmcgui.NOTIFICATION_INFO
-
 	elif icon == 'WARNING':
 		icon = xbmcgui.NOTIFICATION_WARNING
-
 	elif icon == 'ERROR':
 		icon = xbmcgui.NOTIFICATION_ERROR
 	dialog.notification(heading, body, icon, time, sound=sound)
@@ -347,17 +326,14 @@ def selectDialog(list, heading=addonInfo('name')):
 def okDialog(title=None, message=None):
 	if title == 'default' or title is None:
 		title = addonName()
-
 	if isinstance(title, (int, long)):
 		heading = lang(title).encode('utf-8')
 	else:
 		heading = str(title)
-
 	if isinstance(message, (int, long)):
 		body = lang(message).encode('utf-8')
 	else:
 		body = str(message)
-
 	return dialog.ok(heading, body)
 
 
@@ -365,12 +341,10 @@ def context(items = None, labels = None):
 	if items:
 		labels = [i[0] for i in items]
 		choice = xbmcgui.Dialog().contextmenu(labels)
-
 		if choice >= 0:
 			return items[choice][1]()
 		else:
 			return False
-
 	else:
 		return xbmcgui.Dialog().contextmenu(labels)
 
@@ -411,7 +385,6 @@ def visible():
 ########################
 
 
-
 def refresh():
 	return execute('Container.Refresh')
 
@@ -424,12 +397,9 @@ def openSettings(query=None, id=addonInfo('id')):
 	try:
 		hide()
 		execute('Addon.OpenSettings(%s)' % id)
-
 		if query is None:
 			return
-
 		c, f = query.split('.')
-
 		if int(getKodiVersion()) >= 18:
 			execute('SetFocus(%i)' % (int(c) - 100))
 			execute('SetFocus(%i)' % (int(f) - 80))
@@ -465,24 +435,19 @@ def apiLanguage(ret_name=None):
 						'kg', 'kk', 'kj', 'ki', 'ko', 'kn', 'km', 'kl', 'ks', 'kr', 'kw', 'kv', 'ku', 'ky']
 	name = None
 	name = setting('api.language')
-
 	if not name:
 		name = 'AUTO'
-
 	if name[-1].isupper():
 		try:
 			name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
 		except: pass
-
 	try:
 		name = langDict[name]
 	except:
 		name = 'en'
-
 	lang = {'trakt': name} if name in trakt else {'trakt': 'en'}
 	lang['tvdb'] = name if name in tvdb else 'en'
 	lang['youtube'] = name if name in youtube else 'en'
-
 	if ret_name:
 		lang['trakt'] = [i[0] for i in langDict.iteritems() if i[1] == lang['trakt']][0]
 		lang['tvdb'] = [i[0] for i in langDict.iteritems() if i[1] == lang['tvdb']][0]
@@ -535,8 +500,6 @@ def getMenuEnabled(menu_title):
 
 def trigger_widget_refresh():
 	import time
-	# Force an update of widgets to occur
-	# log('FORCE REFRESHING WIDGETS')
 	timestr = time.strftime("%Y%m%d%H%M%S", time.gmtime())
 	homeWindow.setProperty("widgetreload", timestr)
 	homeWindow.setProperty('widgetreload-tvshows', timestr)

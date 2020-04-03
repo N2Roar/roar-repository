@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-
 import re
 import unicodedata
 
@@ -8,12 +7,10 @@ import unicodedata
 def get(title):
 	if title is None:
 		return
-
 	try:
 		title = title.encode('utf-8')
 	except:
 		pass
-
 	title = re.sub('&#(\d+);', '', title)
 	title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
 	title = title.replace('&quot;', '\"').replace('&amp;', '&')
@@ -25,7 +22,6 @@ def geturl(title):
 	if title is None:
 		return
 	title = title.lower()
-
 	#title = title.translate(None, ':*?"\'\.<>|&!,')
 	try:
 		# This gives a weird error saying that translate only takes 1 argument, not 2. However, the Python 2 documentation states 2, but 1 for Python 3.
@@ -34,7 +30,6 @@ def geturl(title):
 	except:
 		for c in ':*?"\'\.<>|&!,':
 			title = title.replace(c, '')
-
 	title = title.replace('/', '-')
 	title = title.replace(' ', '-')
 	title = title.replace('--', '-')

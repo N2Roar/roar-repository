@@ -76,7 +76,7 @@ def getTrakt(url, post = None, cache = True, check = False, timestamp = None, ex
 		opost = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob', 'grant_type': 'refresh_token', 'refresh_token': refresh}
 
 		result = client.request(oauth, post = json.dumps(opost), headers = headers, error = True)
-
+		log_utils.log('result = %s' % result, __name__, log_utils.LOGDEBUG)
 		try:
 			code = str(result[1])
 		except:
@@ -783,6 +783,9 @@ def showCount(imdb, refresh = True, wait = False):
 		if not imdb:
 			return None
 
+		if not imdb.startswith('tt'):
+			return None
+
 		result = {'total': 0, 'watched': 0, 'unwatched': 0}
 		indicators = seasonCount(imdb = imdb, refresh = refresh, wait = wait)
 		if indicators is None:
@@ -804,7 +807,7 @@ def seasonCount(imdb, refresh = True, wait = False):
 			return None
 
 		if not imdb.startswith('tt'):
-			imdb = 'tt' + imdb
+			return None
 
 		indicators = cache.cache_existing(_seasonCountRetrieve, imdb)
 
@@ -829,7 +832,6 @@ def _seasonCountRetrieve(imdb):
 	try:
 		if getTraktCredentialsInfo() is False:
 			return
-
 		if control.setting('tv.specials') == 'true':
 			indicators = getTraktAsJson('/shows/%s/progress/watched?specials=true&hidden=false&count_specials=true' % imdb)
 		else:
@@ -837,7 +839,6 @@ def _seasonCountRetrieve(imdb):
 		if indicators is None:
 			return None
 		seasons = indicators['seasons']
-
 		return [{'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons]
 		# return [{season['number']: {'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons}]
 	except:
@@ -1089,22 +1090,16 @@ def _scrobbleType(type):
 def scrobbleProgress(type, imdb = None, tvdb = None, season = None, episode = None):
 	try:
 		type = _scrobbleType(type)
-
 		if imdb is not None:
 			imdb = str(imdb)
-
 		if tvdb is not None:
 			tvdb = int(tvdb)
-
 		if episode is not None:
 			episode = int(episode)
-
 		if episode is not None:
 			episode = int(episode)
-
 		link = '/sync/playback/type'
 		items = getTraktAsJson(link)
-
 		if type == 'episode':
 			if imdb and items:
 				for item in items:
@@ -1130,32 +1125,23 @@ def scrobbleUpdate(action, type, imdb = None, tvdb = None, season = None, episod
 	try:
 		if action:
 			type = _scrobbleType(type)
-
 			if imdb is not None:
 				imdb = str(imdb)
-
 			if tvdb is not None:
 				tvdb = int(tvdb)
-
 			if season is not None:
 				season = int(season)
-
 			if episode is not None:
 				episode = int(episode)
-
 			if imdb:
 				link = '/search/imdb/' + str(imdb)
-
 			elif tvdb:
 				link = '/search/tvdb/' + str(tvdb)
-
 			if type == 'episode':
 				link += '?type=show'
 			else:
 				link += '?type=movie'
-
 			items = cache.get(getTraktAsJson, 760, link)
-
 			if len(items) > 0:
 				item = items[0]
 				if type == 'episode':
@@ -1164,7 +1150,6 @@ def scrobbleUpdate(action, type, imdb = None, tvdb = None, season = None, episod
 					item = cache.get(getTraktAsJson, 760, link)
 				else:
 					item = item['movie']
-
 				if item:
 					link = '/scrobble/' + action
 					data = {
@@ -1186,4 +1171,3 @@ def _released_key(item):
 		return item['first_aired']
 	else:
 		return 0
-

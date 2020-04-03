@@ -12,6 +12,8 @@
 		<import addon="plugin.video.watchnixtoons2"/>
 		<!-- 3rd Party Anime (repository.wilson-magic) -->
 		<import addon="plugin.video.hummingbird"/>
+		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
+		<import addon="plugin.video.wonderfulsubs" optional="true"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>

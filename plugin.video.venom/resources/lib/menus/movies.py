@@ -85,7 +85,6 @@ class Movies:
 		self.keyword_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&keywords=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 		self.oscars_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_winners&sort=year,desc&count=%d&start=1' % self.count
 		self.oscarsnominees_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_nominees&sort=year,desc&count=%d&start=1' % self.count
-		# self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&release_date=%s,%s&groups=now-playing-us&languages=en&sort=release_date,desc&count=%s&start=1' % (self.year_date, self.today_date, str(self.count))
 		self.theaters_link = 'https://www.imdb.com/search/title?title_type=feature&num_votes=500,&release_date=%s,%s&languages=en&sort=release_date,desc&count=%s&start=1' % (self.three_month_date, self.today_date, str(self.count))
 		self.year_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&year=%s,%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', '%s', self.count)
 
@@ -526,10 +525,8 @@ class Movies:
 
 	def years(self):
 		year = (self.datetime.strftime('%Y'))
-
 		for i in range(int(year)-0, 1900, -1):
 			self.list.append({'name': str(i), 'url': self.year_link % (str(i), str(i)), 'image': 'years.png', 'icon': 'DefaultYear.png', 'action': 'movies'})
-
 		self.addDirectory(self.list)
 		return self.list
 
@@ -539,11 +536,9 @@ class Movies:
 			self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
 		else:
 			self.list = cache.get(self.imdb_person_list, 1, url)
-
 		if len(self.list) == 0:
 			control.hide()
 			control.notification(title = 32010, message = 33049, icon = 'INFO', sound=notificationSound)
-
 		for i in range(0, len(self.list)):
 			self.list[i].update({'icon': 'DefaultActor.png', 'action': 'movies'})
 		self.addDirectory(self.list)
@@ -553,30 +548,22 @@ class Movies:
 	def moviesListToLibrary(self, url):
 		url = getattr(self, url + '_link')
 		u = urlparse.urlparse(url).netloc.lower()
-
 		try:
 			control.hide()
 			if u in self.tmdb_link:
 				from resources.lib.indexers import tmdb
 				items = tmdb.userlists(url)
-
 			elif u in self.trakt_link:
 				items = self.trakt_user_list(url, self.trakt_user)
-
 			items = [(i['name'], i['url']) for i in items]
-
 			message = 32663
 			if 'themoviedb' in url: message = 32681
-
 			select = control.selectDialog([i[0] for i in items], control.lang(message).encode('utf-8'))
 			list_name = items[select][0]
-
 			if select == -1:
 				return
-
 			link = items[select][1]
 			link = link.split('&sort_by')[0]
-
 			from resources.lib.modules import libtools
 			libtools.libmovies().range(link, list_name)
 		except:
@@ -592,20 +579,17 @@ class Movies:
 			activity = trakt.getActivity()
 			self.list = []
 			lists = []
-
 			try:
 				if activity > cache.timeout(self.trakt_user_list, self.traktlists_link, self.trakt_user):
 					raise Exception()
 				lists += cache.get(self.trakt_user_list, 720, self.traktlists_link, self.trakt_user)
 			except:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlists_link, self.trakt_user)
-
 			for i in range(len(lists)):
 				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 			userlists += lists
 		except:
 			pass
-
 		try:
 			if self.traktCredentials is False:
 				raise Exception()
@@ -828,7 +812,6 @@ class Movies:
 
 			result = client.request(url, error=True)
 			# result = client.request(url, output = 'extended', error = True)
-
 			result = result.replace('\n', ' ')
 			# result = result[0].replace('\n','')
 			result = result.decode('iso-8859-1').encode('utf-8')

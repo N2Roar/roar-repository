@@ -230,6 +230,8 @@ class Seasons:
 					imdb = trakt_ids.get('ids', {}).get('imdb', '0')
 					if imdb == '' or imdb is None or imdb == 'None':
 						imdb = '0'
+					if not imdb.startswith('tt'):
+						imdb = '0'
 
 				if tmdb == '0':
 					tmdb = str(trakt_ids.get('ids', {}).get('tmdb', '0'))
@@ -298,10 +300,8 @@ class Seasons:
 
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-			data = requests.get(url)
-			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			data = requests.get(url).content
+			zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -314,7 +314,6 @@ class Seasons:
 			if len(dupe) > 0:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
-				# data = urllib2.urlopen(url, timeout=30).read()
 				data = requests.get(url).content
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
@@ -325,7 +324,6 @@ class Seasons:
 
 			if lang != 'en':
 				url = self.tvdb_info_link % (tvdb, lang)
-				#data = urllib2.urlopen(url, timeout=30).read()
 				data = requests.get(url).content
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
@@ -372,7 +370,7 @@ class Seasons:
 			except:
 				poster = ''
 			if poster != '':
-				poster = self.tvdb_image + poster
+				poster = '%s%s' % (self.tvdb_image, poster)
 			else:
 				poster = '0'
 			poster = client.replaceHTMLCodes(poster)
@@ -383,7 +381,7 @@ class Seasons:
 			except:
 				banner = ''
 			if banner != '':
-				banner = self.tvdb_image + banner
+				banner = '%s%s' % (self.tvdb_image, banner)
 			else:
 				banner = '0'
 			banner = client.replaceHTMLCodes(banner)
@@ -394,7 +392,7 @@ class Seasons:
 			except:
 				fanart = ''
 			if fanart != '':
-				fanart = self.tvdb_image + fanart
+				fanart = '%s%s' % (self.tvdb_image, fanart)
 			else:
 				fanart = '0'
 			fanart = client.replaceHTMLCodes(fanart)
@@ -545,7 +543,7 @@ class Seasons:
 				except:
 					thumb = ''
 				if thumb != '':
-					thumb = self.tvdb_image + thumb
+					thumb = '%s%s' % (self.tvdb_image, thumb)
 				else:
 					thumb = '0'
 				thumb = client.replaceHTMLCodes(thumb)
@@ -614,7 +612,7 @@ class Seasons:
 				except:
 					thumb = ''
 				if thumb != '':
-					thumb = self.tvdb_image + thumb
+					thumb = '%s%s' % (self.tvdb_image, thumb)
 				else:
 					thumb = '0'
 				thumb = client.replaceHTMLCodes(thumb)
@@ -633,7 +631,7 @@ class Seasons:
 				except:
 					season_poster = ''
 				if season_poster != '':
-					season_poster = self.tvdb_image + season_poster
+					season_poster = '%s%s' % (self.tvdb_image, season_poster)
 				else:
 					season_poster = '0'
 				season_poster = client.replaceHTMLCodes(season_poster)
@@ -833,7 +831,6 @@ class Seasons:
 			# data = urllib2.urlopen(url, timeout=30).read()
 			data = requests.get(url).content
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
-
 			result = zip.read('%s.xml' % 'en')
 			zip.close()
 
@@ -977,12 +974,6 @@ class Seasons:
 				art = {}
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart})
-
-				# remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
-				# remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'castandart', 'trailer')
-				# for k in remove_keys:
-					# meta.pop(k, None)
-				# meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
 
 ####-Context Menu and Overlays-####
 				cm = []

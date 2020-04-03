@@ -49,18 +49,14 @@ MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng'
 							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio',
 							'dual.audio', 'multi']
 
-LANG = ['arabic', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'russian', 'spanish',
+LANG = ['arabic', 'bgaudio', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'russian', 'spanish',
 				'truefrech', 'truespanish', 'turkish', 'hebrew']
-
 
 UNDESIREABLES = ['baibako', 'coldfilm', 'extras.only', 'jaskier', 'hamsterstudio', 'ideafilm', 'lakefilm', 'lostfilm',
 									'newstudio', 'sample', 'soundtrack', 'teaser', 'vostfr']
 
-
 DUBBED = ['dublado', 'dubbed']
-
 SUBS = ['subs', 'subtitula', 'subfrench', 'subspanish', 'swesub']
-
 ADDS = ['1xbet', 'betwin']
 
 
@@ -76,16 +72,13 @@ def is_anime(content, type, type_id):
 def get_release_quality(release_name, release_link=None):
 	if release_name is None:
 		return
-
 	try:
 		release_name = release_name.encode('utf-8')
 	except:
 		pass
-
 	try:
 		quality = None
 		release_name = release_name.upper()
-
 		fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', release_name)
 		fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
 		fmt = [i.lower() for i in fmt]
@@ -166,7 +159,6 @@ def getFileType(url):
 		url = str(url)
 
 	type = ''
-
 	if any(value in url for value in ['bluray', 'blu-ray']):
 		type += ' BLURAY /'
 
@@ -470,13 +462,7 @@ def append_headers(headers):
 def _size(siz):
 	if siz in ['0', 0, '', None]: return 0, ''
 	div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
-	# float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))) / div
 	float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', ''))) / div
-
-	# siz = re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))
-	# siz = re.sub('(\d+\.\d+)(\.)', '\\1', siz)
-	# float_size = float(siz) / div
-
 	str_size = '%.2f GB' % float_size
 	return float_size, str_size
 

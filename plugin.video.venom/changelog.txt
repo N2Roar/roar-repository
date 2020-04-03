@@ -1,5 +1,14 @@
+[B][COLOR red]Update - v3.6.0 - April 2, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Compressed artwork to lessen footprint.[/I]
+[COLOR yellow]--[/COLOR][I] Added new setting to enable or disable Calendar
+    (TVMaze) extended meta.  When disabled(default)
+    the Calendar list items will now load faster without
+    the extra meta and artwork.[/I]
+[COLOR yellow]--[/COLOR][I] resolveURL is now maintained by gural so
+    repo has been updated.[/I]
+
 [B][COLOR red]Update - v3.5.9 - March 30, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Removed resolveURL notification of from previous
+[COLOR yellow]--[/COLOR][I] Removed resolveURL notification from previous
     update.[/I]
 [COLOR yellow]--[/COLOR][I] Updated bookmarks caching method to now also
     record show name and year for better tracking of

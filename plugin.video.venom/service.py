@@ -47,7 +47,6 @@ def check_for_addon_update():
 	try:
 		if control.setting('general.checkAddonUpdates') == 'false':
 			return
-
 		import re
 		import requests
 		repo_xml = requests.get('https://raw.githubusercontent.com/123Venom/zips/master/addons.xml')

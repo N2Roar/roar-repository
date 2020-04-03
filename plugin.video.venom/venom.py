@@ -57,7 +57,6 @@ if action is None:
 	navigator.Navigator().root()
 
 
-
 ####################################################
 #---News and Updates
 ####################################################
@@ -72,7 +71,6 @@ elif action == 'ShowNews':
 elif action == 'ShowChangelog':
 	from resources.lib.modules import changelog
 	changelog.get()
-
 
 
 ####################################################
@@ -159,7 +157,6 @@ elif action == 'movieUserlists':
 	movies.Movies().userlists()
 
 
-
 ####################################################
 #---Collections
 ####################################################
@@ -204,7 +201,6 @@ elif action == 'collection_martial_arts_actors':
 	collections.Collections().collection_martial_arts_actors()
 
 
-
 ####################################################
 #---Furk
 ####################################################
@@ -227,7 +223,6 @@ elif action == "furkUserFiles":
 elif action == "furkSearchNew":
 	from resources.lib.menus import furk
 	furk.Furk().search_new()
-
 
 
 ####################################################
@@ -318,7 +313,6 @@ elif action == 'tvUserlists':
 	tvshows.TVshows().userlists()
 
 
-
 ####################################################
 #---SEASONS
 ####################################################
@@ -333,7 +327,6 @@ elif action == 'seasonsUserlists':
 elif action == 'seasonsList':
 	from resources.lib.menus import seasons
 	seasons.Seasons().seasonList(url)
-
 
 
 ####################################################
@@ -368,7 +361,6 @@ elif action == 'episodesUserlists':
 	episodes.Episodes().userlists()
 
 
-
 ####################################################
 #---Anime
 ####################################################
@@ -393,7 +385,6 @@ elif action == 'originals':
 	tvshows.TVshows().originals()
 
 
-
 ####################################################
 #---YouTube
 ####################################################
@@ -403,7 +394,6 @@ elif action == 'youtube':
 		youtube.yt_index().root(action)
 	else:
 		youtube.yt_index().get(action, subid)
-
 
 
 ####################################################
@@ -482,7 +472,6 @@ elif action == 'urlResolverRDTorrent':
 	control.openSettings(query, "script.module.resolveurl")
 
 
-
 ####################################################
 #---Playcount
 ####################################################
@@ -497,7 +486,6 @@ elif action == 'episodePlaycount':
 elif action == 'tvPlaycount':
 	from resources.lib.modules import playcount
 	playcount.tvshows(name, imdb, tvdb, season, query)
-
 
 
 ####################################################
@@ -522,7 +510,6 @@ elif action == 'cachesyncTVShows':
 	trakt.cachesyncTVShows()
 
 
-
 ####################################################
 #---TMDb
 ####################################################
@@ -537,7 +524,6 @@ elif action == 'revokeTMDb':
 	tmdb.Auth().revoke_session_id()
 	if params.get('opensettings') == 'true':
 		control.openSettings(query, "plugin.video.venom")
-
 
 
 ####################################################
@@ -561,7 +547,6 @@ elif action == 'queueItem':
 		control.notification(title = 35515, message = 35519, icon = 'INFO', sound = notificationSound)
 	else:
 		control.notification(title = name, message = 35519, icon = 'INFO', sound = notificationSound)
-
 
 
 ####################################################
@@ -626,9 +611,7 @@ elif action == 'random':
 
 	try:
 		rand = randint(1,len(rlist))-1
-
 		for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
-
 			if rtype == "show" and p == "tvshowtitle":
 				try:
 					r += '&'+p+'='+quote_plus(rlist[rand]['title'])
@@ -639,18 +622,15 @@ elif action == 'random':
 					r += '&'+p+'='+quote_plus(rlist[rand][p])
 				except:
 					pass
-
 		try:
 			r += '&meta='+quote_plus(json.dumps(rlist[rand]))
 		except:
 			r += '&meta='+quote_plus("{}")
-
 		if rtype == "movie":
 			try:
 				control.infoDialog(rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
 			except:
 				pass
-
 		elif rtype == "episode":
 			try:
 				control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
@@ -659,7 +639,6 @@ elif action == 'random':
 		control.execute('RunPlugin(%s)' % r)
 	except:
 		control.infoDialog(control.lang(32537).encode('utf-8'), time=8000)
-
 
 
 ####################################################

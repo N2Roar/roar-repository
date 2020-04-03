@@ -29,7 +29,6 @@ def get(function, duration, *args):
 	:param duration: Duration of validity of cache in hours
 	:param args: Optional arguments for the provided function
 	"""
-
 	try:
 		key = _hash_function(function, args)
 		cache_result = cache_get(key)
@@ -115,14 +114,10 @@ def cache_insert(key, value):
 	try:
 		cursor = _get_connection_cursor()
 		now = int(time.time())
-
 		cursor.execute("CREATE TABLE IF NOT EXISTS %s (key TEXT, value TEXT, date INTEGER, UNIQUE(key))" % cache_table)
-
 		update_result = cursor.execute("UPDATE %s SET value=?,date=? WHERE key=?" % cache_table, (value, now, key))
-
 		if update_result.rowcount is 0:
 			cursor.execute("INSERT INTO %s Values (?, ?, ?)" % cache_table, (key, value, now))
-
 		cursor.connection.commit()
 	except:
 		log_utils.error()
@@ -130,8 +125,6 @@ def cache_insert(key, value):
 	cursor.close()
 
 
-# Remove very old entries to reduce the file size.
-# The cache DB can grow very larger with advanced caching.
 def cache_clean(duration = 1209600):
 	try:
 		now = int(time.time())

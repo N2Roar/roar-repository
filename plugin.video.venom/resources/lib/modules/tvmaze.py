@@ -39,11 +39,9 @@ class tvMaze:
 	def showLookup(self, type, id):
 		try:
 			result = self.request('lookup/shows', {type: id})
-
 			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
-
 			return result
 		except:
 			pass
@@ -54,13 +52,10 @@ class tvMaze:
 		try:
 			if (not self.showID(show_id)):
 				raise Exception()
-
 			result = self.request('shows/%d' % self.show_id)
-
 			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
-
 			return result
 		except:
 			pass

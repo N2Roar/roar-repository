@@ -138,8 +138,6 @@ class lib_tools:
 
 
 	def ckKodiSources(self, paths=None):
-		# Check if the Venom folders were added to the Kodi video sources.
-		# If not, ask user to run full auto setup or turn off service.
 		contains = False
 		try:
 			if paths is None:
@@ -204,7 +202,6 @@ class lib_tools:
 			lib_tools.create_folder(os.path.join(control.transPath(control.setting('library.tv')), ''))
 		except:
 			pass
-
 		try:
 			control.makeFile(control.dataPath)
 			dbcon = database.connect(control.libcacheFile)
@@ -241,7 +238,6 @@ class lib_tools:
 
 				t1 = datetime.timedelta(hours=6)
 				t2 = datetime.datetime.strptime(last_service, '%Y-%m-%d %H:%M:%S.%f')
-				# log_utils.log('t2 = %s' % t2, log_utils.LOGDEBUG)
 				t3 = datetime.datetime.now()
 				check = abs(t3 - t2) >= t1
 				if check is False:
@@ -558,15 +554,10 @@ class libmovies:
 	def strmFile(self, i):
 		try:
 			name, title, year, imdb, tmdb = i['name'], i['title'], i['year'], i['imdb'], i['tmdb']
-
 			sysname, systitle = urllib.quote_plus(name), urllib.quote_plus(title)
-
 			transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
-
 			content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s' % (sys.argv[0], sysname, systitle, year, imdb, tmdb)
-
 			folder = lib_tools.make_path(self.library_folder, transtitle, year)
-
 			lib_tools.create_folder(folder)
 			lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.strm'), content)
 			lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.nfo'), lib_tools.nfo_url('movie', i))
@@ -577,20 +568,16 @@ class libmovies:
 class libtvshows:
 	def __init__(self):
 		self.library_folder = os.path.join(control.transPath(control.setting('library.tv')),'')
-
 		self.check_setting = control.setting('library.check_episode') or 'false'
 		self.library_update = control.setting('library.update') or 'true'
 		self.dupe_chk = control.setting('library.check') or 'true'
-
 		self.include_unknown = control.setting('library.include_unknown') or 'true'
 		self.showunaired = control.setting('showunaired') or 'true'
-
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		if control.setting('library.importdelay') != 'true':
 			self.date = self.datetime.strftime('%Y%m%d')
 		else:
 			self.date = (self.datetime - datetime.timedelta(hours = 24)).strftime('%Y%m%d')
-
 		self.block = False
 
 
@@ -623,7 +610,6 @@ class libtvshows:
 		except:
 			log_utils.error()
 			pass
-
 		try:
 			dbcur.execute("SELECT * FROM lists WHERE type='tvshows'")
 			results = dbcur.fetchall()
@@ -694,7 +680,6 @@ class libtvshows:
 			try:
 				# from resources.lib.menus import episodes
 				# items = episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, idx=False)
-
 				from resources.lib.menus import seasons
 				items = seasons.Seasons().tvdb_list(tvshowtitle, year, imdb, tmdb, tvdb, control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
 			except:
@@ -729,9 +714,6 @@ class libtvshows:
 			except:
 				lib = []
 				pass
-
-			# log_utils.log('lib = %s' % str(lib), __name__, log_utils.LOGDEBUG)
-
 			files_added = 0
 			for i in items:
 				if lib != []:
@@ -823,7 +805,6 @@ class libtvshows:
 		control.hide()
 		if not control.yesnoDialog(control.lang(32555).encode('utf-8'), '', ''):
 			return
-
 		try:
 			if 'traktcollection' in url:
 				message = 32661
@@ -946,12 +927,9 @@ class libtvshows:
 class libepisodes:
 	def __init__(self):
 		self.library_folder = os.path.join(control.transPath(control.setting('library.tv')),'')
-
 		self.library_update = control.setting('library.update') or 'true'
-
 		self.include_unknown = control.setting('library.include_unknown') or 'true'
 		self.showunaired = control.setting('showunaired') or 'true'
-
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		if control.setting('library.importdelay') != 'true':
 			self.date = self.datetime.strftime('%Y%m%d')
@@ -1091,7 +1069,6 @@ class libepisodes:
 
 				# it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tmdb'], item['tvdb'], idx = False)
 				it = seasons.Seasons().tvdb_list(item['tvshowtitle'], item['year'], item['imdb'], item['tmdb'], item['tvdb'], control.apiLanguage()['tvdb'], '-1') # fetch new meta (uncached)
-				# log_utils.log('it = %s' % it, __name__, log_utils.LOGDEBUG)
 				if it == []: continue
 
 				status = it[0]['status'].lower()

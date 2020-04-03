@@ -124,7 +124,7 @@ msgid "Torrent/Hoster (ignore Prem.)"
 msgstr ""
 
 msgctxt "#32023"
-msgid ""
+msgid "Enable Calendar (TVMaze) fetching extended meta"
 msgstr ""
 
 msgctxt "#32024"

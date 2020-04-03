@@ -1053,6 +1053,8 @@ class TVshows:
 						imdb = trakt_ids.get('ids', {}).get('imdb', '0')
 						if imdb == '' or imdb is None or imdb == 'None':
 							imdb = '0'
+						if not imdb.startswith('tt'):
+							imdb = '0'
 
 					if tmdb == '0':
 						tmdb = str(trakt_ids.get('ids', {}).get('tmdb', '0'))
@@ -1211,20 +1213,20 @@ class TVshows:
 			if 'poster' not in self.list[i] or self.list[i]['poster'] == '0':
 				poster = client.parseDOM(item, 'poster')[0]
 				if poster and poster != '':
-					poster = self.tvdb_image + poster
+					poster = '%s%s' % (self.tvdb_image, poster)
 				else: poster = '0'
 			else:
 				poster = self.list[i]['poster']
 
 			banner = client.parseDOM(item, 'banner')[0]
 			if banner and banner != '':
-				banner = self.tvdb_image + banner
+				banner = '%s%s' % (self.tvdb_image, banner)
 			else: banner = '0'
 
 			if 'fanart' not in self.list[i] or self.list[i]['fanart'] == '0':
 				fanart = client.parseDOM(item, 'fanart')[0]
 				if fanart and fanart != '':
-					fanart = self.tvdb_image + fanart
+					fanart = '%s%s' % (self.tvdb_image, fanart)
 				else: fanart = '0'
 			else:
 				fanart = self.list[i]['fanart']

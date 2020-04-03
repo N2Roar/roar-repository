@@ -8,6 +8,7 @@ import os, sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse
 import datetime, copy
 import requests
+import xml.etree.ElementTree as ET
 
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
@@ -48,6 +49,7 @@ class Episodes:
 
 		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
 		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+
 		self.tvdb_image = 'https://thetvdb.com/banners/'
 		self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
@@ -540,10 +542,8 @@ class Episodes:
 			trailer = i.get('trailer')
 			try:
 				url = self.tvdb_info_link % (tvdb, lang)
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -555,6 +555,7 @@ class Episodes:
 				item = [x for x in result if '<EpisodeNumber>' in x]
 				item2 = result[0]
 
+				# TVDB en.xml sort order is by ID now so we resort by season then episode for proper indexing of nextup item to watch.
 				try:
 					sorted_item = [y for y in item if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum'])]
 					sorted_item += [y for y in item if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(int(i['snum']) + 1)]
@@ -620,7 +621,7 @@ class Episodes:
 
 				poster = client.parseDOM(item2, 'poster')[0]
 				if poster and poster != '':
-					poster = self.tvdb_image + poster
+					poster = '%s%s' % (self.tvdb_image, poster)
 				else: poster = '0'
 
 				season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
@@ -629,7 +630,7 @@ class Episodes:
 				except:
 					season_poster = ''
 				if season_poster != '':
-					season_poster = self.tvdb_image + season_poster
+					season_poster = '%s%s' % (self.tvdb_image, season_poster)
 				else:
 					season_poster = '0'
 				season_poster = client.replaceHTMLCodes(season_poster)
@@ -637,17 +638,17 @@ class Episodes:
 
 				banner = client.parseDOM(item2, 'banner')[0]
 				if banner and banner != '':
-					banner = self.tvdb_image + banner
+					banner = '%s%s' % (self.tvdb_image, banner)
 				else: banner = '0'
 
 				fanart = client.parseDOM(item2, 'fanart')[0]
 				if fanart and fanart != '':
-					fanart = self.tvdb_image + fanart
+					fanart = '%s%s' % (self.tvdb_image, fanart)
 				else: fanart = '0'
 
 				thumb = client.parseDOM(item, 'filename')[0]
 				if thumb and thumb != '':
-					thumb = self.tvdb_image + thumb
+					thumb = '%s%s' % (self.tvdb_image, thumb)
 				else: thumb = '0'
 
 				if poster != '0':
@@ -694,7 +695,7 @@ class Episodes:
 				writer = (' / '.join(writer)).encode('utf-8')
 				writer = client.replaceHTMLCodes(writer)
 
-				import xml.etree.ElementTree as ET
+				# import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
 				castandart = []
@@ -928,10 +929,8 @@ class Episodes:
 			trailer = i.get('trailer')
 			try:
 				url = self.tvdb_info_link % (tvdb, lang)
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
@@ -981,22 +980,22 @@ class Episodes:
 
 				poster = client.parseDOM(item2, 'poster')[0]
 				if poster and poster != '':
-					poster = self.tvdb_image + poster
+					poster = '%s%s' % (self.tvdb_image, poster)
 				else: poster = '0'
 
 				banner = client.parseDOM(item2, 'banner')[0]
 				if banner and banner != '':
-					banner = self.tvdb_image + banner
+					banner = '%s%s' % (self.tvdb_image, banner)
 				else: banner = '0'
 
 				fanart = client.parseDOM(item2, 'fanart')[0]
 				if fanart and fanart != '':
-					fanart = self.tvdb_image + fanart
+					fanart = '%s%s' % (self.tvdb_image, fanart)
 				else: fanart = '0'
 
 				thumb = client.parseDOM(item, 'filename')[0]
 				if thumb and thumb != '':
-					thumb = self.tvdb_image + thumb
+					thumb = '%s%s' % (self.tvdb_image, thumb)
 				else: thumb = '0'
 
 				season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
@@ -1005,7 +1004,7 @@ class Episodes:
 				except:
 					season_poster = ''
 				if season_poster != '':
-					season_poster = self.tvdb_image + season_poster
+					season_poster = '%s%s' % (self.tvdb_image, season_poster)
 				else:
 					season_poster = '0'
 				season_poster = client.replaceHTMLCodes(season_poster)
@@ -1058,7 +1057,7 @@ class Episodes:
 				writer = (' / '.join(writer)).encode('utf-8')
 				writer = client.replaceHTMLCodes(writer)
 
-				import xml.etree.ElementTree as ET
+				# import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
 				castandart = []
@@ -1170,6 +1169,8 @@ class Episodes:
 				imdb = item.get('show', {}).get('externals', {}).get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
+				if not imdb.startswith('tt'):
+					imdb = '0'
 
 				# TVMaze does not have tmdb in their api
 				tmdb = '0'
@@ -1178,7 +1179,7 @@ class Episodes:
 				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
-				if imdb == '0' or tvdb == '0':
+				if (imdb == '0' or tvdb == '0') and control.setting('tvshows.calendar.extended') == 'true':
 					try:
 						trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)
 						if trakt_ids is None:
@@ -1188,6 +1189,8 @@ class Episodes:
 						if imdb == '0':
 							imdb = trakt_ids.get('imdb', '0')
 							if imdb == '' or imdb is None or imdb == 'None':
+								imdb = '0'
+							if not imdb.startswith('tt'):
 								imdb = '0'
 
 						if tmdb == '0':
@@ -1220,8 +1223,8 @@ class Episodes:
 				except:
 					thumb = '0'
 
-				studio = item.get('network', {}) or item.get('webChannel', {})
-				studio = studio.get('name') or '0'
+				studio = item.get('show').get('webChannel') or item.get('show').get('network')
+				studio = studio.get('name') or None
 
 				genre = []
 				for i in item['show']['genres']:
@@ -1251,13 +1254,12 @@ class Episodes:
 				except:
 					airzone = ''
 
-				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear,
+				values = {'extended': True, 'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear,
 								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot,
 								'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'airday': airday, 'airtime': airtime, 'airzone': airzone, 'poster': poster,
-								'season_poster': poster, 'thumb': thumb, 'fanart': thumb, 'episodeIDS': episodeIDS}
+								'season_poster': poster, 'thumb': thumb, 'fanart': thumb, 'episodeIDS': episodeIDS, 'ForceAirEnabled': True}
 
 				itemlist.append(values)
-
 				# if count:
 					# self.seasonCount(itemlist, len(itemlist) - 1)
 			except:
@@ -1267,6 +1269,9 @@ class Episodes:
 		# if count:
 			# self.seasonCountWait()
 
+		if control.setting('tvshows.calendar.extended') == 'false':
+			return itemlist
+
 		def items_list(i):
 			self.list = []
 			tvshowtitle = i['tvshowtitle']
@@ -1275,11 +1280,8 @@ class Episodes:
 			imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 			try:
 				url = self.tvdb_info_link % (tvdb, self.lang)
-				# data = urllib2.urlopen(url, timeout=30).read()
-				# zip = zipfile.ZipFile(StringIO.StringIO(data))
-				data = requests.get(url)
-				zip = zipfile.ZipFile(StringIO.StringIO(data.content))
-
+				data = requests.get(url).content
+				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % self.lang)
 				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
@@ -1294,9 +1296,12 @@ class Episodes:
 					pass
 				item2 = result[0]
 
-				artwork = artwork.split('<Banner>')
-				artwork = [x for x in artwork if '<Language>en</Language>' in x and '<BannerType>season</BannerType>' in x]
-				artwork = [x for x in artwork if not 'seasonswide' in re.findall('<BannerPath>(.+?)</BannerPath>', x)[0]]
+				try:
+					artwork = artwork.split('<Banner>')
+					artwork = [x for x in artwork if '<Language>en</Language>' in x and '<BannerType>season</BannerType>' in x]
+					artwork = [x for x in artwork if not 'seasonswide' in re.findall('<BannerPath>(.+?)</BannerPath>', x)[0]]
+				except:
+					artwork = '0'
 
 				status = i['status'] or client.parseDOM(item2, 'Status')[0]
 				if not status:
@@ -1314,39 +1319,34 @@ class Episodes:
 				poster = i['poster']
 				poster2 = client.parseDOM(item2, 'poster')[0]
 				if poster2 and poster2 != '':
-					poster2 = self.tvdb_image + poster2
+					poster2 = '%s%s' % (self.tvdb_image, poster2)
 				else: poster2 = None
 				poster = poster2 or poster or '0'
 
 				banner = client.parseDOM(item2, 'banner')[0]
 				if banner and banner != '':
-					banner = self.tvdb_image + banner
+					banner = '%s%s' % (self.tvdb_image, banner)
 				else: banner = '0'
 
 				fanart = client.parseDOM(item2, 'fanart')[0]
 				if fanart and fanart != '':
-					fanart = self.tvdb_image + fanart
+					fanart = '%s%s' % (self.tvdb_image, fanart)
 				else: fanart = '0'
 
 				thumb = i['thumb']
 				if item is not None:
 					thumb2 = client.parseDOM(item, 'filename')[0]
 					if thumb2 and thumb2 != '':
-						thumb2 = self.tvdb_image + thumb2
+						thumb2 = '%s%s' % (self.tvdb_image, thumb2)
 					else: thumb2 = None
 					thumb = thumb2 or thumb or '0'
 
-				season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
 				try:
+					season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
 					season_poster = client.parseDOM(season_poster[0], 'BannerPath')[0]
+					season_poster = '%s%s' % (self.tvdb_image, season_poster)
 				except:
-					season_poster = ''
-				if season_poster != '':
-					season_poster = self.tvdb_image + season_poster
-				else:
-					season_poster = '0'
-				season_poster = client.replaceHTMLCodes(season_poster)
-				season_poster = season_poster.encode('utf-8')
+					season_poster = poster
 
 				if poster != '0':
 					pass
@@ -1409,7 +1409,7 @@ class Episodes:
 					plot2 = plot2.encode('utf-8')
 					plot = plot2 or plot
 
-				import xml.etree.ElementTree as ET
+				# import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
 				castandart = []
@@ -1496,6 +1496,8 @@ class Episodes:
 			multi = []
 		multi = len([x for y, x in enumerate(multi) if x not in multi[:y]])
 		multi = True if multi > 1 else False
+		if 'ForceAirEnabled' in items[0]:
+			multi = False
 		try:
 			if '/users/me/history/' in items[0]['next']:
 				multi = True
@@ -1621,12 +1623,12 @@ class Episodes:
 				try: meta.update({'title': i['label']})
 				except: pass
 				try: 
-					meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
+					meta.update({'year': re.findall('(\d{4})', premiered)[0]})
 				except: pass
 
 				try:
 					# Kodi uses the year (the year the show started) as the year for the episode. Change it from the premiered date.
-					meta.update({'tvshowyear': i['year']})
+					if 'tvshowyear' not in meta: meta.update({'tvshowyear': year})
 				except: pass
 
 				if airEnabled == 'true':
@@ -1806,7 +1808,7 @@ class Episodes:
 				if 'episodeIDS' in i:
 					item.setUniqueIDs(i['episodeIDS'])
 
-				if unwatchedEnabled == 'true':
+				if unwatchedEnabled == 'true' and 'ForceAirEnabled' not in i:
 					count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
 					if count:
 						item.setProperty('TotalEpisodes', str(count['total']))

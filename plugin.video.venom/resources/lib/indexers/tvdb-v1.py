@@ -32,8 +32,8 @@ imageUrl = '%s/banners/' % baseUrl
 def getZip(tvdb):
 	url = zip_link % (tvdb, lang)
 	try:
-		data = requests.get(url)
-		zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+		data = requests.get(url).content
+		zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 		result = zip.read('%s.xml' % lang)
 		artwork = zip.read('banners.xml')
@@ -45,7 +45,6 @@ def getZip(tvdb):
 		return None
 
 
-
 def parseAll(tvdb):
 	try:
 		dupe = client.parseDOM(result, 'SeriesName')[0]
@@ -55,11 +54,8 @@ def parseAll(tvdb):
 			tvdb = str(dupe[0]).encode('utf-8')
 
 			url = zip_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
-			# zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-			data = requests.get(url)
-			zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			data = requests.get(url).content
+			zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 			result = zip.read('en.xml')
 			artwork = zip.read('banners.xml')
@@ -68,11 +64,8 @@ def parseAll(tvdb):
 
 		# if lang != 'en':
 			# url = zip_link % (tvdb, lang)
-			# # data = urllib2.urlopen(url, timeout=30).read()
-			# # zip = zipfile.ZipFile(StringIO.StringIO(data))
-
-			# data = requests.get(url)
-			# zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+			# data = requests.get(url).content
+			# zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 			# result2 = zip.read('%s.xml' % lang)
 			# zip.close()
@@ -219,12 +212,8 @@ def parseAll(tvdb):
 		except:
 			mpaa = '0'
 
-
-
 		actors = getActors(tvdb)
 		castandart = parseActors(actors)
-
-
 
 
 

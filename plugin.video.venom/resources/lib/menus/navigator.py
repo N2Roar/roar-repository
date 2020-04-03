@@ -318,7 +318,6 @@ class Navigator:
 		self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
 		self.addDirectoryItem(32558, 'updateLibrary', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
 		self.addDirectoryItem(32676, 'cleanLibrary', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
-
 		self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
 		self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 
@@ -369,29 +368,20 @@ class Navigator:
 			control.hide()
 			items = [ (control.lang(32001).encode('utf-8'), 'movies'), (control.lang(32002).encode('utf-8'), 'tvshows'),
 							(control.lang(32054).encode('utf-8'), 'seasons'), (control.lang(32038).encode('utf-8'), 'episodes') ]
-
 			select = control.selectDialog([i[0] for i in items], control.lang(32049).encode('utf-8'))
-
 			if select == -1:
 				return
-
 			content = items[select][1]
-
 			title = control.lang(32059).encode('utf-8')
-
 			url = '%s?action=addView&content=%s' % (sys.argv[0], content)
-
 			poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
-
 			item = control.item(label=title)
 			item.setInfo(type='video', infoLabels = {'title': title})
 			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'fanart': fanart, 'banner': banner})
 			item.setProperty('IsPlayable', 'false')
-
 			control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
 			control.content(int(sys.argv[1]), content)
 			control.directory(int(sys.argv[1]), cacheToDisc=True)
-
 			from resources.lib.modules import views
 			views.setView(content, {})
 		except:
@@ -417,10 +407,8 @@ class Navigator:
 	def clearCacheAll(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_all()
@@ -433,10 +421,8 @@ class Navigator:
 	def clearCacheProviders(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_providers()
@@ -449,10 +435,8 @@ class Navigator:
 	def clearCacheMeta(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_meta()
@@ -465,10 +449,8 @@ class Navigator:
 	def clearCache(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear()
@@ -481,10 +463,8 @@ class Navigator:
 	def clearCacheSearch(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_search()
@@ -497,10 +477,8 @@ class Navigator:
 	def clearCacheSearchPhrase(self, table, name):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_SearchPhrase(table, name)
@@ -513,10 +491,8 @@ class Navigator:
 	def clearBookmarks(self):
 		control.hide()
 		yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
-
 		if not yes:
 			return
-
 		try:
 			from resources.lib.modules import cache
 			cache.cache_clear_bookmarks()
@@ -534,32 +510,22 @@ class Navigator:
 				name = control.lang(name).encode('utf-8')
 		except:
 			log_utils.error()
-
 		url = '%s?action=%s' % (sysaddon, query) if isAction else query
-
 		thumb = os.path.join(artPath, thumb) if artPath is not None else icon
-
 		if not icon.startswith('Default'):
 			icon = os.path.join(artPath, icon)
-
 		cm = []
 		queueMenu = control.lang(32065).encode('utf-8')
-
 		if queue is True:
 			cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-
 		if context is not None:
 			cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
-
 		if isSearch is True:
 			cm.append(('Clear Search Phrase', 'RunPlugin(%s?action=clearSearchPhrase&table=%s&name=%s)' % (sysaddon, table, name)))
-
 		cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
-
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)
-
 		if isPlayable:
 			item.setProperty('IsPlayable', 'true')
 		else:

@@ -123,6 +123,8 @@ def getEpisodeOverlay(indicators, imdb, tvdb, season, episode):
 
 
 def getShowCount(indicators, imdb, tvdb, limit = False):
+	if not imdb.startswith('tt'):
+		return None
 	try:
 		if traktIndicators is True:
 			result = trakt.showCount(imdb)
@@ -145,6 +147,8 @@ def getShowCount(indicators, imdb, tvdb, limit = False):
 
 
 def getSeasonCount(imdb, season = None, season_special = False, limit = False):
+	if not imdb.startswith('tt'):
+		return None
 	try:
 		if traktIndicators is False:
 			raise Exception()
@@ -201,11 +205,9 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 				trakt.markEpisodeAsNotWatched(imdb, tvdb, season, episode)
 
 			trakt.cachesyncTVShows()
-
 			# if trakt.getTraktAddonEpisodeInfo() is True:
 				# log_utils.log('trakt.getTraktAddonEpisodeInfo = True', __name__, log_utils.LOGDEBUG)
 				# trakt.markEpisodeAsNotWatched(imdb, tvdb, season, episode)
-
 		else:
 			from metahandler import metahandlers
 			metaget = metahandlers.MetaData()
@@ -224,7 +226,6 @@ def movies(name, imdb, watched):
 				trakt.watch(name=name, imdb=imdb, refresh=True)
 			else:
 				trakt.unwatch(name=name, imdb=imdb, refresh=True)
-
 		else:
 			from metahandler import metahandlers
 			metaget = metahandlers.MetaData()
@@ -243,7 +244,6 @@ def episodes(name, imdb, tvdb, season, episode, watched):
 				trakt.watch(name=name, imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True)
 			else:
 				trakt.unwatch(name=name, imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True)
-
 		else:
 			from metahandler import metahandlers
 			metaget = metahandlers.MetaData()
@@ -268,13 +268,11 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 				trakt.watch(name=tvshowtitle, imdb = imdb, tvdb = tvdb, season = season, refresh = True)
 			else:
 				trakt.unwatch(name=tvshowtitle, imdb = imdb, tvdb = tvdb, season = season, refresh = True)
-
 		else:
 			from metahandler import metahandlers
 			from resources.lib.menus import episodes
 
 			name = control.addonInfo('name')
-
 			dialog = control.progressDialogBG
 			dialog.create(str(name), str(tvshowtitle))
 			dialog.update(0, str(name), str(tvshowtitle))

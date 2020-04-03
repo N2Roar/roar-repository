@@ -30,26 +30,19 @@ class Trailer:
 			url = self.worker(type, name, year, url, imdb)
 			if not url:
 				return
-
 			title = control.infoLabel('ListItem.Title')
-
 			if not title:
 				title = control.infoLabel('ListItem.Label')
-
 			icon = control.infoLabel('ListItem.Icon')
-
 			item = control.item(label=title, iconImage=icon, thumbnailImage=icon, path=url)
 			item.setInfo(type="video", infoLabels={'title': title})
 			item.setProperty('IsPlayable', 'true')
-
 			control.refresh()
 			control.resolve(handle=int(sys.argv[1]), succeeded=True, listitem=item)
-
 			if windowedtrailer == 1:
 				control.sleep(1000)
 				while control.player.isPlayingVideo():
 					control.sleep(1000)
-
 				control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)
 		except:
 			log_utils.error()
@@ -62,11 +55,9 @@ class Trailer:
 				if not url:
 					raise Exception()
 				return url
-
 			elif not url.startswith('http'):
 				url = self.youtube_watch % url
 				url = self.resolve(url)
-
 				if not url:
 					raise Exception()
 				return url
@@ -91,7 +82,6 @@ class Trailer:
 			else:
 				items = json.loads(result).get('items', [])
 				items = [i.get('id', {}).get('videoId') for i in items]
-
 			for vid_id in items:
 				url = self.resolve(vid_id)
 				if url:
@@ -105,12 +95,10 @@ class Trailer:
 		from resources.lib.modules import trakt
 		#check if this needs .replace(' ', '-') between title spaces
 		id = (name.lower() + '-' + year) if imdb == '0' else imdb
-
 		if type == 'movie':
 			item = trakt.getMovieSummary(id)
 		else:
 			item = trakt.getTVShowSummary(id)
-
 		try:
 			trailer_id = item.get('trailer').split('v=')
 			trailer_id = [trailer_id[1]]
@@ -123,18 +111,13 @@ class Trailer:
 		try:
 			id = url.split('?v=')[-1].split('/')[-1].split('?')[0].split('&')[0]
 			result = client.request(self.youtube_watch % id)
-
 			message = client.parseDOM(result, 'div', attrs={'id': 'unavailable-submessage'})
 			message = ''.join(message)
-
 			alert = client.parseDOM(result, 'div', attrs={'id': 'watch7-notification-area'})
-
 			if len(alert) > 0:
 				raise Exception()
-
 			if re.search('[a-zA-Z]', message):
 				raise Exception()
-
 			url = 'plugin://plugin.video.youtube/play/?video_id=%s' % id
 			return url
 		except:
