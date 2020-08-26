@@ -1,50 +1,54 @@
 # -*- coding: UTF-8 -*-
 
+"""
+	Venom Add-on
+"""
+
 import cProfile
+from datetime import datetime
 import inspect
 import json
-import os
 import pstats
-import StringIO
+try:
+	from StringIO import StringIO
+except:
+	from io import StringIO
 import time
 import xbmc
-from datetime import datetime
 from xbmc import LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO, LOGNONE, LOGNOTICE, LOGSEVERE, LOGWARNING  # @UnusedImport
 
 from resources.lib.modules import control
 
-name = control.addonInfo('name')
 DEBUGPREFIX = '[COLOR red][ Venom DEBUG ][/COLOR]'
 LOGPATH = xbmc.translatePath('special://logpath/')
 addonName = "Venom"
 
 
-def log(msg, caller=None, level = LOGNOTICE):
-	debug_enabled = control.setting('addon_debug')
+def log(msg, caller=None, level=LOGNOTICE):
+	debug_enabled = control.setting('addon_debug') == 'true'
 	debug_log = control.setting('debug.location')
 
-	print DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled)
-	print DEBUGPREFIX + ' Debug Log?: ' + str(debug_log)
+	print(DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled))
+	print(DEBUGPREFIX + ' Debug Log?: ' + str(debug_log))
 
-	if control.setting('addon_debug') != 'true':
+	if not debug_enabled:
 		return
-
 	try:
 		if caller is not None and level == LOGDEBUG:
 			func = inspect.currentframe().f_back.f_code
 			line_number = inspect.currentframe().f_back.f_lineno
 			caller = "%s.%s()" % (caller, func.co_name)
-			msg = 'From func name: %s Line # :%s\n                       msg : %s'%(caller,line_number,msg)
+			msg = 'From func name: %s Line # :%s\n                       msg : %s' % (caller, line_number, msg)
 
 		if caller is not None and level == LOGERROR:
-			msg = 'From func name: %s.%s() Line # :%s\n                       msg : %s'%(caller[0], caller[1], caller[2], msg)
+			msg = 'From func name: %s.%s() Line # :%s\n                       msg : %s' % (caller[0], caller[1], caller[2], msg)
 
 		if isinstance(msg, unicode):
 			msg = '%s (ENCODED)' % (msg.encode('utf-8'))
 
-		if not control.setting('debug.location') == '0':
-			log_file = os.path.join(LOGPATH, 'venom.log')
-			if not os.path.exists(log_file):
+		if debug_log == '1':
+			log_file = control.joinPath(LOGPATH, 'venom.log')
+			if not control.existsPath(log_file):
 				f = open(log_file, 'w')
 				f.close()
 			with open(log_file, 'a') as f:
@@ -79,15 +83,15 @@ def error(message=None, exception=True):
 		import sys
 		if exception:
 			type, value, traceback = sys.exc_info()
-			sysaddon = sys.argv[0].split('//')[1].replace('/', '.')
-			filename = (traceback.tb_frame.f_code.co_filename).replace('\\', '.').replace('.py', '')
-			filename = filename.split(sysaddon)[1].replace('\\', '.')
+			addon = 'plugin.video.venom'
+			filename = (traceback.tb_frame.f_code.co_filename)
+			filename = filename.split(addon)[1]
 			name = traceback.tb_frame.f_code.co_name
 			linenumber = traceback.tb_lineno
 			errortype = type.__name__
-			errormessage = value.message
-			if errormessage == '':
-				raise Exception()
+			errormessage = value.message or value # sometime value.message is null while value is not
+			if str(errormessage) == '':
+				return
 			if message:
 				message += ' -> '
 			else:
@@ -96,8 +100,11 @@ def error(message=None, exception=True):
 			caller = [filename, name, linenumber]
 		else:
 			caller = None
-		log(msg=message, caller=caller, level = LOGERROR)
+		log(msg=message, caller=caller, level=LOGERROR)
+		del(type, value, traceback) # So we don't leave our local labels/objects dangling
 	except:
+		import traceback
+		traceback.print_exc()
 		pass
 
 
@@ -142,12 +149,12 @@ class Profiler(object):
 
 
 	def dump_stats(self):
-		if self._profiler is not None:
-			s = StringIO.StringIO()
+		if self._profiler:
+			s = StringIO()
 			params = (self.sort_by,) if isinstance(self.sort_by, basestring) else self.sort_by
 			ps = pstats.Stats(self._profiler, stream=s).sort_stats(*params)
 			ps.print_stats()
-			if self.file_path is not None:
+			if self.file_path:
 				with open(self.file_path, 'w') as f:
 					f.write(s.getvalue())
 

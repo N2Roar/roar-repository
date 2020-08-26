@@ -34,15 +34,15 @@ def get_request(url):
 		except requests.exceptions.SSLError:
 			response = requests.get(url, verify=False)
 	except requests.exceptions.ConnectionError:
-		control.notification(title='default', message=32024, icon='INFO')
+		control.notification(title='default', message=32024, icon='default')
 		return
 
 	if '200' in str(response):
 		return response.json()
 	elif 'Retry-After' in response.headers:
-		# API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
+		# API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME (removed 12-6-20)
 		throttleTime = response.headers['Retry-After']
-		control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='INFO')
+		control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='default')
 		sleep(int(throttleTime) + 1)
 		return get_request(url)
 	else:
@@ -105,12 +105,11 @@ class Movies:
 	def __init__(self):
 		self.list = []
 		self.meta = []
-
 		self.lang = control.apiLanguage()['trakt']
-
 		self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,videos' % ('%s', API_key, self.lang)
-###                                                                             other "append_to_response" options                             external_ids,alternative_titles,videos,images
+		# self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,videos,alternative_titles' % ('%s', API_key, self.lang)
 
+###                                                                             other "append_to_response" options                             external_ids,alternative_titles,images
 		self.tmdb_art_link = base_link + '/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
 		self.tmdb_external_ids = base_link + '/3/movie/%s/external_ids?api_key=%s' % ('%s', API_key)
 
@@ -139,18 +138,18 @@ class Movies:
 
 		for item in items:
 			try:
-				title = (item.get('title')).encode('utf-8')
+				title = item.get('title').encode('utf-8')
 			except:
 				title = item.get('title')
 
 			try: 
-				originaltitle = (item.get('original_title')).encode('utf-8')
+				originaltitle = item.get('original_title').encode('utf-8')
 			except:
 				originaltitle = title
 
 			year = str(item.get('release_date')[:4])
 
-			tmdb = item.get('id')
+			tmdb = str(item.get('id'))
 			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
@@ -163,12 +162,13 @@ class Movies:
 
 			plot = item.get('overview')
 
-			try:
-				tagline = item.get('tagline', '0')
-				if tagline == '' or tagline == '0' or tagline is None:
-					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-			except:
-				tagline = '0'
+			# try:
+				# tagline = item.get('tagline', '0')
+				# if tagline == '' or tagline == '0' or tagline is None:
+					# tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			# except:
+				# tagline = '0'
+			tagline = '0'
 
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline, 'metacache': False}
@@ -176,7 +176,7 @@ class Movies:
 			self.list.append(values)
 
 		def items_list(i):
-			if i['metacache'] is True:
+			if i['metacache']:
 				return
 
 			try:
@@ -233,7 +233,8 @@ class Movies:
 					if len(castandart) == 150: break
 
 				try:
-					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube'][0]['key']
+					# trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube'][0]['key']
+					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube' and i['type'] == 'Trailer'][0]['key']
 					trailer = control.trailer % trailer
 				except:
 					trailer = ''
@@ -242,14 +243,14 @@ class Movies:
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
 							'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
-							'landscape': fanart, 'trailer': trailer, 'metacache': False, 'next': next}
+							'landscape': fanart, 'mediatype': 'movie', 'trailer': trailer, 'metacache': False, 'next': next}
 
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
 					extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
-					if extended_art is not None:
+					if extended_art:
 						values.update(extended_art)
 						meta.update(values)
 
@@ -324,7 +325,7 @@ class Movies:
 
 			year = str(item.get('release_date')[:4])
 
-			tmdb = item.get('id')
+			tmdb = str(item.get('id'))
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
 			fanart = '%s%s' % (fanart_path, item['backdrop_path']) if item['backdrop_path'] else '0'
@@ -336,12 +337,13 @@ class Movies:
 
 			plot = item.get('overview')
 
-			try:
-				tagline = item.get('tagline', '0')
-				if tagline == '' or tagline == '0' or tagline is None:
-					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-			except:
-				tagline = '0'
+			# try:
+				# tagline = item.get('tagline', '0')
+				# if tagline == '' or tagline == '0' or tagline is None:
+					# tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			# except:
+				# tagline = '0'
+			tagline = '0'
 
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
@@ -402,7 +404,7 @@ class Movies:
 					if len(castandart) == 150: break
 
 				try:
-					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube'][0]['key']
+					trailer = [i for i in item['videos']['results'] if i['site'] == 'YouTube' and i['type'] == 'Trailer'][0]['key']
 					trailer = control.trailer % trailer
 				except:
 					trailer = ''
@@ -411,14 +413,14 @@ class Movies:
 							'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
 							'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
-							'landscape': fanart, 'trailer': trailer, 'metacache': False, 'next': next}
+							'landscape': fanart, 'mediatype': 'movie', 'trailer': trailer, 'metacache': False, 'next': next}
 
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
 					extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
-					if extended_art is not None:
+					if extended_art:
 						values.update(extended_art)
 						meta.update(values)
 
@@ -444,25 +446,31 @@ class Movies:
 
 
 	def get_details(self, tmdb, imdb):
-		item = get_request(self.tmdb_info_link % tmdb)
-		if item is None:
-			item = get_request(self.tmdb_info_link % imdb)
+		item = None
+		if tmdb != '0':
+			item = get_request(self.tmdb_info_link % tmdb)
+		if not item:
+			if imdb != '0':
+				item = get_request(self.tmdb_info_link % imdb)
 		return item
 
 
 	def get_external_ids(self, tmdb, imdb):
-		items = get_request(self.tmdb_external_ids % tmdb)
-		if item is None:
-			item = get_request(self.tmdb_external_ids % imdb)
+		item = None
+		if tmdb != '0':
+			items = get_request(self.tmdb_external_ids % tmdb)
+		if not item:
+			if imdb != '0':
+				item = get_request(self.tmdb_external_ids % imdb)
 		return item
 
 
 	def get_art(self, tmdb):
-		if API_key == '' or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb == 'None' or tmdb is None):
 			return None
 
 		art3 = get_request(self.tmdb_art_link % tmdb)
-		if art3 is None:
+		if not art3:
 			return None
 
 		try:
@@ -490,7 +498,7 @@ class Movies:
 		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 		people = get_request(url % tmdb)
-		if people is None:
+		if not people:
 			return None
 		return people
 
@@ -503,6 +511,14 @@ class TVshows:
 		self.tmdb_info_link = base_link + '/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings,external_ids' % ('%s', API_key, self.lang)
 ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
 		self.tmdb_art_link = base_link + '/3/tv/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
+		tvdb_key_list = [
+			'MDZjZmYzMDY5MGY5Yjk2MjI5NTcwNDRmMjE1OWZmYWU=',
+			'MUQ2MkYyRjkwMDMwQzQ0NA==',
+			'N1I4U1paWDkwVUE5WU1CVQ==']
+		self.tvdb_key = tvdb_key_list[int(control.setting('tvdb.api.key'))]
+
+		self.imdb_user = control.setting('imdb.user').replace('ur', '')
+		self.user = str(self.imdb_user) + str(self.tvdb_key)
 
 
 	def tmdb_list(self, url):
@@ -534,7 +550,7 @@ class TVshows:
 
 			year = str(item.get('first_air_date')[:4])
 
-			tmdb = item.get('id')
+			tmdb = str(item.get('id'))
 			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
@@ -547,16 +563,16 @@ class TVshows:
 
 			plot = item.get('overview')
 
-			try:
-				tagline = item.get('tagline', '0')
-				if tagline == '' or tagline == '0' or tagline is None:
-					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-			except:
-				tagline = '0'
+			# try:
+				# tagline = item.get('tagline', '0')
+				# if tagline == '' or tagline == '0' or tagline is None:
+					# tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			# except:
+				# tagline = '0'
+			tagline = '0'
 
 			values = {'next': next, 'title': title, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
-
 			list.append(values)
 
 
@@ -597,6 +613,11 @@ class TVshows:
 				except:
 					studio = '0'
 
+				try:
+					total_seasons = int(item.get('number_of_seasons', ''))
+				except:
+					total_seasons = 0
+
 				credits = item['credits']
 				director = writer = '0'
 				for person in credits['crew']:
@@ -619,14 +640,14 @@ class TVshows:
 				values = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
 								'votes': votes, 'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb,
 								'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart,
-								'metacache': False, 'next': next}
+								'total_seasons': total_seasons, 'metacache': False, 'next': next}
 
-				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': API_key, 'item': values}
+				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': values}
 
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
 					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
-					if extended_art is not None:
+					if extended_art:
 						values.update(extended_art)
 						meta.update(values)
 
@@ -639,6 +660,7 @@ class TVshows:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
+				log_utils.error()
 				pass
 
 		items = list[:len(list)]
@@ -663,6 +685,7 @@ class TVshows:
 			else:
 				items = result['results']
 		except:
+			log_utils.error()
 			return
 
 		list = []
@@ -691,7 +714,7 @@ class TVshows:
 
 			year = str(item.get('first_air_date')[:4])
 
-			tmdb = item.get('id')
+			tmdb = str(item.get('id'))
 			sortList.append(tmdb)
 
 			poster = '%s%s' % (poster_path, item['poster_path']) if item['poster_path'] else '0'
@@ -704,12 +727,13 @@ class TVshows:
 
 			plot = (item.get('overview'))
 
-			try:
-				tagline = item.get('tagline', '0')
-				if tagline == '' or tagline == '0' or tagline is None:
-					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-			except:
-				tagline = '0'
+			# try:
+				# tagline = item.get('tagline', '0')
+				# if tagline == '' or tagline == '0' or tagline is None:
+					# tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			# except:
+				# tagline = '0'
+			tagline = '0'
 
 			values = {'next': next, 'title': title, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline}
@@ -770,16 +794,15 @@ class TVshows:
 						castandart = []
 					if len(castandart) == 150: break
 
-				values = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
+				values = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
 								'mpaa': mpaa, 'status': status, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
 								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
-				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': API_key, 'item': values}
-
+				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': values}
 				if disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
 					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
-					if extended_art is not None:
+					if extended_art:
 						values.update(extended_art)
 						meta.update(values)
 
@@ -792,6 +815,7 @@ class TVshows:
 				self.meta.append(meta)
 				metacache.insert(self.meta)
 			except:
+				log_utils.error()
 				pass
 
 		items = list[:len(list)]
@@ -808,18 +832,21 @@ class TVshows:
 
 
 	def get_details(self, tmdb, imdb):
-		item = get_request(self.tmdb_info_link % tmdb)
-		if item is None:
-			item = get_request(self.tmdb_info_link % imdb)
+		item = None
+		if tmdb != '0':
+			item = get_request(self.tmdb_info_link % tmdb)
+		if not item:
+			if imdb != '0':
+				item = get_request(self.tmdb_info_link % imdb)
 		return item
 
 
 	def get_art(self, tmdb):
-		if API_key == '' or (tmdb == '0' or tmdb is None):
+		if API_key == '' or (tmdb == '0' or tmdb == 'None' or tmdb is None):
 			return None
 
 		art3 = get_request(self.tmdb_art_link % tmdb)
-		if art3 is None:
+		if not art3:
 			return None
 
 		try:
@@ -847,7 +874,7 @@ class TVshows:
 		if API_key == '' or (tmdb == '0' or tmdb is None):
 			return None
 		people = get_request(url % tmdb)
-		if people is None:
+		if not people:
 			return None
 		return people
 
@@ -884,6 +911,7 @@ class Auth:
 			else:
 				control.notification(title='default', message='TMDb Authorization FAILED', icon='ERROR')
 		except:
+			log_utils.error()
 			pass
 
 
@@ -903,4 +931,5 @@ class Auth:
 			else:
 				control.notification(title='default', message='TMDb session_id deletion FAILED', icon='ERROR')
 		except:
+			log_utils.error()
 			pass

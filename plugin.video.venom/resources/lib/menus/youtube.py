@@ -8,12 +8,10 @@
  # ----------------------------------------------------------------------------
 #######################################################################
 
-import sys
 
+from sys import argv
 from resources.lib.modules import control
 from resources.lib.modules import youtube_menu
-
-thishandle = int(sys.argv[1])
 
 
 class yt_index:  # initializes as musicvids, functions can override based on action and subid.
@@ -24,6 +22,7 @@ class yt_index:  # initializes as musicvids, functions can override based on act
 		self.submenu = '%s/%s.txt'
 		self.default_icon = '%s/icons/music_video_folder_icon.png'
 		self.default_fanart = '%s/icons/music_video_folder_fanart.jpg'
+
 
 	def init_vars(self, action):
 		try:
@@ -41,9 +40,7 @@ class yt_index:  # initializes as musicvids, functions can override based on act
 	def root(self, action):
 		try:
 			self.init_vars(action)
-
 			menuItems = youtube_menu.youtube_menu().processMenuFile(self.mainmenu)
-
 			for name, section, searchid, subid, playlistid, channelid, videoid, iconimage, fanart, description in menuItems:
 				if subid != 'false': # Means this item points to a submenu
 					youtube_menu.youtube_menu().addMenuItem(name, self.action, subid, iconimage, fanart, description, True)
@@ -96,4 +93,4 @@ class yt_index:  # initializes as musicvids, functions can override based on act
 
 
 	def endDirectory(self):
-		control.directory(thishandle, cacheToDisc=True)
+		control.directory(int(argv[1]), cacheToDisc=True)

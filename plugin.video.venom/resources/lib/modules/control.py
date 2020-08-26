@@ -4,10 +4,24 @@
 	Venom Add-on
 """
 
-import os, sys, urllib, re, glob
-import xbmc, xbmcaddon, xbmcplugin, xbmcvfs, xbmcgui
+import datetime
+import glob
+import os
+import re
+import string
+from sys import argv
+import time
 
-from sqlite3 import dbapi2
+try:
+	from urllib import urlencode
+except:
+	from urllib.parse import urlencode
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcplugin
+import xbmcvfs
 from xml.etree import ElementTree
 
 integer = 1000
@@ -18,9 +32,7 @@ addonInfo = xbmcaddon.Addon().getAddonInfo
 addonName = addonInfo('name')
 addonVersion = addonInfo('version')
 
-lang = xbmcaddon.Addon().getLocalizedString
-lang2 = xbmc.getLocalizedString
-
+getLangString = xbmcaddon.Addon().getLocalizedString
 setting = xbmcaddon.Addon().getSetting
 setSetting = xbmcaddon.Addon().setSetting
 
@@ -34,7 +46,6 @@ XBFONT_CENTER_Y = 0x00000004
 XBFONT_TRUNCATED = 0x00000008
 window = xbmcgui.Window(10000)
 homeWindow = xbmcgui.Window(10000)
-# xbmcgui.Window(10000).setProperty('VenomGlobalContextEnabled', setting('enable.venom.context'))
 
 windowDialog = xbmcgui.WindowDialog()
 dialog = xbmcgui.Dialog()
@@ -50,10 +61,11 @@ content = xbmcplugin.setContent
 property = xbmcplugin.setProperty
 resolve = xbmcplugin.setResolvedUrl
 
-infoLabel = xbmc.getInfoLabel
 condVisibility = xbmc.getCondVisibility
-keyboard = xbmc.Keyboard
 execute = xbmc.executebuiltin
+infoLabel = xbmc.getInfoLabel
+keyboard = xbmc.Keyboard
+monitor = xbmc.Monitor()
 skin = xbmc.getSkinDir()
 
 player = xbmc.Player()
@@ -67,6 +79,9 @@ try:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
 except:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path')
+
+joinPath = os.path.join
+existsPath = os.path.exists
 
 menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
 SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
@@ -92,42 +107,53 @@ deleteFile = xbmcvfs.delete
 listDir = xbmcvfs.listdir
 deleteDir = xbmcvfs.rmdir
 transPath = xbmc.translatePath
-existsPath =  xbmcvfs.exists
+existsPath = xbmcvfs.exists
 
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"
 trailer = 'plugin://plugin.video.youtube/play/?video_id=%s'
 
-# def lang(language_id):
-	# text = getLangString(language_id)
-	# text = text.encode('utf-8', 'replace')
-	# text = display_string(text)
-	# return text
 
-# def display_string(object):
-	# if type(object) is str or type(object) is unicode:
-		# return deaccentString(object)
-	# if type(object) is int:
-		# return '%s' % object
-	# if type(object) is bytes:
-		# object = ''.join(chr(x) for x in object)
-		# return object
+def lang(language_id):
+	text = getLangString(language_id)
+	if getKodiVersion() < 19:
+		text = text.encode('utf-8', 'replace')
+	return text
 
-# def deaccentString(text):
-	# text = u'%s' % text
-	# text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
-	# return text
+
+def display_string(object):
+	try:
+		if type(object) is str or type(object) is unicode:
+			return deaccentString(object)
+	except NameError:
+		if type(object) is str:
+			return deaccentString(object)
+	if type(object) is int:
+		return '%s' % object
+	if type(object) is bytes:
+		object = ''.join(chr(x) for x in object)
+		return object
+
+
+def deaccentString(text):
+	try:
+		if isinstance(text, bytes):
+			text = text.decode('utf-8')
+	except UnicodeDecodeError:
+		text = u'%s' % text
+	text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
+	return text
+
+
+def strip_non_ascii_and_unprintable(text):
+	result = ''.join(char for char in text if char in string.printable)
+	return result.encode('ascii', errors='ignore').decode('ascii', errors='ignore')
 
 
 def sleep(time):  # Modified `sleep`(in milli secs) command that honors a user exit request
-	while time > 0 and not xbmc.abortRequested:
+	while time > 0 and not monitor.abortRequested():
 		xbmc.sleep(min(100, time))
 		time = time - 100
-
-
-def sleep2(seconds):
-	import time
-	time.sleep(seconds)
 
 
 def getCurrentViewId():
@@ -136,7 +162,7 @@ def getCurrentViewId():
 
 
 def getKodiVersion():
-	return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
+	return int(xbmc.getInfoLabel("System.BuildVersion")[:2])
 
 
 def check_version_numbers(current, new):
@@ -163,13 +189,13 @@ def addonVersion(addon):
 
 def get_plugin_url(queries):
 	try:
-		query = urllib.urlencode(queries)
+		query = urlencode(queries)
 	except UnicodeEncodeError:
 		for k in queries:
 			if isinstance(queries[k], unicode):
 				queries[k] = queries[k].encode('utf-8')
-		query = urllib.urlencode(queries)
-	addon_id = sys.argv[0]
+		query = urlencode(queries)
+	addon_id = argv[0]
 	if not addon_id:
 		addon_id = addonId()
 	return addon_id + '?' + query
@@ -188,7 +214,6 @@ def addonPath(addon):
 		addonID = xbmcaddon.Addon(addon)
 	except:
 		addonID = None
-
 	if addonID is None:
 		return ''
 	else:
@@ -281,27 +306,15 @@ def metadataClean(metadata):
 ####################################################
 # --- Dialogs
 ####################################################
-def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=False):
-	if icon == '':
-		icon = addonIcon()
-	elif icon == 'INFO':
-		icon = xbmcgui.NOTIFICATION_INFO
-	elif icon == 'WARNING':
-		icon = xbmcgui.NOTIFICATION_WARNING
-	elif icon == 'ERROR':
-		icon = xbmcgui.NOTIFICATION_ERROR
-	dialog.notification(heading, message, icon, time, sound=sound)
-
-
 def notification(title=None, message=None, icon=None, time=3000, sound=False):
 	if title == 'default' or title is None:
 		title = addonName()
 	if isinstance(title, (int, long)):
-		heading = lang(title).encode('utf-8')
+		heading = lang(title)
 	else:
 		heading = str(title)
 	if isinstance(message, (int, long)):
-		body = lang(message).encode('utf-8')
+		body = lang(message)
 	else:
 		body = str(message)
 	if icon is None or icon == '' or icon == 'default':
@@ -327,17 +340,17 @@ def okDialog(title=None, message=None):
 	if title == 'default' or title is None:
 		title = addonName()
 	if isinstance(title, (int, long)):
-		heading = lang(title).encode('utf-8')
+		heading = lang(title)
 	else:
 		heading = str(title)
 	if isinstance(message, (int, long)):
-		body = lang(message).encode('utf-8')
+		body = lang(message)
 	else:
 		body = str(message)
 	return dialog.ok(heading, body)
 
 
-def context(items = None, labels = None):
+def context(items=None, labels=None):
 	if items:
 		labels = [i[0] for i in items]
 		choice = xbmcgui.Dialog().contextmenu(labels)
@@ -350,21 +363,21 @@ def context(items = None, labels = None):
 
 
 def busy():
-	if int(getKodiVersion()) >= 18:
+	if getKodiVersion() >= 18:
 		return execute('ActivateWindow(busydialognocancel)')
 	else:
 		return execute('ActivateWindow(busydialog)')
 
 
 def hide():
-	if int(getKodiVersion()) >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
+	if getKodiVersion() >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
 		return execute('Dialog.Close(busydialognocancel)')
 	else:
 		return execute('Dialog.Close(busydialog)')
 
 
 def closeAll():
-	return execute('Dialog.Close(all,true)')
+	return execute('Dialog.Close(all, true)')
 
 
 def closeOk():
@@ -373,13 +386,13 @@ def closeOk():
 
 def cancelPlayback():
 	playlist.clear()
-	syshandle = int(sys.argv[1])
+	syshandle = int(argv[1])
 	resolve(syshandle, False, item())
 	closeOk()
 
 
 def visible():
-	if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1:
+	if getKodiVersion() >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1:
 		return True
 	return xbmc.getCondVisibility('Window.IsActive(busydialog)') == 1
 ########################
@@ -397,10 +410,10 @@ def openSettings(query=None, id=addonInfo('id')):
 	try:
 		hide()
 		execute('Addon.OpenSettings(%s)' % id)
-		if query is None:
+		if not query:
 			return
 		c, f = query.split('.')
-		if int(getKodiVersion()) >= 18:
+		if getKodiVersion() >= 18:
 			execute('SetFocus(%i)' % (int(c) - 100))
 			execute('SetFocus(%i)' % (int(f) - 80))
 		else:
@@ -491,6 +504,15 @@ def getSettingDefault(id):
 		return None
 
 
+def getColor(n):
+	colorChart = ['blue', 'red', 'yellow', 'deeppink', 'cyan', 'lawngreen', 'gold', 'magenta', 'yellowgreen', 'skyblue', 
+						'lime', 'limegreen', 'deepskyblue', 'white', 'whitesmoke', 'nocolor']
+	if not n:
+		n = '8'
+	color = colorChart[int(n)]
+	return color
+
+
 def getMenuEnabled(menu_title):
 	is_enabled = setting(menu_title).strip()
 	if (is_enabled == '' or is_enabled == 'false'):
@@ -505,6 +527,37 @@ def trigger_widget_refresh():
 	homeWindow.setProperty('widgetreload-tvshows', timestr)
 	homeWindow.setProperty('widgetreload-episodes', timestr)
 	homeWindow.setProperty('widgetreload-movies', timestr)
+
+
+def get_video_database_path():
+	database_path = os.path.abspath(os.path.join(dataPath, '..', '..', 'Database', ))
+	if getKodiVersion() == 17:
+		database_path = os.path.join(database_path, 'MyVideos107.db')
+	elif getKodiVersion() == 18:
+		database_path = os.path.join(database_path, 'MyVideos116.db')
+	return database_path
+
+
+def datetime_workaround(string_date, format="%Y-%m-%d", date_only=True):
+	sleep(200)
+	try:
+		if string_date == '':
+			return None
+		try:
+			if date_only:
+				res = datetime.datetime.strptime(string_date, format).date()
+			else:
+				res = datetime.datetime.strptime(string_date, format)
+		except TypeError:
+			if date_only:
+				res = datetime.datetime(*(time.strptime(string_date, format)[0:6])).date()
+			else:
+				res = datetime.datetime(*(time.strptime(string_date, format)[0:6]))
+		return res
+	except:
+		import traceback
+		traceback.print_exc()
+		pass
 
 
 def add_source(source_name, source_path, source_content, source_thumbnail, type='video'):
@@ -623,6 +676,10 @@ def _db_execute(db_name, command):
 	databaseFile = _get_database(db_name)
 	if not databaseFile:
 		return False
+	try:
+		from sqlite3 import dbapi2
+	except:
+		from pysqlite2 import dbapi2
 	dbcon = dbapi2.connect(databaseFile)
 	dbcur = dbcon.cursor()
 	dbcur.execute(command)
@@ -651,7 +708,6 @@ def _set_source_content(content):
 
 
 def clean_settings():
-	import xml.etree.ElementTree as ET
 	def _make_content(dict_object):
 		if kodi_version >= 18:
 			content = '<settings version="2">'
@@ -672,7 +728,7 @@ def clean_settings():
 		content += '\n</settings>'
 		return content
 
-	kodi_version = int(getKodiVersion()) 
+	kodi_version = getKodiVersion()
 	for addon_id in ('plugin.video.venom', 'script.module.openscrapers'):
 		try:
 			removed_settings = []
@@ -683,30 +739,81 @@ def clean_settings():
 			addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
 			profile_dir = xbmc.translatePath(addon.getAddonInfo('profile'))
 			active_settings_xml = os.path.join(addon_dir, 'resources', 'settings.xml')
-			root = ET.parse(active_settings_xml).getroot()
+			root = ElementTree.parse(active_settings_xml).getroot()
 			for item in root.findall('./category/setting'):
 				setting_id = item.get('id')
 				if setting_id:
 					active_settings.append(setting_id)
 			settings_xml = os.path.join(profile_dir, 'settings.xml')
-			root = ET.parse(settings_xml).getroot()
+			root = ElementTree.parse(settings_xml).getroot()
 			for item in root:
 				dict_item = {}
 				setting_id = item.get('id')
 				setting_default = item.get('default')
-				if kodi_version >= 18: setting_value = item.text
+				if kodi_version >= 18:
+					setting_value = item.text
 				else: setting_value = item.get('value')
 				dict_item['id'] = setting_id
-				if setting_value: dict_item['value'] = setting_value
-				if setting_default: dict_item['default'] = setting_default
+				if setting_value:
+					dict_item['value'] = setting_value
+				if setting_default:
+					dict_item['default'] = setting_default
 				current_user_settings.append(dict_item)
 			new_content = _make_content(current_user_settings)
 			nfo_file = xbmcvfs.File(settings_xml, 'w')
 			nfo_file.write(new_content)
 			nfo_file.close()
 			sleep(200)
-			notification(title = addon_name, message = lang(32084).encode('utf-8').format(str(len(removed_settings))), icon = 'INFO', sound=False)
+			notification(title=addon_name, message=lang(32084).format(str(len(removed_settings))), icon='default', sound=(setting('notification.sound') == 'true'))
 		except:
 			import traceback
 			traceback.print_exc()
-			notification(title = addon_name, message = 'Error Cleaning Settings.xml. Old settings.xml files Restored.', icon = 'INFO', sound=False)
+			notification(title=addon_name, message='Error Cleaning Settings.xml. Old settings.xml files Restored.', icon='default', sound=(setting('notification.sound') == 'true'))
+
+
+def set_reuselanguageinvoker():
+	if getKodiVersion() < 18:
+		notification(title='default', message='This feature is only supported in kodi 18 and beyond', icon='default', sound=(setting('notification.sound') == 'true'))
+		return
+	try:
+		addon_id = 'plugin.video.venom'
+		addon = xbmcaddon.Addon(id=addon_id)
+		addon_name = addon.getAddonInfo('name')
+		addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
+		addon_xml = os.path.join(addon_dir, 'addon.xml')
+		tree = ElementTree.parse(addon_xml)
+		root = tree.getroot()
+
+		for item in root.iter('reuselanguageinvoker'):
+			curr_value = str(item.text)
+		if curr_value:
+			yes = yesnoDialog('Current value of <reuselanguageinvoker> from addon.xml = %s' % curr_value, 'Note: instability issue may occur. Test on your own free will', '')
+			if not yes:
+				return
+			new_value = 'true' if curr_value == 'false' else 'false'
+			item.text = new_value
+			hash_start = gen_file_hash(addon_xml)
+			# xbmc.log('hash_start = %s' % str(hash_start), 2)
+			tree.write(addon_xml)
+			hash_end = gen_file_hash(addon_xml)
+			# xbmc.log('hash_end = %s' % str(hash_end), 2)
+			if hash_start != hash_end:
+				okDialog(title='default', message='New value = %s: Successfully changed. You must restart kodi for change to take effect.' % new_value)
+			else:
+				okDialog(title='default', message='Write failed')
+	except:
+		import traceback
+		traceback.print_exc()
+
+
+def gen_file_hash(file):
+	try:
+		import hashlib
+		md5_hash = hashlib.md5()
+		with open(file, 'rb') as afile:
+			buf = afile.read()
+			md5_hash.update(buf)
+			return md5_hash.hexdigest()
+	except:
+		import traceback
+		traceback.print_exc()

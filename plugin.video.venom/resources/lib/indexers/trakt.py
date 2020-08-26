@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 
 '''
-Venom
+	Venom Add-on
 '''
 
-import sys ,re , datetime
-import urllib, urlparse, json
+import datetime
+import json
+import re
+import sys
+try:
+	from urllib import urlencode
+	from urlparse import parse_qsl, urlparse, urlsplit
+except:
+	from urllib.parse import urlencode, parse_qsl, urlparse, urlsplit
 
-from resources.lib.modules import trakt
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import client
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
+from resources.lib.modules import trakt
 from resources.lib.modules import workers
-
-# from resources.lib.modules import utils
-
-# import requests
-
 
 self.trakt_link = 'https://api.trakt.tv'
 self.trakt_user = control.setting('trakt.user').strip()
@@ -42,10 +44,10 @@ self.traktpopular_link = 'https://api.trakt.tv/movies/popular?limit=40&page=1'
 
 def trakt_list(self, url, user):
 	try:
-		q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
+		q = dict(parse_qsl(urlsplit(url).query))
 		q.update({'extended': 'full'})
-		q = (urllib.urlencode(q)).replace('%2C', ',')
-		u = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
+		q = (urlencode(q)).replace('%2C', ',')
+		u = url.replace('?' + urlparse(url).query, '') + '?' + q
 
 		result = trakt.getTraktAsJson(u)
 
@@ -63,11 +65,11 @@ def trakt_list(self, url, user):
 		return
 
 	try:
-		q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
+		q = dict(parse_qsl(urlsplit(url).query))
 		if not int(q['limit']) == len(items): raise Exception()
 		q.update({'page': str(int(q['page']) + 1)})
-		q = (urllib.urlencode(q)).replace('%2C', ',')
-		next = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
+		q = (urlencode(q)).replace('%2C', ',')
+		next = url.replace('?' + urlparse(url).query, '') + '?' + q
 		next = next.encode('utf-8')
 	except:
 		next = ''
@@ -117,7 +119,8 @@ def trakt_list(self, url, user):
 			try: plot = plot.encode('utf-8')
 			except: pass
 
-			tagline = item.get('tagline', '0')
+			# tagline = item.get('tagline', '0')
+			tagline = '0'
 
 			self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration,
 										'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb,

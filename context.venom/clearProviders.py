@@ -1,10 +1,4 @@
-import sys, xbmc, json
-import datetime
-
-try:
-	from urlparse import parse_qsl
-except:
-	from urllib.parse import parse_qsl
+import xbmc
 
 
 if __name__ == '__main__':

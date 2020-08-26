@@ -1,77 +1,117 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="context.venom" version="1.0.1" name="Venom - Global Context Menu Items" provider-name="Venom">
+<addon id="context.venom" version="1.0.5" name="Venom - Global Context Menu Items" provider-name="Venom">
 	<requires>
 		<import addon="xbmc.python" version="2.23.0" />
 	</requires>
 	<extension point="kodi.context.item">
 		<menu id="kodi.core.main">
+			<item library="contextSettings.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - CM Settings</label>
+				<visible>
+					!String.IsEmpty(Window(home).Property(context.venom.settings)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true)
+				</visible>
+			</item>
 			<item library="traktManager.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Trakt Manager</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(context.venom.traktManager)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,season) | String.IsEqual(ListItem.dbtype,movie)]
 				</visible>
 			</item>
-
-			<item library="rescrape.py">
-				<label>[B][COLOR red]Venom[/COLOR][/B] - Rescrape Item</label>
-				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
-					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
-				</visible>
-			</item>
-
 			<item library="clearProviders.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Clear Providers</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(context.venom.clearProviders)) +
+					String.StartsWith(ListItem.FolderPath,plugin://plugin.video.venom/?action=play) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
 				</visible>
 			</item>
-
-<!-- 			<item library="autoPlay.py">
+			<item library="clearBookmark.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Clear Item Bookmark</label>
+				<visible>
+					!String.IsEmpty(Window(home).Property(context.venom.clearBookmark)) +
+					String.StartsWith(ListItem.FolderPath,plugin://plugin.video.venom/?action=play) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
+<!-- 					!String.IsEqual(ListItem.Property(resumetime),0) + -->
+					!String.IsEqual(ListItem.Property(venom_resumetime),0) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+			<item library="rescrape.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Rescrape Item</label>
+				<visible>
+					!String.IsEmpty(Window(home).Property(context.venom.rescrape)) +
+					String.StartsWith(ListItem.FolderPath,plugin://plugin.video.venom/?action=play) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
+				</visible>
+			</item>
+			<item library="playFromHere.py">
+				<label>[B][COLOR red]Venom[/COLOR][/B] - Play from here</label>
+				<visible>
+					!String.IsEmpty(Window(home).Property(context.venom.playFromHere)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					String.IsEqual(ListItem.dbtype,episode)
+				</visible>
+			</item>
+			<item library="autoPlay.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Auto Play</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					String.IsEmpty(Window(home).Property(plugin.video.venom.autoPlay)) +
+					!String.IsEmpty(Window(home).Property(context.venom.autoPlay)) +
+					String.StartsWith(ListItem.FolderPath,plugin://plugin.video.venom/?action=play) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
 				</visible>
-			</item> -->
-
-<!-- 			<item library="sourceSelect.py">
+			</item>
+			<item library="sourceSelect.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Source Select</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(plugin.video.venom.autoPlay)) +
+					!String.IsEmpty(Window(home).Property(context.venom.sourceSelect)) +
+					String.StartsWith(ListItem.FolderPath,plugin://plugin.video.venom/?action=play) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie)]
 				</visible>
-			</item> -->
-
+			</item>
 			<item library="findSimilar.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Find Similar</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(context.venom.findSimilar)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,movie)]
 				</visible>
 			</item>
-
 			<item library="browseSeries.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Browse Series</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(context.venom.browseSeries)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					[String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,tvshow)]
 				</visible>
 			</item>
-
 			<item library="browseEpisodes.py">
 				<label>[B][COLOR red]Venom[/COLOR][/B] - Browse Episodes</label>
 				<visible>
-					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) + String.IsEqual(ListItem.Property(isVenom_widget),true) +
+					!String.IsEmpty(Window(home).Property(context.venom.browseEpisodes)) +
+					String.StartsWith(ListItem.path,plugin://plugin.video.venom/) +
+					String.IsEqual(ListItem.Property(isVenom_widget),true) +
 					String.IsEqual(ListItem.dbtype,episode)
+<!-- 					[String.IsEqual(ListItem.dbtype,episode) | !String.IsEmpty(ListItem.Property(multi_episodes))] -->
 				</visible>
-			</item> -->
-
+			</item>
 		</menu>
-	</extension>
+</extension>
+	<extension point="xbmc.service" library="service.py" />
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">Venom - This Addon is currently in beta. Please be aware there may be bugs present</summary>
 		<description lang="en">Adds Global Contextual Menu Items for Venom menu items throughout Kodi
@@ -87,22 +127,12 @@
 			<fanart>fanart.png</fanart>
 		</assets>
 		<news>
+[B][COLOR red]Update - v1.0.5 - May 29, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added service for settings changes.  This now helps items
+    to change and be more responsive than before.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed issue where wrong year wascausing bookmark issues.[/I]
 		</news>
 	</extension>
-</addon>
-
-<addon id="doko.repository" name="Doko Repository" version="0.1.0" provider-name="doko">
-    <extension point="xbmc.addon.repository" name="Doko Repository">
-        <info compressed="false">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/doko-desuka/doko.repository/master/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/doko-desuka/doko.repository/master/</datadir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>Doko Kodi Add-ons</summary>
-        <description>Add-ons for Kodi</description>
-        <disclaimer></disclaimer>
-        <platform>all</platform>
-    </extension>
 </addon>
 
 <addon id="plugin.program.autocompletion" name="AutoCompletion for virtual keyboard" version="1.0.1" provider-name="Philipp Temminghoff (phil65)">
@@ -157,18 +187,15 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.9"
+  version="0.0.10"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
 		<!-- <import addon="plugin.video.aswim"/> -->
-		<!-- 3rd Party Anime (doko.repository) -->
-		<import addon="plugin.video.wsbeta" optional="true"/>
-		<import addon="plugin.video.watchnixtoons2"/>
+		<!-- 3rd Party Anime (no repo) -->
+		<import addon="plugin.video.watchnixtoons2" optional="true"/>
 		<!-- 3rd Party Anime (repository.wilson-magic) -->
 		<import addon="plugin.video.hummingbird"/>
-		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
-		<import addon="plugin.video.wonderfulsubs" optional="true"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
@@ -188,8 +215,6 @@
   version="0.0.4"
   provider-name="N2Roar">
 	<requires>
-		<!-- 3rd Party Drama (repository.magicality) -->
-		<!-- <import addon="plugin.video.dramatic"/> -->
 		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
 		<import addon="plugin.video.icdrama"/>
 	</requires>
@@ -231,36 +256,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dramatic" name="Dramatic [COLOR red](Krypton Only)[/COLOR]" version="1.0.3" provider-name="Wilson Magic">
-	<requires>
-		<import addon="xbmc.python" version="2.19.0"/>
-		<import addon="script.module.requests"/>
-	    <import addon="script.module.beautifulsoup4"/>
-        <import addon="script.module.resolveurl" version="5.0.13"/>
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="default.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Dramatic</summary>
-		<description lang="en">Because Asian drama is magical.</description>
-		<platform>all</platform>
-		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
-		<forum>https://www.reddit.com/r/Addons4Kodi/</forum>
-		<website>https://www3.watchasian.co/</website>
-		<source>https://www3.watchasian.co/</source>
-		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
-		<assets>
-			<icon>icon.png</icon>
-			<fanart>fanart.jpg</fanart>
-            <screenshot>resources/screenshots/screenshot-01.jpg</screenshot>
-            <screenshot>resources/screenshots/screenshot-02.jpg</screenshot>
-            <screenshot>resources/screenshots/screenshot-03.jpg</screenshot>
-    	</assets>
-	</extension>
-</addon>
-
-<addon id="plugin.video.hummingbird" version="0.4.6" name="Hummingbird" provider-name="Wilson Magic">
+<addon id="plugin.video.hummingbird" version="0.5.0" name="Hummingbird" provider-name="Wilson Magic">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 		<import addon="script.module.requests"/>
@@ -296,13 +292,13 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.icdrama" version="1.9.6" name="Icdrama" provider-name="aznhusband, dumbo0001, boleanly, mugol, General-Meow, cthlo">
+<addon id="plugin.video.icdrama" version="2.1.0" name="Icdrama" provider-name="aznhusband, dumbo0001, s_h, boleanly, mugol, General-Meow, cthlo">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.html5lib" version="0.999.0"/>
     <import addon="script.module.beautifulsoup4" version="4.3.2"/>
     <import addon="script.module.requests" version="2.9.1"/>
-    <import addon="script.module.urlresolver" version="3.0.34"/>
+    <import addon="script.module.resolveurl" version="5.0.38"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>
@@ -314,67 +310,6 @@
     <platform>all</platform>
     <license>MIT License</license>
   </extension>
-</addon>
-
-<addon id="plugin.video.openmeta" name="OpenMeta" version="1.4.14" provider-name="A4K">
-	<requires>
-		<import addon="xbmc.python" version="2.25.0"/>
-		<import addon="metadata.tvdb.com" version="3.0.14"/>
-		<import addon="script.module.futures" version="2.2.0"/>
-		<import addon="script.module.requests" version="2.19.1"/>
-		<import addon="script.module.requests-cache" version="0.4.13"/>
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="addon.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.service" library="service.py"/>
-	<extension point="kodi.context.item">
-		<menu id="kodi.core.main">
-			<item library="context.py">
-				<label>OpenMeta - Default Player</label>
-				<visible>!String.StartsWith(ListItem.path,plugin://plugin.video.openmeta/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,movie)]</visible>
-			</item>
-			<item library="context2.py">
-				<label>OpenMeta - Choose Player</label>
-				<visible>String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,episode)</visible>
-			</item>
-		</menu>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">TMDb, TVDb and Trakt browser</summary>
-		<description lang="en">Browse The MovieDb, The TVDb, Trakt and pass info along to library or an addon. Needs player-files and the appropriate addon to play the files.</description>
-		<assets>
-			<icon>resources/icon.png</icon>
-			<fanart>resources/fanart.jpg</fanart>
-			<screenshot>resources/screenshot000.jpg</screenshot>
-			<screenshot>resources/screenshot001.jpg</screenshot>
-			<screenshot>resources/screenshot002.jpg</screenshot>
-		</assets>
-		<license></license>
-		<forum></forum>
-		<website></website>
-		<source></source>
-		<news>
-		1.4.14 - Fix bug with missing ID in TV menus
-		1.4.13 - Added realtitle (movies) and realname (tvshows) parameters for plexkodiconnect compatibility
-		1.4.12 - Handle non-existent 'filename' key in TVDB data.
-		1.4.11 - TVDB API fix, thanks to @ruinernin and @bg-22 (among others)!
-				 BUG: Some artwork may not load for certain items, due to ongoing API instability.
-		1.4.10 - Added language option for player-files (TV)
-		1.4.9  - Fix art in TV menus
-		1.4.8  - Fix crash from empty "first_aired" string"
-		1.4.7  - Fix crash when we can't contact TVDB
-		1.4.6  - Fix crashes from non-existent keys
-		1.4.5  - Added default play action, options for movies are; Play/OpenInfo and options for episodes are; Play/OpenInfo(TV Show info)/OpenInfo(Episode info).
-		1.4.4  - Fix clearlogo for movies
-		1.4.3  - Fix typo in season fanart request.
-		1.4.2  - Add fanart caching
-		1.4.1  - Fix season artwork
-		1.4.0  - Add unwatched counts for shows/seasons.
-		1.3.2  - Fix "Upcoming Episodes" and "Next Episodes".
-		1.3.1  - Fixed "Next Page" bug with widgets.</news>
-	</extension>
 </addon>
 
 <addon id="plugin.video.scrubsv2" name="[COLOR orange]Scrubs v2[/COLOR]" provider-name="JewBMX" version="4.6.2">
@@ -405,13 +340,14 @@
 </addon>
 
 <addon id="plugin.video.themoviedb.helper"
-version="2.2.73.01"
+version="3.3.13"
 name="TheMovieDb Helper"
 provider-name="jurialmunkey">
 <requires>
   <import addon="xbmc.python" version="2.26.0"/>
   <import addon="script.module.simplecache" version="1.0.11" />
   <import addon="script.module.requests" version="2.9.1"/>
+  <import addon="script.module.pil" version="1.1.7"/>
 </requires>
 <extension point="xbmc.python.pluginsource" library="plugin.py">
   <provides>video</provides>
@@ -421,74 +357,94 @@ provider-name="jurialmunkey">
 <extension point="kodi.context.item">
   <menu id="kodi.core.main">
     <item library="context-play.py">
-      <label>Play Using</label>
-      <visible>[String.IsEqual(ListItem.dbtype,episode) + !String.IsEmpty(ListItem.Property(tvshow.tmdb_id)) + !String.IsEmpty(ListItem.Season) + !String.IsEmpty(ListItem.Episode)] | [String.IsEqual(ListItem.dbtype,movie) + !String.IsEmpty(ListItem.Property(tmdb_id))] </visible>
+      <label>$ADDON[plugin.video.themoviedb.helper 32146]</label>
+      <visible>[String.IsEqual(ListItem.dbtype,episode) + !String.IsEmpty(ListItem.Season) + !String.IsEmpty(ListItem.Episode)] | [String.IsEqual(ListItem.dbtype,movie)]</visible>
     </item>
     <item library="context-open.py">
-      <label>Browse Seasons</label>
+      <label>$ADDON[plugin.video.themoviedb.helper 32147]</label>
       <visible>String.IsEqual(ListItem.dbtype,episode) + !String.IsEmpty(ListItem.Property(tvshow.tmdb_id))</visible>
     </item>
-    <item library="context-watchlist.py">
-      <label>Add/Remove from Trakt Watchlist</label>
-      <visible>String.StartsWith(ListItem.path,plugin://plugin.video.themoviedb.helper/) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
-    </item>
-    <item library="context-history.py">
-      <label>Add/Remove from Trakt History</label>
-      <visible>String.StartsWith(ListItem.path,plugin://plugin.video.themoviedb.helper/) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
-    </item>
-    <item library="context-collection.py">
-      <label>Add/Remove from Trakt Collection</label>
-      <visible>String.StartsWith(ListItem.path,plugin://plugin.video.themoviedb.helper/) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
-    </item>
-    <item library="context-library.py">
-      <label>Add to Kodi Library</label>
-      <visible>String.StartsWith(ListItem.path,plugin://plugin.video.themoviedb.helper/) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,season)]</visible>
-    </item>
+    <menu>
+      <label>$ADDON[plugin.video.themoviedb.helper 32145]</label>
+      <item library="context-watchlist.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32148]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
+      </item>
+      <item library="context-history.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32149]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
+      </item>
+      <item library="context-collection.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32150]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
+      </item>
+      <item library="context-library.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32151]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow) | String.IsEqual(ListItem.dbtype,season)]</visible>
+      </item>
+      <item library="context-library-userlist.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32151]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + String.IsEqual(ListItem.Property(Item.Info),trakt_userlist)</visible>
+      </item>
+      <item library="context-addtouserlist.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32140]</label>
+        <visible>!String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)] + [!String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID)]</visible>
+      </item>
+      <item library="context-removefromuserlist.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32152]</label>
+        <visible>!String.IsEmpty(Window(Home).Property(TMDbHelper.TraktIsAuth)) + !String.IsEmpty(Window(Home).Property(TMDbHelper.TraktUserSlug)) + !String.IsEmpty(ListItem.Property(Container.User_Slug)) + !String.IsEmpty(ListItem.Property(Container.List_Slug)) + String.IsEqual(Window(Home).Property(TMDbHelper.TraktUserSlug),ListItem.Property(Container.User_Slug))</visible>
+      </item>
+      <item library="context-refresh-item.py">
+        <label>$ADDON[plugin.video.themoviedb.helper 32153]</label>
+        <visible>!String.IsEmpty(ListItem.Property(Container.Info)) + !String.IsEmpty(ListItem.Property(tmdb_id)) + [String.IsEqual(ListItem.dbtype,episode) | String.IsEqual(ListItem.dbtype,movie) | String.IsEqual(ListItem.dbtype,tvshow)]</visible>
+      </item>
+    </menu>
   </menu>
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en_GB">TheMovieDb Helper - Now With Trakt Support!</summary>
+  <summary lang="es_ES">TheMovieDb Helper - Â¡Ahora con soporte para Trakt!</summary>
   <description lang="en_GB">TheMovieDb Helper provides details about movies, tvshows and actors from TMDb. Users can access a variety of lists from TMDb and Trakt.</description>
+  <description lang="es_ES">TheMovieDb Helper proporciona detalles sobre pelÃ­culas, programas de televisiÃ³n y actores de TMDb. Los usuarios pueden acceder a una variedad de listas desde TMDb y Trakt.</description>
   <disclaimer lang="en_GB">Provided by TheMovieDb and Trakt.</disclaimer>
-  <license>GPL-3.0</license>
+  <disclaimer lang="es_ES">Proporcionado por TheMovieDb y Trakt</disclaimer>
+  <license>GPL-3.0-or-later</license>
+  <website>https://github.com/jurialmunkey/plugin.video.themoviedb.helper</website>
+  <forum>https://forum.kodi.tv/showthread.php?tid=345847</forum>
   <assets>
     <icon>icon.png</icon>
     <fanart>fanart.jpg</fanart>
     <screenshot>resources/screenshot-01.jpg</screenshot>
     <screenshot>resources/screenshot-02.jpg</screenshot>
   </assets>
-  <news>2.2.73 - Trakt Error fix[CR]2.2.72 - Some playlist fixes[CR]2.2.71 - Add URL encode options for player values[CR]2.2.70 - NextAired Library Improvements use Trakt[CR]2.2.69 - LMAO - Browse seasons[CR]2.2.68 - Fix trakt context for episodes[CR]2.2.67 - Add day to next aired labels[CR]2.2.66 - Some next aired library tweeks[CR]2.2.65 - Add play using context menu[CR]2.2.64 - Library next aired[CR]2.2.63 - Sort userlists by added date instead of rating[CR]2.2.62 - Add regions for release dates[CR]2.2.61 - Relative release dates in discover[CR]2.2.60 - Add release type selection in discover[CR]2.2.59 - Expose Trakt context addremove function[CR]2.2.58 - Add search history caching[CR]2.2.57 - Add feedback for adding items to watchlist etc.[CR]2.2.56 - Add Videos section to details[CR]2.2.55 - Fix for TraktAPI false positives getting slug[CR]2.2.54 - Potential fix for Trakt management options to only show if auth[CR]2.2.53 - Another fix for resolving url bugs - NOTICE: Users should re-add old strm files[CR]2.2.52 - Add autoupdate on startup option for library added shows[CR]2.2.51 - Flatten seasons option[CR]2.2.50 - Add season and episode numbers to episodes[CR]2.2.49 - Separate unaired movies/episodes option[CR]2.2.48 - Remove TMDB/Fanart develop key expert options as children can't help but get their sticky fingers all over it even after being told not to touch[CR]2.2.47 - Better clearing of service monitor properties[CR]2.2.46 - Fix for fanarttv on episode widgets[CR]2.2.45 - Add option to show next page item on widgets[CR]2.2.44 - Potential fix for both strm and widget player resolve[CR]2.2.43 - Fix for mostwatched shows/movies not reaching limit[CR]2.2.42 - Fix for unwatched episode counts[CR]2.2.41 - Remove resolveurl to prevent crashing bug and add fixes for fanarttv: Episode artwork plus connection error loop[CR]2.2.39/40 - Add role to label2[CR]2.2.38 - Expand Trakt list limit option[CR]2.2.37 - Add throwaway var to attempt fix for _strptime import bug[CR]2.2.36 - Possible fix for old settings format log spam[CR]2.2.35 - Potential fix for datetime bug in py2[CR]2.2.34 - Fix for plugin failed to play error[CR]2.2.33 - Fix for context menu trakt management of tvshows[CR]2.2.32 - Fix for trakt collection url not resolving to details[CR]2.2.31 - Add option to disable folder creation check[CR]2.2.30 - Reattempt create filepath as possible fix for false failure report[CR]2.2.29 - Only skip TMDbHelper .strm files in local library[CR]2.2.28 - Add options for add to library path[CR]2.2.26/27 - Fixes for add to library[CR]2.2.25 - Formatting future episodes fix[CR]2.2.24 - Browse Trakt Collection[CR]2.2.23 - Add to Kodi Library function[CR]2.2.22 - Player now ignores strm files in local library[CR]2.2.21 - Improvements to In-Progress[CR]2.2.20 - Add option to hide unaired episodes/movies. Format unaired episode/movie labels to red italic[CR]2.2.19 - Additional artwork types from kodilibrary[CR]2.2.18 - Cleanup and clear some empty keys[CR]2.2.17 - Add person kodidb stats to service monitor[CR]2.2.16 - Fix service monitor for people[CR]2.2.14/5 - playmedia param for close dialog[CR]2.2.13 - Extra checks to prevent double adding[CR]2.2.11 - Add Rule improvements to Discover[CR]2.2.10 - Move stats to infoproperties[CR]2.2.9 - DB Stats for Person[CR]2.2.8 - Use select dialog instead of container for discover method[CR]2.2.7 - Add discover select boxes[CR]2.2.6 - Fix for unicode error in add_query params[CR]2.2.5 - Expose discover method for users[CR]2.2.4 - Cleanup for window manager service monitor[CR]2.2.3 - Add close dialog option[CR]2.2.2 - Add Gender Field[CR]2.2.1 - Additional Sets Properties[CR]2.2.0 - Call Auto method for handling extendedinfo experience</news>
+  <news>Add some additional dbid checking based on title/year combo</news>
 </extension>
 </addon>
 
-<addon id="plugin.video.venom" version="3.6.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
-
+<addon id="plugin.video.venom" name="[COLOR red]Venom[/COLOR]" provider-name="Venom" version="4.0.8">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.module.requests" version="2.19.1" />
-		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
+		<import addon="script.module.beautifulsoup4" version="4.5.3" />
 		<import addon="script.module.metahandler" version="2.9.0" />
-		<import addon="plugin.video.youtube" version="6.2.0"/>
-		<import addon="script.module.resolveurl" version="5.0.27"/>
-		<import addon="script.module.openscrapers" />
-		<import addon="script.module.addon.signals" version="0.0.3"/>
-		<import addon="context.venom" version="1.0.0"/>
+		<import addon="plugin.video.youtube" version="6.2.0" />
+		<import addon="script.module.resolveurl" version="5.0.27" />
+		<import addon="script.module.openscrapers" version="0.0.2.008" />
+		<import addon="script.module.addon.signals" version="0.0.3" />
+		<import addon="context.venom" version="1.0.0" />
 	</requires>
-
-	<extension point="xbmc.python.pluginsource" library="venom.py">
+	<extension library="venom.py" point="xbmc.python.pluginsource">
 		<provides>video</provides>
 	</extension>
-
-	<extension point="xbmc.service" library="service.py" start="startup" />
-	<extension point="xbmc.python.module" library="resources/lib/"/>
-
+	<extension library="service.py" point="xbmc.service" start="startup" />
+	<extension library="resources/lib/" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
-		<reuselanguageinvoker>false</reuselanguageinvoker> <!-- You can enable this if you want, expect some instability but much faster menu speeds -->
+		<reuselanguageinvoker>false</reuselanguageinvoker>
 		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] - We do not host any of the contents streamed</summary>
 		<description lang="en">[B][COLOR red]Venom[/COLOR][/B][CR] This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels.[CR]The author does not host any of the content in this addon and takes no responsibility for content found</description>
 		<platform>all</platform>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
-		<forum></forum>
+		<forum />
 		<website>https://github.com/123Venom/plugin.video.venom</website>
 		<source>https://github.com/123Venom/plugin.video.venom</source>
 		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
@@ -500,19 +456,30 @@ provider-name="jurialmunkey">
 			<screenshot>resources/screenshots/screenshot003.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.6.0 - April 2, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Compressed artwork to lessen footprint.[/I]
-[COLOR yellow]--[/COLOR][I] Added new setting to enable or disable Calendar
-    (TVMaze) extended meta.  When disabled(default)
-    the Calendar list items will now load faster without
-    the extra meta and artwork.[/I]
-[COLOR yellow]--[/COLOR][I] resolveURL is now maintained by gural so
-    repo has been updated.[/I]
+[B][COLOR red]Update - v4.0.8 - Aug. 23, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Changed episode unaired condition when meta
+    provider does not return a premiered date.  The
+    item is now considered unaired.[/I]
+[COLOR yellow]--[/COLOR][I] Added Real-Debrid to the new "Premium Services"
+    menu.  You can view, play, download, and manage
+    your RD account from here.[/I]
+[COLOR yellow]--[/COLOR][I] Added a new setting that allows user to flip and test
+    kodi 18's new setting called "reuselanguageinvoker" that
+    greatly improves the performance of the addon.
+    Option is found under the "Debugging-Developer Mode".
+    You must enable Developer mode for option to be visible.
+    Note that this is an experimental feature you can test.
+    It has been reported that this can cause kodi to crash
+    and seems to effect widgets.  The issue has been posted
+    to Team Kodi's github so it's on them to fix it. I'm not
+    discussing this experimental inclusion beyond this.[/I]
+[COLOR yellow]--[/COLOR][I] Many code changes for the above have taken place
+    to comply with its requirements.[/I]
 		</news>
 	</extension>
 </addon>
 
-<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.4.6" provider-name="doko">
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.4.10" provider-name="doko">
     <requires>
         <import addon="xbmc.python" version="2.25.0"/>
         <import addon="script.module.requests"/>
@@ -523,6 +490,21 @@ provider-name="jurialmunkey">
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.4.10:[/B]
+- Added an experimental setting (Settings -&gt; Debug -&gt; Use HTTP stream instead of HTTPS).
+This is for when it fails to play on new Kodi versions due to a mysterious SSL problem.
+
+[B]0.4.9:[/B]
+- Fixed the warning for blocked videos.
+
+[B]0.4.8:[/B]
+- Fixed a typo in the addons.xml file (thanks @SerpentDrago!)
+
+[B]0.4.7:[/B]
+- Autoplay setting reinstated.
+- Added an option to show letter thumbnails on the catalog sections. Only useful if you're on a custom Kodi skin.
+- Added a warning whenever a video is blocked from excess traffic.
+
 [B]0.4.6:[/B]
 - Add-on re-enabled. Their site is back to letting free users watch videos.
 - To avoid overwhelming their servers on these COVID-19 quarantine times, the "autoplay highest quality" add-on setting was removed. So when you play a video, you'll always be asked what quality to use.
@@ -545,18 +527,6 @@ explaining how they work, so you can read before using.
 [B]0.4.1:[/B]
 - Changed to a WatchCartoonOnline domain that's updated more frequently.
 - Fix for letters in episode numbers (when using the "Clean Episode Titles" option).
-
-[B]0.4.0:[/B]
-- Fix for when there's weird season ordinals in the episode titles.
-
-[B]0.3.9:[/B]
-- Fix for when there's blank lists on the mobile website.
-
-[B]0.3.8:[/B]
-- Fix for when using favorite items with the old website address.
-
-[B]0.3.7:[/B]
-- Fixed thumbnail images with the Show Information context menu.
         </news>
         <description lang="en">
 Watch cartoons and anime from [COLOR orange][B]www.TheWatchCartoonOnline.tv[/B][/COLOR].
@@ -569,87 +539,6 @@ Add-on by doko.
         <platform lang="en">all</platform>
         <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
     </extension>
-</addon>
-
-<addon id="plugin.video.wonderfulsubs" name="WonderfulSubs : Anime Subs &amp; Dubs" provider-name="DxCx" version="0.0.29">
-  <requires>
-    <import addon="xbmc.python" version="2.25.0" />
-    <import addon="script.module.requests" version="2.12.4" />
-    <import addon="script.module.beautifulsoup4" version="4.5.3" />
-    <import addon="script.common.plugin.cache" version="2.5.5" />
-    <import addon="script.module.inputstreamhelper" version="0.3.3" />
-  </requires>
-  <extension library="default.py" point="xbmc.python.pluginsource">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary lang="en">WonderfulSubs : Anime Subs &amp; Dubs</summary>
-    <description lang="en">HD Animes</description>
-    <source>https://github.com/DxCx/plugin.video.wonderfulsubs</source>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.wsbeta" name="WSBeta" version="0.2.0" provider-name="doko">
-    <requires>
-        <import addon="xbmc.python" version="2.25.0"/>
-        <import addon="script.module.requests"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="Default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <news>
-[COLOR orange][B]WS Beta[/B][/COLOR]
-[B]0.2.0:[/B]
-- Added a "Last Watched" menu item.
-- Added support for InputStream Adaptive. This lets you watch the Auto (DASH) sources.
-See the "Playback" category of the add-on settings for how to enable this.
-
-[B]0.1.2:[/B]
-- Fixed a bug with the A-Z category.
-
-[B]0.1.1:[/B]
-- Removed the Connection:keep-alive header, it was causing trouble.
-
-[B]0.1.0:[/B]
-- Initial release.
-        </news>
-        <description lang="en">
-Watch anime from [COLOR orange][B]beta.wonderfulsubs.com[/B][/COLOR].
-This add-on is really bare-bones and should not be used by anyone.
-
-Support the WonderfulSubs website with a donation:
-[COLOR khaki][B]https://blog.wonderfulsubs.com/donate[/B][/COLOR]
-
-Add-on by doko.
-        </description>
-        <platform lang="en">all</platform>
-        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
-    </extension>
-</addon>
-
-<addon id="repo.plugin.video.9anime" name="DxCx Kodi Repository" version="0.0.4" provider-name="DxCx">
-	<requires>
-		<import addon="xbmc.addon" version="12.0.0"/>
-	</requires>
-	<extension point="xbmc.addon.repository" name="DxCx Kodi Repository">
-			<info compressed="false">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/DxCx/repo.plugin.video.9anime/master</datadir>
-			<hashes>false</hashes>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Repository for DxCx video plugin</summary>
-		<description lang="en">Download and install DxCx's addons repository.</description>
-		<source>https://github.com/DxCx/repo.plugin.video.9anime</source>
-		<platform>all</platform>
-		<assets>
-		   <icon>resources/icon.png</icon>
-		   <fanart>resources/fanart.jpg</fanart>
-		</assets>
-		<news>[B]0.0.1[/B][CR]• Initial release</news>
-	</extension>
 </addon>
 
 <addon id="repository.aznhusband-kodi-repo" version="1.0.1" name="aznhusband-kodi-repo" provider-name="aznhusband">
@@ -701,7 +590,7 @@ Add-on by doko.
 	</extension>
 </addon>
 
-<addon id="repository.jurialmunkey" name="jurialmunkey Alpha Repository" version="1.2" provider-name="jurialmunkey">
+<addon id="repository.jurialmunkey" name="jurialmunkey Alpha Repository" version="1.4-leia" provider-name="jurialmunkey">
     <extension point="xbmc.addon.repository" name="jurialmunkey Alpha Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/jurialmunkey/repository.jurialmunkey/master/zips/addons.xml</info>
@@ -763,13 +652,25 @@ Add-on by doko.
 	</extension>
 </addon>
 
-<addon id="repository.venom" name="[COLOR red]Venom[/COLOR] Repository" version="1.7" provider-name="Venom">
+<addon id="repository.venom" name="[COLOR red]Venom[/COLOR] Repository" version="1.9" provider-name="Venom">
 	<extension point="xbmc.addon.repository" name="Venom Repo">
 
 		<dir>
 			<info compressed="false">https://raw.githubusercontent.com/123Venom/zips/master/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/123Venom/zips/master/addons.xml.md5</checksum>
 			<datadir zip="true">https://raw.githubusercontent.com/123Venom/zips/master/</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/drinfernoo/repository.openwizard/master/zips/</datadir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/skyfsza/repository.auramod/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/skyfsza/repository.auramod/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/skyfsza/repository.auramod/master/</datadir>
 		</dir>
 
 		<dir>
@@ -802,6 +703,19 @@ Add-on by doko.
 			<datadir zip="true">https://raw.githubusercontent.com/Gujal00/smrzips/master/zips/</datadir>
 		</dir>
 
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/newt-sc/a4kSubtitles/master/packages/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/newt-sc/a4kSubtitles/master/packages/addons.xml.crc</checksum>
+			<datadir>https://github.com/newt-sc/a4kSubtitles/archive</datadir>
+			<artdir>https://github.com/a4k-openproject/a4kSubtitles/releases/download/v0.0.13</artdir>
+		</dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/drinfernoo/plugin.program.autowidget/repo/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/drinfernoo/plugin.program.autowidget/repo/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/drinfernoo/plugin.program.autowidget/repo/zips/</datadir>
+		</dir>
+
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] - We do not host any of the contents streamed</summary>
@@ -814,9 +728,9 @@ Add-on by doko.
 			<fanart>fanart.jpg</fanart>
 		</assets>
 		<news>
-[B][COLOR red]Update - v1.7 - April 1, 2020[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added gujal-resolveURL to repo since he's taking over
-    for jsergio.[/I]
+[B][COLOR red]Update - v1.9 - Aug 15, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added AutoWidgets.[/I]
+[COLOR yellow]--[/COLOR][I] Added a4kSubtitles.[/I]
 		</news>
 	</extension>
 </addon>
@@ -933,79 +847,5 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 			<icon>icon.jpg</icon>
 		</assets>
 	</extension>
-</addon>
-
-<addon id="service.subtitles.opensubtitles_by_opensubtitles"
-       name="OpenSubtitles.org by OpenSubtitles"
-       version="5.2.14"
-       provider-name="amet, opensubtitles">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.subtitle.module"
-             library="service.py" />
-  <extension point="xbmc.addon.metadata">
-    <summary>OpenSubtitles by OpenSubtitles.org</summary>
-    <description lang="en">Anonymously search and download subtitles for movies and TV-Series from OpenSubtitles.org without log-in. Search in 75 languages, 4.000.000+ subtitles, daily updates. </description>
-	<description lang="at">Pelis and Subtítulos TV en munches llingües, milenta de subtítulos traducíos y xubíos caldía. Descarga llibre dende la fonte, sofitu API, millones d'usuarios.</description>
-	<description lang="br">Istitloù Filmoù ha TV e meur a yezh, miliadoù a istitloù troet hag uskarget bemdez. Pellgargadenn digoust diouzh ar vammenn, skoazell an API, millionoù a implijerien.</description>
-	<description lang="ca">Subtítols de films i televisió en múltiples idiomes, milers de subtítols traduïts carregats diàriament. Descàrrega gratuïta des de la font, suport de l'API, amb milions d'usuaris.</description>
-	<description lang="cs">Titulky k filmům a seriálům v mnoha jazycích, denně tisíce nahraných přeložených titulků. Stažení zadarmo přímo od zdroje, podpora API, milióny uživatelů.</description>
-	<description lang="de">Film- und TV-Untertitel in vielen Sprachen, täglicher Upload von tausenden übersetzten Untertiteln. Freier Download von der Quelle, API-Unterstützung, Millionen Nutzer</description>
-	<description lang="el">Ταινίες και Σειρές σε όλες τις γλώσσες, χιλιάδες μεταφρασμένοι υπότιτλοι ανεβαίνουν καθημερινά, κατεβάστε δωρεάν , υποστήριξη API από εκατομμύρια χρήστες</description>
-	<description lang="eo">Filmaj kaj Televidaj subtekstoj en multaj lingvoj, miloj da tradukitaj subtekstoj ĉiutage alŝutataj. Senpaga elŝuto de fonto, API-subteno, miloj da uzantoj.</description>
-	<description lang="es">Películas y Subtítulos en diversos idiomas, miles de subtítulos traducidos subidos diariamente. Descarge gratis, soporte API, millones de usuarios.</description>
-	<description lang="et">Sadu Filmi ja TV Serjaalide subtiitrid erinevates keeltes laetakse üles igapäev. tasuta allalaadimine ja abi, rohkem kui miljon kasutajat.</description>
-	<description lang="eu">Film eta Telebista azpitituluak hizkuntza anitzetan, milaka azpititulu itzuliak igotzen dira egunero. Doan jaitsi iturburutik, API sostengua, milioika erabiltzaile.</description>
-	<description lang="fi">Tekstityksiä useilla kielillä elokuviin ja TV-Sarjoihin, tuhansia uusia tekstityksiä päivittäin, ilmainen lataus, API tuki, miljoonia käyttäjiä.</description>
-	<description lang="fr">Les sous-titres de film et téléfilm en plusieurs langues, des milliers de sous-titres traduits tous les jours. Bénéficiez de téléchargements gratuits depuis la source, du support API, une d'une communauté de millions d'utilisateurs.</description>
-	<description lang="hi">मूवी और टीवी उपशीर्षक कई भाषाओं में अनुवाद उपशीर्षक के हजारों दैनिक अपलोड की गई। मुफ्त डाउनलोड स्रोत से , एपीआई समर्थन, उपयोगकर्ताओं के लाखों लोगों की ।</description>
-	<description lang="hr">Titlovi za filmove i TV na mnogim jezicima, tisuće prijevoda postavljenih svaki dan. Besplatno preuzimanje s izvora, podrška za API, milijuni korisnika.</description>
-	<description lang="hu">Film és TV feliratok több nyelven, naponta több ezer lefordított felirat feltöltés. Ingyenes letöltés a forrástól, API támogatás, több millió felhasználó.</description>
-	<description lang="id">Subjudul film dan serial TV dalam multibahasa, ribuan subjudul diterjemah dan diunggah setiap harinya. Pengunduhan gratis dari sumber, didukung fitur antarmuka pemrograman aplikasi, dan jutaan pengguna.</description>
-	<description lang="is">Textar fyrir myndir og sjónvarpsþ. á mörgum tungumálum, þúsundir af þýddum textum upphlaðið daglega. Frítt niðurhal frá síðu, API stuðningur, milljónir notenda.</description>
-	<description lang="it">Sottotitoli di Film e TV in più lingue,migliaia di sottotitoli tradotti caricati ogni giorno.Download gratuito,supporto API, milioni di utenti.</description>
-	<description lang="ja">映画やテレビの字幕をさまざまな言語で。毎日数多くの翻訳字幕がアップロードされています。ソースを無料ダウンロード、API 対応、数百万を超えるユーザー。</description>
-	<description lang="ka">სუბტიტრები ფილმებისა და ტვ-სთვის მრავალ ენაზე. ათასობიტ თარგმნილი სუბტიტრის ატვირთვა ყოველდღიურად. უდასო ჩამოტვირტვა წყაროდან, API მხარდაჭერა, მილიონობით მომხმარებელი</description>
-	<description lang="km">អត្ថបទរឿងសម្រាប់ ខ្សែភាពយន្ត និងកម្មវិធីទូរទស្សន៍​ ជាភាសាជាច្រើន រួមនឹងអត្ថបទរឿងបកប្រែរាប់ពាន់​រឿង​ដែល​ត្រូវបាន​អ័ពឡូដជារៀងរាល់ថ្ងៃ។ ទាញយកដោយឥតគិតថ្លៃពីប្រភពដើម គាំទ្រ API និងមានអ្នកប្រើប្រាស់រាប់លាននាក់។ </description>
-	<description lang="ko">Movie and TV Subtitles in multiple languages, thousands of translated subtitles uploaded daily. Free download from source, API support, millions of users.</description>
-	<description lang="ms">Sarikata TV dan Movie dalam pelbagai bahasa, ribuan terjemahan sarikata dimuat-naik setiap hari.Muat-turun percuma dari sumber utama, sokongan API, jutaan pengguna.</description>
-	<description lang="nl">Ondertitels voor films en tv-series in meerdere talen, dagelijks upload van duizenden vertaalde ondertitels. Gratis downloaden van de bron, API ondersteuning, miljoenen gebruikers.</description>
-	<description lang="no">Undertekster for film og TV på mange språk, med tusener av nye oversettelser hver dag. Vi har gratis nedlasting av undertekster, API-support, og mange millioner brukere.</description>
-	<description lang="pt-br">Milhares de legendas para filmes e seriados de TV, em vários idiomas, são traduzidas e enviadas diariamente. Download grátis, suporte API e milhões de usuários.</description>
-	<description lang="pl">Napisy do filmów i seriali w wielu językach. Tysiące napisów dodawanych codziennie. Darmowe pobranie, miliony użytkowników.</description>
-	<description lang="pt">Legendas de filmes e séries de TV em vários idiomas, milhares de legendas traduzidas e enviadas diariamente. Download grátis a partir da fonte, suporte API, milhões de utilizadores.</description>
-	<description lang="ro">Subtitrari pentru filme in multe limbi, mii de subtitrari traduse si încărcate in fiecare zi. Descărca gratuit de la sursă, suport API, milioane de utilizatori.</description>
-	<description lang="ru">Кино и ТВ субтитры на нескольких языках, тысячи переведенными субтитрами загружены ежедневно. Бесплатно скачать из исходных текстов, поддержка API, миллионы пользователей.</description>
-	<description lang="sk">Titulky pre filmy a TV seriály, denne nahratých tisíce titulkov preložených vo viacerých jazykoch. Sťahuj zadarmo zo zdroja, podpora API, milióny používateľov.</description>
-	<description lang="sl">Filmski in televizijski podnapisi v mnogo jezikih, na tisoče prevedenih podnapisov dnevno. Brezplačen prenos iz vira, podpora API, miljoni uporabnikov.</description>
-	<description lang="sq">Titra filmash dhe serialesh në shumë gjuhë, mijëra titra të përkthyera që vendosen çdo ditë. Shkarko nga burimi, apo nga mbështetja e API-së, miliona përdorues.</description>
-	<description lang="sr">Titlovi za filmove i TV na mnogim jezicima, hiljade prevoda okačenih svakodnevno. Besplatno skidanje sa izvora, podrška za API, milioni korisnika.</description>
-	<description lang="sv">Filmer och Tv-undertexter med olika språk, tusentals översatta undertexter uppladdade dagligen. Gratis nerladdning från källor, API support, miljoner av användare.</description>
-	<description lang="tr">Her gün eklenen, pek çok dildeki binlerce film ve dizi altyazısı. Kaynağından ücretsiz indirme, API desteği ve milyonlarca kullanıcı.</description>
-	<description lang="uz">Film va TV Taglavhalari ko'p tillarda, minglab tarjima qilingan taglavhalar har kuni tizimga yuklanadi. Bepul resursdan yuklab oling, API qo'llaydi, millionlab foydalanuvchilar.</description>
-	<description lang="zh">多语种的电影及剧集字幕，每日更新千余条翻译好的字幕。免费下载，提供API接口，已拥有上百万的用户。</description>
-    <disclaimer>Works without log-in</disclaimer>
-	<news>
-Improved add-on by OpenSubtitles.org
-v5.2.14 (2017-01-23)
-- Users are able to download subtitles as anonymous without authentication. Added localized descriptions, media files
-- New feature: Users are able to check for subtitles when Kodi is not playing, by using the manual search or by standing on an item and opening the subtitles search dialog (By key or by an external addon)  | @burekas
-	</news>
-    <platform>all</platform>
-	<language></language>
-    <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-    <forum>https://forum.opensubtitles.org/viewtopic.php?f=8&amp;t=15847</forum>
-    <website>http://www.opensubtitles.org</website>
-    <email>admin [at] opensubtitles {dot} org</email>
-	<assets>
-	    <icon>resources/media/os_logo_512x512.png</icon>
-	    <fanart>resources/media/os_fanart.jpg</fanart>
-		<screenshot>resources/media/screenshot_1.jpg</screenshot>
-		<screenshot>resources/media/screenshot_2.jpg</screenshot>
-		<screenshot>resources/media/screenshot_3.jpg</screenshot>
-	</assets>
-    <source>https://github.com/opensubtitles/service.subtitles.opensubtitles_by_opensubtitles</source>
-  </extension>
 </addon>
 </addons>

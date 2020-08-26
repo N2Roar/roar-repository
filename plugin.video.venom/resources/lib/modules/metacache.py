@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 
+'''
+	Venom Add-on
+'''
+
 import time
 
 try:
 	from sqlite3 import dbapi2 as database
 except:
 	from pysqlite2 import dbapi2 as database
+
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 
 
-def fetch(items, lang = 'en', user=''):
+def fetch(items, lang='en', user=''):
 	try:
 		t2 = int(time.time())
 
@@ -51,9 +56,9 @@ def fetch(items, lang = 'en', user=''):
 					except:
 						pass
 
-			if match is not None:
+			if match:
 				update = (abs(t2 - t1) / 3600) >= 720
-				if update is True:
+				if update:
 					continue
 
 				item = eval(match[5].encode('utf-8'))

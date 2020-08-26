@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import base64
+"""
+	Venom Add-on
+"""
+
 import json
 import random
 import re
-import urllib
+import sys
+try:
+	from urllib import quote_plus
+except:
+	from urllib.parse import quote_plus
 
 from resources.lib.modules import client
 from resources.lib.modules import control
@@ -22,6 +28,7 @@ class Trailer:
 		else:
 			self.key_link = '&key=%s' % self.rckey_link
 		self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&q=%s' + self.key_link
+		# self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=%s' + self.key_link
 		self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
 
 
@@ -65,7 +72,7 @@ class Trailer:
 				raise Exception()
 		except:
 			query = name + ' trailer'
-			query = self.search_link % urllib.quote_plus(query)
+			query = self.search_link % quote_plus(query)
 			return self.search(query, type, name, year, imdb)
 
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import re, json
+import json
+import re
 
 from resources.lib.modules import client
 from resources.lib.modules import workers
@@ -86,7 +87,7 @@ class youtube(object):
 			pass
 		for i in range(1, 5):
 			try:
-				if pagination is True:
+				if pagination:
 					raise Exception()
 				if 'nextPageToken' not in result:
 					raise Exception()
@@ -97,7 +98,7 @@ class youtube(object):
 			except:
 				pass
 		try:
-			if pagination is False:
+			if not pagination:
 				raise Exception()
 			next = cid + '&pageToken=' + result['nextPageToken']
 		except:
@@ -116,7 +117,7 @@ class youtube(object):
 					raise Exception()
 				image = image.encode('utf-8')
 				append = {'title': title, 'url': url, 'image': image}
-				if not next == '':
+				if next != '':
 					append['next'] = next
 				self.list.append(append)
 			except:

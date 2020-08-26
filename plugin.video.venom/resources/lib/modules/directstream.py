@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import re, os, urllib, urlparse, json, binascii
+'''
+	Venom Add-on
+'''
+
+import re, os, json, binascii
+try:
+	from urllib import unquote, urlencode
+	from urlparse import parse_qsl, parse_qs, urlparse
+except:
+	from urllib.parse import unquote, urlencode, parse_qsl, parse_qs, urlparse
+
 from resources.lib.modules import client
 
 
@@ -22,7 +32,7 @@ def google(url, ref=None):
 		if any(x in url for x in ['youtube.', 'docid=']):
 			url = 'https://drive.google.com/file/d/%s/view' % re.compile('docid=([\w-]+)').findall(url)[0]
 
-		netloc = urlparse.urlparse(url.strip().lower()).netloc
+		netloc = urlparse(url.strip().lower()).netloc
 		netloc = netloc.split('.google')[0]
 
 		if netloc == 'docs' or netloc == 'drive':
@@ -50,7 +60,7 @@ def google(url, ref=None):
 			result = re.compile('"\d*/\d*x\d*.+?","(.+?)"').findall(result)[0]
 			result = result.replace('\\u003d', '=').replace('\\u0026', '&')
 			result = re.compile('url=(.+?)&').findall(result)
-			result = [urllib.unquote(i) for i in result]
+			result = [unquote(i) for i in result]
 			result = sum([googletag(i, append_height=True) for i in result], [])
 
 		elif netloc == 'picasaweb':
@@ -69,12 +79,12 @@ def google(url, ref=None):
 			result = sum([googletag(i, append_height=True) for i in result], [])
 
 		elif netloc == 'plus':
-			id = (urlparse.urlparse(url).path).split('/')[-1]
+			id = (urlparse(url).path).split('/')[-1]
 			result = result.replace('\r', '').replace('\n', '').replace('\t', '')
 			result = result.split('"%s"' % id)[-1].split(']]')[0]
 			result = result.replace('\\u003d', '=').replace('\\u0026', '&')
 			result = re.compile('url=(.+?)&').findall(result)
-			result = [urllib.unquote(i) for i in result]
+			result = [unquote(i) for i in result]
 			result = sum([googletag(i, append_height=True) for i in result], [])
 		result = sorted(result, key=lambda i: i.get('height', 0), reverse=True)
 		url = []
@@ -87,7 +97,7 @@ def google(url, ref=None):
 
 		for i in url:
 			i.pop('height', None)
-			i.update({'url': i['url'] + '|%s' % urllib.urlencode(headers)})
+			i.update({'url': i['url'] + '|%s' % urlencode(headers)})
 
 		if not url:
 			return
@@ -142,7 +152,7 @@ def googletag(url, append_height=False):
 def googlepass(url):
 	try:
 		try:
-			headers = dict(urlparse.parse_qsl(url.rsplit('|', 1)[1]))
+			headers = dict(parse_qsl(url.rsplit('|', 1)[1]))
 		except:
 			headers = None
 		url = url.split('|')[0].replace('\\', '')
@@ -151,7 +161,7 @@ def googlepass(url):
 			url = url.replace('http://', 'https://')
 		else:
 			url = url.replace('https://', 'http://')
-		if headers: url += '|%s' % urllib.urlencode(headers)
+		if headers: url += '|%s' % urlencode(headers)
 		return url
 	except:
 		return
@@ -159,7 +169,7 @@ def googlepass(url):
 
 def vk(url):
 	try:
-		query = urlparse.parse_qs(urlparse.urlparse(url).query)
+		query = parse_qs(urlparse(url).query)
 		try:
 			oid, video_id = query['oid'][0], query['id'][0]
 		except:
@@ -243,7 +253,7 @@ def yandex(url):
 		idstring = re.findall('"id"\s*:\s*"([^"]+)', r)[0]
 		idclient = binascii.b2a_hex(os.urandom(16))
 		post = {'idClient': idclient, 'version': '3.9.2', 'sk': sk, '_model.0': 'do-get-resource-url', 'id.0': idstring}
-		post = urllib.urlencode(post)
+		post = urlencode(post)
 		r = client.request('https://yadi.sk/models/?_m=do-get-resource-url', post=post, cookie=cookie)
 		r = json.loads(r)
 		url = r['models'][0]['data']['file']

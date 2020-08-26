@@ -1,590 +1,198 @@
 # -*- coding: utf-8 -*-
 
+"""
+	Venom Add-on
+"""
 
-import base64
-import urlparse
-import urllib
-import hashlib
 import re
 
-from resources.lib.modules import client
-from resources.lib.modules import directstream
-from resources.lib.modules import pyaes
+try:
+	from urllib import unquote_plus
+except:
+	from urllib.parse import unquote_plus
 
+from resources.lib.modules import log_utils
 
-RES_4K = ['4k', 'hd4k', '4khd', 'uhd', 'ultrahd', 'ultra-hd', '2160', '2160p', '2160i', 'hd2160', '2160hd',
-						'1716p', '1716i', 'hd1716', '1716hd', '2664p', '2664i', 'hd2664', '2664hd', '3112p',
-						'3112i', 'hd3112', '3112hd', '2880p', '2880i', 'hd2880', '2880hd']
-RES_2K = ['2k', 'hd2k', 'hd2k ', '2khd', '2khd ', '2048p', '2048i', 'hd2048', '2048hd', '1332p', '1332i',
-						'hd1332', '1332hd', '1556p', '1556i', 'hd1556', '1556hd']
-RES_1080 = ['1080', '1080p', '1080i', 'hd1080', '1080hd', '1200p', '1200i', 'hd1200', '1200hd']
-RES_HD = ['720', '720p', '720i', 'hd720', '720hd', '.hd.']
-RES_SD = ['576', '576p', '576i', 'sd576', '576sd', '480', '480p', '480i', 'sd480', '480sd', '360', '360p',
-						'360i', 'sd360', '360sd', '240', '240p', '240i', 'sd240', '240sd']
-
-SCR = ['dvdscr', 'screener', 'scr', 'r5', 'r6']
-CAM = ['camrip', 'cam rip', 'tsrip', 'ts rip', 'dvdcam', 'dvd cam', 'dvdts', 'dvd ts', 'cam', 'telesync', 'tele sync', 'ts']
-HDCAM = ['hdcam', 'hd cam', 'hd-cam', 'hd.cam', 'hdts', 'hd ts', 'hcam']
+HDCAM = ['hdcam', '.hd.cam.', 'hdts', '.hd.ts.', '.hdtc.', '.hd.tc.', '.hctc.', 'hc.tc.']
 
 CODEC_H265 = ['hevc', 'h265', 'h.265', 'x265', 'x.265']
 CODEC_H264 = ['avc', 'h264', 'h.264', 'x264', 'x.264']
-CODEC_XVID = ['xvid', 'x.vid', 'x-vid']
+CODEC_XVID = ['xvid', 'x.vid']
 CODEC_DIVX = ['divx', 'divx ', 'div2', 'div2 ', 'div3']
-CODEC_MPEG = ['mp4', 'mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 ', 'mpeg ', 'msmpeg', 'msmpeg4', 'mpegurl']
-CODEC_AVI = ['avi']
+CODEC_MPEG = ['mpeg', 'm4v', 'mpg', 'mpg1', 'mpg2', 'mpg3', 'mpg4', 'mp4 ', '.mp.4.', 'msmpeg', 'msmpeg4',
+							'msmpeg.4.', 'mpegurl']
 CODEC_MKV = ['mkv', '.mkv', 'matroska']
 
-AUDIO_8CH = ['ch8', '8ch', 'ch7.1', '7.1ch', '7.1', '7-1ch']
-AUDIO_7CH = ['ch7', '7ch', 'ch6.1', '6.1ch', '6.1', '6-1ch']
-AUDIO_6CH = ['ch6', '6ch', 'ch5.1', '5.1ch', '5.1', '5-1ch']
-AUDIO_2CH = ['ch2', '2ch', 'ch2.0', 'stereo']
-AUDIO_1CH = ['ch1', '1ch', 'mono', 'monoaudio']
-
-VIDEO_3D = ['3d', 'sbs', 'hsbs', 'sidebyside', 'side by side', 'stereoscopic', 'tab', 'htab', 'topandbottom', 'top and bottom']
+AUDIO_8CH = ['ch8.', '8ch.', '.7.1.']
+AUDIO_7CH = ['ch7.', '7ch.', '.6.1.']
+AUDIO_6CH = ['ch6.', '6ch.', '.5.1.']
+AUDIO_2CH = ['ch2.', '2ch.', '2.0', 'audio.2.0.', 'stereo']
 
 MULTI_LANG = ['hindi.eng', 'ara.eng', 'ces.eng', 'chi.eng', 'cze.eng', 'dan.eng', 'dut.eng', 'ell.eng', 'esl.eng',
-							'esp.eng', 'fin.eng', 'fra.eng', 'fre.eng', 'frn.eng', 'gai.eng', 'ger.eng', 'gle.eng', 'gre.eng', 'gtm.eng',
-							'heb.eng', 'hin.eng', 'hun.eng', 'ind.eng', 'iri.eng', 'ita.eng', 'jap.eng', 'jpn.eng', 'kor.eng', 'lat.eng',
-							'lebb.eng', 'lit.eng', 'nor.eng', 'pol.eng', 'por.eng', 'rus.eng', 'som.eng', 'spa.eng', 'sve.eng',
-							'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual audio', 'dual-audio',
-							'dual.audio', 'multi']
+			  'esp.eng', 'fin.eng', 'fra.eng', 'fre.eng', 'frn.eng', 'gai.eng', 'ger.eng', 'gle.eng', 'gre.eng',
+			  'gtm.eng', 'heb.eng', 'hin.eng', 'hun.eng', 'ind.eng', 'iri.eng', 'ita.eng', 'jap.eng', 'jpn.eng', 'kor.eng',
+			  'lat.eng', 'lebb.eng', 'lit.eng', 'nor.eng', 'pol.eng', 'por.eng', 'rus.eng', 'som.eng', 'spa.eng', 'sve.eng',
+			  'swe.eng', 'tha.eng', 'tur.eng', 'uae.eng', 'ukr.eng', 'vie.eng', 'zho.eng', 'dual.audio', 'multi']
 
-LANG = ['arabic', 'bgaudio', 'dutch', 'finnish', 'french', 'german', 'greek', 'italian', 'polish', 'portuguese', 'russian', 'spanish',
-				'truefrech', 'truespanish', 'turkish', 'hebrew']
-
-UNDESIREABLES = ['baibako', 'coldfilm', 'extras.only', 'jaskier', 'hamsterstudio', 'ideafilm', 'lakefilm', 'lostfilm',
-									'newstudio', 'sample', 'soundtrack', 'teaser', 'vostfr']
-
-DUBBED = ['dublado', 'dubbed']
-SUBS = ['subs', 'subtitula', 'subfrench', 'subspanish', 'swesub']
+SUBS = ['subita', 'subfrench', 'subs', 'subspanish', 'subtitula', 'swesub']
 ADDS = ['1xbet', 'betwin']
 
 
-def is_anime(content, type, type_id):
-	from openscrapers.modules import trakt
-	try:
-		r = trakt.getGenre(content, type, type_id)
-		return 'anime' in r or 'animation' in r
-	except:
-		return False
+def seas_ep_filter(season, episode, release_title, split=False):
+	string1 = '(s<<S>>e<<E>>)|' \
+			'(s<<S>>\.e<<E>>)|' \
+			'(s<<S>>ep<<E>>)|' \
+			'(s<<S>>\.ep<<E>>)'
+
+	string2 = '(season\.<<S>>\.episode\.<<E>>)|' \
+			'(season<<S>>\.episode<<E>>)|' \
+			'(season<<S>>episode<<E>>)|' \
+			'(s<<S>>e\(<<E>>\))|' \
+			'(s<<S>>\.e\(<<E>>\))|' \
+			'(<<S>>x<<E>>\.)|' \
+			'(<<S>>\.<<E>>\.)'
+
+	string3 = '(<<S>><<E>>\.)'
+
+	string4 = '(s<<S>>e<<E1>>e<<E2>>)|' \
+			'(s<<S>>e<<E1>>-e<<E2>>)|' \
+			'(s<<S>>e<<E1>>\.e<<E2>>)|' \
+			'(s<<S>>e<<E1>>-<<E2>>)|' \
+			'(s<<S>>e<<E1>>\.<<E2>>)|' \
+			'(s<<S>>e<<E1>><<E2>>)'
+
+	string_list = []
+	string_list.append(string1.replace('<<S>>', str(season).zfill(2)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string1.replace('<<S>>', str(season)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string2.replace('<<S>>', str(season).zfill(2)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string2.replace('<<S>>', str(season)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string2.replace('<<S>>', str(season).zfill(2)).replace('<<E>>', str(episode)))
+	string_list.append(string2.replace('<<S>>', str(season)).replace('<<E>>', str(episode)))
+	string_list.append(string3.replace('<<S>>', str(season).zfill(2)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string3.replace('<<S>>', str(season)).replace('<<E>>', str(episode).zfill(2)))
+	string_list.append(string4.replace('<<S>>', str(season).zfill(2)).replace('<<E1>>', str(int(episode)-1).zfill(2)).replace('<<E2>>', str(episode).zfill(2)))
+	string_list.append(string4.replace('<<S>>', str(season).zfill(2)).replace('<<E1>>', str(episode).zfill(2)).replace('<<E2>>', str(int(episode)+1).zfill(2)))
 
 
-def get_release_quality(release_name, release_link=None):
-	if release_name is None:
-		return
-	try:
-		release_name = release_name.encode('utf-8')
-	except:
-		pass
-	try:
-		quality = None
-		release_name = release_name.upper()
-		fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', release_name)
-		fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
-		fmt = [i.lower() for i in fmt]
+	final_string = '|'.join(string_list)
+	# log_utils.log('final_string = %s' % str(final_string), __name__, log_utils.LOGDEBUG)
+	reg_pattern = re.compile(final_string)
+	if split:
+		return release_title.split(re.search(reg_pattern, release_title).group(), 1)[1]
+	else:
+		return bool(re.search(reg_pattern, release_title))
 
-		if any(value in fmt for value in RES_4K):
-			quality = "4K"
 
-		elif any(value in fmt for value in RES_1080):
-			quality = "1080p"
+def episode_extras_filter():
+	return ['extra', 'extras', 'deleted', 'unused', 'footage', 'inside', 'blooper', 'bloopers', 'making of', 'feature', 'sample']
 
-		elif any(value in fmt for value in RES_HD):
-			quality = "720p"
 
-		elif any(value in fmt for value in SCR):
-			quality = 'SCR'
-
-		elif any(value in fmt for value in RES_SD):
-			quality = "SD"
-
-		elif any(value in fmt for value in CAM):
-			quality = 'CAM'
-
-		elif any(value in fmt for value in HDCAM):
-			quality = 'CAM'
-
-		if not quality:
-			if release_link:
-				release_link = release_link.lower()
-				try:
-					release_link = release_link.encode('utf-8')
-				except:
-					pass
-
-				if any(value in release_link for value in RES_4K):
-					quality = "4K"
-
-				elif any(value in release_link for value in RES_1080):
-					quality = "1080p"
-
-				elif any(value in release_link for value in RES_HD):
-					quality = "720p"
-
-				elif any(value in release_link for value in SCR):
-					quality = 'SCR'
-
-				elif any(value in release_link for value in RES_SD):
-					quality = "SD"
-
-				elif any(value in release_link for value in CAM):
-					quality = 'CAM'
-
-				elif any(value in release_link for value in HDCAM):
-					quality = 'CAM'
-
-				else:
-					quality = 'SD'
-
-			else:
-				quality = 'SD'
-
-		info = []
-		if any(value in fmt for value in VIDEO_3D):
-			info.append('3D')
-
-		if any(value in fmt for value in CODEC_H265):
-			info.append('HEVC')
-
-		return quality, info
-	except:
-		return 'SD', []
+def supported_video_extensions():
+	import xbmc
+	supported_video_extensions = xbmc.getSupportedMedia('video').split('|')
+	return [i for i in supported_video_extensions if i != '' and i != '.zip']
 
 
 def getFileType(url):
 	try:
-		url = url.lower()
-		url = url.replace(' ', '.')
+		type = ''
+		fmt = url_strip(url)
+		# log_utils.log('fmt = %s' % fmt, log_utils.LOGDEBUG)
+		if fmt is None:
+			return type
+		if any(value in fmt for value in ['blu.ray', 'bluray', '.bd.']):
+			type += ' BLURAY /'
+		if any(value in fmt for value in ['bd.r', 'bdr', 'bd.rip', 'bdrip', 'br.rip', 'brrip']):
+			type += ' BR-RIP /'
+		if 'remux' in fmt:
+			type += ' REMUX /'
+		if any(i in fmt for i in ['dvd.rip', 'dvdrip']):
+			type += ' DVD /'
+		if any(value in fmt for value in ['web.dl', 'webdl', 'web.rip', 'webrip']):
+			type += ' WEB /'
+		if 'hdtv' in fmt:
+			type += ' HDTV /'
+		if 'sdtv' in fmt:
+			type += ' SDTV /'
+		if any(value in fmt for value in ['hd.rip', 'hdrip']):
+			type += ' HDRIP /'
+		if 'hdr.' in fmt:
+			type += ' HDR /'
+		if any(value in fmt for value in ['dd.5.1.', 'dd.5.1ch.', 'dd5.1.', 'dolby.digital', 'dolbydigital']):
+			type += ' DOLBYDIGITAL /'
+		if any(value in fmt for value in ['.dd.ex.', 'ddex', 'dolby.ex.', 'dolby.digital.ex.', 'dolbydigital.ex.']):
+			type += ' DD-EX /'
+		if any(value in fmt for value in ['dolby.digital.plus', 'dolbydigital.plus', 'dolbydigitalplus', 'dd.plus.', 'ddplus']):
+			type += ' DD+ /'
+		if any(value in fmt for value in ['dd.7.1ch', 'dd.true.hd.', 'dd.truehd', 'ddtruehd']):
+			type += ' DOLBY-TRUEHD /'
+		if 'atmos' in fmt:
+			type += ' ATMOS /'
+		if '.dts.' in fmt:
+			type += ' DTS /'
+		if any(value in fmt for value in ['dts.hd.', 'dtshd']):
+			type += ' DTS-HD /'
+		if any(value in fmt for value in ['dts.hd.ma.', 'dtshd.ma.', 'dtshdma', '.hd.ma.', 'hdma']):
+			type += ' DTS-HD MA/'
+		if any(value in fmt for value in ['dts.x.', 'dtsx']):
+			type += ' DTS-X /'
+		if any(value in fmt for value in AUDIO_8CH):
+			type += ' 8CH /'
+		if any(value in fmt for value in AUDIO_7CH):
+			type += ' 7CH /'
+		if any(value in fmt for value in AUDIO_6CH):
+			type += ' 6CH /'
+		if any(value in fmt for value in AUDIO_2CH):
+			type += ' 2CH /'
+		if any(value in fmt for value in CODEC_XVID):
+			type += ' XVID /'
+		if any(value in fmt for value in CODEC_DIVX):
+			type += ' DIVX /'
+		if any(value in fmt for value in CODEC_MPEG):
+			type += ' MPEG /'
+		if '.avi' in fmt:
+			type += ' AVI /'
+		if any(value in fmt for value in ['.ac3', '.ac.3.']):
+			type += ' AC3 /'
+		if any(value in fmt for value in CODEC_H264):
+			type += ' X264 /'
+		if any(value in fmt for value in CODEC_H265):
+			type += ' X265 /'
+		if any(value in fmt for value in CODEC_MKV):
+			type += ' MKV /'
+		if any(value in fmt for value in HDCAM):
+			type += ' HDCAM /'
+		if any(value in fmt for value in MULTI_LANG):
+			type += ' MULTI-LANG /'
+		if any(value in fmt for value in ADDS):
+			type += ' ADDS /'
+		if any(value in fmt for value in SUBS):
+			if type != '':
+				type += ' WITH SUBS'
+			else:
+				type = 'SUBS'
+		type = type.rstrip('/')
+		return type
 	except:
-		url = str(url)
+		log_utils.error()
+		return ''
 
-	type = ''
-	if any(value in url for value in ['bluray', 'blu-ray']):
-		type += ' BLURAY /'
 
-	if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip', 'brrip', 'br.rip']):
-		type += ' BR-RIP /'
-
-	if 'remux' in url:
-		type += ' REMUX /'
-
-	if any(i in url for i in ['dvd-rip', 'dvd.rip', 'dvdrip']):
-		type += ' DVD /'
-
-	if any(value in url for value in ['web-dl', 'web.dl', 'webdl', 'web-rip', 'web.rip', 'webrip']):
-		type += ' WEB /'
-
-	if 'hdtv' in url:
-		type += ' HDTV /'
-
-	if 'sdtv' in url:
-		type += ' SDTV /'
-
-	if any(value in url for value in ['hd-rip', 'hd.rip', 'hdrip']):
-		type += ' HDRIP /'
-
-	if 'hdr.' in url:
-		type += ' HDR /'
-
-	if any(value in url for value in ['dd5.1', 'dd-5.1', 'dd5-1', 'dolby-digital', 'dolby.digital']):
-		type += ' DOLBYDIGITAL /'
-
-	if any(value in url for value in ['.ddex', 'dd-ex', 'dolby-ex', 'dolby.digital.ex']):
-		type += ' DD-EX /'
-
-	if any(value in url for value in ['dolby-digital-plus', 'dolby.digital.plus', 'ddplus', 'dd-plus']):
-		type += ' DD+ /'
-
-	if any(value in url for value in ['true-hd', 'truehd', '.ddhd']):
-		type += ' DOLBY-TRUEHD /'
-
-	if 'atmos' in url:
-		type += ' DOLBY-ATMOS /'
-
-	if '.dts.' in url:
-		type += ' DTS /'
-
-	if any(value in url for value in ['dts-hd', 'dtshd', 'dts.hd']):
-		type += ' DTS-HD /'
-
-	if any(value in url for value in ['dts-es', 'dtses', 'dts.es']):
-		type += ' DTS-ES /'
-
-	if any(value in url for value in ['dts-neo', 'dtsneo', 'dts.neo']):
-		type += ' DTS-NEO /'
-
-	if '.thx.' in url:
-		type += ' THX /'
-
-	if any(value in url for value in ['.thx-ex', 'thxex']):
-		type += ' THX-EX /'
-
-	if any(value in url for value in AUDIO_8CH):
-		type += ' 8CH /'
-
-	if any(value in url for value in AUDIO_7CH):
-		type += ' 7CH /'
-
-	if any(value in url for value in AUDIO_6CH):
-		type += ' 6CH /'
-
-	if 'xvid' in url:
-		type += ' XVID /'
-
-	if 'divx' in url:
-		type += ' DIVX /'
-
-	if any(value in url for value in CODEC_MPEG):
-		type += ' MPEG /'
-
-	if '.avi' in url:
-		type += ' AVI /'
-
-	if 'ac3' in url:
-		type += ' AC3 /'
-
-	if any(value in url for value in CODEC_H264):
-		type += ' X264 /'
-
-	if any(value in url for value in CODEC_H265):
-		type += ' X265 /'
-
-	if any(value in url for value in CODEC_MKV):
-		type += ' MKV /'
-
-	if any(value in url for value in HDCAM):
-		type += ' HDCAM /'
-
-	if any(value in url for value in MULTI_LANG):
-		type += ' MULTI-LANG /'
-
-	if any(value in url for value in ADDS):
-		type += ' ADDS /'
-
-	if any(value in url for value in SUBS):
-		if type != '':
-			type += ' WITH SUBS'
+def url_strip(url):
+	try:
+		url = unquote_plus(url)
+		if 'magnet' in url:
+			url = url.split('&dn=')[1]
+		url = url.lower().replace("'", "").lstrip('.').rstrip('.')
+		fmt = re.sub('[^a-z0-9]+', '.', url)
+		fmt = '.%s.' % fmt
+		fmt = re.sub(r'(.+)((?:19|20)[0-9]{2}|season.\d+|s[0-3]{1}[0-9]{1}|e\d+|complete)(.complete\.|.episode\.\d+\.|.episodes\.\d+\.\d+\.|.series|.extras|.ep\.\d+\.|.\d{1,2}\.|-|\.|\s)', '', fmt) # new for pack files
+		if '.http' in fmt:
+			fmt = None
+		if fmt == '':
+			return None
 		else:
-			type = 'SUBS'
-	type = type.rstrip('/')
-	return type
-
-
-def check_sd_url(release_link):
-	release_link = release_link.lower()
-	try:
-		release_link = release_link.encode('utf-8')
+			return '.%s' % fmt
 	except:
-		pass
-
-	try:
-		if '2160' in release_link:
-			quality = '4K'
-		elif '4k' in release_link:
-			quality = '4K'
-		elif 'uhd' in release_link:
-			quality = '4K'
-		elif '1080' in release_link:
-			quality = '1080p'
-		elif '720' in release_link:
-			quality = '720p'
-		elif '.hd.' in release_link:
-			quality = '720p'
-		elif 'hdtv' in release_link:
-			quality = '720p'
-		elif 'bluray' in release_link:
-			quality = '720p'
-		elif 'webrip' in release_link:
-			quality = '720p'
-		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in release_link):
-			quality = 'SCR'
-		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in release_link):
-			quality = 'CAM'
-		else:
-			quality = 'SD'
-		return quality
-	except:
-		return 'SD'
-
-
-def check_direct_url(url):
-	url = url.lower()
-	try:
-		if '2160' in url:
-			quality = '4K'
-		elif '4k' in url:
-			quality = '4K'
-		elif '1080p' in url:
-			quality = '1080p'
-		elif '1080' in url:
-			quality = '1080p'
-		elif '720p' in url:
-			quality = '720p'
-		elif '720' in url:
-			quality = '720p'
-		elif '.hd.' in url:
-			quality = '720p'
-		elif '.hd' in url:
-			quality = '720p'
-		elif 'hdtv' in url:
-			quality = '720p'
-		elif 'bluray' in url:
-			quality = '720p'
-		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in url):
-			quality = 'SCR'
-		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url):
-			quality = 'CAM'
-		else:
-			quality = 'SD'
-		return quality
-	except:
-		return 'SD'
-
-
-def check_url(url):
-	url = url.lower()
-	try:
-		if '2160p' in url:
-			quality = '4K'
-		elif '2160' in url:
-			quality = '4K'
-		elif '4k' in url:
-			quality = '4K'
-		elif 'uhd' in url:
-			quality = '4K'
-		elif '1080p' in url:
-			quality = '1080p'
-		elif '1080' in url:
-			quality = '1080p'
-		elif '720p' in url:
-			quality = '720p'
-		elif '720' in url:
-			quality = '720p'
-		elif '.hd.' in url:
-			quality = '720p'
-		elif '.hd' in url:
-			quality = '720p'
-		elif 'hdtv' in url:
-			quality = '720p'
-		elif 'bluray' in url:
-			quality = '720p'
-		elif 'webrip' in url:
-			quality = '720p'
-		elif '480p' in url:
-			quality = 'SD'
-		elif '480' in url:
-			quality = 'SD'
-		elif any(i in ['dvdscr', 'screener', 'r5', 'r6'] for i in url):
-			quality = 'SCR'
-		elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url):
-			quality = 'CAM'
-		else:
-			quality = 'SD'
-		return quality
-	except:
-		return 'SD'
-
-
-def label_to_quality(label):
-	try:
-		try:
-			label = int(re.search('(\d+)', label).group(1))
-		except:
-			label = 0
-
-		if label >= 2160:
-			return '4K'
-		elif label >= 1440:
-			return '1440p'
-		elif label >= 1080:
-			return '1080p'
-		elif 720 <= label < 1080:
-			return '720p'
-		elif label < 720:
-			return 'SD'
-	except:
-		return 'SD'
-
-
-def strip_domain(url):
-	try:
-		if url.lower().startswith('http') or url.startswith('/'):
-			url = re.findall('(?://.+?|)(/.+)', url)[0]
-		url = client.replaceHTMLCodes(url)
-		url = url.encode('utf-8')
-		return url
-	except:
-		return
-
-
-def is_host_valid(url, domains):
-	try:
-		host = __top_domain(url)
-		hosts = [domain.lower() for domain in domains if host and host in domain.lower()]
-		if hosts and '.' not in host:
-			host = hosts[0]
-		if hosts and any([h for h in ['google', 'picasa', 'blogspot'] if h in host]):
-			host = 'gvideo'
-		if hosts and any([h for h in ['akamaized','ocloud'] if h in host]):
-			host = 'CDN'
-		return any(hosts), host
-	except:
-		return False, ''
-
-
-def __top_domain(url):
-	elements = urlparse.urlparse(url)
-	domain = elements.netloc or elements.path
-	domain = domain.split('@')[-1].split(':')[0]
-	regex = "(?:www\.)?([\w\-]*\.[\w\-]{2,3}(?:\.[\w\-]{2,3})?)$"
-	res = re.search(regex, domain)
-	if res:
-		domain = res.group(1)
-	domain = domain.lower()
-	return domain
-
-
-def aliases_to_array(aliases, filter=None):
-	try:
-		if not filter:
-			filter = []
-		if isinstance(filter, str):
-			filter = [filter]
-		return [x.get('title') for x in aliases if not filter or x.get('country') in filter]
-	except:
-		return []
-
-
-def append_headers(headers):
-	return '|%s' % '&'.join(['%s=%s' % (key, urllib.quote_plus(headers[key])) for key in headers])
-
-
-def _size(siz):
-	if siz in ['0', 0, '', None]: return 0, ''
-	div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
-	float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', ''))) / div
-	str_size = '%.2f GB' % float_size
-	return float_size, str_size
-
-
-def get_size(url): # not called
-	try:
-		size = client.request(url, output='file_size')
-		if size == '0':
-			size = False
-		float_size, str_size = convert_size(size)
-		return float_size, str_size
-	except:
-		return False
-
-
-def convert_size(size_bytes, to='GB'):
-	import math
-	if size_bytes == 0:
-		return 0, ''
-	power = {'B' : 0, 'KB': 1, 'MB' : 2, 'GB': 3, 'TB' : 4, 'EB' : 5, 'ZB' : 6, 'YB': 7}
-	i = power[to]
-	p = math.pow(1024, i)
-	float_size = round(size_bytes / p, 2)
-	# if to == 'B' or to  == 'KB':
-		# return 0, ''
-	str_size = "%s %s" % (float_size, to)
-	return float_size, str_size
-
-
-def check_directstreams(url, hoster='', quality='SD'):
-	urls = []
-	host = hoster
-
-	if 'google' in url or any(x in url for x in ['youtube.', 'docid=']):
-		urls = directstream.google(url)
-		if not urls:
-			tag = directstream.googletag(url)
-			if tag:
-				urls = [{'quality': tag[0]['quality'], 'url': url}]
-		if urls:
-			host = 'gvideo'
-
-	elif 'ok.ru' in url:
-		urls = directstream.odnoklassniki(url)
-		if urls:
-			host = 'vk'
-
-	elif 'vk.com' in url:
-		urls = directstream.vk(url)
-		if urls:
-			host = 'vk'
-
-	elif any(x in url for x in ['akamaized', 'blogspot', 'ocloud.stream']):
-		urls = [{'url': url}]
-		if urls:
-			host = 'CDN'
-
-	direct = True if urls else False
-
-	if not urls:
-		urls = [{'quality': quality, 'url': url}]
-	return urls, host, direct
-
-
-def evp_decode(cipher_text, passphrase, salt=None):
-	cipher_text = base64.b64decode(cipher_text)
-	if not salt:
-		salt = cipher_text[8:16]
-		cipher_text = cipher_text[16:]
-	data = evpKDF(passphrase, salt)
-	decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(data['key'], data['iv']))
-	plain_text = decrypter.feed(cipher_text)
-	plain_text += decrypter.feed()
-	return plain_text
-
-
-def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
-	target_key_size = key_size + iv_size
-	derived_bytes = ""
-	number_of_derived_words = 0
-	block = None
-	hasher = hashlib.new(hash_algorithm)
-
-	while number_of_derived_words < target_key_size:
-		if block is not None:
-			hasher.update(block)
-		hasher.update(passwd)
-		hasher.update(salt)
-		block = hasher.digest()
-		hasher = hashlib.new(hash_algorithm)
-
-		for _i in range(1, iterations):
-			hasher.update(block)
-			block = hasher.digest()
-			hasher = hashlib.new(hash_algorithm)
-		derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
-		number_of_derived_words += len(block) / 4
-	return {"key": derived_bytes[0: key_size * 4], "iv": derived_bytes[key_size * 4:]}
-
-
-def remove_lang(name):
-	try:
-		name = name.lower()
-		name = name.replace(' ', '.')
-	except:
-		name = str(name)
-
-	if any(value in name for value in LANG):
-		return True
-	elif any(value in name for value in UNDESIREABLES):
-		return True
-	elif any(value in name for value in DUBBED):
-		return True
-	elif 'rus' in name and not any(value in name for value in ['eng', 'multi']):
-		return True
-	else:
-		return False
-
-
-def ck_CamSd():
-	from resources.lib.modules import control
-	try:
-		return True if control.setting('remove.CamSd.sources') == 'true' else False
-	except:
-		return False
+		log_utils.error()
+		return None

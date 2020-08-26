@@ -1,32 +1,36 @@
 import xbmc
-import json
 import resources.lib.utils as utils
 
 
 class KodiLibrary(object):
-    def __init__(self, dbtype=None, tvshowid=None):
+    def __init__(self, dbtype=None, tvshowid=None, attempt_reconnect=False):
         self.dbtype = None
+        self.database = None
         self.get_database(dbtype, tvshowid)
 
-    def get_jsonrpc(self, method=None, params=None):
-        if not method or not params:
-            return {}
-        query = {
-            "jsonrpc": "2.0",
-            "params": params,
-            "method": method,
-            "id": 1}
-        return json.loads(xbmc.executeJSONRPC(json.dumps(query)))
+        if self.database or not dbtype or not attempt_reconnect:
+            return
+
+        # If we didn't get database retry in case Kodi was starting up
+        retries = 0
+        monitor = xbmc.Monitor()
+        while not monitor.abortRequested() and not self.database and retries < 5:
+            monitor.waitForAbort(1)
+            self.get_database(dbtype, tvshowid)
+            retries += 1
+            utils.kodi_log(u'Unable to retrive {} KodiDB!\nAttempting to Reconnect - Attempt {}'.format(dbtype, retries), 1)
+        if not self.database:
+            utils.kodi_log(u'Getting KodiDB {} FAILED!'.format(dbtype), 1)
 
     def get_database(self, dbtype=None, tvshowid=None):
         if not dbtype:
             return
         if dbtype == "movie":
             method = "VideoLibrary.GetMovies"
-            params = {"properties": ["title", "imdbnumber", "originaltitle", "year", "file"]}
+            params = {"properties": ["title", "imdbnumber", "originaltitle", "uniqueid", "year", "file"]}
         if dbtype == "tvshow":
             method = "VideoLibrary.GetTVShows"
-            params = {"properties": ["title", "imdbnumber", "originaltitle", "year"]}
+            params = {"properties": ["title", "imdbnumber", "originaltitle", "uniqueid", "year"]}
         if dbtype == "episode":
             method = "VideoLibrary.GetEpisodes"
             params = {
@@ -34,10 +38,12 @@ class KodiLibrary(object):
                 "properties": ["title", "showtitle", "season", "episode", "file"]}
         dbid_name = '{0}id'.format(dbtype)
         key_to_get = '{0}s'.format(dbtype)
-        response = self.get_jsonrpc(method, params)
+        response = utils.get_jsonrpc(method, params)
         self.dbtype = dbtype
         self.database = [{
-            'imdb_id': item.get('imdbnumber'),
+            'imdb_id': item.get('uniqueid', {}).get('imdb'),
+            'tmdb_id': item.get('uniqueid', {}).get('tmdb'),
+            'tvdb_id': item.get('uniqueid', {}).get('tvdb'),
             'dbid': item.get(dbid_name),
             'title': item.get('title'),
             'originaltitle': item.get('originaltitle'),
@@ -62,7 +68,7 @@ class KodiLibrary(object):
         if filterr:
             params['filter'] = filterr
 
-        response = self.get_jsonrpc(method, params)
+        response = utils.get_jsonrpc(method, params)
         return response.get('result')
 
     def get_num_credits(self, dbtype, person):
@@ -94,44 +100,41 @@ class KodiLibrary(object):
         infoproperties['numitems.dbid.tvshows'] = self.get_num_credits('tvshow', person)
         infoproperties['numitems.dbid.episodes'] = self.get_num_credits('episode', person)
         infoproperties['numitems.dbid.total'] = (
-            utils.try_parse_int(infoproperties.get('numitems.dbid.movies')) +
-            utils.try_parse_int(infoproperties.get('numitems.dbid.tvshows')) +
-            utils.try_parse_int(infoproperties.get('numitems.dbid.episodes')))
+            utils.try_parse_int(infoproperties.get('numitems.dbid.movies'))
+            + utils.try_parse_int(infoproperties.get('numitems.dbid.tvshows'))
+            + utils.try_parse_int(infoproperties.get('numitems.dbid.episodes')))
         infoproperties = utils.del_empty_keys(infoproperties, ['N/A', '0.0', '0'])
         return infoproperties
 
-    def get_info(self, info, dbid=None, imdb_id=None, originaltitle=None, title=None, year=None, season=None, episode=None, fuzzy_match=False):
+    def get_info(self, info, dbid=None, imdb_id=None, originaltitle=None, title=None, year=None, season=None, episode=None, fuzzy_match=False, tmdb_id=None, tvdb_id=None):
         if not self.database or not info:
             return
-        utils.kodi_log(u'KodiLibrary -- Searching KodiDb for {0}'.format(info), 2)
+        yearcheck = False
         index_list = utils.find_dict_in_list(self.database, 'dbid', dbid) if dbid else []
         if not index_list and season:
             index_list = utils.find_dict_in_list(self.database, 'season', utils.try_parse_int(season))
-            utils.kodi_log(u'KodiLibrary -- Searching KodiDb for Season: {0}\nIndices: {1}'.format(season, index_list), 2)
         if not index_list and imdb_id:
             index_list = utils.find_dict_in_list(self.database, 'imdb_id', imdb_id)
-            utils.kodi_log(u'KodiLibrary -- Searching KodiDb for IMDb ID: {0}\nIndices: {1}'.format(imdb_id, index_list), 2)
+        if not index_list and tmdb_id:
+            index_list = utils.find_dict_in_list(self.database, 'tmdb_id', str(tmdb_id))
+        if not index_list and tvdb_id:
+            index_list = utils.find_dict_in_list(self.database, 'tvdb_id', str(tvdb_id))
+        if not index_list:
+            yearcheck = str(year) or 'dummynull'  # Also use year if matching by title to be certain we have correct item. Dummy value for True value that will always fail comparison check.
         if not index_list and originaltitle:
             index_list = utils.find_dict_in_list(self.database, 'originaltitle', originaltitle)
-            utils.kodi_log(u'KodiLibrary -- Searching KodiDb for OriginalTitle: {0}\nIndices: {1}'.format(originaltitle, index_list), 2)
         if not index_list and title:
             index_list = utils.find_dict_in_list(self.database, 'title', title)
-            utils.kodi_log(u'KodiLibrary -- Searching KodiDb for Title: {0}\nIndices: {1}'.format(title, index_list), 2)
         for i in index_list:
-            utils.kodi_log(u'KodiLibrary -- Searching KodiDb for Match...\nChecking Item: {0}'.format(self.database[i]), 2)
             if season and episode:
                 if utils.try_parse_int(episode) == self.database[i].get('episode'):
-                    utils.kodi_log(u'KodiLibrary -- Found Match!\nItem: {0}  Key: {1}  Value: {2}'.format(self.database[i], info, self.database[i].get(info)), 2)
                     return self.database[i].get(info)
-            elif not year or year in str(self.database[i].get('year')):
-                utils.kodi_log(u'KodiLibrary -- Found Match!\nItem: {0}  Key: {1}  Value: {2}'.format(self.database[i], info, self.database[i].get(info)), 2)
+            elif not yearcheck or yearcheck in str(self.database[i].get('year')):
                 return self.database[i].get(info)
-        if index_list and fuzzy_match and year and not season and not episode:
+        if index_list and fuzzy_match and not season and not episode:
             """ Fuzzy Match """
             i = index_list[0]
-            utils.kodi_log(u'KodiLibrary -- Found Match!\nItem: {0}  Key: {1}  Value: {2}'.format(self.database[i], info, self.database[i].get(info)), 2)
             return self.database[i].get(info)
-        utils.kodi_log(u'KodiLibrary -- Failed to Find Match for {0}'.format(info), 2)
 
     def get_infolabels(self, item, key):
         infolabels = {}
@@ -176,7 +179,7 @@ class KodiLibrary(object):
         infolabels['album'] = item.get('album')
         infolabels['artist'] = item.get('artist', [])
         infolabels['votes'] = item.get('votes')
-        infolabels['path'] = item.get('path')
+        infolabels['path'] = item.get('file')
         infolabels['trailer'] = item.get('trailer')
         infolabels['dateadded'] = item.get('dateadded')
         infolabels['overlay'] = 5 if utils.try_parse_int(item.get('playcount')) > 0 and key in ['movie', 'episode'] else 4
@@ -196,7 +199,8 @@ class KodiLibrary(object):
 
     def get_niceitem(self, item, key):
         label = item.get('label') or ''
-        icon = thumb = item.get('thumbnail') or ''
+        icon = item.get('thumbnail') or ''
+        thumb = item.get('art', {}).get('thumb') or ''
         poster = item.get('art', {}).get('poster') or ''
         fanart = item.get('fanart') or item.get('art', {}).get('fanart') or ''
         landscape = item.get('art', {}).get('landscape') or ''
@@ -204,13 +208,14 @@ class KodiLibrary(object):
         clearart = item.get('art', {}).get('clearart') or ''
         discart = item.get('art', {}).get('discart') or ''
         cast = item.get('cast', [])
+        path = item.get('file') or ''
         streamdetails = item.get('streamdetails', {})
         infolabels = self.get_infolabels(item, key)
         infoproperties = self.get_infoproperties(item)
         return {
             'label': label, 'icon': icon, 'poster': poster, 'thumb': thumb, 'fanart': fanart, 'landscape': landscape,
             'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'cast': cast, 'infolabels': infolabels,
-            'infoproperties': infoproperties, 'streamdetails': streamdetails}
+            'infoproperties': infoproperties, 'streamdetails': streamdetails, 'path': path}
 
     def get_item_details(self, dbid=None, method=None, key=None, properties=None):
         if not dbid or not method or not key or not properties:
@@ -219,7 +224,7 @@ class KodiLibrary(object):
         params = {
             param_name: utils.try_parse_int(dbid),
             "properties": properties}
-        details = self.get_jsonrpc(method, params)
+        details = utils.get_jsonrpc(method, params)
         if not details or not isinstance(details, dict):
             return {}
         details = details.get('result', {}).get('{0}details'.format(key))
@@ -254,7 +259,7 @@ class KodiLibrary(object):
             "directory": url,
             "media": "files",
             "properties": [
-                "title", "year", "originaltitle", "imdbnumber", "premiered",
-                "firstaired", "season", "episode", "showtitle", "file", "tvshowid"]}
-        response = self.get_jsonrpc(method, params)
+                "title", "year", "originaltitle", "imdbnumber", "premiered", "streamdetails", "size",
+                "firstaired", "season", "episode", "showtitle", "file", "tvshowid", "thumbnail"]}
+        response = utils.get_jsonrpc(method, params)
         return response.get('result', {}).get('files', [{}]) or [{}]

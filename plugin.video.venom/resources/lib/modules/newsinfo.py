@@ -4,8 +4,18 @@
 	Venom Add-on
 """
 
-import os, urllib2
-import xbmc, xbmcaddon, xbmcgui
+import os
+import xbmc
+import xbmcaddon
+import xbmcgui
+
+try:
+	from urllib.request import urlopen
+	from urllib.request import Request
+except ImportError:
+	from urllib2 import urlopen
+	from urllib2 import Request
+
 
 ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
 HOMEPATH = xbmc.translatePath('special://home/')
@@ -30,12 +40,12 @@ def news():
 
 
 def open_news_url(url):
-	req = urllib2.Request(url)
+	req = Request(url)
 	req.add_header('User-Agent', 'klopp')
-	response = urllib2.urlopen(req)
+	response = urlopen(req)
 	link = response.read()
 	response.close()
-	print link
+	print(link)
 	return link
 
 
@@ -51,7 +61,6 @@ def showText(heading, text):
 	xbmc.sleep(500)
 	win = xbmcgui.Window(id)
 	retry = 50
-
 	while (retry > 0):
 		try:
 			xbmc.sleep(10)

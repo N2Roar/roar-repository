@@ -1,13 +1,24 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 	Venom Add-on
-'''
+"""
 
-import sys, re, json, zipfile
-import StringIO, urllib, urllib2, urlparse
 import datetime
+import json
+import re
 import requests
+import StringIO
+import sys
+# import urllib2
+import zipfile
+
+
+try:
+	from urllib import quote_plus
+	from urlparse import parse_qsl
+except:
+	from urllib.parse import quote_plus, parse_qsl
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import cache
@@ -21,13 +32,10 @@ from resources.lib.modules import views
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
 
-sysaddon = sys.argv[0]
-syshandle = int(sys.argv[1])
-
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
-action = params.get('action')
-notificationSound = False if control.setting('notification.sound') == 'false' else True
-is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
+# params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
+# action = params.get('action')
+disable_fanarttv = control.setting('disable.fanarttv')
+is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
 
 
 class Seasons:
@@ -40,7 +48,12 @@ class Seasons:
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 
-		self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
+		tvdb_key_list = [
+			'MDZjZmYzMDY5MGY5Yjk2MjI5NTcwNDRmMjE1OWZmYWU=',
+			'MUQ2MkYyRjkwMDMwQzQ0NA==',
+			'N1I4U1paWDkwVUE5WU1CVQ==']
+		self.tvdb_key = tvdb_key_list[int(control.setting('tvdb.api.key'))]
+
 		self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
@@ -55,28 +68,7 @@ class Seasons:
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
-		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
-
-
-	def getUnairedColor(self, n):
-		if n == '0': n = 'blue'
-		elif n == '1': n = 'red'
-		elif n == '2': n = 'yellow'
-		elif n == '3': n = 'deeppink'
-		elif n == '4': n = 'cyan'
-		elif n == '5': n = 'lawngreen'
-		elif n == '6': n = 'gold'
-		elif n == '7': n = 'magenta'
-		elif n == '8': n = 'yellowgreen'
-		elif n == '9': n = 'skyblue'
-		elif n == '10': n = 'lime'
-		elif n == '11': n = 'limegreen'
-		elif n == '12': n = 'deepskyblue'
-		elif n == '13': n = 'white'
-		elif n == '14': n = 'whitesmoke'
-		elif n == '15': n = 'nocolor'
-		else: n == 'skyblue'
-		return n
+		self.unairedcolor = control.getColor(self.unairedcolor)
 
 
 	@classmethod
@@ -104,7 +96,7 @@ class Seasons:
 
 
 	def get(self, tvshowtitle, year, imdb, tmdb, tvdb, idx=True):
-		if idx is True:
+		if idx:
 			self.list = cache.get(self.tvdb_list, 24, tvshowtitle, year, imdb, tmdb, tvdb, self.lang)
 			self.seasonDirectory(self.list)
 			return self.list
@@ -147,14 +139,14 @@ class Seasons:
 		userlists = []
 
 		try:
-			if self.traktCredentials is False:
+			if not self.traktCredentials:
 				raise Exception()
 			activity = trakt.getActivity()
 		except:
 			pass
 
 		try:
-			if self.traktCredentials is False:
+			if not self.traktCredentials:
 				raise Exception()
 			self.list = []
 			try:
@@ -167,7 +159,7 @@ class Seasons:
 			pass
 
 		try:
-			if self.traktCredentials is False:
+			if not self.traktCredentials:
 				raise Exception()
 			self.list = []
 			try:
@@ -194,8 +186,8 @@ class Seasons:
 		for i in range(0, len(self.list)): self.list[i].update({'image': 'traktlists.png', 'action': 'seasonsList'})
 
 		# Watchlist
-		if self.traktCredentials is True:
-			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.traktwatchlist_link, 'image': 'traktwatch.png', 'action': 'seasons'})
+		if self.traktCredentials:
+			self.list.insert(0, {'name': control.lang(32033), 'url': self.traktwatchlist_link, 'image': 'traktwatch.png', 'action': 'seasons'})
 
 		episodes.addDirectory(self.list, queue = True)
 		return self.list
@@ -204,24 +196,23 @@ class Seasons:
 	def tvdb_list(self, tvshowtitle, year, imdb, tmdb, tvdb, lang, limit = ''):
 		if (tvdb == '0' or tmdb == '0') and imdb != '0':
 			try:
-				trakt_ids = trakt.IdLookup('show', 'imdb', imdb)
-				if not trakt_ids:
-					raise Exception()
-				if tvdb == '0':
-					tvdb = str(trakt_ids.get('tvdb', '0'))
-					if tvdb == '' or tvdb is None or tvdb == 'None':
-						tvdb = '0'
-				if tmdb == '0':
-					tmdb = str(trakt_ids.get('tmdb', '0'))
-					if tvdb == '' or tvdb is None or tvdb == 'None':
-						tvdb = '0'
+				trakt_ids = trakt.IdLookup('imdb', imdb, 'show')
+				if trakt_ids:
+					if tvdb == '0':
+						tvdb = str(trakt_ids.get('tvdb', '0'))
+						if tvdb == '' or tvdb is None or tvdb == 'None':
+							tvdb = '0'
+					if tmdb == '0':
+						tmdb = str(trakt_ids.get('tmdb', '0'))
+						if tmdb == '' or tmdb is None or tmdb == 'None':
+							tmdb = '0'
 			except:
 				log_utils.error()
 				pass
 
 		if imdb == '0' or tmdb == '0' or tvdb == '0':
 			try:
-				trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)
+				trakt_ids = trakt.SearchTVShow(quote_plus(tvshowtitle), year, full=False)
 				if not trakt_ids:
 					raise Exception()
 				trakt_ids = trakt_ids[0].get('show', '0')
@@ -278,7 +269,7 @@ class Seasons:
 		if tvdb == '0':
 			try:
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
-				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
+				url = self.tvdb_by_query % (quote_plus(tvshowtitle))
 				# tvdb = client.request(url, timeout='10', error=True)
 				tvdb = requests.get(url).content
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
@@ -297,10 +288,11 @@ class Seasons:
 
 		if tvdb == '0':
 			return None
-
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
-			data = requests.get(url).content
+			# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
+			data = requests.get(url).content # sometimes one api key pulls empty xml while another does not
+			# data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
 
 			result = zip.read('en.xml')
@@ -343,16 +335,23 @@ class Seasons:
 			item2 = result2[0]
 
 			episodes = [i for i in result if '<EpisodeNumber>' in i]
-
 			if control.setting('tv.specials') == 'true':
 				episodes = [i for i in episodes]
 			else:
 				episodes = [i for i in episodes if not '<SeasonNumber>0</SeasonNumber>' in i]
 				episodes = [i for i in episodes if not '<EpisodeNumber>0</EpisodeNumber>' in i]
 
+			# season still airing check for pack scraping
+			premiered_eps = [i for i in episodes if not '<FirstAired></FirstAired>' in i]
+			unaired_eps = [i for i in premiered_eps if int(re.sub('[^0-9]', '', str(client.parseDOM(i, 'FirstAired')))) > int(re.sub('[^0-9]', '', str(self.today_date)))]
+			if unaired_eps:
+				still_airing = client.parseDOM(unaired_eps, 'SeasonNumber')[0]
+			else:
+				still_airing = None
+
 			seasons = [i for i in episodes if '<EpisodeNumber>1</EpisodeNumber>' in i]
 			counts = self.seasonCountParse(seasons = seasons, episodes = episodes)
-
+			# log_utils.log('counts = %s' % counts, __name__, log_utils.LOGDEBUG)
 			locals = [i for i in result2 if '<EpisodeNumber>' in i]
 
 			result = ''
@@ -501,7 +500,8 @@ class Seasons:
 			label = label.encode('utf-8')
 
 			try:
-				plot = client.parseDOM(item2, 'Overview')[0]
+				# plot = client.parseDOM(item2, 'Overview')[0]
+				plot = client.parseDOM(item2, 'Overview')[0].encode('ascii', errors='ignore').decode('ascii', errors='ignore')
 			except:
 				plot = ''
 			if plot == '':
@@ -527,6 +527,9 @@ class Seasons:
 				# elif premiered == '0':
 					# continue
 				elif premiered == '0':
+					# unaired = 'true'
+					# if self.showunaired != 'true':
+						# continue
 					pass
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
@@ -556,13 +559,17 @@ class Seasons:
 				except:
 					seasoncount = None
 
-				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year,
-											'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
-											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
-											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
-											'thumb': thumb, 'unaired': unaired})
-				self.list = sorted(self.list, key=lambda k: int(k['season'])) # fix for TVDb new sort by ID
+				try:
+					total_seasons = len([i for i in counts if i != '0'])
+				except:
+					total_seasons = None
 
+				self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered,
+										'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
+										'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
+										'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb,
+										'unaired': unaired, 'seasoncount': seasoncount, 'total_seasons': total_seasons})
+				self.list = sorted(self.list, key=lambda k: int(k['season'])) # fix for TVDb new sort by ID
 			except:
 				log_utils.error()
 				pass
@@ -578,9 +585,10 @@ class Seasons:
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
-				# elif premiered == '0':
-					# continue
 				elif premiered == '0':
+					unaired = 'true'
+					if self.showunaired != 'true':
+						continue
 					pass
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
@@ -594,6 +602,14 @@ class Seasons:
 				episode = client.parseDOM(item, 'EpisodeNumber')[0]
 				episode = re.sub('[^0-9]', '', '%01d' % int(episode))
 				episode = episode.encode('utf-8')
+
+				if still_airing:
+					if int(still_airing) == int(season):
+						is_airing = True
+					else:
+						is_airing = False
+				else:
+					is_airing = False
 
 # ### episode IDS
 				episodeIDS = {}
@@ -638,7 +654,6 @@ class Seasons:
 				season_poster = season_poster.encode('utf-8')
 				if season_poster == '0':
 					season_poster = poster
-				# log_utils.log('season_poster = %s for tvshowtitle = %s' % (season_poster, tvshowtitle), __name__, log_utils.LOGDEBUG)
 
 				try:
 					rating = client.parseDOM(item, 'Rating')[0]
@@ -702,10 +717,17 @@ class Seasons:
 				except:
 					seasoncount = None
 
-				self.list.append({'title': title, 'label': label, 'seasoncount': seasoncount, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
-								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-								'director': director, 'writer': writer, 'castandart': castandart, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
-								'fanart': fanart, 'thumb': thumb, 'season_poster': season_poster, 'unaired': unaired, 'episodeIDS': episodeIDS})
+				try:
+					total_seasons = len([i for i in counts if i != '0'])
+				except:
+					total_seasons = None
+
+				self.list.append({'title': title, 'label': label, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
+										'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
+										'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': episodeplot,
+										'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb,
+										'season_poster': season_poster, 'unaired': unaired, 'seasoncount': seasoncount, 'counts': counts,
+										'total_seasons': total_seasons, 'is_airing': is_airing, 'episodeIDS': episodeIDS})
 				self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode']))) # fix for TVDb new sort by ID
 				# meta = {}
 				# meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tvdb_key, 'item': item}
@@ -767,7 +789,7 @@ class Seasons:
 	def _seasonCount(self, tvshowtitle, year, imdb, tvdb):
 		if imdb == '0':
 			try:
-				imdb = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
+				imdb = trakt.SearchTVShow(quote_plus(tvshowtitle), year, full=False)[0]
 				imdb = imdb.get('show', '0')
 				imdb = imdb.get('ids', {}).get('imdb', '0')
 				imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
@@ -781,7 +803,6 @@ class Seasons:
 		if tvdb == '0' and imdb != '0':
 			try:
 				url = self.tvdb_by_imdb % imdb
-				# result = client.request(url, timeout='10')
 				result = requests.get(url).content
 				result = re.sub(r'[^\x00-\x7F]+', '', result)
 				result = client.replaceHTMLCodes(result)
@@ -806,8 +827,7 @@ class Seasons:
 		if tvdb == '0':
 			try:
 				years = [str(year), str(int(year)+1), str(int(year)-1)]
-				url = self.tvdb_by_query % (urllib.quote_plus(tvshowtitle))
-				# tvdb = client.request(url, timeout='10', error=True)
+				url = self.tvdb_by_query % (quote_plus(tvshowtitle))
 				tvdb = requests.get(url).content
 				tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
 				tvdb = client.replaceHTMLCodes(tvdb)
@@ -828,7 +848,6 @@ class Seasons:
 
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# data = urllib2.urlopen(url, timeout=30).read()
 			data = requests.get(url).content
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
 			result = zip.read('%s.xml' % 'en')
@@ -840,7 +859,6 @@ class Seasons:
 			if len(dupe) > 0:
 				tvdb = str(dupe[0]).encode('utf-8')
 				url = self.tvdb_info_link % (tvdb, 'en')
-				# data = urllib2.urlopen(url, timeout=30).read()
 				data = requests.get(url).content
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 
@@ -855,11 +873,13 @@ class Seasons:
 
 
 	def seasonDirectory(self, items):
-		if items is None or len(items) == 0:
+		if not items:
 			control.hide()
-			control.notification(title = 32054, message = 33049, icon = 'INFO', sound=notificationSound)
+			control.notification(title=32054, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
 			sys.exit()
 
+		sysaddon = sys.argv[0]
+		syshandle = int(sys.argv[1])
 		settingFanart = control.setting('fanart')
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
@@ -870,25 +890,23 @@ class Seasons:
 		except :
 			pass
 
-		unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
-		unwatchedLimit = False
-		seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
+		unwatchedEnabled = control.setting('tvshows.unwatched.enabled') == 'true'
 
-		if trakt.getTraktIndicatorsInfo() is True:
-			watchedMenu = control.lang(32068).encode('utf-8')
-			unwatchedMenu = control.lang(32069).encode('utf-8')
+		if trakt.getTraktIndicatorsInfo():
+			watchedMenu = control.lang(32068)
+			unwatchedMenu = control.lang(32069)
 		else:
-			watchedMenu = control.lang(32066).encode('utf-8')
-			unwatchedMenu = control.lang(32067).encode('utf-8')
+			watchedMenu = control.lang(32066)
+			unwatchedMenu = control.lang(32067)
 
-		traktManagerMenu = control.lang(32070).encode('utf-8')
-		# playlistManagerMenu = control.lang(35522).encode('utf-8')
-		queueMenu = control.lang(32065).encode('utf-8')
-		showPlaylistMenu = control.lang(35517).encode('utf-8')
-		clearPlaylistMenu = control.lang(35516).encode('utf-8')
-		labelMenu = control.lang(32055).encode('utf-8')
-		playRandom = control.lang(32535).encode('utf-8')
-		addToLibrary = control.lang(32551).encode('utf-8')
+		traktManagerMenu = control.lang(32070)
+		# playlistManagerMenu = control.lang(35522)
+		queueMenu = control.lang(32065)
+		showPlaylistMenu = control.lang(35517)
+		clearPlaylistMenu = control.lang(35516)
+		labelMenu = control.lang(32055)
+		playRandom = control.lang(32535)
+		addToLibrary = control.lang(32551)
 
 		try:
 			multi = [i['tvshowtitle'] for i in items]
@@ -897,13 +915,21 @@ class Seasons:
 		multi = len([x for y,x in enumerate(multi) if x not in multi[:y]])
 		multi = True if multi > 1 else False
 
+		if disable_fanarttv != 'true':
+			tvdb = [i['tvdb'] for i in items][0]
+			from resources.lib.indexers import fanarttv
+			extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
+		else:
+			extended_art = None
+
 		for i in items:
 			try:
 				imdb, tmdb, tvdb, year, season = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0'), i['season']
 				title = i['tvshowtitle']
 				label = '%s %s' % (labelMenu, i['season'])
 
-				if self.season_special is False and control.setting('tv.specials') == 'true':
+				# if self.season_special is False and control.setting('tv.specials') == 'true':
+				if not self.season_special and control.setting('tv.specials') == 'true':
 					self.season_special = True if int(season) == 0 else False
 
 				try:
@@ -912,7 +938,7 @@ class Seasons:
 				except:
 					pass
 
-				systitle = urllib.quote_plus(title)
+				systitle = quote_plus(title)
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
@@ -937,7 +963,7 @@ class Seasons:
 				except: pass
 
 				try:
-					# Year is the shows year, not the seasons year. Extract the correct year frpm the premier date.
+					# Year is the shows year, not the seasons year. Extract the correct year from the premier date.
 					yearNew = i['premiered']
 					yearNew = re.findall('(\d{4})', yearNew)[0]
 					yearNew = yearNew.encode('utf-8')
@@ -959,7 +985,6 @@ class Seasons:
 					fanart3 = meta.get('fanart3')
 					fanart = fanart3 or fanart2 or fanart1 or addonFanart
 
-				# landscape = meta.get('landscape')
 				thumb = meta.get('thumb') or poster
 				icon = meta.get('icon') or poster
 
@@ -968,8 +993,12 @@ class Seasons:
 				banner3 = meta.get('banner3')
 				banner = banner3 or banner2 or banner1 or addonBanner
 
-				clearlogo = meta.get('clearlogo')
-				clearart = meta.get('clearart')
+				if extended_art:
+					clearlogo = extended_art.get('clearlogo')
+					clearart = extended_art.get('clearart')
+				else:
+					clearlogo = '0'
+					clearart = '0'
 
 				art = {}
 				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
@@ -977,7 +1006,7 @@ class Seasons:
 
 ####-Context Menu and Overlays-####
 				cm = []
-				if self.traktCredentials is True:
+				if self.traktCredentials:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, systitle, imdb, tvdb, season)))
 
 				try:
@@ -992,10 +1021,10 @@ class Seasons:
 				except:
 					pass
 
-				# sysmeta = urllib.quote_plus(json.dumps(meta))
-				# sysart = urllib.quote_plus(json.dumps(art))
+				# sysmeta = quote_plus(json.dumps(meta))
+				# sysart = quote_plus(json.dumps(art))
 				url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s&season=%s' % (sysaddon, systitle, year, imdb, tmdb, tvdb, season)
-				# sysurl = urllib.quote_plus(url)
+				# sysurl = quote_plus(url)
 
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=episode&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s)' % (
 									sysaddon, systitle, year, imdb, tvdb, season)))
@@ -1007,12 +1036,12 @@ class Seasons:
 
 				if control.setting('library.service.update') == 'true':
 					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tmdb, tvdb)))
-				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				# cm.append((control.lang(32610), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
 				if not i.get('trailer'):
-					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', urllib.quote_plus(title), year, imdb)})
+					meta.update({'trailer': '%s?action=trailer&type=%s&name=%s&year=%s&imdb=%s' % (sysaddon, 'show', quote_plus(title), year, imdb)})
 
 				item = control.item(label = label)
 				if 'castandart' in i:
@@ -1021,22 +1050,15 @@ class Seasons:
 				if 'episodeIDS' in i:
 					item.setUniqueIDs(i['episodeIDS'])
 
-				if unwatchedEnabled == 'true':
-					count = playcount.getSeasonCount(imdb, season, self.season_special, unwatchedLimit)
+				if unwatchedEnabled:
+					count = playcount.getSeasonCount(imdb, season, self.season_special)
 					if count:
 						item.setProperty('TotalEpisodes', str(count['total']))
 						item.setProperty('WatchedEpisodes', str(count['watched']))
 						item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-				if seasoncountEnabled == 'true' and self.traktCredentials is True:
-					total_seasons = trakt.getSeasons(imdb, full=False)
-					if total_seasons is not None:
-						total_seasons = [i['number'] for i in total_seasons]
-						season_special = True if 0 in total_seasons else False
-						total_seasons = len(total_seasons)
-						if control.setting('tv.specials') == 'false' and season_special is True:
-							total_seasons = total_seasons - 1
-						item.setProperty('TotalSeasons', str(total_seasons))
+				if 'total_seasons' in meta:
+					item.setProperty('TotalSeasons', str(meta.get('total_seasons')))
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', 'false')

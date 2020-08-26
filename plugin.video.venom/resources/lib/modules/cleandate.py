@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import time, datetime
+'''
+	Venom Add-on
+'''
+
+import datetime
+import time
 
 
 def iso_2_utc(iso_ts):

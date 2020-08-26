@@ -1,6 +1,10 @@
+import xbmc
+import datetime
 import resources.lib.utils as utils
+from json import loads
 from resources.lib.requestapi import RequestAPI
 from resources.lib.listitem import ListItem
+from resources.lib.downloader import Downloader
 _genreids = {
     "Action": 28, "Adventure": 12, "Animation": 16, "Comedy": 35, "Crime": 80, "Documentary": 99, "Drama": 18,
     "Family": 10751, "Fantasy": 14, "History": 36, "Horror": 27, "Kids": 10762, "Music": 10402, "Mystery": 9648,
@@ -12,7 +16,7 @@ class TMDb(RequestAPI):
     def __init__(self, api_key=None, language=None, cache_long=None, cache_short=None, append_to_response=None, mpaa_prefix=None, filter_key=None, filter_value=None, exclude_key=None, exclude_value=None):
         super(TMDb, self).__init__(
             cache_short=cache_short, cache_long=cache_long,
-            req_api_name='TMDb', req_api_url='https://api.themoviedb.org/3', req_wait_time=0.25,
+            req_api_name='TMDb', req_api_url='https://api.themoviedb.org/3', req_wait_time=0,
             req_api_key='api_key=a07324c669cac4d96789197134ce272b')
         api_key = api_key if api_key else 'a07324c669cac4d96789197134ce272b'
         language = language if language else 'en-US'
@@ -69,13 +73,43 @@ class TMDb(RequestAPI):
         if item.get('backdrop_path'):
             return self.get_imagepath(item.get('backdrop_path'))
 
+    def get_airdates(self, item):
+        if not item:
+            return
+        infoproperties = {}
+        if item.get('last_episode_to_air'):
+            i = item.get('last_episode_to_air', {})
+            infoproperties['last_aired'] = utils.date_to_format(i.get('air_date'), xbmc.getRegion('dateshort'))
+            infoproperties['last_aired.long'] = utils.date_to_format(i.get('air_date'), xbmc.getRegion('datelong'))
+            infoproperties['last_aired.day'] = utils.date_to_format(i.get('air_date'), "%A")
+            infoproperties['last_aired.episode'] = i.get('episode_number')
+            infoproperties['last_aired.name'] = i.get('name')
+            infoproperties['last_aired.tmdb_id'] = i.get('id')
+            infoproperties['last_aired.plot'] = i.get('overview')
+            infoproperties['last_aired.season'] = i.get('season_number')
+            infoproperties['last_aired.rating'] = '{:0,.1f}'.format(utils.try_parse_float(i.get('vote_average')))
+            infoproperties['last_aired.votes'] = i.get('vote_count')
+            infoproperties['last_aired.thumb'] = self.get_season_thumb(i)
+        if item.get('next_episode_to_air'):
+            i = item.get('next_episode_to_air', {})
+            infoproperties['next_aired'] = utils.date_to_format(i.get('air_date'), xbmc.getRegion('dateshort'))
+            infoproperties['next_aired.long'] = utils.date_to_format(i.get('air_date'), xbmc.getRegion('datelong'))
+            infoproperties['next_aired.day'] = utils.date_to_format(i.get('air_date'), "%A")
+            infoproperties['next_aired.episode'] = i.get('episode_number')
+            infoproperties['next_aired.name'] = i.get('name')
+            infoproperties['next_aired.tmdb_id'] = i.get('id')
+            infoproperties['next_aired.plot'] = i.get('overview')
+            infoproperties['next_aired.season'] = i.get('season_number')
+            infoproperties['next_aired.thumb'] = self.get_season_thumb(i)
+        return infoproperties
+
     def get_infolabels(self, item):
         infolabels = {}
         infolabels['title'] = self.get_title(item)
         infolabels['originaltitle'] = item.get('original_title')
         infolabels['tvshowtitle'] = item.get('tvshowtitle')
         infolabels['plot'] = item.get('overview') or item.get('biography') or item.get('content')
-        infolabels['rating'] = item.get('vote_average')
+        infolabels['rating'] = '{:0,.1f}'.format(utils.try_parse_float(item.get('vote_average')))
         infolabels['votes'] = '{:0,.0f}'.format(item.get('vote_count')) if item.get('vote_count') else None
         infolabels['premiered'] = item.get('air_date') or item.get('release_date') or item.get('first_air_date') or ''
         infolabels['year'] = infolabels.get('premiered')[:4]
@@ -87,8 +121,10 @@ class TMDb(RequestAPI):
         infolabels['genre'] = utils.dict_to_list(item.get('genres', []), 'name')
         if item.get('site') == 'YouTube' and item.get('key'):
             infolabels['path'] = 'plugin://plugin.video.youtube/play/?video_id={0}'.format(item.get('key'))
+        if item.get('episode_run_time'):
+            infolabels['duration'] = utils.try_parse_int(item.get('episode_run_time', [0])[0]) * 60
         if item.get('runtime'):
-            infolabels['duration'] = item.get('runtime', 0) * 60
+            infolabels['duration'] = utils.try_parse_int(item.get('runtime', 0)) * 60
         if item.get('belongs_to_collection'):
             infolabels['set'] = item.get('belongs_to_collection').get('name')
         if item.get('networks'):
@@ -102,12 +138,16 @@ class TMDb(RequestAPI):
         if item.get('release_dates') and item.get('release_dates').get('results'):
             for i in item.get('release_dates').get('results'):
                 if i.get('iso_3166_1') and i.get('iso_3166_1') == self.iso_country:
-                    if i.get('release_dates') and i.get('release_dates')[0].get('certification'):
-                        infolabels['MPAA'] = '{0}{1}'.format(self.mpaa_prefix, i.get('release_dates')[0].get('certification'))
+                    for i in sorted(i.get('release_dates', []), key=lambda k: k.get('type')):
+                        if i.get('certification'):
+                            infolabels['MPAA'] = '{0}{1}'.format(self.mpaa_prefix, i.get('certification'))
+                            break
+                    break
         if item.get('content_ratings') and item.get('content_ratings').get('results'):
             for i in item.get('content_ratings').get('results'):
                 if i.get('iso_3166_1') and i.get('iso_3166_1') == self.iso_country and i.get('rating'):
                     infolabels['MPAA'] = '{0}{1}'.format(self.mpaa_prefix, i.get('rating'))
+                    break
         return infolabels
 
     def get_infoproperties(self, item):
@@ -115,6 +155,11 @@ class TMDb(RequestAPI):
         infoproperties['tmdb_id'] = item.get('id')
         infoproperties['imdb_id'] = item.get('imdb_id') or item.get('external_ids', {}).get('imdb_id')
         infoproperties['tvdb_id'] = item.get('external_ids', {}).get('tvdb_id')
+        infoproperties['tvshow.tmdb_id'] = item.get('tvshow.tmdb_id')
+        infoproperties['tvshow.imdb_id'] = item.get('tvshow.imdb_id')
+        infoproperties['tvshow.tvdb_id'] = item.get('tvshow.tvdb_id')
+        infoproperties['tvshow.premiered'] = item.get('tvshow.premiered') or ''
+        infoproperties['tvshow.year'] = infoproperties.get('tvshow.premiered')[:4]
         infoproperties['biography'] = item.get('biography')
         infoproperties['birthday'] = item.get('birthday')
         infoproperties['age'] = utils.age_difference(item.get('birthday'), item.get('deathday'))
@@ -124,32 +169,11 @@ class TMDb(RequestAPI):
         infoproperties['job'] = item.get('job')
         infoproperties['role'] = item.get('character') or item.get('job') or item.get('department') or item.get('known_for_department')
         infoproperties['born'] = item.get('place_of_birth')
-        infoproperties['tmdb_rating'] = item.get('vote_average')
+        infoproperties['tmdb_rating'] = '{:0,.1f}'.format(utils.try_parse_float(item.get('vote_average')))
         infoproperties['tmdb_votes'] = '{:0,.0f}'.format(item.get('vote_count')) if item.get('vote_count') else None
         if item.get('gender'):
             infoproperties['gender'] = self.addon.getLocalizedString(32070) if item.get('gender') == 2 else self.addon.getLocalizedString(32071)
-        if item.get('last_episode_to_air'):
-            i = item.get('last_episode_to_air', {})
-            infoproperties['last_aired'] = i.get('air_date')
-            infoproperties['last_aired.day'] = utils.date_to_format(i.get('air_date'), "%A")
-            infoproperties['last_aired.episode'] = i.get('episode_number')
-            infoproperties['last_aired.name'] = i.get('name')
-            infoproperties['last_aired.tmdb_id'] = i.get('id')
-            infoproperties['last_aired.plot'] = i.get('overview')
-            infoproperties['last_aired.season'] = i.get('season_number')
-            infoproperties['last_aired.rating'] = i.get('vote_average')
-            infoproperties['last_aired.votes'] = i.get('vote_count')
-            infoproperties['last_aired.thumb'] = self.get_season_thumb(i)
-        if item.get('next_episode_to_air'):
-            i = item.get('next_episode_to_air', {})
-            infoproperties['next_aired'] = i.get('air_date')
-            infoproperties['next_aired.day'] = utils.date_to_format(i.get('air_date'), "%A")
-            infoproperties['next_aired.episode'] = i.get('episode_number')
-            infoproperties['next_aired.name'] = i.get('name')
-            infoproperties['next_aired.tmdb_id'] = i.get('id')
-            infoproperties['next_aired.plot'] = i.get('overview')
-            infoproperties['next_aired.season'] = i.get('season_number')
-            infoproperties['next_aired.thumb'] = self.get_season_thumb(i)
+        infoproperties.update(self.get_airdates(item))
         if item.get('created_by'):
             infoproperties = utils.iter_props(item.get('created_by'), 'Creator', infoproperties, name='name', tmdb_id='id')
             infoproperties = utils.iter_props(item.get('created_by'), 'Creator', infoproperties, thumb='profile_path', func=self.get_imagepath)
@@ -206,7 +230,7 @@ class TMDb(RequestAPI):
                 infoproperties['set.{}.plot'.format(p)] = i.get('overview', '')
                 infoproperties['set.{}.premiered'.format(p)] = i.get('release_date', '')
                 infoproperties['set.{}.year'.format(p)] = i.get('release_date', '')[:4]
-                infoproperties['set.{}.rating'.format(p)] = i.get('vote_average', '')
+                infoproperties['set.{}.rating'.format(p)] = '{:0,.1f}'.format(utils.try_parse_float(i.get('vote_average')))
                 infoproperties['set.{}.votes'.format(p)] = i.get('vote_count', '')
                 infoproperties['set.{}.poster'.format(p)] = self.get_imagepath(i.get('poster_path', ''), True)
                 infoproperties['set.{}.fanart'.format(p)] = self.get_imagepath(i.get('backdrop_path', ''))
@@ -352,8 +376,8 @@ class TMDb(RequestAPI):
     def get_nicelist(self, items):
         return [
             ListItem(library=self.library, **self.get_niceitem(i)) for i in items if
-            not utils.filtered_item(i, self.filter_key, self.filter_value) and
-            not utils.filtered_item(i, self.exclude_key, self.exclude_value, True)]
+            not utils.filtered_item(i, self.filter_key, self.filter_value)
+            and not utils.filtered_item(i, self.exclude_key, self.exclude_value, True)]
 
     def get_translated_list(self, items, itemtype=None, separator=None):
         """
@@ -382,29 +406,70 @@ class TMDb(RequestAPI):
         else:
             return False
 
+    def get_downloaded_list(self, export_list=None, sorting=False):
+        if not export_list:
+            return
+        date = datetime.datetime.now() - datetime.timedelta(days=2)
+        download_url = 'https://files.tmdb.org/p/exports/{}_ids_{}.json.gz'.format(export_list, date.strftime("%m_%d_%Y"))
+        raw_list = [loads(i) for i in Downloader(download_url=download_url).get_gzip_text().splitlines()]
+        return sorted(raw_list, key=lambda k: k.get('name', '')) if sorting else raw_list
+
+    def get_daily_list(self, export_list=None, sorting=False):
+        if not export_list:
+            return
+        cache_name = u'{}.TMDb.Downloader.v4'.format(self.cache_name)
+        return self.use_cache(self.get_downloaded_list, cache_name=cache_name, cache_days=self.cache_long, export_list=export_list, sorting=sorting)
+
     def get_detailed_item(self, itemtype, tmdb_id, season=None, episode=None, cache_only=False, cache_refresh=False):
         if not itemtype or not tmdb_id:
-            utils.kodi_log('TMDb Get Details: No Item Type or TMDb ID!\n{} {} {} {}'.format(itemtype, tmdb_id, season, episode), 2)
+            utils.kodi_log(u'TMDb Get Details: No Item Type or TMDb ID!\n{} {} {} {}'.format(itemtype, tmdb_id, season, episode), 2)
             return {}
+
         extra_request = None
-        cache_name = '{0}.TMDb.v2_2_67.{1}.{2}'.format(self.cache_name, itemtype, tmdb_id)
+        cache_name = '{0}.TMDb.v3_2_9.{1}.{2}'.format(self.cache_name, itemtype, tmdb_id)
         cache_name = '{0}.Season{1}'.format(cache_name, season) if season else cache_name
         cache_name = '{0}.Episode{1}'.format(cache_name, episode) if season and episode else cache_name
         itemdict = self.get_cache(cache_name) if not cache_refresh else None
+
         if not itemdict and not cache_only:
             request = self.get_request_lc(itemtype, tmdb_id, language=self.req_language, append_to_response=self.req_append, cache_refresh=cache_refresh)
+
             if itemtype == 'tv':
                 request['tvshowtitle'] = self.get_title(request)
+
             if season and episode:
-                extra_request = self.get_request_lc('tv', tmdb_id, 'season', season, 'episode', episode, language=self.req_language, append_to_response=self.req_append, cache_refresh=cache_refresh)
+                extra_request = self.get_request_lc(
+                    'tv', tmdb_id, 'season', season, 'episode', episode,
+                    language=self.req_language, append_to_response=self.req_append, cache_refresh=cache_refresh)
             elif season:
-                extra_request = self.get_request_lc('tv', tmdb_id, 'season', season, language=self.req_language, append_to_response=self.req_append, cache_refresh=cache_refresh)
+                extra_request = self.get_request_lc(
+                    'tv', tmdb_id, 'season', season,
+                    language=self.req_language, append_to_response=self.req_append, cache_refresh=cache_refresh)
+
             if season and episode and not extra_request:
                 extra_request = {'episode_number': episode, 'season_number': season}
+
             if extra_request:
+                extra_request['tvshow.tmdb_id'] = request.get('id')
+                extra_request['tvshow.imdb_id'] = request.get('imdb_id') or request.get('external_ids', {}).get('imdb_id')
+                extra_request['tvshow.tvdb_id'] = request.get('external_ids', {}).get('tvdb_id')
+                extra_request['tvshow.premiered'] = request.get('first_air_date') or ''
                 request = utils.merge_two_dicts(request, extra_request)
+
             itemdict = self.set_cache(self.get_niceitem(request), cache_name, self.cache_long) if request else {}
-            utils.kodi_log('TMDb Get Details: No Item Found!\n{} {} {} {}'.format(itemtype, tmdb_id, season, episode), 2) if not request else None
+            utils.kodi_log(u'TMDb Get Details: No Item Found!\n{} {} {} {}'.format(itemtype, tmdb_id, season, episode), 2) if not request else None
+
+        return itemdict
+
+    def get_tvshow_nextaired(self, tmdb_id):
+        """ Get updated next aired data for tvshows using 24hr cache """
+        if not tmdb_id:
+            return {}
+        cache_name = '{0}.NextAired.{1}'.format(self.cache_name, tmdb_id)
+        itemdict = self.get_cache(cache_name)
+        if not itemdict:
+            request = self.get_request('tv', tmdb_id, language=self.req_language, cache_days=1)
+            itemdict = self.set_cache(self.get_airdates(request), cache_name, cache_days=1) if request else {}
         return itemdict
 
     def get_externalid_item(self, itemtype, external_id, external_source):
@@ -473,5 +538,5 @@ class TMDb(RequestAPI):
         request = func(*args, language=self.req_language, **kwargs)
         items = self.get_nicelist(request.get(key, []))
         if pagination and utils.try_parse_int(request.get('page', 0)) < utils.try_parse_int(request.get('total_pages', 0)):
-            items.append(ListItem(library=self.library, label='Next Page', nextpage=utils.try_parse_int(request.get('page', 0)) + 1))
+            items.append(ListItem(library=self.library, label=xbmc.getLocalizedString(33078), nextpage=utils.try_parse_int(request.get('page', 0)) + 1))
         return items

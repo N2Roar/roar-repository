@@ -8,17 +8,15 @@ import ast
 import hashlib
 import re
 import time
-
-from resources.lib.modules import control
-from resources.lib.modules import log_utils
-
 try:
 	from sqlite3 import dbapi2 as db, OperationalError
 except ImportError:
 	from pysqlite2 import dbapi2 as db, OperationalError
 
+from resources.lib.modules import control
+from resources.lib.modules import log_utils
+
 cache_table = 'cache'
-notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 def get(function, duration, *args):
@@ -29,17 +27,14 @@ def get(function, duration, *args):
 	:param duration: Duration of validity of cache in hours
 	:param args: Optional arguments for the provided function
 	"""
-
 	try:
 		key = _hash_function(function, args)
 		cache_result = cache_get(key)
-
 		if cache_result:
 			if _is_cache_valid(cache_result['date'], duration):
 				return ast.literal_eval(cache_result['value'].encode('utf-8'))
 
 		fresh_result = repr(function(*args))
-
 		cache_insert(key, fresh_result)
 
 		# Sometimes None is returned as a string instead of the special value None.
@@ -67,14 +62,37 @@ def get(function, duration, *args):
 		return None
 
 
+def remove(function, *args):
+	try:
+		key = _hash_function(function, args)
+		key_exists = cache_get(key)
+		if key_exists:
+			cursor = _get_connection_cursor()
+			cursor.execute("DELETE FROM %s WHERE key = ?" % cache_table, [key])
+			cursor.connection.commit()
+			cursor.close()
+	except:
+		log_utils.error()
+		try:
+			cursor.close()
+		except:
+			pass
+
+
 def cache_get(key):
 	try:
 		cursor = _get_connection_cursor()
+		cursor.execute("SELECT * FROM sqlite_master WHERE type='table' AND name='%s';" % cache_table)
+		ck_table = cursor.fetchone()
+		if not ck_table:
+			cursor.close()
+			return None
 		cursor.execute("SELECT * FROM %s WHERE key = ?" % cache_table, [key])
 		results = cursor.fetchone()
 		cursor.close()
 		return results
 	except:
+		log_utils.error()
 		try:
 			cursor.close()
 		except:
@@ -86,14 +104,10 @@ def cache_insert(key, value):
 	try:
 		cursor = _get_connection_cursor()
 		now = int(time.time())
-
 		cursor.execute("CREATE TABLE IF NOT EXISTS %s (key TEXT, value TEXT, date INTEGER, UNIQUE(key))" % cache_table)
-
 		update_result = cursor.execute("UPDATE %s SET value=?,date=? WHERE key=?" % cache_table, (value, now, key))
-
 		if update_result.rowcount is 0:
 			cursor.execute("INSERT INTO %s Values (?, ?, ?)" % cache_table, (key, value, now))
-
 		cursor.connection.commit()
 	except:
 		log_utils.error()
@@ -104,6 +118,7 @@ def cache_insert(key, value):
 def cache_clear_providers():
 	cursor = _get_connection_cursor()
 	for t in ['cache', 'rel_src', 'rel_url']:
+	# for t in ['cache', 'rel_src', 'rel_url', 'rel_src_seasonPack', 'rel_src_showPack']:
 		try:
 			cursor.execute("DROP TABLE IF EXISTS %s" % t)
 			cursor.execute("VACUUM")
@@ -154,4 +169,3 @@ def _is_cache_valid(cached_time, cache_timeout):
 	now = int(time.time())
 	diff = now - cached_time
 	return (cache_timeout * 3600) > diff
-

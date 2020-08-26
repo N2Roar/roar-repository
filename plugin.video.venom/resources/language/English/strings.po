@@ -336,11 +336,11 @@ msgid "Auto update User Lists"
 msgstr ""
 
 msgctxt "#32076"
-msgid ""
+msgid "Removing metacache results in excessive api requests and\nsystem slow down.\nAre you sure?"
 msgstr ""
 
 msgctxt "#32077"
-msgid ""
+msgid "This also wipes out your metacache and all meta must be\nfetched from scratch, resulting in excessive api requests\nand system slow down.\nBest to only use this unless ABSOLUTELY necessary.\nAre you sure?"
 msgstr ""
 
 msgctxt "#32078"
@@ -348,11 +348,11 @@ msgid "Show general notifications"
 msgstr ""
 
 msgctxt "#32079"
-msgid ""
+msgid "Enable File Size Limit"
 msgstr ""
 
 msgctxt "#32080"
-msgid ""
+msgid "File Size limit (GB)"
 msgstr ""
 
 msgctxt "#32081"
@@ -550,7 +550,7 @@ msgid "Background"
 msgstr ""
 
 msgctxt "#32338"
-msgid "File Hosting Filters"
+msgid "Results filtering options"
 msgstr ""
 
 msgctxt "#32339"
@@ -562,7 +562,7 @@ msgid "SD Hosters in Auto Play"
 msgstr ""
 
 msgctxt "#32341"
-msgid "Include Hosters with captchas"
+msgid "Remove pair/captcha hosts"
 msgstr ""
 
 msgctxt "#32342"
@@ -650,11 +650,11 @@ msgid "[B]SETTINGS[/B] : Navigation"
 msgstr ""
 
 msgctxt "#32363"
-msgid "Include HEVC"
+msgid "Remove HEVC streams"
 msgstr ""
 
 msgctxt "#32364"
-msgid ""
+msgid "Disable CloudFlare protected providers"
 msgstr ""
 
 msgctxt "#32365"
@@ -674,15 +674,15 @@ msgid " (Trakt)"
 msgstr ""
 
 msgctxt "#32369"
-msgid ""
+msgid "TVDB api key1"
 msgstr ""
 
 msgctxt "#32370"
-msgid ""
+msgid "TVDB api key2"
 msgstr ""
 
 msgctxt "#32371"
-msgid ""
+msgid "TVDB api key3"
 msgstr ""
 
 msgctxt "#32372"
@@ -810,7 +810,7 @@ msgid "Playback outside Venom is not allowed"
 msgstr ""
 
 msgctxt "#32403"
-msgid "Download"
+msgid "[B]Download[/B]"
 msgstr ""
 
 msgctxt "#32404"
@@ -1222,7 +1222,7 @@ msgid "[B][COLOR red]UpNext[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32506"
-msgid ""
+msgid "[B][COLOR red]Venom Global Context[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32507"
@@ -1250,7 +1250,7 @@ msgid "Do you want to reset?"
 msgstr ""
 
 msgctxt "#32513"
-msgid "1) Visit : [COLOR skyblue]%s[/COLOR]"
+msgid "1) Open this link in a browser : [COLOR skyblue]%s[/COLOR]"
 msgstr ""
 
 msgctxt "#32514"
@@ -2276,7 +2276,7 @@ msgid "Download Manager"
 msgstr ""
 
 msgctxt "#33586"
-msgid "Error Connecting to TMDB"
+msgid "Error"
 msgstr ""
 
 msgctxt "#33587"
@@ -2295,9 +2295,45 @@ msgctxt "#33590"
 msgid ""
 msgstr ""
 
+msgctxt "#33591"
+msgid ""
+msgstr ""
 
+msgctxt "#33592"
+msgid ""
+msgstr ""
 
+msgctxt "#33593"
+msgid ""
+msgstr ""
 
+msgctxt "#33594"
+msgid ""
+msgstr ""
+
+msgctxt "#33595"
+msgid ""
+msgstr ""
+
+msgctxt "#33596"
+msgid ""
+msgstr ""
+
+msgctxt "#33597"
+msgid ""
+msgstr ""
+
+msgctxt "#33598"
+msgid ""
+msgstr ""
+
+msgctxt "#33599"
+msgid ""
+msgstr ""
+
+msgctxt "#33600"
+msgid ""
+msgstr ""
 
 
 
@@ -2533,7 +2569,7 @@ msgid "Air Label Day"
 msgstr ""
 
 msgctxt "#35032"
-msgid "Airs"
+msgid "[B]Airs[/B]:"
 msgstr ""
 
 msgctxt "#35033"
@@ -2886,15 +2922,15 @@ msgid "Notify Me About Available Updates"
 msgstr ""
 
 msgctxt "#35525"
-msgid ""
+msgid "Disable clearart, clearlogo, and discart in player"
 msgstr ""
 
 msgctxt "#35526"
-msgid ""
+msgid "Movie theatrical unreleased color"
 msgstr ""
 
 msgctxt "#35527"
-msgid ""
+msgid "Enable Notification Sound"
 msgstr ""
 
 msgctxt "#35528"
@@ -2977,10 +3013,101 @@ msgctxt "#35547"
 msgid "Force"
 msgstr ""
 
+msgctxt "#35548"
+msgid ""
+msgstr ""
 
+msgctxt "#35549"
+msgid ""
+msgstr ""
 
+msgctxt "#35550"
+msgid ""
+msgstr ""
 
+msgctxt "#35551"
+msgid ""
+msgstr ""
 
+msgctxt "#35552"
+msgid ""
+msgstr ""
+
+msgctxt "#35553"
+msgid ""
+msgstr ""
+
+msgctxt "#35554"
+msgid ""
+msgstr ""
+
+msgctxt "#35555"
+msgid ""
+msgstr ""
+
+msgctxt "#35556"
+msgid ""
+msgstr ""
+
+msgctxt "#35557"
+msgid ""
+msgstr ""
+
+msgctxt "#35558"
+msgid ""
+msgstr ""
+
+msgctxt "#35559"
+msgid ""
+msgstr ""
+
+msgctxt "#35560"
+msgid ""
+msgstr ""
+
+msgctxt "#35561"
+msgid ""
+msgstr ""
+
+msgctxt "#35562"
+msgid ""
+msgstr ""
+
+msgctxt "#35563"
+msgid ""
+msgstr ""
+
+msgctxt "#35564"
+msgid ""
+msgstr ""
+
+msgctxt "#35565"
+msgid ""
+msgstr ""
+
+msgctxt "#35566"
+msgid ""
+msgstr ""
+
+msgctxt "#35567"
+msgid ""
+msgstr ""
+
+msgctxt "#35568"
+msgid ""
+msgstr ""
+
+msgctxt "#35569"
+msgid ""
+msgstr ""
+
+msgctxt "#35570"
+msgid ""
+msgstr ""
+
+msgctxt "#35571"
+msgid ""
+msgstr ""
 
 msgctxt "#35572"
 msgid "Progress Sorting"
@@ -2990,13 +3117,162 @@ msgctxt "#35573"
 msgid "Calendar Sorting"
 msgstr ""
 
+msgctxt "#35574"
+msgid ""
+msgstr ""
+
+msgctxt "#35575"
+msgid ""
+msgstr ""
+
+msgctxt "#35576"
+msgid ""
+msgstr ""
+
+msgctxt "#35577"
+msgid ""
+msgstr ""
+
+msgctxt "#35578"
+msgid ""
+msgstr ""
+
+msgctxt "#35579"
+msgid ""
+msgstr ""
+
+msgctxt "#35580"
+msgid ""
+msgstr ""
+
+msgctxt "#35581"
+msgid ""
+msgstr ""
+
+msgctxt "#35582"
+msgid ""
+msgstr ""
+
+msgctxt "#35583"
+msgid ""
+msgstr ""
+
+msgctxt "#35584"
+msgid ""
+msgstr ""
+
+msgctxt "#35585"
+msgid ""
+msgstr ""
+
+msgctxt "#35586"
+msgid ""
+msgstr ""
+
+msgctxt "#35587"
+msgid ""
+msgstr ""
+
+msgctxt "#35588"
+msgid ""
+msgstr ""
+
+msgctxt "#35589"
+msgid ""
+msgstr ""
+
+msgctxt "#35589"
+msgid ""
+msgstr ""
+
+msgctxt "#35590"
+msgid ""
+msgstr ""
+
+msgctxt "#35591"
+msgid ""
+msgstr ""
+
+msgctxt "#35592"
+msgid ""
+msgstr ""
+
+msgctxt "#35593"
+msgid ""
+msgstr ""
+
+msgctxt "#35594"
+msgid ""
+msgstr ""
+
+msgctxt "#35595"
+msgid ""
+msgstr ""
+
+msgctxt "#35596"
+msgid ""
+msgstr ""
+
+msgctxt "#355977"
+msgid ""
+msgstr ""
+
+msgctxt "#35598"
+msgid ""
+msgstr ""
+
+msgctxt "#35599"
+msgid ""
+msgstr ""
+
+msgctxt "#35600"
+msgid ""
+msgstr ""
 
 
 
 
 
 
+msgctxt "#40010"
+msgid ""
+msgstr ""
 
+msgctxt "#40011"
+msgid ""
+msgstr ""
+
+msgctxt "#40012"
+msgid ""
+msgstr ""
+
+msgctxt "#40013"
+msgid ""
+msgstr ""
+
+msgctxt "#40014"
+msgid ""
+msgstr ""
+
+msgctxt "#40015"
+msgid ""
+msgstr ""
+
+msgctxt "#40016"
+msgid ""
+msgstr ""
+
+msgctxt "#40017"
+msgid ""
+msgstr ""
+
+msgctxt "#40018"
+msgid ""
+msgstr ""
+
+msgctxt "#40019"
+msgid ""
+msgstr ""
 
 msgctxt "#40020"
 msgid ""
@@ -3059,107 +3335,107 @@ msgid "Add Meta Provider Labels..ex. (IMDb)"
 msgstr ""
 
 msgctxt "#40035"
-msgid ""
+msgid "[B]Email:[/B] %s"
 msgstr ""
 
 msgctxt "#40036"
-msgid ""
+msgid "[B]Username:[/B] %s"
 msgstr ""
 
 msgctxt "#40037"
-msgid ""
+msgid "[B]Status:[/B] %s"
 msgstr ""
 
 msgctxt "#40038"
-msgid ""
+msgid "[B]Fidelity Points:[/B] %s"
 msgstr ""
 
 msgctxt "#40039"
-msgid ""
+msgid "Highlight Color"
 msgstr ""
 
 msgctxt "#40040"
-msgid ""
+msgid "[B]Customer ID:[/B] %s"
 msgstr ""
 
 msgctxt "#40041"
-msgid ""
+msgid "[B]Expires:[/B] %s"
 msgstr ""
 
 msgctxt "#40042"
-msgid ""
+msgid "[B]Days Remaining:[/B] %s"
 msgstr ""
 
 msgctxt "#40043"
-msgid ""
+msgid "[B]Points Used:[/B] %.f"
 msgstr ""
 
 msgctxt "#40044"
-msgid ""
+msgid "[B]Space Used:[/B] %.2f"
 msgstr ""
 
 msgctxt "#40045"
-msgid ""
+msgid "[B]Fair Use (Percentage Used):[/B] %s"
 msgstr ""
 
 msgctxt "#40046"
-msgid ""
+msgid "folder"
 msgstr ""
 
 msgctxt "#40047"
-msgid ""
+msgid "file"
 msgstr ""
 
 msgctxt "#40048"
-msgid ""
+msgid "[B]Download File[/B]"
 msgstr ""
 
 msgctxt "#40049"
-msgid ""
+msgid "[B]Rename %s[/B]"
 msgstr ""
 
 msgctxt "#40050"
-msgid ""
+msgid "[B]Delete %s[/B]"
 msgstr ""
 
 msgctxt "#40051"
-msgid ""
+msgid "[B]Clear Finished Transfers[/B]"
 msgstr ""
 
 msgctxt "#40052"
-msgid ""
+msgid "Preminumize.me succesfuly authorized"
 msgstr ""
 
 msgctxt "#40053"
-msgid ""
+msgid "Authentication with Real-Debrid has failed, please try again"
 msgstr ""
 
 msgctxt "#40054"
-msgid ""
+msgid "Premiumize.me Auth"
 msgstr ""
 
 msgctxt "#40055"
-msgid ""
+msgid "Real-Debrid Auth"
 msgstr ""
 
 msgctxt "#40056"
-msgid ""
+msgid "All-Debrid Auth"
 msgstr ""
 
 msgctxt "#40057"
-msgid ""
+msgid "Premiumize.me"
 msgstr ""
 
 msgctxt "#40058"
-msgid ""
+msgid "Real-Debrid"
 msgstr ""
 
 msgctxt "#40059"
-msgid ""
+msgid "All-Debrid"
 msgstr ""
 
 msgctxt "#40060"
-msgid ""
+msgid "Enable Premium Services Menu"
 msgstr ""
 
 msgctxt "#40061"

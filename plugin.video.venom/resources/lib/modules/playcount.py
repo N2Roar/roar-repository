@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys, xbmc
+import sys
 
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
@@ -11,8 +11,8 @@ traktIndicators = trakt.getTraktIndicatorsInfo()
 
 def getMovieIndicators(refresh=False):
 	try:
-		if traktIndicators is True:
-			if refresh is False:
+		if traktIndicators:
+			if not refresh:
 				timeout = 720
 			elif trakt.getWatchedActivity() < trakt.timeoutsyncMovies():
 				timeout = 720
@@ -31,8 +31,8 @@ def getMovieIndicators(refresh=False):
 
 def getTVShowIndicators(refresh=False):
 	try:
-		if traktIndicators is True:
-			if refresh is False:
+		if traktIndicators:
+			if not refresh:
 				timeout = 720
 			elif trakt.getWatchedActivity() < trakt.timeoutsyncTVShows():
 				timeout = 720
@@ -51,8 +51,8 @@ def getTVShowIndicators(refresh=False):
 
 def getSeasonIndicators(imdb, refresh=False):
 	try:
-		if traktIndicators is True:
-			if refresh is False:
+		if traktIndicators:
+			if not refresh:
 				timeout = 720
 			elif trakt.getWatchedActivity() < trakt.timeoutsyncSeason(imdb = imdb):
 				timeout = 720
@@ -122,11 +122,11 @@ def getEpisodeOverlay(indicators, imdb, tvdb, season, episode):
 		return '6'
 
 
-def getShowCount(indicators, imdb, tvdb, limit = False):
+def getShowCount(indicators, imdb, tvdb, limit=False):
 	if not imdb.startswith('tt'):
 		return None
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			result = trakt.showCount(imdb)
 			if limit and result:
 				result['unwatched'] = min(99, result['unwatched'])
@@ -146,11 +146,11 @@ def getShowCount(indicators, imdb, tvdb, limit = False):
 		return None
 
 
-def getSeasonCount(imdb, season = None, season_special = False, limit = False):
+def getSeasonCount(imdb, season=None, season_special=False, limit=False):
 	if not imdb.startswith('tt'):
 		return None
 	try:
-		if traktIndicators is False:
+		if not traktIndicators:
 			raise Exception()
 
 		result = trakt.seasonCount(imdb)
@@ -161,7 +161,7 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 					result[i]['unwatched'] = min(99, result[i]['unwatched'])
 			return result
 		else:
-			if control.setting('tv.specials') == 'true' and season_special is True:
+			if control.setting('tv.specials') == 'true' and season_special:
 				result = result[int(season)]
 			else:
 				result = result[int(season) - 1]
@@ -175,7 +175,7 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 
 def markMovieDuringPlayback(imdb, watched):
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			if int(watched) == 7:
 				trakt.markMovieAsWatched(imdb)
 			else:
@@ -183,7 +183,7 @@ def markMovieDuringPlayback(imdb, watched):
 
 			trakt.cachesyncMovies()
 
-			# if trakt.getTraktAddonMovieInfo() is True:
+			# if trakt.getTraktAddonMovieInfo():
 				# log_utils.log('trakt.getTraktAddonMovieInfo = True', __name__, log_utils.LOGDEBUG)
 				# trakt.markMovieAsNotWatched(imdb)
 		else:
@@ -198,14 +198,14 @@ def markMovieDuringPlayback(imdb, watched):
 
 def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			if int(watched) == 7:
 				trakt.markEpisodeAsWatched(imdb, tvdb, season, episode)
 			else:
 				trakt.markEpisodeAsNotWatched(imdb, tvdb, season, episode)
 
 			trakt.cachesyncTVShows()
-			# if trakt.getTraktAddonEpisodeInfo() is True:
+			# if trakt.getTraktAddonEpisodeInfo():
 				# log_utils.log('trakt.getTraktAddonEpisodeInfo = True', __name__, log_utils.LOGDEBUG)
 				# trakt.markEpisodeAsNotWatched(imdb, tvdb, season, episode)
 		else:
@@ -221,7 +221,7 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 def movies(name, imdb, watched):
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			if int(watched) == 7:
 				trakt.watch(name=name, imdb=imdb, refresh=True)
 			else:
@@ -239,7 +239,7 @@ def movies(name, imdb, watched):
 
 def episodes(name, imdb, tvdb, season, episode, watched):
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			if int(watched) == 7:
 				trakt.watch(name=name, imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True)
 			else:
@@ -263,7 +263,7 @@ def seasons(tvshowtitle, imdb, tvdb, season, watched):
 def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 	watched = int(watched)
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			if watched == 7:
 				trakt.watch(name=tvshowtitle, imdb = imdb, tvdb = tvdb, season = season, refresh = True)
 			else:
@@ -296,7 +296,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 			count = len(items)
 
 			for i in range(count):
-				if xbmc.abortRequested is True:
+				if control.monitor.abortRequested():
 					return sys.exit()
 				dialog.update(int(100.0 / count * i), str(name), str(items[i]['label']))
 				season, episode = items[i]['season'], items[i]['episode']
@@ -315,7 +315,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 
 def tvshowsUpdate(imdb, tvdb):
 	try:
-		if traktIndicators is True:
+		if traktIndicators:
 			return
 
 		from metahandler import metahandlers

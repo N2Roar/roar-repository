@@ -1,28 +1,37 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import urllib, hashlib, json
-import xbmc
+"""
+	Venom Add-on
+"""
 
 try:
 	import AddonSignals
 except:
 	pass
 
-from resources.lib.modules import cleantitle, control, playcount, log_utils
-
-try:
-	sysaddon = sys.argv[0]
-	syshandle = int(sys.argv[1])
-except:
-	pass
+import copy
+import hashlib
+import json
+import sys
 
 try:
 	from sqlite3 import dbapi2 as database
 except:
 	from pysqlite2 import dbapi2 as database
 
-notificationSound = False if control.setting('notification.sound') == 'false' else True
+try:
+	from urllib import quote_plus, unquote_plus
+except:
+	from urllib.parse import quote_plus, unquote_plus
+
+import xbmc
+
+from resources.lib.modules import control
+from resources.lib.modules import cleantitle
+from resources.lib.modules import log_utils
+from resources.lib.modules import metacache
+from resources.lib.modules import playcount
+from resources.lib.modules import trakt
 
 
 class Player(xbmc.Player):
@@ -46,22 +55,21 @@ class Player(xbmc.Player):
 				control.cancelPlayback()
 				raise Exception
 
-			control.sleep(200)
 			self.media_type = 'movie' if season is None or episode is None else 'episode'
 			self.title = title
 			self.year = str(year)
 
 			if self.media_type == 'movie':
-				self.name = urllib.quote_plus(title) + urllib.quote_plus(' (%s)' % self.year) 
+				self.name = quote_plus(title) + quote_plus(' (%s)' % self.year) 
 				self.season = None
 				self.episode = None
 
 			elif self.media_type == 'episode':
-				self.name = urllib.quote_plus(title) + urllib.quote_plus(' S%02dE%02d' % (int(season), int(episode)))
+				self.name = quote_plus(title) + quote_plus(' S%02dE%02d' % (int(season), int(episode)))
 				self.season = '%01d' % int(season)
 				self.episode = '%01d' % int(episode)
 
-			self.name = urllib.unquote_plus(self.name)
+			self.name = unquote_plus(self.name) # this looks dumb, quote to only unquote?
 
 			self.DBID = None
 
@@ -69,13 +77,42 @@ class Player(xbmc.Player):
 			self.tvdb = tvdb if tvdb is not None else '0'
 			self.ids = {'imdb': self.imdb, 'tvdb': self.tvdb}
 			self.ids = dict((k, v) for k, v in self.ids.iteritems() if v != '0')
-
 			self.meta = meta
 			self.offset = Bookmarks().get(self.name, self.year)
-			poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta = self.getMeta(meta)
 
 			item = control.item(path=url)
 
+## - compare meta received to database and use largest(eventually switch to a request to fetch missing db meta for item)
+			self.imdb_user = control.setting('imdb.user').replace('ur', '')
+			self.tmdb_key = control.setting('tm.user')
+			if self.tmdb_key == '' or self.tmdb_key is None:
+				self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
+			tvdb_key_list = [
+				'MDZjZmYzMDY5MGY5Yjk2MjI5NTcwNDRmMjE1OWZmYWU=',
+				'MUQ2MkYyRjkwMDMwQzQ0NA==',
+				'N1I4U1paWDkwVUE5WU1CVQ==']
+			self.tvdb_key = tvdb_key_list[int(control.setting('tvdb.api.key'))]
+
+			if self.media_type == 'episode':
+				self.user = str(self.imdb_user) + str(self.tvdb_key)
+			else:
+				self.user = str(self.tmdb_key)
+			self.lang = control.apiLanguage()['tvdb']
+			items = [{'imdb': imdb, 'tvdb': tvdb}] # need to add tmdb but it's not passed as of now
+			items_ck = copy.deepcopy(items)
+
+			meta1 = meta
+			meta2 = metacache.fetch(items, self.lang, self.user)[0]
+			if meta1 is not None:
+				if len(meta2) > len(meta1):
+					meta = meta2
+				else:
+					meta = meta1
+			else:
+				meta = meta2 if meta2 != items_ck[0] else meta1
+##################
+
+			poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta = self.getMeta(meta)
 			if self.media_type == 'episode':
 				self.episodeIDS = meta.get('episodeIDS', '0')
 				item.setUniqueIDs(self.episodeIDS)
@@ -90,18 +127,6 @@ class Player(xbmc.Player):
 				else:
 					item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'fanart': fanart})
 
-			# self.tvdb_key = 'N1I4U1paWDkwVUE5WU1CVQ=='
-			# self.imdb_user = control.setting('imdb.user').replace('ur', '')
-			# self.user = str(self.imdb_user) + str(self.tvdb_key)
-			# self.lang = control.apiLanguage()['tvdb']
-			# items = [{'imdb': imdb, 'tvdb': tvdb}]
-			# list = metacache.fetch(items, self.lang, self.user)
-			# if 'castandart' in str(list):
-				# item.setCast(list[0].get('castandart', ''))
-
-			# test = control.infoLabel('ListItem.thumb')
-			# log_utils.log('thumb = %s' % test, __name__, log_utils.LOGDEBUG)
-
 			if 'castandart' in meta:
 				item.setCast(meta.get('castandart', ''))
 
@@ -110,7 +135,7 @@ class Player(xbmc.Player):
 			if 'plugin' not in control.infoLabel('Container.PluginName') or select != '1':
 				if control.window.getProperty('infodialogs.active'):
 					control.closeAll()
-				control.resolve(syshandle, True, item)
+				control.resolve(int(sys.argv[1]), True, item)
 
 			elif select == '1':
 				control.closeAll()
@@ -126,9 +151,9 @@ class Player(xbmc.Player):
 
 	def getMeta(self, meta):
 		try:
-			if meta is None:
+			if not meta:
 				raise Exception()
-			poster = meta.get('poster')
+			poster = meta.get('poster3') or meta.get('poster2') or meta.get('poster')
 			thumb = meta.get('thumb')
 			thumb = thumb or poster or control.addonThumb()
 			season_poster = meta.get('season_poster') or poster
@@ -137,9 +162,13 @@ class Player(xbmc.Player):
 			clearart = meta.get('clearart')
 			clearlogo = meta.get('clearlogo')
 			discart = meta.get('discart')
-			if 'mediatype' not in meta:
-				meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})
 
+			if 'mediatype' not in meta:
+				meta.update({'mediatype': 'episode' if self.episode else 'movie'})
+				if self.episode:
+					meta.update({'season': self.season})
+					meta.update({'episode': self.episode})
+					meta.update({'tvshowtitle': self.title})
 			return (poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta)
 		except:
 			log_utils.error()
@@ -175,8 +204,6 @@ class Player(xbmc.Player):
 				self.DBID = meta.get('movieid')
 
 			poster = thumb = meta.get('thumbnail')
-
-			# return (poster, thumb, '', '', '', '', '', '', meta)
 			return (poster, '', '', '', '', '', '', '', meta)
 		except:
 			log_utils.error()
@@ -220,7 +247,6 @@ class Player(xbmc.Player):
 				self.DBID = meta.get('episodeid')
 
 			thumb = meta['thumbnail']
-			# return (poster, thumb, '', '', '', '', '', '', meta) # poster gets dropped if also passed thumb from episode
 			return (poster, '', '', '', '', '', '', '', meta)
 		except:
 			log_utils.error()
@@ -293,7 +319,8 @@ class Player(xbmc.Player):
 
 				if self.media_type == 'movie':
 					try:
-						if watcher is True and property != '7':
+						# if watcher is True and property != '7':
+						if watcher and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markMovieDuringPlayback(self.imdb, '7')
 						# elif watcher is False and property != '6':
@@ -305,7 +332,8 @@ class Player(xbmc.Player):
 
 				elif self.media_type == 'episode':
 					try:
-						if watcher is True and property != '7':
+						# if watcher is True and property != '7':
+						if watcher and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '7')
 						# elif watcher is False and property != '6':
@@ -419,7 +447,6 @@ class Player(xbmc.Player):
 				xbmc.sleep(1000)
 
 		if self.offset != '0' and self.playback_resumed is False:
-			# log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
 			self.seekTime(float(self.offset))
 			self.playback_resumed = True
 
@@ -544,7 +571,7 @@ class Player(xbmc.Player):
 class Subtitles:
 	def get(self, name, imdb, season, episode):
 		import gzip, StringIO, codecs
-		import xmlrpclib, os, re, base64
+		import xmlrpclib, re, base64
 
 		try:
 			langDict = {'Afrikaans': 'afr', 'Albanian': 'alb', 'Arabic': 'ara', 'Armenian': 'arm', 'Basque': 'baq', 'Bengali': 'ben', 'Bosnian': 'bos', 'Breton': 'bre', 'Bulgarian': 'bul', 'Burmese': 'bur', 'Catalan': 'cat', 'Chinese': 'chi', 'Croatian': 'hrv', 'Czech': 'cze', 'Danish': 'dan', 'Dutch': 'dut', 'English': 'eng', 'Esperanto': 'epo', 'Estonian': 'est', 'Finnish': 'fin', 'French': 'fre', 'Galician': 'glg', 'Georgian': 'geo', 'German': 'ger', 'Greek': 'ell', 'Hebrew': 'heb', 'Hindi': 'hin', 'Hungarian': 'hun', 'Icelandic': 'ice', 'Indonesian': 'ind', 'Italian': 'ita', 'Japanese': 'jpn', 'Kazakh': 'kaz', 'Khmer': 'khm', 'Korean': 'kor', 'Latvian': 'lav', 'Lithuanian': 'lit', 'Luxembourgish': 'ltz', 'Macedonian': 'mac', 'Malay': 'may', 'Malayalam': 'mal', 'Manipuri': 'mni', 'Mongolian': 'mon', 'Montenegrin': 'mne', 'Norwegian': 'nor', 'Occitan': 'oci', 'Persian': 'per', 'Polish': 'pol', 'Portuguese': 'por,pob', 'Portuguese(Brazil)': 'pob,por', 'Romanian': 'rum', 'Russian': 'rus', 'Serbian': 'scc', 'Sinhalese': 'sin', 'Slovak': 'slo', 'Slovenian': 'slv', 'Spanish': 'spa', 'Swahili': 'swa', 'Swedish': 'swe', 'Syriac': 'syr', 'Tagalog': 'tgl', 'Tamil': 'tam', 'Telugu': 'tel', 'Thai': 'tha', 'Turkish': 'tur', 'Ukrainian': 'ukr', 'Urdu': 'urd'}
@@ -614,7 +641,7 @@ class Subtitles:
 			content = gzip.GzipFile(fileobj=StringIO.StringIO(content)).read()
 
 			subtitle = xbmc.translatePath('special://temp/')
-			subtitle = os.path.join(subtitle, 'TemporarySubs.%s.srt' % lang)
+			subtitle = control.joinPath(subtitle, 'TemporarySubs.%s.srt' % lang)
 
 			codepage = codePageDict.get(lang, '')
 			if codepage and control.setting('subtitles.utf') == 'true':
@@ -643,25 +670,34 @@ class Bookmarks:
 		if control.setting('bookmarks') != 'true':
 			return self.offset
 
-		idFile = hashlib.md5()
+		# idFile = hashlib.md5()
+		# for i in name:
+			# idFile.update(str(i))
+		# for i in year:
+			# idFile.update(str(i))
+		# idFile = str(idFile.hexdigest())
 
-		for i in name:
-			idFile.update(str(i))
+		try:
+			dbcon = database.connect(control.bookmarksFile)
+			dbcur = dbcon.cursor()
+			dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
+			# dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
+			if not year:
+				return self.offset
+			years = [str(year), str(int(year)+1), str(int(year)-1)]
 
-		for i in year:
-			idFile.update(str(i))
+			dbcur.execute('SELECT * FROM bookmark WHERE Name = "%s" AND year IN (%s)' % (name, ','.join(i for i in years))) #helps fix random cases where trakt and imdb, or tvdb, differ by a year for eps
+			match = dbcur.fetchone()
+			dbcon.close()
+		except:
+			log_utils.error()
+			try:
+				dbcon.close()
+			except:
+				pass
+			return self.offset
 
-		idFile = str(idFile.hexdigest())
-
-		dbcon = database.connect(control.bookmarksFile)
-		dbcur = dbcon.cursor()
-		# dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
-		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
-		dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
-		match = dbcur.fetchone()
-		dbcon.close()
-
-		if match is None:
+		if not match:
 			return self.offset
 
 		self.offset = str(match[1])
@@ -673,17 +709,19 @@ class Bookmarks:
 		hours, minutes = divmod(minutes, 60)
 
 		label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-		label = (control.lang(32502) % label).encode('utf-8')
+		label = control.lang(32502) % label
 
 		if control.setting('bookmarks.auto') == 'false':
-			yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
-
+			yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503), control.lang(32501))
 			if yes:
 				self.offset = '0'
 		return self.offset
 
 
 	def reset(self, current_time, media_length, name, year='0'):
+		from resources.lib.modules import cache
+		cache.clear_local_bookmarks()
+
 		if control.setting('bookmarks') != 'true' or media_length == 0 or current_time == 0:
 			return
 
@@ -692,33 +730,33 @@ class Bookmarks:
 		ok = (int(current_time) > 180 and (current_time / media_length) <= .92)
 
 		idFile = hashlib.md5()
-
 		for i in name:
 			idFile.update(str(i))
-
 		for i in year:
 			idFile.update(str(i))
-
 		idFile = str(idFile.hexdigest())
 
 		control.makeFile(control.dataPath)
-		dbcon = database.connect(control.bookmarksFile)
-		dbcur = dbcon.cursor()
-		# dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
-		dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
-		dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
+		try:
+			dbcon = database.connect(control.bookmarksFile)
+			dbcur = dbcon.cursor()
+			dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
+			# dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
+			years = [str(year), str(int(year)+1), str(int(year)-1)]
+			dbcur.execute('DELETE FROM bookmark WHERE Name = "%s" AND year IN (%s)' % (name, ','.join(i for i in years))) #helps fix random cases where trakt and imdb, or tvdb, differ by a year for eps
+		except:
+			log_utils.error()
+			pass
 
 		if ok:
-			# dbcur.execute("INSERT INTO bookmark Values (?, ?)", (idFile, timeInSeconds))
 			dbcur.execute("INSERT INTO bookmark Values (?, ?, ?, ?)", (idFile, timeInSeconds, name, year))
-
 
 			minutes, seconds = divmod(float(timeInSeconds), 60)
 			hours, minutes = divmod(minutes, 60)
 
 			label = ('%02d:%02d:%02d' % (hours, minutes, seconds)).encode('utf-8')
-			message = control.lang(32660).encode('utf-8')
+			message = control.lang(32660)
 
-			control.notification(title=name, message=message + '(' + label + ')', icon='INFO', sound=notificationSound)
+			control.notification(title=name, message=message + '(' + label + ')', icon='default', sound=(control.setting('notification.sound') == 'true'))
 		dbcur.connection.commit()
 		dbcon.close()

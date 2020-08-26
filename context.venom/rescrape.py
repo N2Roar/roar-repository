@@ -1,5 +1,6 @@
-import sys, xbmc, json
-import datetime
+import json
+import sys
+import xbmc
 
 try:
 	from urlparse import parse_qsl
@@ -10,35 +11,37 @@ except:
 
 if __name__ == '__main__':
 	item = sys.listitem
-	message = item.getLabel()
+	# message = item.getLabel()
 	path = item.getPath()
-	dt = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-	systime = (dt).strftime('%Y%m%d%H%M%S%f')
+	# xbmc.log('path = %s' % path, 2)
 	plugin = 'plugin://plugin.video.venom/'
 	args = path.split(plugin, 1)
 	params = dict(parse_qsl(args[1].replace('?', '')))
+
 	title = params['title']
+	systitle = quote_plus(title)
+	year = params.get('year', '')
 
 	if 'meta' in params:
 		meta = json.loads(params['meta'])
-		year = meta.get('year', '')
 		imdb = meta.get('imdb', '')
 		tvdb = meta.get('tvdb', '')
 		season = meta.get('season', '')
 		episode = meta.get('episode', '')
 		tvshowtitle = meta.get('tvshowtitle', '')
+		systvshowtitle = quote_plus(tvshowtitle)
 		premiered = meta.get('premiered', '')
 
 	else:
-		year = params.get('year', '')
 		imdb = params.get('imdb', '')
 		tvdb = params.get('tvdb', '')
 		season = params.get('season', '')
 		episode = params.get('episode', '')
 		tvshowtitle = params.get('tvshowtitle', '')
+		systvshowtitle = quote_plus(tvshowtitle)
 		premiered = params.get('premiered', '')
 
 	sysmeta = quote_plus(json.dumps(meta))
-	path = 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s)' % (
-									plugin, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, sysmeta, systime)
+	path = 'PlayMedia(%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&rescrape=true)' % (
+									plugin, systitle, year, imdb, tvdb, season, episode, systvshowtitle, premiered, sysmeta)
 	xbmc.executebuiltin(path)

@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, re, datetime
-import requests, urlparse, json, xbmcgui, xbmcplugin
+'''
+	Venom Add-on
+'''
+
+import sys
+import re
+import requests, json, xbmcgui
+try:
+	from urllib import quote_plus
+except:
+	from urllib.parse import quote_plus
 
 from resources.lib.modules import log_utils
 from resources.lib.modules import cache
 from resources.lib.modules import client
 from resources.lib.modules import control
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
-artPath = control.artPath() ; addonFanart = control.addonFanart()
-notificationSound = False if control.setting('notification.sound') == 'false' else True
+artPath = control.artPath()
+addonFanart = control.addonFanart()
+
 
 class documentary:
 	def __init__(self):
@@ -65,7 +74,7 @@ class documentary:
 				tmp_list = []
 				link = links[(len(links)-1)]
 				docu_action = 'docuHeaven&docuCat=%s' % link
-				self.list.append({'name': control.lang(32053).encode('utf-8'), 'url': link, 'image': control.addonNext(), 'action': docu_action})
+				self.list.append({'name': control.lang(32053), 'url': link, 'image': control.addonNext(), 'action': docu_action})
 			except:
 				pass
 		except Exception as e:
@@ -97,7 +106,7 @@ class documentary:
 				url = self.getDailyMotionStream(video_id)
 			else:
 				log_utils.log('Play Documentary: Unknown Host: ' + str(url))
-				control.notification(title = 'default', message = 'Unknown Host - Report To Developer: ' + str(url), icon = 'INFO', sound = notificationSound)
+				control.notification(title='default', message='Unknown Host - Report To Developer: ' + str(url), icon='default', sound=(control.setting('notification.sound') == 'true'))
 			control.execute('PlayMedia(%s)' % url)
 
 			# item = xbmcgui.ListItem(str(docu_title), iconImage='DefaultVideo.png', thumbnailImage='DefaultVideo.png')
@@ -160,7 +169,7 @@ class documentary:
 					if '.m3u8?auth' in m_url:
 						rr = requests.get(m_url,cookies=r.cookies.get_dict() ,headers=headers)
 						if rr.headers.get('set-cookie'):
-							print 'adding cookie to url'
+							print('adding cookie to url')
 							strurl = re.findall('(http.+)',rr.text)[0].split('#cell')[0]+'|Cookie='+rr.headers['set-cookie']
 						else:
 							strurl = re.findall('(http.+)',rr.text)[0].split('#cell')[0]
@@ -168,17 +177,22 @@ class documentary:
 
 
 	def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-		try: name = control.lang(name).encode('utf-8')
-		except: pass
+		try:
+			name = control.lang(name)
+		except:
+			pass
+
+		sysaddon = sys.argv[0]
+		syshandle = int(sys.argv[1])
+
 		url = '%s?action=%s' % (sysaddon, query) if isAction is True else query
-		thumb = os.path.join(artPath, thumb) if artPath is not None else icon
+		thumb = control.joinPath(artPath, thumb) if artPath is not None else icon
+
 		cm = []
-
-		if queue is True:
+		if queue:
 			cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-
-		if context is not None:
-			cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
+		if context:
+			cm.append((control.lang(context[0]), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 
 		item = control.item(label=name)
 		item.addContextMenuItems(cm)
@@ -187,6 +201,7 @@ class documentary:
 
 
 	def endDirectory(self):
+		syshandle = int(sys.argv[1])
 		control.content(syshandle, 'addons')
 		control.directory(syshandle, cacheToDisc=True)
 
@@ -194,18 +209,16 @@ class documentary:
 	def addDirectory(self, items, queue=False, isFolder=True):
 		if items is None or len(items) == 0: 
 			control.hide()
-			control.notification(title = 32002, message = 33049, icon = 'INFO', sound = notificationSound)
+			control.notification(title=32002, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
 			sys.exit()
 
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
-
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()
-
-		queueMenu = control.lang(32065).encode('utf-8')
-		playRandom = control.lang(32535).encode('utf-8')
-		addToLibrary = control.lang(32551).encode('utf-8')
+		queueMenu = control.lang(32065)
+		playRandom = control.lang(32535)
+		addToLibrary = control.lang(32551)
 
 		for i in items:
 			try:
@@ -213,8 +226,8 @@ class documentary:
 
 				if i['image'].startswith('http'):
 					thumb = i['image']
-				elif artPath is not None:
-					thumb = os.path.join(artPath, i['image'])
+				elif artPath:
+					thumb = control.joinPath(artPath, i['image'])
 				else:
 					thumb = addonThumb
 
@@ -222,7 +235,7 @@ class documentary:
 
 				if isFolder:
 					url = '%s?action=%s' % (sysaddon, i['action'])
-					try: url += '&url=%s' % urllib.quote_plus(i['url'])
+					try: url += '&url=%s' % quote_plus(i['url'])
 					except: pass
 					item.setProperty('IsPlayable', 'false')
 				else:

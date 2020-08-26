@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+	Venom Add-on
+"""
 
-import json, re
-
+import json
+import re
 
 def json_load_as_str(file_handle):
 	return byteify(json.load(file_handle, object_hook=byteify), ignore_dicts=True)

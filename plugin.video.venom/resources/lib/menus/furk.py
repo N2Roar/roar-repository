@@ -1,14 +1,22 @@
+# -*- coding: utf-8 -*-
+
 '''
 	Venom Add-on
 '''
 
-import sys, os
-import requests, json, urllib, urlparse
+import os
+import sys
+import json
+import requests
+
+try:
+	from urllib import quote_plus
+except:
+	from urllib.parse import quote_plus
 
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 accepted_extensions = ['mkv','mp4','avi', 'm4v']
 
 
@@ -24,6 +32,7 @@ class Furk:
 		self.add_download_link = "/api/dl/add?"
 		self.api_key = control.setting('furk.api')
 		self.list = []
+
 
 		def user_files(self):
 		if self.api_key == '':
@@ -60,6 +69,7 @@ class Furk:
 			log_utils.error()
 			pass
 
+
 	def search(self):
 		from resources.lib.menus import navigator
 		navigator.Navigator().addDirectoryItem('New Search', 'furkSearchNew', 'search.png', 'search.png')
@@ -93,14 +103,16 @@ class Furk:
 
 		navigator.Navigator().endDirectory()
 
+
 	def search_new(self):
 			control.hide()
-
-			t = control.lang(32010).encode('utf-8')
-			k = control.keyboard('', t) ; k.doModal()
+			t = control.lang(32010)
+			k = control.keyboard('', t)
+			k.doModal()
 			q = k.getText() if k.isConfirmed() else None
 
-			if (q is None or q == ''): return
+			if (q is None or q == ''):
+			return
 
 			try:
 				from sqlite3 import dbapi2 as database
@@ -113,9 +125,10 @@ class Furk:
 			dbcon.commit()
 			dbcur.close()
 
-			url = urllib.quote_plus(q)
-			url = '%s?action=furkMetaSearch&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+			url = quote_plus(q)
+			url = '%s?action=furkMetaSearch&url=%s' % (sys.argv[0], quote_plus(url))
 			control.execute('Container.Update(%s)' % url)
+
 
 	def furk_meta_search(self, url):
 		if self.api_key == '':
@@ -158,15 +171,17 @@ class Furk:
 			log_utils.error()
 			pass
 
+
 	def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
+		sysaddon = sys.argv[0]
+		syshandle = int(sys.argv[1])
 		try:
 			if type(name) is str or type(name) is unicode:
 				name = str(name)
 			if type(name) is int:
-				name = control.lang(name).encode('utf-8')
+				name = control.lang(name)
 		except:
 			log_utils.error()
-
 			url = '%s?action=%s' % (sysaddon, query) if isAction else query
 			item = control.item(label=name)
 			item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
@@ -174,6 +189,7 @@ class Furk:
 
 
 	def endDirectory(self):
+		syshandle = int(sys.argv[1])
 		control.content(syshandle, 'addons')
 		control.directory(syshandle, cacheToDisc=True)
 		control.sleep(200)

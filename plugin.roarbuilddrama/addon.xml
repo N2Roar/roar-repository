@@ -5,8 +5,6 @@
   version="0.0.4"
   provider-name="N2Roar">
 	<requires>
-		<!-- 3rd Party Drama (repository.magicality) -->
-		<!-- <import addon="plugin.video.dramatic"/> -->
 		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
 		<import addon="plugin.video.icdrama"/>
 	</requires>

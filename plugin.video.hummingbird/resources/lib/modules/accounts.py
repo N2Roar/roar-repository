@@ -22,20 +22,25 @@ class Mappings:
         self.id_list = []
 
     def get(self, site, id, return_site):
-        #Try Hato then Notify then just take the data
-        resp = requests.get('https://hato.malupdaterosx.moe/api/mappings/%s/anime/%s' % (site, id), headers={'User-Agent': tools.get_random_ua()})
-        load = json.loads(resp.content)
-        data = load['data']
         try:
-            notify = data['notify_id']
-            resp = requests.get('https://notify.moe/api/anime/%s' % notify)
+            resp = requests.get('https://arm.now.sh/api/v1/search?type=%s&id=%s' % (site, id))
             load = json.loads(resp.content)
-            mappings = load['mappings']
-            for a in mappings:
-                if a['service'] == self.return_sites[return_site]['notify']:
-                    return a['serviceId']
+            return load['services'][return_site]
         except:
-            return data[self.return_sites[return_site]['hato']]    
+            #Try Hato then Notify then just take the data
+            resp = requests.get('https://hato.malupdaterosx.moe/api/mappings/%s/anime/%s' % (site, id), headers={'User-Agent': tools.get_random_ua()})
+            load = json.loads(resp.content)
+            data = load['data']
+            try:
+                notify = data['notify_id']
+                resp = requests.get('https://notify.moe/api/anime/%s' % notify)
+                load = json.loads(resp.content)
+                mappings = load['mappings']
+                for a in mappings:
+                    if a['service'] == self.return_sites[return_site]['notify']:
+                        return a['serviceId']
+            except:
+                return data[self.return_sites[return_site]['hato']]    
             
     def get_thread(self, site, id, return_site):
         new_id = cache.hummingCache().cacheCheck(self.get, 8760, site, id, return_site)
@@ -119,7 +124,8 @@ class Kitsu:
             tools.setSetting('kitsu.refresh', str(info['refresh_token']))
             tools.setSetting('kitsu.create', str(info['created_at']))
             tools.setSetting('kitsu.expiry', str(info['expires_in']))
-            user = requests.get('https://kitsu.io/api/edge/users?filter[name]=%s' % self.username, headers=self.headers)
+            self.headers['Authorization'] = 'Bearer %s' % str(info['access_token'])
+            user = requests.get('https://kitsu.io/api/edge/users?filter[self]=true', headers=self.headers)
             userdata = json.loads(user.content)
             userdata = userdata['data'][0]
             tools.setSetting('kitsu.userid', str(userdata['id']))
@@ -440,8 +446,6 @@ class Mal:
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
         
-        tools.log(anime_list, 'error') #Should print list of anime
-        
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
         
@@ -469,8 +473,6 @@ class Mal:
             
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
 
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)        
@@ -499,8 +501,6 @@ class Mal:
             
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
 
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
@@ -529,9 +529,7 @@ class Mal:
             
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)        
         
@@ -559,8 +557,6 @@ class Mal:
             
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
 
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
@@ -693,11 +689,7 @@ class Anilist:
         
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         
-        tools.log(anime_list, 'error') #Should print list of anime
-        
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
         
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
@@ -765,11 +757,7 @@ class Anilist:
         
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
         
-        tools.log(anime_list, 'error') #Should print list of anime
-        
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
         
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)        
@@ -835,13 +823,9 @@ class Anilist:
         kitsu_ids = Mappings.get_list('anilist', anilist_items, 'kitsu')
         
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
         
@@ -907,13 +891,9 @@ class Anilist:
         kitsu_ids = Mappings.get_list('anilist', anilist_items, 'kitsu')
         
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
         
@@ -979,13 +959,9 @@ class Anilist:
         kitsu_ids = Mappings.get_list('anilist', anilist_items, 'kitsu')
         
         anime_list = kitsu_api.KitsuBrowser().getListById(kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         anime_list = tools.sort_anime_by_id(anime_list, kitsu_ids)
-        
-        tools.log(anime_list, 'error') #Should print list of anime
-        
+
         if '-' in sort_status:
             anime_list = sorted(anime_list, reverse=True)
         

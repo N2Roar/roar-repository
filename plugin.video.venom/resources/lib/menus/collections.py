@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 	Venom Add-on
-'''
+"""
 
-import os, sys, re, datetime
-import urllib, urlparse, json
+import datetime
+import json
+import re
+import sys
+try:
+	from urllib import quote_plus
+	from urlparse import parse_qsl, urlparse
+except:
+	from urllib.parse import quote_plus, parse_qsl, urlparse
 
 from resources.lib.modules import cache
 from resources.lib.modules import cleangenre
@@ -17,14 +24,11 @@ from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import views
 from resources.lib.modules import workers
+from resources.lib.indexers import tmdb as tmdb_indexer
 
-sysaddon = sys.argv[0]
-syshandle = int(sys.argv[1])
-
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
-action = params.get('action')
-notificationSound = False if control.setting('notification.sound') == 'false' else True
-is_widget = False if 'plugin' in control.infoLabel('Container.PluginName') else True
+# params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
+# action = params.get('action')
+is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
 
 
 class Collections:
@@ -32,7 +36,6 @@ class Collections:
 		self.list = []
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-		self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
 		self.lang = control.apiLanguage()['trakt']
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
@@ -47,18 +50,16 @@ class Collections:
 		self.user = str(self.tmdb_key)
 
 		self.unairedcolor = control.setting('movie.unaired.identify')
-		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
+		self.unairedcolor = control.getColor(self.unairedcolor)
 
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'https://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'https://image.tmdb.org/t/p/w1280'
 		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=release_date.asc&page=1' % ('%s', self.tmdb_key)
-
 		self.imdb_link = 'https://www.imdb.com'
 		self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
 		self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
 		self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
-
 
 # Martial Arts Movies
 		self.martialartsmovies_link = self.tmdb_api_link % '117973'
@@ -171,7 +172,7 @@ class Collections:
 		self.hangover_link = self.tmdb_api_link % '33311'
 		self.hanniballector_link = self.tmdb_api_link % '33312'
 		self.hellraiser_link = self.tmdb_api_link % '33313'
-		self.highlander_link = self.tmdb_api_link % '13256'
+		self.highlander_link = self.tmdb_api_link % '141257'
 		self.thehobbit_link = 'https://www.imdb.com/search/title?title=the+hobbit&title_type=feature,tv_movie&num_votes=1000,&countries=us&languages=en&sort=release_date,asc'
 		self.hollowman_link = self.tmdb_api_link % '13251'
 		self.honeyishrunkthekids_link = self.tmdb_api_link % '33208'
@@ -375,20 +376,19 @@ class Collections:
 		self.xmen_link = self.tmdb_api_link % '33137'
 
 
-	def collectionsNavigator(self, lite=False):
-		self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('Martial Arts', 'collection_martial_arts', 'boxsets.png', 'DefaultVideoPlaylists.png')
-
+	def collections_Navigator(self, lite=False):
+		self.addDirectoryItem('Movies', 'collections_Boxset', 'boxsets.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('Martial Arts', 'collections_MartialArts', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		if control.getMenuEnabled('navi.xmascollections'):
 			self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('DC Comics', 'collections&url=dcmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Marvel Comics', 'collections&url=marvelmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('Superheroes', 'collectionSuperhero', 'boxsets.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('Kids Collections', 'collectionKids', 'boxsets.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('Superheroes', 'collections_Superhero', 'boxsets.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('Kids Collections', 'collections_Kids', 'boxsets.png', 'DefaultVideoPlaylists.png')
 		self.endDirectory()
 
 
-	def collectionBoxset(self):
+	def collections_Boxset(self):
 		self.addDirectoryItem('12 Rounds (2009-2015)', 'collections&url=rounds', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('300 (2007-2014)', 'collections&url=tmdb300', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('48 Hrs. (1982-1990)', 'collections&url=fortyeighthours', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
@@ -458,7 +458,7 @@ class Collections:
 		self.addDirectoryItem('Hangover (2009-2013)', 'collections&url=hangover', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Hannibal Lector (1986-2007)', 'collections&url=hanniballector', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Hellraiser (1987-1996)', 'collections&url=hellraiser', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('Highlander', 'collections&url=highlander', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('Highlander (1986-2007)', 'collections&url=highlander', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('The Hobbit (1977-2014)', 'collections&url=thehobbit', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Hollow Man (2000-2006)', 'collections&url=hollowman', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Honey I Shrunk the Kids (1989-1995)', 'collections&url=honeyishrunkthekids', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
@@ -582,13 +582,13 @@ class Collections:
 		self.endDirectory()
 
 
-	def collection_martial_arts(self):
+	def collections_martial_arts(self):
 		self.addDirectoryItem('All Movies', 'collections&url=martialartsmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('By Actors', 'collection_martial_arts_actors', 'people.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('By Actors', 'collections_MartialArtsActors', 'people.png', 'DefaultVideoPlaylists.png')
 		self.endDirectory()
 
 
-	def collection_martial_arts_actors(self):
+	def collections_martial_arts_actors(self):
 		self.addDirectoryItem('Brandon Lee', 'collections&url=brandonlee', 'people.png', 'DefaultActor.png')
 		self.addDirectoryItem('Bruce Lee', 'collections&url=brucelee2', 'people.png', 'DefaultActor.png')
 		self.addDirectoryItem('Chuck Norris', 'collections&url=chucknorris', 'people.png', 'DefaultActor.png')
@@ -611,14 +611,14 @@ class Collections:
 		self.endDirectory()
 
 
-	def collectionKids(self):
+	def collections_Kids(self):
 		self.addDirectoryItem('Disney Collection', 'collections&url=disneymovies', 'collectiondisney.png', 'DefaultVideoPlaylists.png')
-		self.addDirectoryItem('Kids Boxset Collection', 'collectionBoxsetKids', 'collectionkidsboxset.png', 'DefaultVideoPlaylists.png')
+		self.addDirectoryItem('Kids Boxset Collection', 'collections_BoxsetKids', 'collectionkidsboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Kids Movie Collection', 'collections&url=kidsmovies', 'collectionkids.png', 'DefaultVideoPlaylists.png')
 		self.endDirectory()
 
 
-	def collectionBoxsetKids(self):
+	def collections_BoxsetKids(self):
 		self.addDirectoryItem('101 Dalmations (1961-2003)', 'collections&url=onehundredonedalmations', 'collectionkidsboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Addams Family (1991-1998)', 'collections&url=addamsfamily', 'collectionkidsboxset.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Aladdin (1992-1996)', 'collections&url=aladdin', 'collectionkidsboxset.png', 'DefaultVideoPlaylists.png')
@@ -688,7 +688,7 @@ class Collections:
 		self.endDirectory()
 
 
-	def collectionSuperhero(self):
+	def collections_Superhero(self):
 		self.addDirectoryItem('Avengers (2008-2017)', 'collections&url=avengers', 'collectionsuperhero.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Batman (1989-2016)', 'collections&url=batman', 'collectionsuperhero.png', 'DefaultVideoPlaylists.png')
 		self.addDirectoryItem('Captain America (2011-2016)', 'collections&url=captainamerica', 'collectionsuperhero.png', 'DefaultVideoPlaylists.png')
@@ -703,61 +703,34 @@ class Collections:
 		self.endDirectory()
 
 
-	def getUnairedColor(self, n):
-		if n == '0': n = 'blue'
-		elif n == '1': n = 'red'
-		elif n == '2': n = 'yellow'
-		elif n == '3': n = 'deeppink'
-		elif n == '4': n = 'cyan'
-		elif n == '5': n = 'lawngreen'
-		elif n == '6': n = 'gold'
-		elif n == '7': n = 'magenta'
-		elif n == '8': n = 'yellowgreen'
-		elif n == '9': n = 'skyblue'
-		elif n == '10': n = 'lime'
-		elif n == '11': n = 'limegreen'
-		elif n == '12': n = 'deepskyblue'
-		elif n == '13': n = 'white'
-		elif n == '14': n = 'whitesmoke'
-		elif n == '15': n = 'nocolor'
-		else: n == 'skyblue'
-		return n
-
-
-
 	def get(self, url, idx=True):
 		try:
 			try: url = getattr(self, url + '_link')
 			except: pass
-			try: u = urlparse.urlparse(url).netloc.lower()
+			try: u = urlparse(url).netloc.lower()
 			except:
 				pass
 
 			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 168, url)
-				# self.sort()
 				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
 			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
-				# self.sort()
 				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
 				self.list = cache.get(self.imdb_list, 168, url)
-				if idx is True:
+				if idx:
 					self.worker()
-				# self.sort()
 
 			elif u in self.imdb_link:
 				self.list = cache.get(self.imdb_list, 168, url)
-				if idx is True:
+				if idx:
 					self.worker()
-				# self.sort()
-
-			if idx is True:
+			if idx:
 				self.movieDirectory(self.list)
 			return self.list
 		except:
@@ -857,7 +830,7 @@ class Collections:
 				next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
 				next = [i[0] for i in next if 'Next' in i[1]]
 
-			next = url.replace(urlparse.urlparse(url).query, urlparse.urlparse(next[0]).query)
+			next = url.replace(urlparse(url).query, urlparse(next[0]).query)
 			next = client.replaceHTMLCodes(next)
 			next = next.encode('utf-8')
 		except:
@@ -969,36 +942,36 @@ class Collections:
 					try:
 						plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
 					except:
+						plot = client.parseDOM(item, 'p', attrs = {'class': '""'})[0]
 						pass
 				plot = plot.rsplit('<span>', 1)[0].strip()
 				plot = re.sub('<.+?>|</.+?>', '', plot)
 				if plot == '':
 					plot = '0'
-				if plot == '0':
-					try:
-						plot = client.parseDOM(item, 'div', attrs = {'class': 'lister-item-content'})[0]
-						plot = re.sub('<p\s*class="">', '<p class="plot_">', plot)
-						plot = client.parseDOM(plot, 'p', attrs = {'class': 'plot_'})[0]
-						plot = re.sub('<.+?>|</.+?>', '', plot)
-						if plot == '': plot = '0'
-					except:
-						pass
+				# if plot == '0':
+					# try:
+						# plot = client.parseDOM(item, 'div', attrs = {'class': 'lister-item-content'})[0]
+						# plot = re.sub('<p\s*class="">', '<p class="plot_">', plot)
+						# plot = client.parseDOM(plot, 'p', attrs = {'class': 'plot_'})[0]
+						# plot = re.sub('<.+?>|</.+?>', '', plot)
+						# if plot == '': plot = '0'
+					# except:
+						# pass
 				plot = client.replaceHTMLCodes(plot)
 				plot = plot.encode('utf-8')
 
-				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
-											'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'plot': plot, 'tagline': '0', 'imdb': imdb,
-											'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': '0', 'genre': genre, 'duration': duration, 'rating': rating,
+									'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'tagline': '0', 'plot': plot, 'imdb': imdb,
+									'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
 				log_utils.error()
 				pass
-
 		return list
 
 
 	def worker(self, level=1):
 		try:
-			if self.list is None or self.list == []:
+			if not self.list:
 				return
 			self.meta = []
 			total = len(self.list)
@@ -1027,47 +1000,43 @@ class Collections:
 
 	def super_imdb_info(self, i):
 		try:
-			if self.list[i]['metacache'] is True:
+			if self.list[i]['metacache']:
 				return
 
 			imdb = self.list[i]['imdb'] or '0'
 			tmdb = self.list[i]['tmdb'] or '0'
-			id = (self.list[i]['title'].lower() + '-' + self.list[i]['year']) if imdb == '0' else imdb
+			# item = cache.get(tmdb_indexer.Movies().get_details, 168, tmdb, imdb)
+			item = tmdb_indexer.Movies().get_details(tmdb, imdb)
 
-# look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
-# maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
-			item = trakt.getMovieSummary(id)
+			try:
+				title = item.get('title').encode('utf-8')
+			except:
+				title = item.get('title')
 
-			title = item.get('title')
-			originaltitle = title
+			try: 
+				originaltitle = item.get('original_title').encode('utf-8')
+			except:
+				originaltitle = title
 
-			try: trailer = control.trailer % item['trailer'].split('v=')[1]
-			except: trailer = ''
-
-			if 'year' not in self.list[i] or self.list[i]['year'] == '0':
-				year = str(item.get('year', '0'))
-			else:
-				year = self.list[i]['year']
+			year = str(item.get('release_date')[:4])
 
 			if imdb == '0' or imdb is None:
-				imdb = item.get('ids', {}).get('imdb', '0')
+				imdb = item.get('imdb_id', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
 			if tmdb == '0' or tmdb is None:
-				tmdb = str(item.get('ids', {}).get('tmdb', 0))
-				if tmdb == '' or tmdb is None or tmdb == 'None':
-					tmdb = '0'
+				tmdb = str(item.get('id'))
 
 			if 'premiered' not in self.list[i] or self.list[i]['premiered'] == '0':
-				premiered = item.get('released', '0')
+				premiered = item.get('release_date')
 			else:
 				premiered = self.list[i]['premiered']
 
 			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
 				genre = []
 				for x in item['genres']:
-					genre.append(x.title())
+					genre.append(x.get('name'))
 				if genre == []: genre = 'NA'
 			else:
 				genre = self.list[i]['genre']
@@ -1078,62 +1047,79 @@ class Collections:
 				duration = self.list[i]['duration']
 
 			if 'rating' not in self.list[i] or self.list[i]['rating'] == '0':
-				rating = str(item.get('rating', '0'))
+				rating = str(item.get('vote_average', '0'))
 			else:
 				rating = self.list[i]['rating']
 
 			if 'votes' not in self.list[i] or self.list[i]['votes'] == '0':
-				votes = str(format(int(item.get('votes', '0')),',d'))
+				votes = str(format(int(item.get('vote_count', '0')),',d'))
 			else:
 				votes = self.list[i]['votes']
 
 			if 'mpaa' not in self.list[i] or self.list[i]['mpaa'] == '0' or self.list[i]['mpaa'] == 'NR':
-				mpaa = item.get('certification', '0')
+				mpaa = item['release_dates']['results']
+				mpaa = [x for x in mpaa if x['iso_3166_1'] == 'US']
+				try:
+					mpaa = mpaa[0].get('release_dates')[-1].get('certification')
+					if not mpaa:
+						mpaa = mpaa[0].get('release_dates')[0].get('certification')
+						if not mpaa:
+							mpaa = mpaa[0].get('release_dates')[1].get('certification')
+					mpaa = str(mpaa)
+				except:
+					mpaa = '0'
 			else:
 				mpaa = self.list[i]['mpaa']
 
-			if 'tagline' not in self.list[i] or self.list[i]['tagline'] == '0':
-				tagline = item.get('tagline', '0')
-			else:
-				tagline = self.list[i]['tagline']
+			# if 'tagline' not in self.list[i] or self.list[i]['tagline'] == '0':
+				# try:
+					# tagline = item.get('tagline', '0')
+					# if tagline == '' or tagline == '0' or tagline is None:
+						# tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+				# except:
+					# tagline = '0'
+			# else:
+				# tagline = self.list[i]['tagline']
+			tagline = '0'
+
 
 			if 'plot' not in self.list[i] or self.list[i]['plot'] == '0':
-				plot = item.get('overview', '0')
+				plot = item.get('overview')
 			else:
 				plot = self.list[i]['plot']
 			try: plot = plot.encode('utf-8')
 			except: pass
 
-#########################################
-			from resources.lib.indexers.tmdb import Movies
-			tmdb_Item = cache.get(Movies().get_details, 168, tmdb, imdb)
+			try:
+				trailer = [x for x in item['videos']['results'] if x['site'] == 'YouTube' and x['type'] == 'Trailer'][0]['key']
+				trailer = control.trailer % trailer
+			except:
+				trailer = ''
 
+#########################################
 			castandart = []
 			director = writer = '0'
 			poster3 = fanart3 = '0'
-			try:
-				if tmdb_Item is None:
-					raise Exception()
-				for person in tmdb_Item['credits']['cast']:
+
+			for person in item['credits']['cast']:
+				try:
 					try:
-						try:
-							castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-						except:
-							castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 					except:
-						castandart = []
-					if len(castandart) == 150: break
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+				except:
+					castandart = []
+				if len(castandart) == 150: break
 
-				for person in tmdb_Item['credits']['crew']:
-					if 'Director' in person['job']:
-						director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
-					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-						writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+			for person in item['credits']['crew']:
+				if 'Director' in person['job']:
+					director = ', '.join([director['name'].encode('utf-8') for director in item['credits']['crew'] if director['job'].lower() == 'director'])
+				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
 
-				poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
-				fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
-			except:
-				pass
+			poster3 = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+			fanart3 = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
+
 ########################################
 
 			try:
@@ -1141,7 +1127,8 @@ class Collections:
 					raise Exception()
 				trans_item = trakt.getMovieTranslation(imdb, self.lang, full = True)
 				title = trans_item.get('title') or title
-				tagline = trans_item.get('tagline') or tagline
+				# tagline = trans_item.get('tagline') or tagline
+				tagline = '0'
 				plot = trans_item.get('overview') or plot
 			except:
 				log_utils.error()
@@ -1151,14 +1138,14 @@ class Collections:
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
 						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
 						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
-						'discart': '0', 'trailer': trailer, 'metacache': False}
+						'discart': '0', 'mediatype': 'movie', 'trailer': trailer, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
 			if self.disable_fanarttv != 'true':
 				from resources.lib.indexers import fanarttv
 				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
-				if extended_art is not None:
+				if extended_art:
 					item.update(extended_art)
 					meta.update(item)
 
@@ -1170,15 +1157,18 @@ class Collections:
 			self.list[i].update(item)
 			self.meta.append(meta)
 		except:
+			log_utils.error()
 			pass
 
 
 	def movieDirectory(self, items, next=True):
-		if items is None or len(items) == 0: 
+		if not items: 
 			control.hide()
-			control.notification(title = 32000, message = 33049, icon = 'INFO', sound=notificationSound)
+			control.notification(title=32000, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
 			sys.exit()
 
+		sysaddon = sys.argv[0]
+		syshandle = int(sys.argv[1])
 		settingFanart = control.setting('fanart')
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
@@ -1193,21 +1183,21 @@ class Collections:
 			isPlayable = 'true'
 
 		if control.setting('hosts.mode') == '2':
-			playbackMenu = control.lang(32063).encode('utf-8')
+			playbackMenu = control.lang(32063)
 		else:
-			playbackMenu = control.lang(32064).encode('utf-8')
+			playbackMenu = control.lang(32064)
 
-		if trakt.getTraktIndicatorsInfo() is True:
-			watchedMenu = control.lang(32068).encode('utf-8')
-			unwatchedMenu = control.lang(32069).encode('utf-8')
+		if trakt.getTraktIndicatorsInfo():
+			watchedMenu = control.lang(32068)
+			unwatchedMenu = control.lang(32069)
 		else:
-			watchedMenu = control.lang(32066).encode('utf-8')
-			unwatchedMenu = control.lang(32067).encode('utf-8')
+			watchedMenu = control.lang(32066)
+			unwatchedMenu = control.lang(32067)
 
-		playlistManagerMenu = control.lang(35522).encode('utf-8')
-		queueMenu = control.lang(32065).encode('utf-8')
-		traktManagerMenu = control.lang(32070).encode('utf-8')
-		addToLibrary = control.lang(32551).encode('utf-8')
+		playlistManagerMenu = control.lang(35522)
+		queueMenu = control.lang(32065)
+		traktManagerMenu = control.lang(32070)
+		addToLibrary = control.lang(32551)
 
 		for i in items:
 			try:
@@ -1220,8 +1210,8 @@ class Collections:
 				if int(re.sub('[^0-9]', '', str(i['premiered']))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					label = '[COLOR %s][I]%s[/I][/COLOR]' % (self.unairedcolor, label)
 
-				sysname = urllib.quote_plus(label)
-				systitle = urllib.quote_plus(title)
+				sysname = quote_plus(label)
+				systitle = quote_plus(title)
 
 				meta = dict((k, v) for k, v in i.iteritems() if v != '0')
 				meta.update({'code': imdb, 'imdbnumber': imdb})
@@ -1276,16 +1266,15 @@ class Collections:
 				art.update({'icon': icon, 'thumb': thumb, 'banner': banner, 'poster': poster, 'fanart': fanart,
 								'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'discart': discart})
 
-				remove_keys = ('poster1', 'poster2', 'poster3', 'fanart1', 'fanart2', 'fanart3', 'banner1', 'banner2', 'banner3', 'trailer')
+				remove_keys = ('poster2', 'poster3', 'fanart2', 'fanart3', 'banner2', 'banner3', 'trailer')
 				for k in remove_keys:
 					meta.pop(k, None)
 				meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
 
 ####-Context Menu and Overlays-####
 				cm = []
-				if self.traktCredentials is True:
+				if self.traktCredentials:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
-
 				try:
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
 					watched = (overlay == 7)
@@ -1301,26 +1290,25 @@ class Collections:
 				except:
 					pass
 
-				sysmeta = urllib.quote_plus(json.dumps(meta))
-				sysart = urllib.quote_plus(json.dumps(art))
+				sysmeta = quote_plus(json.dumps(meta))
+				sysart = quote_plus(json.dumps(art))
 
-				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
-				sysurl = urllib.quote_plus(url)
+				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s' % (sysaddon, systitle, year, imdb, sysmeta)
+				sysurl = quote_plus(url)
 
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
 				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
 				cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
 				if control.setting('hosts.mode') == '1':
-					cm.append(('Rescrape Item', 'RunPlugin(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
-
+					cm.append(('Rescrape Item', 'RunPlugin(%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&rescrape=true)' % (sysaddon, systitle, year, imdb, sysmeta)))
 				elif control.setting('hosts.mode') != '1':
-					cm.append(('Rescrape Item', 'PlayMedia(%s?action=reScrape&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+					cm.append(('Rescrape Item', 'PlayMedia(%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&rescrape=true)' % (sysaddon, systitle, year, imdb, sysmeta)))
 
 				if control.setting('library.service.update') == 'true':
 					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
-				cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+				cm.append((control.lang(32611), 'RunPlugin(%s?action=clearSources&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
@@ -1340,11 +1328,14 @@ class Collections:
 
 				from resources.lib.modules.player import Bookmarks
 				resumetime = Bookmarks().get(label, str(year), ck=True)
-				# item.setProperty('totaltime', str(meta['duration']))
+				# item.setProperty('totaltime', str(meta['duration'])) # Adding this property causes the Kodi bookmark CM items to be added
 				item.setProperty('resumetime', str(resumetime))
-				# watched_percent = int(float(resumetime) / float(meta['duration']) * 100)
-				# item.setProperty('percentplayed', str(watched_percent))
-
+				item.setProperty('venom_resumetime', str(resumetime))
+				try:
+					watched_percent = int(float(resumetime) / float(meta['duration']) * 100)
+					item.setProperty('percentplayed', str(watched_percent))
+				except:
+					pass
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 				video_streaminfo = {'codec': 'h264'}
 				item.addStreamInfo('video', video_streaminfo)
@@ -1360,8 +1351,8 @@ class Collections:
 				if url == '':
 					raise Exception()
 
-				nextMenu = control.lang(32053).encode('utf-8')
-				url_params = dict(urlparse.parse_qsl(url))
+				nextMenu = control.lang(32053)
+				url_params = dict(parse_qsl(url))
 
 				if 'imdb.com' in url:
 					start = int(url_params.get('start'))
@@ -1372,7 +1363,7 @@ class Collections:
 
 				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
 
-				url = '%s?action=collections&url=%s' % (sysaddon, urllib.quote_plus(url))
+				url = '%s?action=collections&url=%s' % (sysaddon, quote_plus(url))
 
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
@@ -1392,32 +1383,31 @@ class Collections:
 			if type(name) is str or type(name) is unicode:
 				name = str(name)
 			if type(name) is int:
-				name = control.lang(name).encode('utf-8')
+				name = control.lang(name)
 		except:
 			log_utils.error()
 
+		sysaddon = sys.argv[0]
+		syshandle = int(sys.argv[1])
+		artPath = control.artPath()
+		thumb = control.joinPath(artPath, thumb) if artPath else icon
+
 		url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
-		artPath = control.artPath()
-		thumb = os.path.join(artPath, thumb) if artPath is not None else icon
-
 		cm = []
-		if queue is True:
+		if queue:
 			cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-
-		if context is not None:
-			cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
-
-		cm.append((control.lang(32610).encode('utf-8'), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+		if context:
+			cm.append((control.lang(context[0]), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 
 		item = control.item(label=name)
 		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
-
 		item.addContextMenuItems(cm)
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
 
 	def endDirectory(self):
+		syshandle = int(sys.argv[1])
 		control.content(syshandle, 'addons')
 		control.directory(syshandle, cacheToDisc=True)

@@ -1,3 +1,247 @@
+[B][COLOR red]Update - v4.0.8 - Aug. 23, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Changed episode unaired condition when meta
+    provider does not return a premiered date.  The
+    item is now considered unaired.[/I]
+[COLOR yellow]--[/COLOR][I] Added Real-Debrid to the new "Premium Services"
+    menu.  You can view, play, download, and manage
+    your RD account from here.[/I]
+[COLOR yellow]--[/COLOR][I] Added a new setting that allows user to flip and test
+    kodi 18's new setting called "reuselanguageinvoker" that
+    greatly improves the performance of the addon.
+    Option is found under the "Debugging-Developer Mode".
+    You must enable Developer mode for option to be visible.
+    Note that this is an experimental feature you can test.
+    It has been reported that this can cause kodi to crash
+    and seems to effect widgets.  The issue has been posted
+    to Team Kodi's github so it's on them to fix it. I'm not
+    discussing this experimental inclusion beyond this.[/I]
+[COLOR yellow]--[/COLOR][I] Many code changes for the above have taken place
+    to comply with its requirements.[/I]
+
+[B][COLOR red]Update - v4.0.7 - Aug. 15, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issue with free hosters not showing in source
+    select.[/I]
+[COLOR yellow]--[/COLOR][I] Added new "Premium Services" menu.  At this time
+    only Premiumize.me is fully functional.  I had no
+    intention of releasing this till PM, RD, and AD was
+    complete but the item list above bit me in the ass.
+    You can view, play, and manage your cloud account
+    from here.[/I]
+[COLOR yellow]--[/COLOR][I] Added Context Menu option "Cache to cloud" for
+    selected uncached torrent provided seeder count
+    is not 0 for the selected item.  If you have uncached
+    torrents removed this option is not available at this
+    time.  I'm considering adding a yes-no dialog to load
+    uncached torrents if no sources found and user has
+    removed uncached torrents.  This would give you an
+    opportunity to cache an item to your cloud.[/I]
+
+[B][COLOR red]Update - v4.0.6 - Aug. 05, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issue with "Watched Count" setting dropping
+    show-seasons that do not contain a valid imdb_id.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed db issue for shows mentioned above.  This also
+    caused issues in rare cases that the very next
+    episode scraped also did not contain a valid 
+    imdb_id the returned sources would include
+    previous scrape.  This is now fixed and invalid
+    imdb_id entries are wiped from the db.[/I]
+[COLOR yellow]--[/COLOR][I] Changed Pack scraping option to ON by default
+    and changed OpenScrapers dependency to required
+    version to comply. Previous installs will not change.[/I]
+[COLOR yellow]--[/COLOR][I] Added "sample" to filter string for packs files to ignore
+    in resolving.[/I]
+
+[B][COLOR red]Update - v4.0.5 - Aug. 05, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added 2 new string format checks for resolving
+    pack files due to some rare and rather odd internal
+    episode naming conventions used.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed a torrent caching expiry issue preventing a fresh
+    scrape under some situations.[/I]
+
+[B][COLOR red]Update - v4.0.4 - Aug. 02, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Sorry folks completely forgot about .strm library file
+    playback with the new pack file work, they were badly
+    broken.  This is now fixed including resolving of pack
+    files from library as well.[/I]
+
+[B][COLOR red]Update - v4.0.3 - Aug. 02, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new Pack file size calc. function.  This will
+    take the current pack file and calculate the approx. size
+    of each episode inside the pack.  This will also vary
+    based on show Packs that are ranges ex. 1-7 when
+    there are 9 total season.  Only season 1-7 will be
+    accounted for in that case.[/I]
+
+[B][COLOR red]Update - v4.0.2 - July 30, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Switched IMDb year check for titles to api request for
+    small 1/2-3/4 second savings to scrape startup.  Thanks
+    for the tip on that hidden api Mr.Anonymous!![/I]
+[COLOR yellow]--[/COLOR][I] Code cleanup of forgotten logging.[/I]
+
+[B][COLOR red]Update - v4.0.1 - July 30, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed pack file resolving when "Directory"
+    source select mode is chosen.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed issue with TMDBHelper passing
+    plot that contains quotes.[/I]
+
+[B][COLOR red]Update - v4.0 - July 26, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Pack scraping support added.  This is off by default so
+    enable under "Source Options". Resolving support for
+    RD and PM only at this time.  Special thanks to Tikipeter
+    for his collaboration in this project!!![/I]
+[COLOR yellow]--[/COLOR][I] Added "is_airing" for seasons containing unaired
+    episodes. This flag will avoid seasonPack scraping for
+    seasons that are still airing, which returns nothing
+    but incomplete season packs anyway.[/I]
+[COLOR yellow]--[/COLOR][I] Added the ability to view pack files via context menu
+    option courtesy of TikiPeter. You can pick and play
+    any video content.[/I]
+[COLOR yellow]--[/COLOR][I] Added "Dev mode" to "Debugging" settings section.
+    Please DO NOT USE.  This is for my own testing of
+    scrapers to enable or disable and isolate issues.  I
+    will not field questions or speak of this section.[/I]
+[COLOR yellow]--[/COLOR][I] Added IMDb check for titles and year, just prior to
+    scraping.  A number of titles the meta from trakt and
+    tmdb differ from IMDb by a year, ex.
+    "Dragged Across Concrete" and "Oculus".  Some titles also differ,
+    ex. "Star Wars: The Rise of Skywalker" vs.
+    "Star Wars: Episode IX - The Rise of Skywalker".[/I]
+[COLOR yellow]--[/COLOR][I] Season count is now hard coded ON.  Previously
+    a trakt api request was used to fetch total season
+    and the need to disable for speed was apparent.
+    Now the season count is parsed from and counted
+    from the tvdb v1 api xml files already received so
+    there is no longer a need to disable.[/I]
+[COLOR yellow]--[/COLOR][I] Removed Season0 from season count when option is
+    enabled.  Season count will no longer include
+    Season0 regardless of setting.[/I]
+[COLOR yellow]--[/COLOR][I] Changed TV Specials (Season0) to default "false"(off).[/I]
+[COLOR yellow]--[/COLOR][I] Fixed  function cache scraping from library .strm files.[/I]
+[COLOR yellow]--[/COLOR][I] Added alias title check matching to scraped query results[/I]
+
+
+[B][COLOR red]Update - v3.7.4 - June 27, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new ability to show "Help" file text for settings options
+    deemed confusing.  I will add more upon request[/I]
+[COLOR yellow]--[/COLOR][I] Fixed issue with one item in Trakt progress not showing
+    show title.[/I]
+[COLOR yellow]--[/COLOR][I] Added option for multi episode lists to show or not show
+     unwatched count.  See new Help for more info[/I]
+
+[B][COLOR red]Update - v3.7.3 - May 31, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issue where if fanart.tv was disabled it prevented
+    loading of seasons list.[/I]
+
+[B][COLOR red]Update - v3.7.2 - May 30, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new TVDB api key selection between 3 possible
+    keys.  It was discovered today that some keys seem to
+    drop random shows loading a season list, and that
+    happens rarely in itself.  This server anomaly eventually
+    clears up in a day or so but flipping to a different key
+    seems to also cure the problem more immediate for
+    those that can no wait.[/I]
+
+[B][COLOR red]Update - v3.7.1 - May 29, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Set tmdb to str() in tmdb module. This broke setting
+    the new .setProperty('tmdb_id', tmdb). Can not be an int().[/I]
+
+[B][COLOR red]Update - v3.7.0 - May 29, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Increased Find Similar list to 20 items vs. 10.[/I]
+[COLOR yellow]--[/COLOR][I] Removed tagline for shows.[/I]
+[COLOR yellow]--[/COLOR][I] Added missing clearlogo and clearart at season level.[/I]
+[COLOR yellow]--[/COLOR][I] Unwatched count now only added to multi episode
+    lists like Progress and Calendar.[/I]
+[COLOR yellow]--[/COLOR][I] Added .setProperty(tmdb_id) for episodes and
+    .setProperty(tvshow.tmdb_id) for shows for TMDBHelper
+    support of lookup.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed bookmark issue mismatch in databse.[/I]
+
+[B][COLOR red]Update - v3.6.9 - May 20, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new source filtering option "File Size limit (GB)".
+    This is off by default.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed random case of fetching foreign landscape
+    from fanart.tv.[/I]
+
+[B][COLOR red]Update - v3.6.8 - May 17, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed random issue with busy dialog not closing.[/I]
+[COLOR yellow]--[/COLOR][I] Added database table check to avoid bogus log errors.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed issue if user cleared Provider cache and then
+    selected Rescrape the table was now empty and halted scraping.[/I]
+[COLOR yellow]--[/COLOR][I] Because of the changes to item #2 and 3 above the
+    setting option "Allow Rescrape to first clear item providers"
+    has now been removed and hard coded as the default.[/I]
+
+[B][COLOR red]Update - v3.6.7 - May 14, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Library .strm playback. Previous update added ability
+    to compare meta received from tmdbhelper vs. Venom's
+    cached meta and use the largest.  I neglected that .strm
+    files are also player files and meta sent is None type. Now
+    I compare this as well and if the item is cached that meta
+    is now used vs. scraped meta saved locally, which is more
+    limited than Venom's cached meta.[/I]
+
+[B][COLOR red]Update - v3.6.6 - May 14, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Remove HVAC and Remove 3D options.
+    Previousely there would be random failures if specific
+    free hosters were enabled.  Some free hosters were
+    missing 'info' keys in the sources dict.  This has been
+    fixed in both Venom and missing keys added to
+    OpenScrapers.[/I]
+
+[B][COLOR red]Update - v3.6.5 - May 12, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new setting option to disable Cloudflare
+    protected providers due to recent challenge failures.[/I]
+[COLOR yellow]--[/COLOR][I] Reorganized all settings under "Source Options"
+    to better follow the flow of scraping from start to results.[/I]
+[COLOR yellow]--[/COLOR][I] Changed all Source filtering options to be "Remove"
+    options.  Previously options were "Enable" or "Remove"
+    and this just seems to be cleaner.[/I]
+[COLOR yellow]--[/COLOR][I] Added new setting option "Allow Rescrape to first
+    clear item providers".  Previously Rescrape would only
+    cache new providers and read in previously cached providers.
+    Now you have the option to make Rescrape fully start from
+    scratch for the selected item.  This option will only clear
+    provider links for the item you are selecting, this is not a full "Clear
+    Providers" built in function.[/I]
+[COLOR yellow]--[/COLOR][I] Improved scrape time.[/I]
+[COLOR yellow]--[/COLOR][I] Added IMDBNUMBER to episode InfoLabels for a4ksubtitles.[/I]
+[COLOR yellow]--[/COLOR][I] Improved meta data handling to deal with TMDBHELPER's
+    limited meta exchange.  Now the Venomplayer will look in
+    the Venom cache and compare against the meta received
+    from TMDBHELPER and use the larger of the two.[/I]
+[COLOR yellow]--[/COLOR][I] Removed context menu "Clear All Cache" and replaced in
+    movies and episodes with "Clear Providers".  Sorry
+    folks but really frowning upon clearing of metacache.[/I]
+[COLOR yellow]--[/COLOR][I] Submitted new player files to TMDBHELPER.  Now there is
+    two.."Venom (Auto Play)" and 'Venom (Source Select)".
+    be sure to update TMDBHELPER's players.[/I]
+
+[B][COLOR red]Update - v3.6.4 - May 8, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo in downloader module.[/I]
+
+[B][COLOR red]Update - v3.6.3 - May 6, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Integration with new "Play from Here" option in Global
+    Context Menu. See "What's New" for more info in addon.[/I]
+[COLOR yellow]--[/COLOR][I] Code changes per cProfile function testing for speed
+    inprovements. Movie menus should now load faster
+    and more to follow.[/I]
+
+[B][COLOR red]Update - v3.6.2 - April 29, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Code changes for new integration with Venom global
+    context menu changes.[/I]
+[COLOR yellow]--[/COLOR][I] Changed trakt history to now follow "Progress sorting"
+    method from settings.[/I]
+
+[B][COLOR red]Update - v3.6.1 - April 14, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Calendar show titles.[/I]
+[COLOR yellow]--[/COLOR][I] fixed typo with RD uncached torrent removal
+    using PM setting.[/I]
+[COLOR yellow]--[/COLOR][I] fixed issue with RD uncached torrent check
+    failing due to RD response converting hashes to
+    lower case.[/I]
+[COLOR yellow]--[/COLOR][I] fixed Trakt Progress episode sort issue from
+    Trakt response.[/I]
+
 [B][COLOR red]Update - v3.6.0 - April 2, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Compressed artwork to lessen footprint.[/I]
 [COLOR yellow]--[/COLOR][I] Added new setting to enable or disable Calendar

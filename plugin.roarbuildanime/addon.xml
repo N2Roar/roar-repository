@@ -2,18 +2,15 @@
 <addon
   id="plugin.roarbuildanime"
   name="ROAR Build Anime"
-  version="0.0.9"
+  version="0.0.10"
   provider-name="N2Roar">
 	<requires>
 		<!-- Official Addons -->
 		<!-- <import addon="plugin.video.aswim"/> -->
-		<!-- 3rd Party Anime (doko.repository) -->
-		<import addon="plugin.video.wsbeta" optional="true"/>
-		<import addon="plugin.video.watchnixtoons2"/>
+		<!-- 3rd Party Anime (no repo) -->
+		<import addon="plugin.video.watchnixtoons2" optional="true"/>
 		<!-- 3rd Party Anime (repository.wilson-magic) -->
 		<import addon="plugin.video.hummingbird"/>
-		<!-- 3rd Party Anime (repo.plugin.video.9anime) -->
-		<import addon="plugin.video.wonderfulsubs" optional="true"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>

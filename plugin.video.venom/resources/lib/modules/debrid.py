@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
+"""
+	Venom Add-on
+"""
+
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 
 try:
 	import resolveurl
-
 	debrid_resolvers = [resolver() for resolver in resolveurl.relevant_resolvers(order_matters=True) if resolver.isUniversal()]
-
 	if len(debrid_resolvers) == 0:
 		debrid_resolvers = [resolver() for resolver in resolveurl.relevant_resolvers(order_matters=True,include_universal=False) if 'rapidgator.net' in resolver.domains]
 except:

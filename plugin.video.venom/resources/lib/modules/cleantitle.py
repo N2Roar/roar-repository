@@ -86,6 +86,5 @@ def normalize(title):
 
 
 def clean_search_query(url):
-	url = url.replace('-','+')
-	url = url.replace(' ', '+')
+	url = url.replace('-','+').replace(' ', '+')
 	return url

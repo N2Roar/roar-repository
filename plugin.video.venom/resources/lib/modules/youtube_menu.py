@@ -1,13 +1,24 @@
 # -*- coding: utf-8 -*-
 
-import sys
+"""
+	Venom Add-on
+"""
+
 import re
-# import urllib
-import urllib2
+from sys import argv
+import xbmc
+
+try:
+	from urllib.request import urlopen
+	from urllib.request import Request
+except ImportError:
+	from urllib2 import urlopen
+	from urllib2 import Request
 
 from resources.lib.modules import control
 
-syshandle = int(sys.argv[1])
+sysaddon = argv[0]
+syshandle = int(argv[1])
 
 
 class youtube_menu(object):
@@ -17,9 +28,9 @@ class youtube_menu(object):
 
 
 	def openMenuFile(self, menuFile):
-		req = urllib2.Request(menuFile)
+		req = Request(menuFile)
 		req.add_header('User-Agent', self.agent)
-		response = urllib2.urlopen(req)
+		response = urlopen(req)
 		link=response.read()
 		response.close()
 		return link
@@ -32,18 +43,18 @@ class youtube_menu(object):
 
 
 	def addMenuItem(self, name, action, subid, iconimage, fanart, description='', isFolder=True):
-		u = sys.argv[0] + "?action=" + action + "&subid=" + subid
+		url = '%s?action=%s&id=%s' % (sysaddon, action, subid)
 		liz = control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
 		liz.setInfo(type='video', infoLabels={'title': name, 'plot': description})
 		liz.setProperty('Fanart_Image', fanart)
-		control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=isFolder)
+		control.addItem(handle=syshandle, url=url, listitem=liz, isFolder=isFolder)
 
 
 	def addSectionItem(self, name, iconimage, fanart):
-		u = sys.argv[0] + "?action=sectionItem"
+		url = '%s?action=sectionItem' % sysaddon
 		liz = control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
 		liz.setProperty('Fanart_Image', fanart)
-		control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=False)
+		control.addItem(handle=syshandle, url=url, listitem=liz, isFolder=False)
 
 
 	def addSearchItem(self, name, search_id, icon, fanart):
@@ -83,7 +94,6 @@ class youtube_menu(object):
 		work_url = "plugin://plugin.video.youtube/play/?video_id=%s" % video_id
 		liz = control.item(name)
 		liz.setInfo( type='video', infoLabels={'title': name})
-		# liz.setPath(work_url)
 		liz.setArt({'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart})
 		liz.setProperty('IsPlayable', 'true')
 		control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=False)

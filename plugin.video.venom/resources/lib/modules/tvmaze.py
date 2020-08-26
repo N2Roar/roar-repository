@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import urllib
-import json
+"""
+	Venom Add-on
+"""
 
-from resources.lib.modules import client
+import json
+try:
+	from urllib import urlencode
+except:
+	from urllib.parse import urlencode
+
 from resources.lib.modules import cache
+from resources.lib.modules import client
 
 
 class tvMaze:
@@ -23,8 +30,8 @@ class tvMaze:
 	def request(self, endpoint, query = None):
 		try:
 			# Encode the queries, if there is any...
-			if (query != None):
-				query = '?' + urllib.urlencode(query)
+			if query:
+				query = '?' + urlencode(query)
 			else:
 				query = ''
 
@@ -39,7 +46,6 @@ class tvMaze:
 	def showLookup(self, type, id):
 		try:
 			result = self.request('lookup/shows', {type: id})
-			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
 			return result
@@ -53,7 +59,6 @@ class tvMaze:
 			if (not self.showID(show_id)):
 				raise Exception()
 			result = self.request('shows/%d' % self.show_id)
-			# Storing the show id locally
 			if ('id' in result):
 				self.show_id = result['id']
 			return result

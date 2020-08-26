@@ -1,6 +1,14 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
-import os, xbmc, xbmcgui, xbmcaddon
+'''
+	Venom Add-on
+'''
+
+import os.path
+import xbmc
+import xbmcaddon
+import xbmcgui
+
 
 def get():
 		addonInfo = xbmcaddon.Addon().getAddonInfo
@@ -19,6 +27,8 @@ def get():
 				retry -= 1
 				win.getControl(1).setLabel('[COLOR red]Venom[/COLOR] -  v%s - ChangeLog' % (xbmcaddon.Addon().getAddonInfo('version')))
 				win.getControl(5).setText(text)
+				while xbmcgui.getCurrentWindowDialogId() == id:
+					xbmc.sleep(100)
 				return
 			except:
 				pass

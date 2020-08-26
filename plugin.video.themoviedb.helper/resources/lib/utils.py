@@ -1,13 +1,22 @@
+import re
 import sys
 import time
 import xbmc
+import xbmcvfs
 import xbmcgui
 import xbmcaddon
 import unicodedata
 import datetime
+import hashlib
+import json
+import simplecache
 from copy import copy
 from contextlib import contextmanager
 from resources.lib.constants import TYPE_CONVERSION, VALID_FILECHARS
+try:
+    from urllib.parse import urlencode, unquote_plus  # Py3
+except ImportError:
+    from urllib import urlencode, unquote_plus
 _addonlogname = '[plugin.video.themoviedb.helper]\n'
 _addon = xbmcaddon.Addon()
 _debuglogging = _addon.getSettingBool('debug_logging')
@@ -31,17 +40,56 @@ def validify_filename(filename):
         pass
     filename = str(unicodedata.normalize('NFD', filename).encode('ascii', 'ignore').decode("utf-8"))
     filename = ''.join(c for c in filename if c in VALID_FILECHARS)
+    filename = filename[:-1] if filename.endswith('.') else filename
     return filename
+
+
+def makepath(path):
+    if xbmcvfs.exists(path):
+        return xbmc.translatePath(path)
+    if xbmcvfs.mkdirs(path):
+        return xbmc.translatePath(path)
+    if _addon.getSettingBool('ignore_folderchecking'):
+        kodi_log(u'Ignored xbmcvfs folder check error\n{}'.format(path), 2)
+        return xbmc.translatePath(path)
+
+
+def md5hash(value):
+    if sys.version_info.major != 3:
+        return hashlib.md5(str(value)).hexdigest()
+
+    value = str(value).encode()
+    return hashlib.md5(value).hexdigest()
 
 
 def type_convert(original, converted):
     return TYPE_CONVERSION.get(original, {}).get(converted, '')
 
 
-def try_parse_int(string):
+def parse_paramstring(paramstring):
+    """ helper to assist with difference in urllib modules in PY2/3 """
+    params = {}
+    paramstring = paramstring.replace('&amp;', '&')  # Just in case xml string
+    for param in paramstring.split('&'):
+        if '=' not in param:
+            continue
+        k, v = param.split('=')
+        params[try_decode_string(unquote_plus(k))] = try_decode_string(unquote_plus(v))
+    return params
+
+
+def urlencode_params(kwparams):
+    """ helper to assist with difference in urllib modules in PY2/3 """
+    params = {}
+    for k, v in kwparams.items():
+        params[try_encode_string(k)] = try_encode_string(v)
+    return urlencode(params)
+
+
+def try_parse_int(string, base=None):
     '''helper to parse int from string without erroring on empty or misformed string'''
     try:
-        return int(string)
+        return int(string, base) if base else int(string)
     except Exception:
         return 0
 
@@ -54,18 +102,36 @@ def try_parse_float(string):
         return 0
 
 
-def try_decode_string(string, encoding='utf-8'):
+def try_decode_string(string, encoding='utf-8', errors=None):
     """helper to decode strings for PY 2 """
     if sys.version_info.major == 3:
         return string
-    return string.decode(encoding)
+    try:
+        return string.decode(encoding, errors) if errors else string.decode(encoding)
+    except Exception:
+        return string
 
 
 def try_encode_string(string, encoding='utf-8'):
     """helper to encode strings for PY 2 """
     if sys.version_info.major == 3:
         return string
-    return string.encode(encoding)
+    try:
+        return string.encode(encoding)
+    except Exception:
+        return string
+
+
+def get_between_strings(string, startswith='', endswith=''):
+    exp = startswith + '(.+?)' + endswith
+    try:
+        return re.search(exp, string).group(1)
+    except AttributeError:
+        return ''
+
+
+def get_currentdatetime(str_fmt='%Y-%m-%d %H:%M'):
+    return datetime.datetime.now().strftime(str_fmt)
 
 
 def get_timestamp(timestamp=None):
@@ -83,6 +149,50 @@ def get_region_date(date_obj, region='dateshort', del_fmt=':%S'):
 
 def set_timestamp(wait_time=60):
     return time.time() + wait_time
+
+
+def normalise_filesize(filesize):
+    filesize = try_parse_int(filesize)
+    i_flt = 1024.0
+    i_str = ['B', 'KB', 'MB', 'GB', 'TB']
+    for i in i_str:
+        if filesize < i_flt:
+            return '{:.2f} {}'.format(filesize, i)
+        filesize = filesize / i_flt
+    return '{:.2f} {}'.format(filesize, 'PB')
+
+
+def get_files_in_folder(folder, regex):
+    return [x for x in xbmcvfs.listdir(folder)[1] if re.match(regex, x)]
+
+
+def read_file(filepath):
+    vfs_file = xbmcvfs.File(filepath)
+    content = ''
+    try:
+        content = vfs_file.read()
+    finally:
+        vfs_file.close()
+    return content
+
+
+def get_tmdbid_nfo(basedir, foldername, tmdbtype='tv'):
+    try:
+        folder = basedir + foldername + '/'
+
+        # Get files ending with .nfo in folder
+        nfo_list = get_files_in_folder(folder, regex=r".*\.nfo$")
+
+        # Check our nfo files for TMDb ID
+        for nfo in nfo_list:
+            content = read_file(folder + nfo)  # Get contents of .nfo file
+            tmdb_id = content.replace('https://www.themoviedb.org/{}/'.format(tmdbtype), '')  # Clean content to retrieve tmdb_id
+            tmdb_id = tmdb_id.replace('&islocal=True', '')
+            if tmdb_id:
+                return tmdb_id
+
+    except Exception as exc:
+        kodi_log(u'ERROR GETTING TMDBID FROM NFO:\n{}'.format(exc))
 
 
 def rate_limiter(addon_name='plugin.video.themoviedb.helper', wait_time=None, api_name=None):
@@ -116,15 +226,15 @@ def rate_limiter(addon_name='plugin.video.themoviedb.helper', wait_time=None, ap
 
 
 def get_property(name, setproperty=None, clearproperty=False, prefix=None, window_id=None):
-        window = xbmcgui.Window(window_id) if window_id else xbmcgui.Window(xbmcgui.getCurrentWindowId())
-        name = '{0}.{1}'.format(prefix, name) if prefix else name
-        if clearproperty:
-            window.clearProperty(name)
-            return
-        elif setproperty:
-            window.setProperty(name, setproperty)
-            return setproperty
-        return window.getProperty(name)
+    window = xbmcgui.Window(window_id) if window_id else xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    name = '{0}.{1}'.format(prefix, name) if prefix else name
+    if clearproperty:
+        window.clearProperty(name)
+        return
+    elif setproperty:
+        window.setProperty(name, setproperty)
+        return setproperty
+    return window.getProperty(name)
 
 
 def dialog_select_item(items=None, details=False, usedetails=True):
@@ -165,7 +275,18 @@ def age_difference(birthday, deathday=''):
         return
 
 
+def iterate_extraart(artworklist, artworkdict={}):
+    idx = len(artworkdict) + 1
+    for art in artworklist:
+        ef_name = 'fanart{}'.format(idx)
+        artworkdict[ef_name] = art
+        idx += 1
+    return artworkdict
+
+
 def convert_timestamp(time_str, time_fmt="%Y-%m-%dT%H:%M:%S", time_lim=19, utc_convert=False):
+    if not time_str:
+        return
     time_str = time_str[:time_lim] if time_lim else time_str
     utc_offset = 0
     if utc_convert:
@@ -208,13 +329,37 @@ def date_in_range(date_str, days=1, start_date=0, date_fmt="%Y-%m-%dT%H:%M:%S", 
 
 
 def kodi_log(value, level=0):
-    logvalue = u'{0}{1}'.format(_addonlogname, value) if sys.version_info.major == 3 else u'{0}{1}'.format(_addonlogname, value).encode('utf-8', 'ignore')
-    if level == 2 and _debuglogging:
-        xbmc.log(logvalue, level=xbmc.LOGNOTICE)
-    elif level == 1:
-        xbmc.log(logvalue, level=xbmc.LOGNOTICE)
-    else:
-        xbmc.log(logvalue, level=xbmc.LOGDEBUG)
+    try:
+        if isinstance(value, bytes):
+            value = value.decode('utf-8')
+        logvalue = u'{0}{1}'.format(_addonlogname, value)
+        if sys.version_info < (3, 0):
+            logvalue = logvalue.encode('utf-8', 'ignore')
+        if level == 2 and _debuglogging:
+            xbmc.log(logvalue, level=xbmc.LOGNOTICE)
+        elif level == 1:
+            xbmc.log(logvalue, level=xbmc.LOGNOTICE)
+        else:
+            xbmc.log(logvalue, level=xbmc.LOGDEBUG)
+    except Exception as exc:
+        xbmc.log(u'Logging Error: {}'.format(exc), level=xbmc.LOGNOTICE)
+
+
+def get_jsonrpc(method=None, params=None):
+    if not method or not params:
+        return {}
+    query = {
+        "jsonrpc": "2.0",
+        "params": params,
+        "method": method,
+        "id": 1}
+    try:
+        jrpc = xbmc.executeJSONRPC(json.dumps(query))
+        response = json.loads(try_decode_string(jrpc, errors='ignore'))
+    except Exception as exc:
+        kodi_log(u'TMDbHelper - JSONRPC Error:\n{}'.format(exc), 1)
+        response = {}
+    return response
 
 
 def dictify(r, root=True):
@@ -300,6 +445,62 @@ def merge_two_dicts(x, y):
     z = x.copy()   # start with x's keys and values
     z.update(y)    # modifies z with y's keys and values & returns None
     return z
+
+
+def merge_two_dicts_deep(x, y):
+    """ Deep merge y keys into copy of x """
+    z = x.copy()
+    for k, v in y.items():
+        if isinstance(v, dict):
+            merge_two_dicts_deep(z.setdefault(k, {}), v)
+        elif v:
+            z[k] = v
+    return z
+
+
+def get_searchhistory(itemtype=None, cache=None):
+    if not itemtype:
+        return []
+    if not cache:
+        cache = simplecache.SimpleCache()
+    cache_name = 'plugin.video.themoviedb.helper.search.history.{}'.format(itemtype)
+    return cache.get(cache_name) or []
+
+
+def set_searchhistory(query=None, itemtype=None, cache=None, cache_days=120, clearcache=False, maxentries=9, replace=False):
+    if not itemtype:
+        return
+    if not cache:
+        cache = simplecache.SimpleCache()
+    cache_name = 'plugin.video.themoviedb.helper.search.history.{}'.format(itemtype)
+    search_history = []
+
+    if not clearcache:
+        search_history = get_searchhistory(itemtype, cache=cache)
+
+        if replace is False and query:
+            if query in search_history:  # Remove query if in history because we want it to be first in list
+                search_history.remove(query)
+            if maxentries and len(search_history) > maxentries:
+                search_history.pop(0)  # Remove the oldest query if we hit our max so we don't accumulate months worth of queries
+            search_history.append(query)
+
+        elif replace is not False:
+            if not isinstance(replace, int) and replace in search_history:
+                replace = search_history.index(replace)  # If not an integer assume we've been given an actual entry to replace
+            if not isinstance(replace, int):
+                return  # If we can't find an index dont update cache to prevent unintended modification NOTE: Not sure if want a way to append instead if replacement item not found
+            try:  # Use a try block to catch index out of range errors
+                if query:
+                    search_history[replace] = query
+                else:
+                    search_history.pop(replace)
+            except Exception as exc:
+                kodi_log(exc, 1)
+                return  # Dont update cache if modifying the search history failed
+
+    cache.set(cache_name, search_history, expiration=datetime.timedelta(days=cache_days))
+    return query
 
 
 def make_kwparams(params):
