@@ -389,16 +389,16 @@ def _is_cache_valid(cached_time, cache_timeout):
 
 
 def _find_cache_version():
-	import os
-	versionFile = os.path.join(control.dataPath, 'cache.v')
+	versionFile = control.joinPath(control.dataPath, 'cache.v')
 	try:
-		if not os.path.exists(versionFile):
+		if not control.existsPath(versionFile):
 			f = open(versionFile, 'w')
 			f.close()
 	except:
-		print('Venom Addon Data Path Does not Exist. Creating Folder....')
+		log_utils.log('Venom Addon Data Path Does not Exist. Creating Folder....', __name__, log_utils.LOGDEBUG)
 		ad_folder = control.transPath('special://home/userdata/addon_data/plugin.video.venom')
-		os.makedirs(ad_folder)
+		# os.makedirs(ad_folder)
+		control.makeDirs(ad_folder)
 	try:
 		with open(versionFile, 'rb') as fh:
 			oldVersion = fh.read()

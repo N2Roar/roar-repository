@@ -16,7 +16,6 @@ try:
 except:
 	from urllib.parse import quote_plus
 
-from resources.lib.modules import cache
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import control
@@ -779,9 +778,8 @@ def getActors(tvdb):
 def parseActors(actors):
 	castandart = []
 	try:
-		if actors is None:
-			raise Exception()
-
+		if not actors:
+			return []
 		import xml.etree.ElementTree as ET
 		tree = ET.ElementTree(ET.fromstring(actors))
 		root = tree.getroot()
@@ -795,18 +793,15 @@ def parseActors(actors):
 			try: role = client.replaceHTMLCodes(person[3])
 			except: pass
 			try:
-				try:
-					castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((imageUrl + image) if image is not None else '0')})
-				except:
-					castandart.append({'name': name, 'role': role, 'thumbnail': ((imageUrl + image) if image is not None else '0')})
+				try: castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((imageUrl + image) if image is not None else '0')})
+				except: castandart.append({'name': name, 'role': role, 'thumbnail': ((imageUrl + image) if image is not None else '0')})
 			except:
 				castandart = []
 			if len(castandart) == 150: break
-
 		return castandart
 	except:
 		log_utils.error()
-		return None
+		return []
 
 
 def getSeries_ByIMDB(title, year, imdb):
@@ -877,7 +872,6 @@ def get_is_airing(tvdb, season):
 		# season still airing check for pack scraping
 		premiered_eps = [i for i in episodes if not '<FirstAired></FirstAired>' in i]
 		unaired_eps = [i for i in premiered_eps if int(re.sub('[^0-9]', '', str(client.parseDOM(i, 'FirstAired')))) > int(re.sub('[^0-9]', '', str(today_date)))]
-		# log_utils.log('unaired_eps = %s' % unaired_eps, __name__, log_utils.LOGDEBUG)
 		if unaired_eps:
 			still_airing = client.parseDOM(unaired_eps, 'SeasonNumber')[0]
 		else:

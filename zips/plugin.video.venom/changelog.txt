@@ -1,3 +1,46 @@
+[B][COLOR red]Update - v4.1.1 – Sept. 04, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed issue with fresh install failing with log error notice.[/I]
+[B][COLOR red]Update - v4.1.0 – Sept. 03, 2020[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added "File Name Format" option to downloads.  You
+    have the option of "Title (year) or Title S01E01", which is
+    the older file naming method.  Or you can chose
+    "torrent file name".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed random issue where meta fallback would replace
+    "tvshowtitle" with episode "title".  This caused issues with
+    OpenInfo or TMDbHelper failing lookup of the show.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed playback issue with OpenInfo where video playing
+    was in background.  This occurred when a search was
+    performed first and then accessing OpenInfo to play
+    from.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed PM expiry date when viewing Account Info.[/I]
+[COLOR yellow]--[/COLOR][I] Added All Debrid support for cache checking and
+    removal of uncached torrents.[/I]
+[COLOR yellow]--[/COLOR][I] Added All Debrid support for resolving of pack files
+    for playback.[/I]
+[COLOR yellow]--[/COLOR][I] Added All Debrid support for context menu option to
+    cache uncached torrents.[/I]
+[COLOR yellow]--[/COLOR][I] Added All Debrid support for downloading from source
+    select.[/I]
+[COLOR yellow]--[/COLOR][I] Added All Debrid support for "Browse Debrid Pack".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed "My Movies" "Date Added" sorting.  Previously it
+    was stuck at descending sort order due to Trakt api key
+    for "listed_at" was not assigned.  This is now fixed.[/I]
+[COLOR yellow]--[/COLOR][I] Renamed "Unfinished" in My Movies and My TV Shows
+    to "Continue Watching".  Limit has been reduced to 40
+    items. Trakt On Deck is now removed as this was the
+    same list with only 20 items so I feel this was a good
+    compromise. Sort order is now set to be based on date
+    paused.[/I]
+[COLOR yellow]--[/COLOR][I] "reuselanguageinvoker" is now officially hard coded on.
+    There is a new service settings management system
+    courtesy of Tikipeter,  so credit goes to him!!![/I]  There
+    is still an option for user to turn this off if not comfortable. 
+[COLOR yellow]--[/COLOR][I] TVShows Originals is now on
+    by default.[/I]
+[COLOR yellow]--[/COLOR][I] Youtube is now on by default.[/I]
+[COLOR yellow]--[/COLOR][I] Please be sure to update "context.venom" to v1.0.6 for
+    compliant changes.[/I]
+
 [B][COLOR red]Update - v4.0.8 - Aug. 23, 2020[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Changed episode unaired condition when meta
     provider does not return a premiered date.  The

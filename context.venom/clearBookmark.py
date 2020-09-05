@@ -25,11 +25,10 @@ if __name__ == '__main__':
 		name = params.get('tvshowtitle') + ' S%02dE%02d' % (int(season), int(episode))
 	sysname = quote_plus(name)
 
-	venom_path = 'RunPlugin(%s?action=clearBookmark&name=%s&year=%s&opensettings=false)' % (plugin, sysname, year)
+	venom_path = 'RunPlugin(%s?action=cache_clearBookmark&name=%s&year=%s&opensettings=false)' % (plugin, sysname, year)
 	xbmc.executebuiltin(venom_path)
 
 	path = path.split('&meta=')[0]
-	kodi_path = 'RunPlugin(%s?action=clearLocalBookmark&url=%s)' % (plugin, quote_plus(path))
+	kodi_path = 'RunPlugin(%s?action=cache_clearKodiBookmark&url=%s)' % (plugin, quote_plus(path))
 	xbmc.executebuiltin(kodi_path)
-
 	xbmc.executebuiltin('UpdateLibrary(video,special://skin/foo)')

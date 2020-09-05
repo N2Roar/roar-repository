@@ -27,10 +27,6 @@ from resources.lib.modules import views
 from resources.lib.modules import workers
 from resources.lib.indexers import tmdb as tmdb_indexer
 
-# params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
-# action = params.get('action')
-is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
-
 
 class Movies:
 	def __init__(self, type='movie', notifications=True):
@@ -41,7 +37,6 @@ class Movies:
 
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.today_date = (self.datetime).strftime('%Y-%m-%d')
-		# self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
 		self.three_month_date = (self.datetime - datetime.timedelta(days = 90)).strftime('%Y-%m-%d')
 		self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
@@ -125,11 +120,9 @@ class Movies:
 		self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
 
 		self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/movies'
-		self.traktcollection_link = 'https://api.trakt.tv/users/me/collection/movies'
+		self.traktcollection_link = 'https://api.trakt.tv/users/me/collection/movies' # api collection does not support pagination atm
 		self.trakthistory_link = 'https://api.trakt.tv/users/me/history/movies?limit=40&page=1'
-		self.traktunfinished_link = 'https://api.trakt.tv/sync/playback/movies?limit=100'
-		self.traktonDeck_link = 'https://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
-
+		self.traktunfinished_link = 'https://api.trakt.tv/sync/playback/movies?limit=40'
 		self.traktanticipated_link = 'https://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
 		self.trakttrending_link = 'https://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
 		self.traktboxoffice_link = 'https://api.trakt.tv/movies/boxoffice'
@@ -143,7 +136,6 @@ class Movies:
 		def wrapper(*args, **kwargs):
 			LOGPATH = control.transPath('special://logpath/')
 			datafn = func.__name__ + ".profile" # Name the data file sensibly
-			# log_file = os.path.join(LOGPATH, datafn)
 			log_file = control.joinPath(LOGPATH, datafn)
 			prof = cProfile.Profile()
 			retval = prof.runcall(func, *args, **kwargs)
@@ -171,13 +163,12 @@ class Movies:
 
 
 	def get(self, url, idx=True):
+		self.list = []
 		try:
 			try: url = getattr(self, url + '_link')
 			except: pass
 			try: u = urlparse(url).netloc.lower()
 			except: pass
-
-			self.list = []
 			if u in self.trakt_link and '/users/' in url:
 				try:
 					if url == self.trakthistory_link:
@@ -226,24 +217,20 @@ class Movies:
 				self.movieDirectory(self.list)
 			return self.list
 		except:
-			try:
-				invalid = (self.list is None or len(self.list) == 0)
-			except:
-				invalid = True
-			if invalid:
+			log_utils.error()
+			if not self.list:
 				control.hide()
 				if self.notifications:
 					control.notification(title=32001, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
 
 
 	def getTMDb(self, url, idx=True, cached=True):
+		self.list = []
 		try:
 			try: url = getattr(self, url + '_link')
 			except: pass
 			try: u = urlparse(url).netloc.lower()
 			except: pass
-
-			self.list = []
 			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 0, url)
@@ -263,37 +250,23 @@ class Movies:
 
 			return self.list
 		except:
-			try:
-				invalid = (self.list is None or len(self.list) == 0)
-			except:
-				invalid = True
-			if invalid:
+			log_utils.error()
+			if not self.list:
 				control.hide()
 				if self.notifications:
 					control.notification(title=32001, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
 
 
 	def unfinished(self, url, idx=True):
+		self.list = []
 		try:
-			try:
-				url = getattr(self, url + '_link')
-			except:
-				pass
-
-			activity = trakt.getWatchedActivity()
-			self.list = []
-			if url == self.traktonDeck_link:
-				try:
-					if activity > cache.timeout(self.trakt_list, url, self.trakt_user):
-						raise Exception()
-					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
-				except:
-					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
-				if idx:
-					self.worker()
-
+			try: url = getattr(self, url + '_link')
+			except: pass
+			# activity = trakt.getWatchedActivity()
+			activity = trakt.getPausedActivity()
 			if url == self.traktunfinished_link :
 				try:
+					# log_utils.log('cache.timeout =  %s' % datetime.datetime.fromtimestamp(cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user)), __name__, log_utils.LOGDEBUG)
 					if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user):
 						raise Exception()
 					self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user)
@@ -301,20 +274,18 @@ class Movies:
 					self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user)
 				if idx:
 					self.worker()
-
 			if idx:
-			# self.sort(type = 'calendar')
-				self.sort()
+				self.list = sorted(self.list, key=lambda k: k['paused_at'], reverse=True)
+				# self.list = sorted(self.list, key=lambda k: k['lastplayed'], reverse=True)
+				# self.list = sorted(self.list, key=lambda i: control.datetime_workaround(i['paused_at'][:19],
+																				# format="%Y-%m-%dT%H:%M:%S",
+																				# date_only=False), reverse=True)
 				self.movieDirectory(self.list, unfinished=True, next=False)
 
 			return self.list
 		except:
 			log_utils.error()
-			try:
-				invalid = (self.list is None or len(self.list) == 0)
-			except:
-				invalid = True
-			if invalid:
+			if not self.list:
 				control.hide()
 				if self.notifications:
 					control.notification(title=32001, message=33049, icon='default', sound=(control.setting('notification.sound') == 'true'))
@@ -336,7 +307,6 @@ class Movies:
 
 	def sort(self):
 		try:
-			# if self.list is None or self.list == []:
 			if not self.list:
 				return
 			attribute = int(control.setting('sort.movies.type'))
@@ -363,7 +333,7 @@ class Movies:
 					for i in range(len(self.list)):
 						if 'added' not in self.list[i]:
 							self.list[i]['added'] = ''
-					self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
+					self.list = sorted(self.list, key = lambda k: k['added'], reverse=reverse)
 				elif attribute == 6:
 					for i in range(len(self.list)):
 						if 'lastplayed' not in self.list[i]:
@@ -437,7 +407,7 @@ class Movies:
 		dbcon.close()
 
 		if delete_option:
-			navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+			navigator.Navigator().addDirectoryItem(32605, 'cache_clearSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		navigator.Navigator().endDirectory()
 
 
@@ -693,21 +663,25 @@ class Movies:
 			if '/related' in u:
 				u = u + '&limit=20'
 			result = trakt.getTraktAsJson(u)
-
 			items = []
 			for i in result:
 				try:
 					movie = i['movie']
-					try:
-						movie['progress'] = max(0, min(1, i['progress'] / 100.0))
-					except:
-						pass
+					try: movie['listed_at'] = i['listed_at'] # for watchlist
+					except: pass
+					try: movie['paused_at'] = i['paused_at']
+					except: pass
+					try: movie['progress'] = max(0, min(1, i['progress'] / 100.0))
+					except: pass
+					try: movie['watched_at'] = i['watched_at']
+					except: pass
 					items.append(movie)
 				except:
 					pass
 			if len(items) == 0:
 				items = result
 		except:
+			log_utils.error()
 			return
 
 		try:
@@ -723,24 +697,28 @@ class Movies:
 
 		for item in items:
 			try:
-				try:
-					title = (item.get('title')).encode('utf-8')
-				except:
-					title = item.get('title')
+				try: title = (item.get('title')).encode('utf-8')
+				except: title = item.get('title')
 
 				premiered = item.get('released', '0')
-
 				year = str(item.get('year', '0'))
 				if year == 'None' or year == '0':
 					year = str(premiered)
-					year = re.search(r"(\d{4})", year).group(1)
+					try: year = re.search(r"(\d{4})", year).group(1)
+					except: pass
 
 				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
-				try:
-					progress = item['progress']
-				except:
-					progress = None
+				progress = item.get('progress', None)
+				paused_at = item.get('paused_at', '0')
+				listed_at = item.get('listed_at', '0')
+				lastplayed = item.get('watched_at', '0')
+				updated_at = item.get('updated_at') # not used right now
+
+				# if title == 'The Current War':
+					# log_utils.log('listed_at = %s' % str(listed_at), __name__, log_utils.LOGDEBUG)
+					# log_utils.log('lastplayed = %s' % str(lastplayed), __name__, log_utils.LOGDEBUG)
+					# log_utils.log('updated_at = %s' % str(updated_at), __name__, log_utils.LOGDEBUG)
 
 				imdb = item.get('ids', {}).get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
@@ -772,10 +750,11 @@ class Movies:
 
 				tagline = item.get('tagline', '0')
 
-				self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration,
-											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb,
-											'tvdb': '0', 'poster': '0', 'fanart': '0', 'trailer': trailer, 'next': next, 'progress': progress})
+				self.list.append({'title': title, 'originaltitle': title, 'added': listed_at, 'lastplayed': lastplayed, 'progress': progress, 'paused_at': paused_at,
+										'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
+										'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'fanart': '0', 'trailer': trailer, 'next': next})
 			except:
+				log_utils.error()
 				pass
 		return self.list
 
@@ -804,6 +783,7 @@ class Movies:
 
 				self.list.append({'name': name, 'url': url, 'context': url})
 			except:
+				log_utils.error()
 				pass
 		self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['name'].lower()))
 		return self.list
@@ -831,6 +811,7 @@ class Movies:
 			items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
 			items += client.parseDOM(result, 'div', attrs = {'class': 'list_item.+?'})
 		except:
+			log_utils.error()
 			return
 
 		next = ''
@@ -838,12 +819,10 @@ class Movies:
 			# HTML syntax error, " directly followed by attribute name. Insert space in between. parseDOM can otherwise not handle it.
 			result = result.replace('"class="lister-page-next', '" class="lister-page-next')
 			next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.*?lister-page-next.*?'})
-
 			if len(next) == 0:
 				next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
 				next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
 				next = [i[0] for i in next if 'Next' in i[1]]
-
 			next = url.replace(urlparse(url).query, urlparse(next[0]).query)
 			next = client.replaceHTMLCodes(next)
 			next = next.encode('utf-8')
@@ -1261,6 +1240,7 @@ class Movies:
 
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
+		is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
 		settingFanart = control.setting('fanart')
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
@@ -1299,7 +1279,7 @@ class Movies:
 				# except: title = i['title']
 				label = '%s (%s)' % (title, year)
 				try:
-					labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
+					labelProgress = label + '[COLOR %s][%s][/COLOR]' % (control.getColor(control.setting('highlight.color')), str(round(float(i['progress'] * 100), 1)) + '%')
 				except:
 					labelProgress = label
 
@@ -1380,10 +1360,10 @@ class Movies:
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
 					watched = (overlay == 7)
 
-					# Skip movies marked as watched for the unfinished and onDeck lists.
-					try:
-						if unfinished and watched and not i['progress'] is None: continue
-					except: pass
+					# Skip episodes marked as watched for the unfinished and onDeck lists.
+					# try:
+						# if unfinished and watched and not i['progress'] is None: continue
+					# except: pass
 
 					if watched:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&name=%s&imdb=%s&query=6)' % (sysaddon, sysname, imdb)))
@@ -1402,8 +1382,8 @@ class Movies:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s' % (sysaddon, systitle, year, imdb, sysmeta)
 				sysurl = quote_plus(url)
 
-				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
-				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
+				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlist_Manager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
+				cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem&name=%s)' % (sysaddon, sysname)))
 				cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
 				if control.setting('hosts.mode') == '1':
@@ -1412,10 +1392,9 @@ class Movies:
 					cm.append(('Rescrape Item', 'PlayMedia(%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&rescrape=true)' % (sysaddon, systitle, year, imdb, sysmeta)))
 
 				if control.setting('library.service.update') == 'true':
-					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+					cm.append((addToLibrary, 'RunPlugin(%s?action=library_movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
-				# cm.append((control.lang(32610), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
-				cm.append((control.lang(32611), 'RunPlugin(%s?action=clearSources&opensettings=false)' % sysaddon))
+				cm.append((control.lang(32611), 'RunPlugin(%s?action=cache_clearSources&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
@@ -1484,7 +1463,6 @@ class Movies:
 			except:
 				log_utils.error()
 				pass
-
 		control.content(syshandle, 'movies')
 		control.directory(syshandle, cacheToDisc=True)
 		control.sleep(500)
@@ -1509,7 +1487,6 @@ class Movies:
 		for i in items:
 			try:
 				name = i['name']
-
 				if i['image'].startswith('http'):
 					thumb = i['image']
 				elif artPath:
@@ -1518,24 +1495,21 @@ class Movies:
 					thumb = addonThumb
 
 				icon = i.get('icon', 0)
-				if not icon:
-					icon = 'DefaultFolder.png'
+				if not icon: icon = 'DefaultFolder.png'
 
 				url = '%s?action=%s' % (sysaddon, i['action'])
-				try:
-					url += '&url=%s' % quote_plus(i['url'])
-				except:
-					pass
+				try: url += '&url=%s' % quote_plus(i['url'])
+				except: pass
 
 				cm = []
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, quote_plus(i['url']))))
 
 				if queue:
-					cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+					cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem)' % sysaddon))
 
 				try:
 					if control.setting('library.service.update') == 'true':
-						cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s&name=%s)' % (sysaddon, quote_plus(i['context']), name)))
+						cm.append((addToLibrary, 'RunPlugin(%s?action=library_moviesToLibrary&url=%s&name=%s)' % (sysaddon, quote_plus(i['context']), name)))
 				except: pass
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 

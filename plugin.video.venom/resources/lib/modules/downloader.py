@@ -11,7 +11,6 @@ try:
 	from urlparse import parse_qsl, urlparse
 except:
 	from urllib.parse import parse_qsl, urlparse
-
 try:
 	from urllib.request import urlopen, Request
 except:
@@ -21,10 +20,11 @@ from resources.lib.modules import control
 from resources.lib.modules import log_utils
 
 
-def download(name, image, url):
+def download(name, image, url, meta_name=None):
 	# log_utils.log('name = %s' % str(name), log_utils.LOGDEBUG)
+	file_format = control.setting('downloads.file.format')
 	try:
-		if url is None:
+		if not url:
 			control.hide()
 			return
 		try:
@@ -34,58 +34,57 @@ def download(name, image, url):
 
 		url = url.split('|')[0]
 
-		try:
-			content = re.search(r'(.+?)(?:|\.| - |-|\s)(?:S|s|\s|\.)(\d{1,2})(?!\d)(?:-{0,1})(?:E{0,1}|e{0,1})[0-2]{1}[0-9]{1}(?!\w)', name.replace('\'', '')).groups()
-			# log_utils.log('content = %s' % str(content), log_utils.LOGDEBUG)
-		except:
-			content = ()
-
 		transname = name.translate(None, '\/:*?"<>|').strip('.')
 		ext_list = ['.mp4', '.mkv', '.flv', '.avi', '.mpg']
 		for i in ext_list:
 			transname = transname.rstrip(i)
 
-		levels =['../../../..', '../../..', '../..', '..']
+		if meta_name:
+			try: content = re.search(r'(.+?)\sS(\d*)E\d*$', meta_name).groups()
+			except: content = ()
+			if file_format == '0':
+				transname = meta_name.translate(None, '\/:*?"<>|').strip('.')
+		else:
+			try: content = re.search(r'(.+?)(?:|\.| - |-|.-.|\s)(?:S|s|\s|\.)(\d{1,2})(?!\d)(?:|\.| - |-|.-.|x|\s)(?:E|e|\s|.)([0-2]{1}[0-9]{1})(?!\w)', name.replace('\'', '')).groups()
+			except: content = ()
+
+ 		levels =['../../../..', '../../..', '../..', '..']
 		if len(content) == 0:
 			dest = control.setting('movie.download.path')
 			dest = control.transPath(dest)
 			for level in levels:
-				try:
-					control.makeFile(os.path.abspath(os.path.join(dest, level)))
-				except:
-					pass
+				try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
+				except: pass
 			control.makeFile(dest)
-
-			try:
-				movie_info = re.search(r'(.+?)(?:\.{0,1}-{0,1}\.{0,1}|\s*)(?:\({0,1})((?:19|20)(?:[0-9]{2}))', name.replace('\'', '')).groups()
-				# log_utils.log('movie_info = %s' % str(movie_info), log_utils.LOGDEBUG)
-			except:
-				movie_info = ()
-
-			if len(movie_info) != 0:
-				movietitle = titlecase(re.sub('[^A-Za-z0-9\s]+', ' ', movie_info[0]))
-				dest = os.path.join(dest, movietitle + '_' + movie_info[1])
+			if meta_name:
+				dest = os.path.join(dest, meta_name.translate(None, '\/:*?"<>|').strip('.'))
 			else:
-				dest = os.path.join(dest, transname)
-			# log_utils.log('dest = %s' % str(dest), log_utils.LOGDEBUG)
-
+				try: movie_info = re.search(r'(.+?)(?:\.{0,1}-{0,1}\.{0,1}|\s*)(?:|\(|\[|\.)((?:19|20)(?:[0-9]{2}))', name.replace('\'', '')).groups()
+				except: movie_info = ()
+				if len(movie_info) != 0:
+					movietitle = titlecase(re.sub('[^A-Za-z0-9\s]+', ' ', movie_info[0]))
+					dest = os.path.join(dest, movietitle + ' (' + movie_info[1] + ')')
+					if file_format == '0':
+						transname = movietitle + ' (' + movie_info[1] + ')'
+				else:
+					dest = os.path.join(dest, transname)
 			control.makeFile(dest)
 		else:
 			dest = control.setting('tv.download.path')
 			dest = control.transPath(dest)
 			for level in levels:
-				try:
-					control.makeFile(os.path.abspath(os.path.join(dest, level)))
-				except:
-					pass
+				try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
+				except: pass
 			control.makeFile(dest)
 			transtvshowtitle = content[0].translate(None, '\/:*?"<>|').strip('.').replace('.', ' ')
-			if not transtvshowtitle[0].isupper():
-				transtvshowtitle = transtvshowtitle.capitalize()
+			if not meta_name:
+				transtvshowtitle = titlecase(re.sub('[^A-Za-z0-9\s-]+', ' ', transtvshowtitle))
 			dest = os.path.join(dest, transtvshowtitle)
 			control.makeFile(dest)
 			dest = os.path.join(dest, 'Season %01d' % int(content[1]))
 			control.makeFile(dest)
+			if file_format == '0' and not meta_name:
+				transname = transtvshowtitle + ' S%sE%s' % (content[1], content[2])
 		ext = os.path.splitext(urlparse(url).path)[1][1:]
 		if not ext in ['mp4', 'mkv', 'flv', 'avi', 'mpg']:
 			ext = 'mp4'
@@ -141,18 +140,20 @@ def doDownload(url, dest, title, image, headers):
 		content = int(resp.headers['Content-Length'])
 	except:
 		content = 0
+
 	try:
 		resumable = 'bytes' in resp.headers['Accept-Ranges'].lower()
 	except:
 		resumable = False
-	# if resumable:
-		# print("Download is resumable")
+
 	if content < 1:
 		control.hide()
 		control.okDialog(title, file + 'Unknown filesize: Unable to download')
 		return
 	size = 1024 * 1024
-	mb   = content / (1024 * 1024)
+	# mb = content / (1024 * 1024)
+	gb = str(round(content / float(1073741824), 2))
+
 	if content < size:
 		size = content
 	total = 0
@@ -162,9 +163,8 @@ def doDownload(url, dest, title, image, headers):
 	resume = 0
 	sleep = 0
 	control.hide()
-	if control.yesnoDialog(file, 'Complete file is %dMB' % mb, 'Continue with download?', 'Confirm Download', 'Confirm',  'Cancel') == 1:
+	if control.yesnoDialog('Name to save: %s' % file, 'File Size: %sGB' % gb, 'Continue with download?', 'Confirm Download', 'Confirm',  'Cancel') == 1:
 		return
-	# print('Download File Size : %dMB %s ' % (mb, dest))
 
 	#f = open(dest, mode='wb')
 	f = control.openFile(dest, 'w')

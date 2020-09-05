@@ -32,9 +32,6 @@ REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 databaseName = control.cacheFile
 databaseTable = 'trakt'
 
-server_notification = control.setting('trakt.server.notifications') == 'true'
-general_notification = control.setting('trakt.general.notifications') == 'true'
-
 
 def getTrakt(url, post=None, cache=True, check=False, timestamp=None, extended=False, direct=False, authentication=None):
 # def getTrakt(url, post = None, cache = True, check = True, timestamp = None, extended = False, direct = False, authentication = None):
@@ -134,7 +131,7 @@ def getTraktAsJson(url, post=None, authentication=None):
 
 def _error(url, post, timestamp, message):
 	_cache(url = url, post = post, timestamp = timestamp)
-	if server_notification:
+	if control.setting('trakt.server.notifications') == 'true':
 		control.notification(title=32315, message=message, icon='default', sound=(control.setting('notification.sound') == 'true'))
 	control.hide()
 	return None
@@ -348,7 +345,7 @@ def watch(name, imdb=None, tvdb=None, season=None, episode=None, refresh=True):
 	if refresh:
 		control.refresh()
 	control.trigger_widget_refresh()
-	if general_notification:
+	if control.setting('trakt.general.notifications') == 'true':
 		if season and not episode:
 			name = '%s-Season%s...' % (name, season)
 		if season and episode:
@@ -375,7 +372,7 @@ def unwatch(name, imdb=None, tvdb=None, season=None, episode=None, refresh=True)
 	if refresh:
 		control.refresh()
 	control.trigger_widget_refresh()
-	if general_notification:
+	if control.setting('trakt.general.notifications') == 'true':
 		if season and not episode:
 			name = '%s-Season%s...' % (name, season)
 		if season and episode:
@@ -452,7 +449,7 @@ def hideItem(name, imdb=None, tvdb=None, season=None, episode=None, refresh=True
 	if refresh:
 		control.refresh()
 	control.trigger_widget_refresh()
-	if general_notification:
+	if control.setting('trakt.general.notifications') == 'true':
 		control.notification(title=32315, message=control.lang(33053) % (name, sections_display[selection]), icon='default', sound=(control.setting('notification.sound') == 'true'))
 
 
@@ -559,7 +556,7 @@ def manager(name, imdb=None, tvdb=None, season=None, episode=None, refresh=True)
 				if refresh:
 					control.refresh()
 				control.trigger_widget_refresh()
-				if general_notification:
+				if control.setting('trakt.general.notifications') == 'true':
 					control.notification(title=name, message=message, icon='default', sound=(control.setting('notification.sound') == 'true'))
 	except:
 		log_utils.error()
@@ -616,14 +613,18 @@ def getActivity():
 	try:
 		i = getTraktAsJson('/sync/last_activities')
 		activity = []
+		activity.append(i['movies']['watched_at']) # added 8/30/20
 		activity.append(i['movies']['collected_at'])
-		activity.append(i['episodes']['collected_at'])
 		activity.append(i['movies']['watchlisted_at'])
+		activity.append(i['movies']['paused_at']) # added 8/30/20
+		activity.append(i['episodes']['watched_at']) # added 8/30/20
+		activity.append(i['episodes']['collected_at'])
+		activity.append(i['episodes']['watchlisted_at'])
+		activity.append(i['episodes']['paused_at']) # added 8/30/20
 		activity.append(i['shows']['watchlisted_at'])
 		activity.append(i['seasons']['watchlisted_at'])
-		activity.append(i['episodes']['watchlisted_at'])
-		activity.append(i['lists']['updated_at'])
 		activity.append(i['lists']['liked_at'])
+		activity.append(i['lists']['updated_at'])
 		activity = [int(cleandate.iso_2_utc(i)) for i in activity]
 		activity = sorted(activity, key=int)[-1]
 		return activity
@@ -638,6 +639,20 @@ def getWatchedActivity():
 		activity = []
 		activity.append(i['movies']['watched_at'])
 		activity.append(i['episodes']['watched_at'])
+		activity = [int(cleandate.iso_2_utc(i)) for i in activity]
+		activity = sorted(activity, key=int)[-1]
+		return activity
+	except:
+		log_utils.error()
+		pass
+
+
+def getPausedActivity():
+	try:
+		i = getTraktAsJson('/sync/last_activities')
+		activity = []
+		activity.append(i['movies']['paused_at'])
+		activity.append(i['episodes']['paused_at'])
 		activity = [int(cleandate.iso_2_utc(i)) for i in activity]
 		activity = sorted(activity, key=int)[-1]
 		return activity
@@ -799,12 +814,11 @@ def showCount(imdb, refresh=True, wait=False):
 	try:
 		if not imdb:
 			return None
-
 		if not imdb.startswith('tt'):
 			return None
 
 		result = {'total': 0, 'watched': 0, 'unwatched': 0}
-		indicators = seasonCount(imdb = imdb, refresh = refresh, wait = wait)
+		indicators = seasonCount(imdb=imdb, refresh=refresh, wait=wait)
 		if indicators is None:
 			return None
 
@@ -822,11 +836,12 @@ def seasonCount(imdb, refresh=True, wait=False):
 	try:
 		if not imdb:
 			return None
-
 		if not imdb.startswith('tt'):
 			return None
-
 		indicators = cache.cache_existing(_seasonCountRetrieve, imdb)
+		# log_utils.log('indicators = %s' % indicators, log_utils.LOGDEBUG)
+		if indicators:
+			return indicators # added 9/2/20
 
 		if refresh:
 			# NB: Do not retrieve a fresh count, otherwise loading show/season menus are slow.
@@ -845,6 +860,7 @@ def _seasonCountCache(imdb):
 	return cache.get(_seasonCountRetrieve, 0, imdb)
 
 
+		# indicators = getTraktAsJson('/users/me/watched/shows?extended=full')
 def _seasonCountRetrieve(imdb):
 	try:
 		if getTraktCredentialsInfo() is False:
@@ -1105,6 +1121,22 @@ def IdLookup(id_type, id, type):
 	except:
 		log_utils.error()
 		return None
+
+
+def scrobbleMovie(imdb, watched_percent):
+	try:
+		if not imdb.startswith('tt'): imdb = 'tt' + imdb
+		return getTrakt('/scrobble/pause', {"movie": {"ids": {"imdb": imdb}}, "progress": watched_percent})
+	except:
+		log_utils.error()
+
+
+def scrobbleEpisode(tvdb, season, episode, watched_percent):
+	try:
+		season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
+		return getTrakt('/scrobble/pause', {"show": {"ids": {"tvdb": tvdb}}, "episode": {"season": season, "number": episode}, "progress": watched_percent})
+	except:
+		log_utils.error()
 
 
 def _scrobbleType(type):

@@ -26,10 +26,6 @@ from resources.lib.modules import views
 from resources.lib.modules import workers
 from resources.lib.indexers import tmdb as tmdb_indexer
 
-# params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
-# action = params.get('action')
-is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
-
 
 class Collections:
 	def __init__(self):
@@ -787,7 +783,6 @@ class Collections:
 			tmdb_sort = 'vote_average'
 		if sort in [4, 5, 6]:
 			tmdb_sort = 'release_date'
-
 		tmdb_sort_order = '.asc' if int(control.setting('sort.movies.order')) == 0 else '.desc'
 		sort_string = tmdb_sort + tmdb_sort_order
 		return sort_string
@@ -984,7 +979,6 @@ class Collections:
 			for r in range(0, total, 40):
 				threads = []
 				for i in range(r, r + 40):
-					# if i <= total: # this is wrong loop counts 0 but len() does not
 					if i < total:
 						threads.append(workers.Thread(self.super_imdb_info, i))
 				[i.start() for i in threads]
@@ -1169,6 +1163,7 @@ class Collections:
 
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
+		is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
 		settingFanart = control.setting('fanart')
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
@@ -1296,8 +1291,8 @@ class Collections:
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s' % (sysaddon, systitle, year, imdb, sysmeta)
 				sysurl = quote_plus(url)
 
-				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
-				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
+				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlist_Manager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
+				cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem&name=%s)' % (sysaddon, sysname)))
 				cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
 				if control.setting('hosts.mode') == '1':
@@ -1306,9 +1301,9 @@ class Collections:
 					cm.append(('Rescrape Item', 'PlayMedia(%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&rescrape=true)' % (sysaddon, systitle, year, imdb, sysmeta)))
 
 				if control.setting('library.service.update') == 'true':
-					cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+					cm.append((addToLibrary, 'RunPlugin(%s?action=library_movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
-				cm.append((control.lang(32611), 'RunPlugin(%s?action=clearSources&opensettings=false)' % sysaddon))
+				cm.append((control.lang(32611), 'RunPlugin(%s?action=cache_clearSources&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 
@@ -1396,7 +1391,7 @@ class Collections:
 
 		cm = []
 		if queue:
-			cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+			cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem)' % sysaddon))
 		if context:
 			cm.append((control.lang(context[0]), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))

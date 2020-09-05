@@ -13,7 +13,6 @@ import sys
 # import urllib2
 import zipfile
 
-
 try:
 	from urllib import quote_plus
 	from urlparse import parse_qsl
@@ -32,11 +31,7 @@ from resources.lib.modules import views
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
 
-# params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
-# action = params.get('action')
 disable_fanarttv = control.setting('disable.fanarttv')
-is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
-
 
 class Seasons:
 	def __init__(self, type = 'show'):
@@ -69,30 +64,6 @@ class Seasons:
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
 		self.unairedcolor = control.getColor(self.unairedcolor)
-
-
-	@classmethod
-	def mark(self, title, imdb, tvdb, season, watched = True):
-		if watched:
-			self.markWatch(title = title, imdb = imdb, tvdb = tvdb, season = season)
-		else:
-			self.markUnwatch(title = title, imdb = imdb, tvdb = tvdb, season = season)
-
-
-	@classmethod
-	def markWatch(self, title, imdb, tvdb, season):
-		interface.Loader.show()
-		playcount.seasons(title, imdb, tvdb, season, '7')
-		interface.Loader.hide()
-		interface.Dialog.notification(title = 35513, message = 35510, icon = interface.Dialog.IconSuccess)
-
-
-	@classmethod
-	def markUnwatch(self, title, imdb, tvdb, season):
-		interface.Loader.show()
-		playcount.seasons(title, imdb, tvdb, season, '6')
-		interface.Loader.hide()
-		interface.Dialog.notification(title = 35513, message = 35511, icon = interface.Dialog.IconSuccess)
 
 
 	def get(self, tvshowtitle, year, imdb, tmdb, tvdb, idx=True):
@@ -130,7 +101,6 @@ class Seasons:
 			self.list = result
 		except:
 			pass
-
 		self.seasonDirectory(self.list)
 
 
@@ -216,19 +186,16 @@ class Seasons:
 				if not trakt_ids:
 					raise Exception()
 				trakt_ids = trakt_ids[0].get('show', '0')
-
 				if imdb == '0':
 					imdb = trakt_ids.get('ids', {}).get('imdb', '0')
 					if imdb == '' or imdb is None or imdb == 'None':
 						imdb = '0'
 					if not imdb.startswith('tt'):
 						imdb = '0'
-
 				if tmdb == '0':
 					tmdb = str(trakt_ids.get('ids', {}).get('tmdb', '0'))
 					if tmdb == '' or tmdb is None or tmdb == 'None':
 						tmdb = '0'
-
 				if tvdb == '0':
 					tvdb = str(trakt_ids.get('ids', {}).get('tvdb', '0'))
 					if tvdb == '' or tvdb is None or tvdb == 'None':
@@ -290,7 +257,6 @@ class Seasons:
 			return None
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
-			# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
 			data = requests.get(url).content # sometimes one api key pulls empty xml while another does not
 			# data = urllib2.urlopen(url, timeout=30).read()
 			zip = zipfile.ZipFile(StringIO.StringIO(data))
@@ -351,7 +317,6 @@ class Seasons:
 
 			seasons = [i for i in episodes if '<EpisodeNumber>1</EpisodeNumber>' in i]
 			counts = self.seasonCountParse(seasons = seasons, episodes = episodes)
-			# log_utils.log('counts = %s' % counts, __name__, log_utils.LOGDEBUG)
 			locals = [i for i in result2 if '<EpisodeNumber>' in i]
 
 			result = ''
@@ -524,12 +489,7 @@ class Seasons:
 				# Show Unaired items.
 				if status.lower() == 'ended':
 					pass
-				# elif premiered == '0':
-					# continue
 				elif premiered == '0':
-					# unaired = 'true'
-					# if self.showunaired != 'true':
-						# continue
 					pass
 				elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
 					unaired = 'true'
@@ -554,15 +514,11 @@ class Seasons:
 				if thumb == '0':
 					thumb = poster
 
-				try:
-					seasoncount = counts[season]
-				except:
-					seasoncount = None
+				try: seasoncount = counts[season]
+				except: seasoncount = None
 
-				try:
-					total_seasons = len([i for i in counts if i != '0'])
-				except:
-					total_seasons = None
+				try: total_seasons = len([i for i in counts if i != '0'])
+				except: total_seasons = None
 
 				self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered,
 										'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
@@ -623,10 +579,8 @@ class Seasons:
 				title = client.replaceHTMLCodes(title)
 				title = title.encode('utf-8')
 
-				try:
-					thumb = client.parseDOM(item, 'filename')[0]
-				except:
-					thumb = ''
+				try: thumb = client.parseDOM(item, 'filename')[0]
+				except: thumb = ''
 				if thumb != '':
 					thumb = '%s%s' % (self.tvdb_image, thumb)
 				else:
@@ -655,19 +609,14 @@ class Seasons:
 				if season_poster == '0':
 					season_poster = poster
 
-				try:
-					rating = client.parseDOM(item, 'Rating')[0]
-				except:
-					rating = ''
-				if rating == '':
-					rating = '0'
+				try: rating = client.parseDOM(item, 'Rating')[0]
+				except: rating = ''
+				if rating == '': rating = '0'
 				rating = client.replaceHTMLCodes(rating)
 				rating = rating.encode('utf-8')
 
-				try:
-					director = client.parseDOM(item, 'Director')[0]
-				except:
-					director = ''
+				try: director = client.parseDOM(item, 'Director')[0]
+				except: director = ''
 				director = [x for x in director.split('|') if x != '']
 				director = ' / '.join(director)
 				if director == '':
@@ -675,10 +624,8 @@ class Seasons:
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
-				try:
-					writer = client.parseDOM(item, 'Writer')[0]
-				except:
-					writer = ''
+				try: writer = client.parseDOM(item, 'Writer')[0]
+				except: writer = ''
 				writer = [x for x in writer.split('|') if x != '']
 				writer = ' / '.join(writer)
 				if writer == '':
@@ -712,15 +659,11 @@ class Seasons:
 				except:
 					pass
 
-				try:
-					seasoncount = counts[season]
-				except:
-					seasoncount = None
+				try: seasoncount = counts[season]
+				except: seasoncount = None
 
-				try:
-					total_seasons = len([i for i in counts if i != '0'])
-				except:
-					total_seasons = None
+				try: total_seasons = len([i for i in counts if i != '0'])
+				except: total_seasons = None
 
 				self.list.append({'title': title, 'label': label, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
 										'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
@@ -845,7 +788,6 @@ class Seasons:
 
 		if tvdb == '0':
 			return None
-
 		try:
 			url = self.tvdb_info_link % (tvdb, 'en')
 			data = requests.get(url).content
@@ -880,6 +822,7 @@ class Seasons:
 
 		sysaddon = sys.argv[0]
 		syshandle = int(sys.argv[1])
+		is_widget = 'plugin' not in control.infoLabel('Container.PluginName')
 		settingFanart = control.setting('fanart')
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
@@ -1029,14 +972,14 @@ class Seasons:
 				cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=episode&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s)' % (
 									sysaddon, systitle, year, imdb, tvdb, season)))
 
-				# cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, systitle, sysurl, sysmeta, sysart)))
-				cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, systitle)))
-				cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
-				cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
+				# cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlist_Manager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, systitle, sysurl, sysmeta, sysart)))
+				cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem&name=%s)' % (sysaddon, systitle)))
+				cm.append((showPlaylistMenu, 'RunPlugin(%s?action=playlist_Show)' % sysaddon))
+				cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=playlist_Clear)' % sysaddon))
 
 				if control.setting('library.service.update') == 'true':
-					cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tmdb, tvdb)))
-				# cm.append((control.lang(32610), 'RunPlugin(%s?action=clearAllCache&opensettings=false)' % sysaddon))
+					cm.append((addToLibrary, 'RunPlugin(%s?action=library_tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tmdb, tvdb)))
+				# cm.append((control.lang(32610), 'RunPlugin(%s?action=cache_clearAll&opensettings=false)' % sysaddon))
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings)' % sysaddon))
 ####################################
 

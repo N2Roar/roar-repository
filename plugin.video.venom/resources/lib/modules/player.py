@@ -133,7 +133,8 @@ class Player(xbmc.Player):
 			item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 
 			if 'plugin' not in control.infoLabel('Container.PluginName') or select != '1':
-				if control.window.getProperty('infodialogs.active'):
+				if control.window.getProperty('infodialogs.active') or \
+				control.window.getProperty('extendedinfo_running'):
 					control.closeAll()
 				control.resolve(int(sys.argv[1]), True, item)
 
@@ -319,7 +320,6 @@ class Player(xbmc.Player):
 
 				if self.media_type == 'movie':
 					try:
-						# if watcher is True and property != '7':
 						if watcher and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markMovieDuringPlayback(self.imdb, '7')
@@ -332,7 +332,6 @@ class Player(xbmc.Player):
 
 				elif self.media_type == 'episode':
 					try:
-						# if watcher is True and property != '7':
 						if watcher and property != '7':
 							control.window.setProperty(pname, '7')
 							playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '7')
@@ -424,15 +423,11 @@ class Player(xbmc.Player):
 				break
 			else:
 				xbmc.sleep(1000)
-
 		if self.offset != '0' and self.playback_resumed is False:
-			# log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
 			self.seekTime(float(self.offset))
 			self.playback_resumed = True
-
 		if control.setting('subtitles') == 'true':
 			Subtitles().get(self.name, self.imdb, self.season, self.episode)
-
 		self.start_playback()
 		xbmc.log('onAVStarted callback', 2)
 
@@ -445,24 +440,24 @@ class Player(xbmc.Player):
 				break
 			else:
 				xbmc.sleep(1000)
-
 		if self.offset != '0' and self.playback_resumed is False:
 			self.seekTime(float(self.offset))
 			self.playback_resumed = True
-
 		if control.setting('subtitles') == 'true':
 			Subtitles().get(self.name, self.imdb, self.season, self.episode)
-
 		self.start_playback()
 		xbmc.log('onPlayBackStarted callback', 2)
 
 
 	def onPlayBackStopped(self):
-		Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
 		try:
+			Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
+
+			Bookmarks().set_scrobble(self.current_time, self.media_length, self.media_type, self.imdb, self.tvdb, self.season, self.episode)
 			if (self.current_time / self.media_length) >= .80:
 				self.libForPlayback()
 		except:
+			log_utils.error()
 			pass
 		if control.setting('crefresh') == 'true':
 			xbmc.sleep(2000)
@@ -578,7 +573,6 @@ class Subtitles:
 			codePageDict = {'ara': 'cp1256', 'ar': 'cp1256', 'ell': 'cp1253', 'el': 'cp1253', 'heb': 'cp1255', 'he': 'cp1255', 'tur': 'cp1254', 'tr': 'cp1254', 'rus': 'cp1251', 'ru': 'cp1251'}
 			quality = ['bluray', 'hdrip', 'brrip', 'bdrip', 'dvdrip', 'webrip', 'hdtv']
 			langs = []
-
 			try:
 				try:
 					langs = langDict[control.setting('subtitles.lang.1')].split(',')
@@ -662,13 +656,10 @@ class Subtitles:
 
 
 class Bookmarks:
-	def __init__(self):
-		self.offset = '0'
-
-
 	def get(self, name, year='0', ck=False):
+		offset = '0'
 		if control.setting('bookmarks') != 'true':
-			return self.offset
+			return offset
 
 		# idFile = hashlib.md5()
 		# for i in name:
@@ -676,16 +667,15 @@ class Bookmarks:
 		# for i in year:
 			# idFile.update(str(i))
 		# idFile = str(idFile.hexdigest())
-
+		# log_utils.log('year =  %s' % year, __name__, log_utils.LOGDEBUG)
 		try:
 			dbcon = database.connect(control.bookmarksFile)
 			dbcur = dbcon.cursor()
 			dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""Name TEXT, ""year TEXT, ""UNIQUE(idFile)"");")
 			# dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
-			if not year:
-				return self.offset
+			if not year or year == 'None':
+				return offset
 			years = [str(year), str(int(year)+1), str(int(year)-1)]
-
 			dbcur.execute('SELECT * FROM bookmark WHERE Name = "%s" AND year IN (%s)' % (name, ','.join(i for i in years))) #helps fix random cases where trakt and imdb, or tvdb, differ by a year for eps
 			match = dbcur.fetchone()
 			dbcon.close()
@@ -695,17 +685,15 @@ class Bookmarks:
 				dbcon.close()
 			except:
 				pass
-			return self.offset
+			return offset
 
 		if not match:
-			return self.offset
-
-		self.offset = str(match[1])
+			return offset
+		offset = str(match[1])
 
 		if ck:
-			return self.offset
-
-		minutes, seconds = divmod(float(self.offset), 60)
+			return offset
+		minutes, seconds = divmod(float(offset), 60)
 		hours, minutes = divmod(minutes, 60)
 
 		label = '%02d:%02d:%02d' % (hours, minutes, seconds)
@@ -714,8 +702,8 @@ class Bookmarks:
 		if control.setting('bookmarks.auto') == 'false':
 			yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503), control.lang(32501))
 			if yes:
-				self.offset = '0'
-		return self.offset
+				offset = '0'
+		return offset
 
 
 	def reset(self, current_time, media_length, name, year='0'):
@@ -726,7 +714,6 @@ class Bookmarks:
 			return
 
 		timeInSeconds = str(current_time)
-
 		ok = (int(current_time) > 180 and (current_time / media_length) <= .92)
 
 		idFile = hashlib.md5()
@@ -760,3 +747,17 @@ class Bookmarks:
 			control.notification(title=name, message=message + '(' + label + ')', icon='default', sound=(control.setting('notification.sound') == 'true'))
 		dbcur.connection.commit()
 		dbcon.close()
+
+
+	def set_scrobble(self, current_time, media_length, media_type, imdb='', tvdb='', season='', episode=''):
+		# log_utils.log('current_time =  %s' % current_time, __name__, log_utils.LOGDEBUG)
+		# log_utils.log('media_type =  %s' % media_type, __name__, log_utils.LOGDEBUG)
+		try:
+			percent = float((current_time / media_length)) * 100
+			# log_utils.log('percent =  %s' % percent, __name__, log_utils.LOGDEBUG)
+			if percent < 95:
+				trakt.scrobbleMovie(imdb, percent) if media_type == 'movie' else trakt.scrobbleEpisode(tvdb, season, episode, percent)
+				# if control.setting('trakt.scrobble.notify') == 'true':
+					# control.infoDialog('Trakt: Scrobbled')
+		except:
+			log_utils.error()

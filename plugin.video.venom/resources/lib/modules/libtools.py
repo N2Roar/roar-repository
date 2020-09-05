@@ -5,8 +5,7 @@
 """
 
 import datetime
-import json
-import os
+from json import loads
 import re
 # Import _strptime to workaround python 2 bug with threads
 import _strptime
@@ -15,12 +14,12 @@ try:
 	from sqlite3 import dbapi2 as database
 except:
 	from pysqlite2 import dbapi2 as database
+
 try:
 	from urlparse import parse_qsl
 	from urllib import quote_plus
 except:
 	from urllib.parse import parse_qsl, quote_plus
-import xbmc, xbmcvfs, xbmcaddon
 
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
@@ -38,40 +37,38 @@ class lib_tools:
 	@staticmethod
 	def create_folder(folder):
 		try:
-			folder = xbmc.makeLegalFilename(folder)
+			folder = control.legalFilename(folder)
 			control.makeFile(folder)
-
 			try:
 				if 'ftp://' not in folder:
 					raise Exception()
-
 				from ftplib import FTP
 				ftparg = re.compile('ftp://(.+?):(.+?)@(.+?):?(\d+)?/(.+/?)').findall(folder)
 				ftp = FTP(ftparg[0][2], ftparg[0][0], ftparg[0][1])
-
 				try:
 					ftp.cwd(ftparg[0][4])
 				except:
 					ftp.mkd(ftparg[0][4])
 				ftp.quit()
 			except:
+				log_utils.error()
 				pass
 		except:
+			log_utils.error()
 			pass
 
 
 	@staticmethod
 	def write_file(path, content):
 		try:
-			path = xbmc.makeLegalFilename(path)
-
+			path = control.legalFilename(path)
 			if not isinstance(content, basestring):
 				content = str(content)
-
 			file = control.openFile(path, 'w')
 			file.write(str(content))
 			file.close()
-		except Exception as e:
+		except:
+			log_utils.error()
 			pass
 
 
@@ -91,7 +88,7 @@ class lib_tools:
 
 
 	@staticmethod
-	def check_sources(title, year, imdb, tvdb = None, season = None, episode = None, tvshowtitle = None, premiered = None):
+	def check_sources(title, year, imdb, tvdb=None, season=None, episode=None, tvshowtitle=None, premiered=None):
 		try:
 			from resources.lib.modules import sources
 			src = sources.Sources().getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
@@ -107,9 +104,11 @@ class lib_tools:
 			filename = re.sub(r'(?!%s)[^\w\-_\.]', '.', filename)
 			filename = re.sub('\.+', '.', filename)
 			filename = re.sub(re.compile('(CON|PRN|AUX|NUL|COM\d|LPT\d)\.', re.I), '\\1_', filename)
-			xbmc.makeLegalFilename(filename)
+			control.legalFilename(filename)
+			# filename = control.legalFilename(filename)
 			return filename
 		except:
+			log_utils.error()
 			return filename
 
 
@@ -117,11 +116,9 @@ class lib_tools:
 	def make_path(base_path, title, year = '', season = ''):
 		show_folder = re.sub(r'[^\w\-_\. ]', '_', title)
 		show_folder = '%s (%s)' % (show_folder, year) if year else show_folder
-		path = os.path.join(base_path, show_folder)
-
+		path = control.joinPath(base_path, show_folder)
 		if season:
-			path = os.path.join(path, 'Season %s' % season)
-
+			path = control.joinPath(path, 'Season %s' % season)
 		return path
 
 
@@ -147,14 +144,14 @@ class lib_tools:
 		try:
 			if paths is None:
 				paths = []
-				movie_LibraryFolder = os.path.join(control.transPath(control.setting('library.movie')), '')
-				special_movie_LibraryFolder = os.path.join(control.setting('library.movie'), '')
+				movie_LibraryFolder = control.joinPath(control.transPath(control.setting('library.movie')), '')
+				special_movie_LibraryFolder = control.joinPath(control.setting('library.movie'), '')
 
 				paths.append(movie_LibraryFolder)
 				paths.append(special_movie_LibraryFolder)
 
-				tvShows_LibraryFolder = os.path.join(control.transPath(control.setting('library.tv')),'')
-				speical_tvShows_LibraryFolder = os.path.join(control.setting('library.tv'),'')
+				tvShows_LibraryFolder = control.joinPath(control.transPath(control.setting('library.tv')),'')
+				speical_tvShows_LibraryFolder = control.joinPath(control.setting('library.tv'),'')
 
 				paths.append(tvShows_LibraryFolder)
 				paths.append(speical_tvShows_LibraryFolder)
@@ -163,7 +160,7 @@ class lib_tools:
 
 			result = control.jsonrpc('{"jsonrpc": "2.0", "method": "Files.GetSources", "params": {"media" : "video"}, "id": 1}')
 			result = unicode(result, 'utf-8', errors='ignore')
-			result = json.loads(result)['result']['sources']
+			result = loads(result)['result']['sources']
 
 			for i in result:
 				if i['file'].rstrip('/').rstrip('\\') in paths:
@@ -174,6 +171,8 @@ class lib_tools:
 
 		if not contains:
 			try:
+				global folder_setup
+				global service_update
 				if control.setting('library.service.update') == 'false' or service_update is False:
 					return contains
 				if folder_setup:
@@ -182,13 +181,11 @@ class lib_tools:
 				msg = 'Your Library Folders do not exist in Kodi Sources.  Would you like to run full setup of Library Folders to Kodi Sources now?'
 				if control.yesnoDialog(msg, '', ''):
 					lib_tools.total_setup()
-					global folder_setup
 					folder_setup = True
 					contains = True
 				else:
 					msg = 'Would you like to turn off Library Auto Update Service?'
 					if control.yesnoDialog(msg, '', ''):
-						global service_update
 						service_update = False
 						control.setSetting('library.service.update', 'false')
 						contains = False
@@ -203,8 +200,8 @@ class lib_tools:
 	def service(self):
 		self.property = '%s_service_property' % control.addonInfo('name').lower()
 		try:
-			lib_tools.create_folder(os.path.join(control.transPath(control.setting('library.movie')), ''))
-			lib_tools.create_folder(os.path.join(control.transPath(control.setting('library.tv')), ''))
+			lib_tools.create_folder(control.joinPath(control.transPath(control.setting('library.movie')), ''))
+			lib_tools.create_folder(control.joinPath(control.transPath(control.setting('library.tv')), ''))
 		except:
 			pass
 		try:
@@ -277,7 +274,7 @@ class lib_tools:
 
 class libmovies:
 	def __init__(self):
-		self.library_folder = os.path.join(control.transPath(control.setting('library.movie')), '')
+		self.library_folder = control.joinPath(control.transPath(control.setting('library.movie')), '')
 		self.check_setting = control.setting('library.check_movie') or 'false'
 		self.library_update = control.setting('library.update') or 'true' 
 		self.dupe_chk = control.setting('library.check') or 'true'
@@ -285,7 +282,7 @@ class libmovies:
 
 	def auto_movie_setup(self):
 		try:
-			xbmcvfs.mkdir(self.library_folder)
+			control.makeFile(self.library_folder)
 			icon = 'DefaultMovies.png'
 			source_name = 'Venom Movies'
 			source_content = "('%s','movies','metadata.themoviedb.org','',2147483647,1,'<settings version=\"2\"><setting id=\"certprefix\" default=\"true\">Rated </setting><setting id=\"fanart\">true</setting><setting id=\"imdbanyway\">true</setting><setting id=\"keeporiginaltitle\" default=\"true\">false</setting><setting id=\"language\" default=\"true\">en</setting><setting id=\"RatingS\" default=\"true\">TMDb</setting><setting id=\"tmdbcertcountry\" default=\"true\">us</setting><setting id=\"trailer\">true</setting></settings>',0,0,NULL,NULL)" % self.library_folder
@@ -331,7 +328,6 @@ class libmovies:
 				if 'trakt' in url:
 					from resources.lib.menus import movies
 					items = movies.Movies().trakt_list(url, control.setting('trakt.user').strip())
-
 				if 'themoviedb' in url:
 					if '/list/' not in url:
 						from resources.lib.indexers import tmdb
@@ -343,7 +339,7 @@ class libmovies:
 				log_utils.error()
 				pass
 
-			if items is None or items == []:
+			if not items:
 				continue
 
 			if service_notification and not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
@@ -356,7 +352,7 @@ class libmovies:
 				try:
 					files_added = self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range=True)
 					if general_notification and files_added > 0:
-						control.notification(title = '%s (%s)' % (i['title'], i['year']), message = 32554, icon = 'default', time = 1000, sound = (control.setting('notification.sound') == 'true'))
+						control.notification(title = '%s (%s)' % (i['title'], i['year']), message=32554, icon='default', time=1000, sound=(control.setting('notification.sound') == 'true'))
 						total_added += 1
 				except:
 					log_utils.error()
@@ -383,7 +379,7 @@ class libmovies:
 				id = [imdb, tmdb] if tmdb != '0' else [imdb]
 				lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["imdbnumber", "title", "originaltitle", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
 				lib = unicode(lib, 'utf-8', errors = 'ignore')
-				lib = json.loads(lib)['result']['movies']
+				lib = loads(lib)['result']['movies']
 				lib = [i for i in lib if str(i['imdbnumber']) in id or (cleantitle.get(title) in [cleantitle.get(i['title'].encode('utf-8')), cleantitle.get(i['originaltitle'].encode('utf-8'))] and str(i['year']) == year)]
 			except:
 				lib = []
@@ -479,8 +475,8 @@ class libmovies:
 			else:
 				message = 'list import'
 		except:
-				log_utils.error()
-				pass
+			log_utils.error()
+			pass
 
 		if general_notification:
 			if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
@@ -565,15 +561,16 @@ class libmovies:
 			content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s' % (sys.argv[0], sysname, systitle, year, imdb, tmdb)
 			folder = lib_tools.make_path(self.library_folder, transtitle, year)
 			lib_tools.create_folder(folder)
-			lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.strm'), content)
-			lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.nfo'), lib_tools.nfo_url('movie', i))
+			lib_tools.write_file(control.joinPath(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.strm'), content)
+			lib_tools.write_file(control.joinPath(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.nfo'), lib_tools.nfo_url('movie', i))
 		except:
+			log_utils.error()
 			pass
 
 
 class libtvshows:
 	def __init__(self):
-		self.library_folder = os.path.join(control.transPath(control.setting('library.tv')),'')
+		self.library_folder = control.joinPath(control.transPath(control.setting('library.tv')),'')
 		self.check_setting = control.setting('library.check_episode') or 'false'
 		self.library_update = control.setting('library.update') or 'true'
 		self.dupe_chk = control.setting('library.check') or 'true'
@@ -589,8 +586,8 @@ class libtvshows:
 
 	def auto_tv_setup(self):
 		try:
-			xbmcvfs.mkdir(self.library_folder)
-			icon = os.path.join(control.artPath(), 'libtv.png')
+			control.makeFile(self.library_folder)
+			icon = control.joinPath(control.artPath(), 'libtv.png')
 			icon = 'DefaultTVShows.png'
 			source_name = 'Venom TV Shows'
 			# TVDb scraper
@@ -710,11 +707,11 @@ class libtvshows:
 				# lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"properties" : ["imdbnumber", "title", "year"]}, "id": 1}')
 				lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
 				lib = unicode(lib, 'utf-8', errors='ignore')
-				lib = json.loads(lib)['result']['tvshows']
+				lib = loads(lib)['result']['tvshows']
 				lib = [i['title'].encode('utf-8') for i in lib if str(i['imdbnumber']) in id or (i['title'].encode('utf-8') == items[0]['tvshowtitle'] and str(i['year']) == items[0]['year'])][0]
 				lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "tvshow", "operator": "is", "value": "%s"}]}, "properties": ["season", "episode"]}, "id": 1}' % lib)
 				lib = unicode(lib, 'utf-8', errors='ignore')
-				lib = json.loads(lib)['result']['episodes']
+				lib = loads(lib)['result']['episodes']
 				lib = ['S%02dE%02d' % (int(i['season']), int(i['episode'])) for i in lib]
 				items = [i for i in items if not 'S%02dE%02d' % (int(i['season']), int(i['episode'])) in lib]
 			except:
@@ -919,13 +916,13 @@ class libtvshows:
 							sys.argv[0], episodetitle, year, imdb, tvdb, season, episode, systitle, syspremiered)
 
 			folder = lib_tools.make_path(self.library_folder, transtitle, year)
-			if not os.path.isfile(os.path.join(folder, 'tvshow.nfo')):
+			if not control.isfilePath(control.joinPath(folder, 'tvshow.nfo')):
 				lib_tools.create_folder(folder)
-				lib_tools.write_file(os.path.join(folder, 'tvshow.nfo'), lib_tools.nfo_url('tv', i))
+				lib_tools.write_file(control.joinPath(folder, 'tvshow.nfo'), lib_tools.nfo_url('tv', i))
 
 			folder = lib_tools.make_path(self.library_folder, transtitle, year, season)
 			lib_tools.create_folder(folder)
-			lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename('%s S%02dE%02d' % (transtitle, int(season), int(episode))) + '.strm'), content)
+			lib_tools.write_file(control.joinPath(folder, lib_tools.legal_filename('%s S%02dE%02d' % (transtitle, int(season), int(episode))) + '.strm'), content)
 		except:
 			log_utils.error()
 			pass
@@ -933,7 +930,7 @@ class libtvshows:
 
 class libepisodes:
 	def __init__(self):
-		self.library_folder = os.path.join(control.transPath(control.setting('library.tv')),'')
+		self.library_folder = control.joinPath(control.transPath(control.setting('library.tv')),'')
 		self.library_update = control.setting('library.update') or 'true'
 		self.include_unknown = control.setting('library.include_unknown') or 'true'
 		self.showunaired = control.setting('showunaired') or 'true'
@@ -955,7 +952,7 @@ class libepisodes:
 		try:
 			items = []
 			season, episode = [], []
-			show = [os.path.join(self.library_folder, i) for i in control.listDir(self.library_folder)[0]]
+			show = [control.joinPath(self.library_folder, i) for i in control.listDir(self.library_folder)[0]]
 
 			if show == []:
 				control.notification(title='default', message='No Shows in Addon Folder', icon='default', time=2000, sound=(control.setting('notification.sound') == 'true'))
@@ -963,13 +960,13 @@ class libepisodes:
 
 			for s in show:
 				try:
-					season += [os.path.join(s, i) for i in control.listDir(s)[0]]
+					season += [control.joinPath(s, i) for i in control.listDir(s)[0]]
 				except:
 					pass
 
 			for s in season:
 				try:
-					episode.append([os.path.join(s, i) for i in control.listDir(s)[1] if i.endswith('.strm')][-1])
+					episode.append([control.joinPath(s, i) for i in control.listDir(s)[1] if i.endswith('.strm')][-1])
 				except:
 					pass
 
@@ -1018,7 +1015,7 @@ class libepisodes:
 			lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"properties": ["imdbnumber", "title", "year"]}, "id": 1 }')
 			# lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
 			lib = unicode(lib, 'utf-8', errors='ignore')
-			lib = json.loads(lib)['result']['tvshows']
+			lib = loads(lib)['result']['tvshows']
 		except:
 			log_utils.error()
 			return
@@ -1098,7 +1095,7 @@ class libepisodes:
 				ep = [x['title'].encode('utf-8') for x in lib if str(x['imdbnumber']) in id or (x['title'].encode('utf-8') == item['tvshowtitle'] and str(x['year']) == item['year'])][0]
 				ep = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "tvshow", "operator": "is", "value": "%s"}]}, "properties": ["season", "episode"]}, "id": 1}' % ep)
 				ep = unicode(ep, 'utf-8', errors = 'ignore')
-				ep = json.loads(ep).get('result', {}).get('episodes', {})
+				ep = loads(ep).get('result', {}).get('episodes', {})
 				ep = [{'season': int(i['season']), 'episode': int(i['episode'])} for i in ep]
 				ep = sorted(ep, key = lambda x: (x['season'], x['episode']))[-1]
 				num = [x for x,y in enumerate(it) if str(y['season']) == str(ep['season']) and str(y['episode']) == str(ep['episode'])][-1]

@@ -7,7 +7,7 @@
 import json
 import re
 import requests
-from sys import argv
+import sys
 
 try:
 	from urllib import quote_plus, unquote
@@ -32,6 +32,7 @@ torrents_info_url = 'torrents/info'
 select_files_url = 'torrents/selectFiles'
 torrents_delete_url = 'torrents/delete'
 check_cache_url = 'torrents/instantAvailability'
+torrents_active_url = "torrents/activeCount"
 hosts_regex_url = 'hosts/regex'
 hosts_domains_url = 'hosts/domains'
 rd_icon = control.joinPath(control.artPath(), 'realdebrid.png')
@@ -54,7 +55,7 @@ class RealDebrid:
 		self.auth_step = 0
 
 
-	def get_url(self, url, fail_check=False, token_ck=False):
+	def _get(self, url, fail_check=False, token_ck=False):
 		try:
 			original_url = url
 			url = rest_base_url + url
@@ -66,13 +67,12 @@ class RealDebrid:
 				url += "?auth_token=%s" % self.token
 			else:
 				url += "&auth_token=%s" % self.token
-
 			response = requests.get(url, timeout=15).json()
 			if 'bad_token' in str(response) or 'Bad Request' in str(response):
 				if not fail_check:
 					if self.refresh_token() and token_ck:
 						return
-					response = self.get_url(original_url, fail_check=True)
+					response = self._get(original_url, fail_check=True)
 			return response
 		except:
 			log_utils.error()
@@ -80,28 +80,24 @@ class RealDebrid:
 		return None
 
 
-	def post_url(self, url, data):
+	def _post(self, url, data):
+		original_url = url
+		url = rest_base_url + url
+		if self.token == '':
+			log_utils.log('No Real Debrid Token Found', __name__, log_utils.LOGDEBUG)
+			return None
+		if '?' not in url:
+			url += "?auth_token=%s" % self.token
+		else:
+			url += "&auth_token=%s" % self.token
+		response = requests.post(url, data=data, timeout=15).text
+		if 'bad_token' in response or 'Bad Request' in response:
+			self.refresh_token()
+			response = self._post(original_url, data)
 		try:
-			original_url = url
-			url = rest_base_url + url
-			if self.token == '':
-				log_utils.log('No Real Debrid Token Found', __name__, log_utils.LOGDEBUG)
-				return None
-			if '?' not in url:
-				url += "?auth_token=%s" % self.token
-			else:
-				url += "&auth_token=%s" % self.token
-
-			# msg : JSONDecodeError -> Expecting value: line 1 column 1 (char 0) check for this error
-			response = requests.post(url, data=data, timeout=15).json()
-			if 'bad_token' in str(response) or 'Bad Request' in str(response):
-				self.refresh_token()
-				response = self.post_url(original_url, data)
-			return response
+			return json.loads(response)
 		except:
-			log_utils.error()
-			pass
-		return None
+			return response
 
 
 	def auth_loop(self):
@@ -110,7 +106,7 @@ class RealDebrid:
 		url = oauth_base_url + credentials_url % url
 		response = json.loads(requests.get(url).text)
 		if 'error' in response:
-			return
+			return control.okDialog(title='default', message=control.lang(40019))
 		else:
 			try:
 				control.progressDialog.close()
@@ -118,7 +114,7 @@ class RealDebrid:
 				self.secret = response['client_secret']
 			except:
 				log_utils.error()
-				control.okDialog(title='default', message=control.lang(40053))
+				control.okDialog(title='default', message=control.lang(40019))
 			return
 
 
@@ -146,21 +142,21 @@ class RealDebrid:
 			self.get_token()
 
 
-	def user_info(self):
-		return self.get_url('user')
+	def acount_info(self):
+		return self._get('user')
 
 
-	def user_info_to_dialog(self):
+	def acount_info_to_dialog(self):
 		from datetime import datetime
 		import time
 		try:
-			userInfo = self.user_info()
+			userInfo = self.acount_info()
 			try:
 				expires = datetime.strptime(userInfo['expiration'], FormatDateTime)
 			except:
 				expires = datetime(*(time.strptime(userInfo['expiration'], FormatDateTime)[0:6]))
 			days_remaining = (expires - datetime.today()).days
-			expires = expires.strftime('%Y-%m-%d')
+			expires = expires.strftime("%A, %B %d, %Y")
 			items = []
 			items += [control.lang(40035) % userInfo['email']]
 			items += [control.lang(40036) % userInfo['username']]
@@ -178,7 +174,7 @@ class RealDebrid:
 	def user_torrents(self):
 		try:
 			url = 'torrents'
-			return self.get_url(url)
+			return self._get(url)
 		except:
 			log_utils.error()
 			pass
@@ -186,10 +182,9 @@ class RealDebrid:
 
 	def user_torrents_to_listItem(self):
 		try:
-			sysaddon = argv[0]
-			syshandle = int(argv[1])
+			sysaddon = sys.argv[0]
+			syshandle = int(sys.argv[1])
 			torrent_files = self.user_torrents()
-			# log_utils.log('torrent_files = %s' %  str(torrent_files), __name__, log_utils.LOGDEBUG)
 			if not torrent_files:
 				return
 			# torrent_files = [i for i in torrent_files if i['status'] == 'downloaded']
@@ -204,9 +199,9 @@ class RealDebrid:
 					folder_name = cleantitle.normalize(item['filename'])
 					label = '%02d | [B]%s[/B] - %s | [B]%s[/B] | [I]%s [/I]' % (count, status, str(item['progress']) + '%', folder_str, folder_name)
 
-					url = '%s?action=rdBrowseUserTorrents&id=%s' % (sysaddon, item['id']) if isFolder else None
+					url = '%s?action=rd_BrowseUserTorrents&id=%s' % (sysaddon, item['id']) if isFolder else None
 
-					cm.append((deleteMenu % 'Torrent', 'RunPlugin(%s?action=rdDeleteUserTorrent&id=%s&name=%s)' %
+					cm.append((deleteMenu % 'Torrent', 'RunPlugin(%s?action=rd_DeleteUserTorrent&id=%s&name=%s)' %
 							(sysaddon, item['id'], quote_plus(folder_name))))
 					item = control.item(label=label)
 					item.addContextMenuItems(cm)
@@ -225,8 +220,8 @@ class RealDebrid:
 
 	def browse_user_torrents(self, folder_id):
 		try:
-			sysaddon = argv[0]
-			syshandle = int(argv[1])
+			sysaddon = sys.argv[0]
+			syshandle = int(sys.argv[1])
 			torrent_files = self.torrent_info(folder_id)
 		except:
 			return
@@ -264,7 +259,7 @@ class RealDebrid:
 
 				cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&url=%s&caller=realdebrid&type=unrestrict)' %
 							(sysaddon, quote_plus(name), quote_plus(rd_icon), url_link)))
-				cm.append((deleteMenu % 'Torrent', 'RunPlugin(%s?action=rdDeleteUserTorrent&id=%s&name=%s)' %
+				cm.append((deleteMenu % 'Torrent', 'RunPlugin(%s?action=rd_DeleteUserTorrent&id=%s&name=%s)' %
 							(sysaddon, item['id'], quote_plus(name))))
 
 				item = control.item(label=label)
@@ -301,7 +296,7 @@ class RealDebrid:
 		import math
 		try:
 			# Need to check token, and refresh if needed
-			ck_token = self.get_url('user', token_ck=True)
+			ck_token = self._get('user', token_ck=True)
 			url = 'downloads?page=%s&auth_token=%s' % (page, self.token)
 			response = requests.get(rest_base_url + url)
 			total_count = float(response.headers['X-Total-Count'])
@@ -315,8 +310,8 @@ class RealDebrid:
 	def my_downloads_to_listItem(self, page):
 		try:
 			from datetime import datetime
-			sysaddon = argv[0]
-			syshandle = int(argv[1])
+			sysaddon = sys.argv[0]
+			syshandle = int(sys.argv[1])
 			my_downloads, pages = self.downloads(page)
 		except:
 			my_downloads = None
@@ -344,7 +339,7 @@ class RealDebrid:
 				cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&url=%s&caller=realdebrid)' %
 								(sysaddon, quote_plus(name), quote_plus(rd_icon), url_link)))
 
-				cm.append((deleteMenu % 'File', 'RunPlugin(%s?action=rdDeleteDownload&id=%s&name=%s)' %
+				cm.append((deleteMenu % 'File', 'RunPlugin(%s?action=rd_DeleteDownload&id=%s&name=%s)' %
 								(sysaddon, item['id'], name)))
 
 				item = control.item(label=label)
@@ -367,7 +362,7 @@ class RealDebrid:
 		if next:
 			try:
 				nextMenu = control.lang(32053)
-				url = '%s?action=rdMyDownloads&query=%s' % (sysaddon, page)
+				url = '%s?action=rd_MyDownloads&query=%s' % (sysaddon, page)
 				page = '  [I](%s)[/I]' % page
 				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
 				item = control.item(label=nextMenu)
@@ -387,7 +382,7 @@ class RealDebrid:
 			if not yes:
 				return
 			# Need to check token, and refresh if needed
-			ck_token = self.get_url('user', token_ck=True)
+			ck_token = self._get('user', token_ck=True)
 			url = downloads_delete_url + "/%s&auth_token=%s" % (media_id, self.token)
 			response = requests.delete(rest_base_url + url).text
 			if not 'error' in response:
@@ -402,24 +397,23 @@ class RealDebrid:
 		if isinstance(hashList, list):
 			hashList = [hashList[x:x+100] for x in range(0, len(hashList), 100)]
 			# Need to check token, and refresh if needed, before blasting threads at it
-			ck_token = self.get_url('user', token_ck=True)
-
+			ck_token = self._get('user', token_ck=True)
 			threads = []
 			for section in hashList:
 				threads.append(workers.Thread(self.check_hash_thread, section))
 			[i.start() for i in threads]
 			[i.join() for i in threads]
-
 			return self.cache_check_results
 		else:
 			hashString = "/" + hashList
-			return self.get_url("torrents/instantAvailability" + hashString)
+			return self._get("torrents/instantAvailability" + hashString)
 
 
 	def check_hash_thread(self, hashes):
 		try:
 			hashString = '/' + '/'.join(hashes)
-			response = self.get_url("torrents/instantAvailability" + hashString)
+			response = self._get("torrents/instantAvailability" + hashString)
+			if not response: return
 			self.cache_check_results.update(response)
 		except:
 			log_utils.error()
@@ -433,48 +427,35 @@ class RealDebrid:
 			torrent_id = None
 			rd_url = None
 			match = False
-
 			extensions = supported_video_extensions()
 			extras_filtering_list = episode_extras_filter()
-
 			info_hash = info_hash.lower()
-
-			torrent_files = self.get_url(check_cache_url + '/' + info_hash)
+			torrent_files = self._get(check_cache_url + '/' + info_hash)
 			if not info_hash in torrent_files:
 				return None
-
 			torrent_id = self.create_transfer(media_id)
 			torrent_files = torrent_files[info_hash]['rd']
-
 			for item in torrent_files:
 				video_only = self.video_only(item, extensions)
 				if not video_only:
 					continue
-
 				correct_file_check = False
 				item_values = [i['filename'] for i in item.values()]
 				for value in item_values:
 					correct_file_check = seas_ep_filter(season, episode, re.sub('[^A-Za-z0-9]+', '.', unquote(value)).lower())
 					if correct_file_check:
 						break
-
 				if not correct_file_check:
 					continue
-
 				torrent_keys = item.keys()
 				if len(torrent_keys) == 0:
 					continue
-
 				torrent_keys = ','.join(torrent_keys)
 				self.select_file(torrent_id, torrent_keys)
-
 				torrent_info = self.torrent_info(torrent_id)
-
 				selected_files = [(idx, i) for idx, i in enumerate([i for i in torrent_info['files'] if i['selected'] == 1])]
-
 				correct_files = []
 				correct_file_check = False
-
 				for value in selected_files:
 					checker = re.sub('[^A-Za-z0-9]+', '.', unquote(value[1]['path'])).lower()
 					correct_file_check = seas_ep_filter(season, episode, checker)
@@ -526,7 +507,7 @@ class RealDebrid:
 			info_hash = info_hash.lower()
 			extensions = supported_video_extensions()
 
-			torrent_files = self.get_url(check_cache_url + '/' + info_hash)
+			torrent_files = self._get(check_cache_url + '/' + info_hash)
 			if not info_hash in torrent_files:
 				return None
 
@@ -560,24 +541,157 @@ class RealDebrid:
 
 			return list_file_items
 		except Exception as e:
-			if torrent_id: self.delete_torrent(torrent_id)
+			if torrent_id:
+				self.delete_torrent(torrent_id)
 			log_utils.log('Real-Debrid Error: DISPLAY MAGNET PACK | %s' % str(e), __name__, log_utils.LOGDEBUG)
 			raise
+
+
+	def torrents_activeCount(self):
+		return self._get(torrents_active_url)
+
+
+	def add_uncached_torrent(self, magnet_url, pack=False):
+		def _return_failed(message=control.lang(33586)):
+			try:
+				control.progressDialog.close()
+			except:
+				pass
+			self.delete_torrent(torrent_id)
+			control.hide()
+			control.sleep(500)
+			control.okDialog(title=control.lang(40018), message=message)
+			return False
+		control.busy()
+		try:
+			active_count = self.torrents_activeCount()
+			if active_count['nb'] >= active_count['limit']:
+				return _return_failed()
+		except:
+			pass
+		interval = 5
+		stalled = ['magnet_error', 'error', 'virus', 'dead']
+		extensions = supported_video_extensions()
+		torrent = self.add_magnet(magnet_url)
+		# if not transfer_id: # check if this is needed
+			# control.hide()
+			# return
+		torrent_id = torrent['id']
+		if not torrent_id:
+			return _return_failed()
+		torrent_info = self.torrent_info(torrent_id)
+		if 'error_code' in torrent_info:
+			# log_utils.log('torrent_info = %s' % torrent_info, __name__, log_utils.LOGDEBUG)
+			return _return_failed()
+		status = torrent_info['status']
+		if status == 'magnet_conversion':
+			line1 = control.lang(40013)
+			line2 = torrent_info['filename']
+			line3 = control.lang(40012) % str(torrent_info['seeders'])
+			timeout = 100
+			control.progressDialog.create(control.lang(40018), line1, line2, line3)
+			while status == 'magnet_conversion' and timeout > 0:
+				control.progressDialog.update(timeout, line3=line3)
+				if control.monitor.abortRequested():
+					return sys.exit()
+				try:
+					if control.progressDialog.iscanceled():
+						return _return_failed(control.lang(40014))
+				except:
+					pass
+				if any(x in status for x in stalled):
+					return _return_failed()
+				timeout -= interval
+				control.sleep(1000 * interval)
+				torrent_info = self.torrent_info(torrent_id)
+				status = torrent_info['status']
+				line3 = control.lang(40012) % str(torrent_info['seeders'])
+			try:
+				control.progressDialog.close()
+			except:
+				pass
+		if status == 'magnet_conversion':
+			return _return_failed()
+		if status == 'waiting_files_selection':
+			video_files = []
+			all_files = torrent_info['files']
+			for item in all_files:
+				if any(item['path'].lower().endswith(x) for x in extensions):
+					video_files.append(item)
+			if pack:
+				try:
+					if len(video_files) == 0:
+						return _return_failed()
+					video_files = sorted(video_files, key=lambda x: x['path'])
+					torrent_keys = [str(i['id']) for i in video_files]
+					if not torrent_keys:
+						return _return_failed(control.lang(40014))
+					torrent_keys = ','.join(torrent_keys)
+					self.select_file(torrent_id, torrent_keys)
+					control.okDialog(title='default', message=control.lang(40017) % control.lang(40058))
+					# self.clear_cache()
+					control.hide()
+					return True
+				except:
+					return _return_failed()
+			else:
+				try:
+					video = max(video_files, key=lambda x: x['bytes'])
+					file_id = video['id']
+				except ValueError:
+					return _return_failed()
+				self.select_file(torrent_id, str(file_id))
+			control.sleep(2000)
+			torrent_info = self.torrent_info(torrent_id)
+			status = torrent_info['status']
+			if status == 'downloaded':
+				return True
+			file_size = round(float(video['bytes']) / (1000 ** 3), 2)
+			line1 = '%s...' % (control.lang(40017) % control.lang(40058))
+			line2 = torrent_info['filename']
+			line3 = status
+			control.progressDialog.create(ls(40018), line1, line2, line3)
+			while not status == 'downloaded':
+				control.sleep(1000 * interval)
+				torrent_info = self.torrent_info(torrent_id)
+				status = torrent_info['status']
+				if status == 'downloading':
+					line3 = control.lang(40011) % (file_size, round(float(torrent_info['speed']) / (1000**2), 2), torrent_info['seeders'], torrent_info['progress'])
+				else:
+					line3 = status
+				control.progressDialog.update(int(float(torrent_info['progress'])), line3=line3)
+				if control.monitor.abortRequested():
+					return sys.exit()
+				try:
+					if control.progressDialog.iscanceled():
+						return _return_failed(control.lang(40011))
+				except:
+					pass
+				if any(x in status for x in stalled):
+					return _return_failed()
+			try:
+				control.progressDialog.close()
+			except Exception:
+				pass
+			control.hide()
+			return True
+		control.hide()
+		return False
 
 
 	def torrent_info(self, torrent_id):
 		try:
 			url = torrents_info_url + "/%s" % torrent_id
-			return self.get_url(url)
+			return self._get(url)
 		except Exception as e:
 			log_utils.log('Real-Debrid Error: TORRENT INFO | %s' % e, __name__, log_utils.LOGDEBUG)
 			raise
 
 
-	def create_transfer(self, media_id):
+	def create_transfer(self, media_id): # used by resolve_magnet_pack(), remove this function in favor of add_magnet() once resolve_magnet_pack() converted to full resolve_magnet()
 		try:
 			data = {'magnet': media_id}
-			js_result = self.post_url(add_magnet_url, data)
+			js_result = self._post(add_magnet_url, data)
 			log_utils.log('Real-Debrid: Sending MAGNET URL %s to the real-debrid cloud' % media_id, __name__, log_utils.LOGDEBUG)
 			return js_result.get('id', "")
 		except Exception as e:
@@ -585,11 +699,16 @@ class RealDebrid:
 			raise
 
 
+	def add_magnet(self, magnet): # used by add_uncached_torrent(), convert resolve_magnet_pack() to full resolve_magnet() and use this function instead of above
+		data = {'magnet': magnet}
+		return self._post(add_magnet_url, data)
+
+
 	def select_file(self, torrent_id, file_id):
 		try:
 			url = '%s/%s' % (select_files_url, torrent_id)
 			data = {'files': file_id}
-			self.post_url(url, data)
+			self._post(url, data)
 			log_utils.log('Real-Debrid: Selected file ID %s from Torrent ID %s to transfer' % (file_id, torrent_id), __name__, log_utils.LOGDEBUG)
 			return True
 		except Exception as e:
@@ -599,7 +718,7 @@ class RealDebrid:
 
 	def unrestrict_link(self, link):
 		post_data = {'link': link}
-		response = self.post_url(unrestrict_link_url, post_data)
+		response = self._post(unrestrict_link_url, post_data)
 		try:
 			return response['download']
 		except:
@@ -609,7 +728,7 @@ class RealDebrid:
 	def delete_torrent(self, torrent_id):
 		try:
 			# Need to check token, and refresh if needed
-			ck_token = self.get_url('user', token_ck=True)
+			ck_token = self._get('user', token_ck=True)
 			url = torrents_delete_url + "/%s&auth_token=%s" % (torrent_id, self.token)
 			response = requests.delete(rest_base_url + url)
 			log_utils.log('Real-Debrid: Torrent ID %s was removed from your active torrents' % torrent_id, __name__, log_utils.LOGDEBUG)
@@ -617,24 +736,6 @@ class RealDebrid:
 		except Exception as e:
 			log_utils.log('Real-Debrid Error: DELETE TORRENT | %s' % e, __name__, log_utils.LOGDEBUG)
 			raise
-
-
-	def add_torrent_select(self, torrent_id, file_ids):
-		self.clear_cache()
-		url = "torrents/selectFiles/%s" % torrent_id
-		post_data = {'files': file_ids}
-		return self.post_url(url, post_data)
-
-
-# video_files = []
-# all_files = torrent_info['files']
-# for item in all_files:
-	# if any(item['path'].lower().endswith(x) for x in extensions):
-		# video_files.append(item)
-# torrent_keys = [str(i['id']) for i in video_files]
-# torrent_keys = ','.join(torrent_keys)
-# self.add_torrent_select(torrent_id, torrent_keys)
-
 
 
 	def get_link(self, link):

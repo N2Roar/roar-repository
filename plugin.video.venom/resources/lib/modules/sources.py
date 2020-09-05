@@ -18,6 +18,7 @@ try:
 except:
 	from urllib.parse import quote_plus, parse_qsl, unquote
 
+from resources.lib.modules import alldebrid
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import control
@@ -246,27 +247,29 @@ class Sources:
 				sysurl = '%s?action=playItem&title=%s&source=%s' % (sysaddon, systitle, syssource)
 
 				cm = []
-				if downloads:
-					if not 'uncached' in items[i]['source']:
-						try:
-							new_sysname = quote_plus(items[i]['name'])
-						except:
-							new_sysname = sysname
-							pass
-						cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s&caller=sources)' %
-								(sysaddon, new_sysname, sysimage, syssource)))
+				type = 'pack' if 'package' in items[i] else 'single'
+				isCached = True if re.match(r'cached.*torrent', items[i]['source']) else False
+				if downloads and isCached:
+					try: 
+						new_sysname = quote_plus(items[i]['name'])
+					except:
+						new_sysname = sysname
+						pass
+					cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s&caller=sources&title=%s)' %
+										(sysaddon, new_sysname, sysimage, syssource, sysname)))
 
-				if 'package' in items[i]:
-					if not 'uncached' in items[i]['source']:
-						cm.append(('Browse Debrid Pack', 'RunPlugin(%s?action=showDebridPack&caller=%s&name=%s&url=%s&source=%s)' %
-								(sysaddon, quote_plus(items[i]['debrid']), quote_plus(items[i]['name']), quote_plus(items[i]['url']), quote_plus(items[i]['hash']))))
+				if type == 'pack' and isCached:
+					cm.append(('Browse Debrid Pack', 'RunPlugin(%s?action=showDebridPack&caller=%s&name=%s&url=%s&source=%s)' %
+									(sysaddon, quote_plus(items[i]['debrid']), quote_plus(items[i]['name']), quote_plus(items[i]['url']), quote_plus(items[i]['hash']))))
 
-				if 'uncached' in items[i]['source']:
-					seeders = int(items[i]['seeders'])
-					if seeders > 0:
-						d = self.debrid_abv(items[i]['debrid'])
-						cm.append(('Cache to %s Cloud (seeders=%s)' % (d, seeders), 'RunPlugin(%s?action=cacheTorrent&caller=%s&url=%s)' %
-								(sysaddon, quote_plus(items[i]['debrid']), quote_plus(items[i]['url']))))
+				if not isCached:
+					try: seeders = int(items[i]['seeders'])
+					except: seeders = 0
+					# if seeders > 0:
+					d = self.debrid_abv(items[i]['debrid'])
+					if d == 'PM' or d == 'RD' or d == 'AD':
+						cm.append(('Cache to %s Cloud (seeders=%s)' % (d, seeders), 'RunPlugin(%s?action=cacheTorrent&caller=%s&type=%s&url=%s)' %
+												(sysaddon, d, type, quote_plus(items[i]['url']))))
 
 				if control.setting('enable.resquality.icons') == 'true':
 					quality = items[i]['quality']
@@ -465,7 +468,6 @@ class Sources:
 			meta = json.loads(unquote(control.window.getProperty(self.metaProperty).replace('%22', '\\"')))
 			genres = [i.lower() for i in meta.get('genre')]
 		except:
-			log_utils.error()
 			genres = None
 			pass
 
@@ -1164,7 +1166,28 @@ class Sources:
 					filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
 				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
-			if d.name != 'Premiumize.me' and d.name != 'Real-Debrid':
+			if d.name == 'AllDebrid':
+				if control.setting('ad.chk.cached') == 'true':
+					try:
+						adTorrent_List = copy.deepcopy(self.sources)
+						adTorrent_List = [i for i in adTorrent_List if 'magnet:' in i['url']]
+						if adTorrent_List == []:
+							raise Exception()
+						adCached = self.ad_cache_chk_list(adTorrent_List, d)
+						if not adCached: raise Exception
+						# self.uncached_sources += [dict(i.items() + [('debrid', d.name)]) for i in adCached if re.match(r'uncached.*torrent', i['source'])]
+						if control.setting('ad.remove.uncached') == 'true':
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in adCached if re.match(r'cached.*torrent', i['source'])]
+						else:
+							filter += [dict(i.items() + [('debrid', d.name)]) for i in adCached if 'magnet:' in i['url']]
+					except:
+						log_utils.error()
+						pass
+				else:
+					filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+
+			if d.name != 'Premiumize.me' and d.name != 'Real-Debrid' and d.name != 'AllDebrid':
 				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
 				filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
@@ -1329,6 +1352,11 @@ class Sources:
 					elif item['debrid'] == 'Premiumize.me':
 						from resources.lib.modules.premiumize import Premiumize
 						url = Premiumize().resolve_magnet_pack(item['url'], season, episode, title)
+					elif item['debrid'] == 'AllDebrid':
+						from resources.lib.modules.alldebrid import AllDebrid
+						url = AllDebrid().resolve_magnet_pack(item['url'], season, episode, title)
+					else:
+						return
 					self.url = url
 					return url
 				except:
@@ -1584,7 +1612,10 @@ class Sources:
 				from resources.lib.modules.realdebrid import RealDebrid as debrid_function
 			elif provider == 'Premiumize.me':
 				from resources.lib.modules.premiumize import Premiumize as debrid_function
-
+			elif provider == 'AllDebrid':
+				from resources.lib.modules.alldebrid import AllDebrid as debrid_function
+			else:
+				return
 			debrid_files = None
 			control.busy()
 			try:
@@ -1599,23 +1630,23 @@ class Sources:
 			debrid_files = sorted(debrid_files, key=lambda k: k['filename'].lower())
 
 			display_list = ['%02d | [B]%.2f GB[/B] | [I]%s[/I]' % \
-							(count,
-							i['size'],
+							(count, i['size'],
 							i['filename'].upper()) for count, i in enumerate(debrid_files, 1)]
 
 			control.hide()
-
 			chosen = control.selectDialog(display_list, heading=name)
 			if chosen < 0:
 				return None
 
+			control.busy()
 			chosen_result = debrid_files[chosen]
 
 			if provider  == 'Real-Debrid':
 				self.url = debrid_function().unrestrict_link(chosen_result['link'])
 			elif provider == 'Premiumize.me':
 				self.url = debrid_function().add_headers_to_url(chosen_result['link'])
-
+			elif provider == 'AllDebrid':
+				self.url = debrid_function().unrestrict_link(chosen_result['link'])
 			from resources.lib.modules import player
 			from resources.lib.modules.source_utils import seas_ep_filter
 			meta = json.loads(unquote(control.window.getProperty(self.metaProperty).replace('%22', '\\"')))
@@ -1633,11 +1664,18 @@ class Sources:
 
 			release_title = re.sub('[^A-Za-z0-9]+', '.', unquote(chosen_result['filename'])).lower()
 
+			control.hide()
 			if seas_ep_filter(season, episode, release_title):
 				return player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta, select='1')
 			else:
 				return player.Player().play(self.url)
-
+				# # log_utils.log('self.url =  %s' % self.url, __name__, log_utils.LOGDEBUG)
+				# content = re.search(r'(?:|\.| - |-|.-.|\s)(?:S|s|\s|\.)(\d{1,2})(?!\d)(?:|\.| - |-|.-.|x|\s)(?:E|e|\s|.)([0-2]{1}[0-9]{1})(?!\w)', self.url.replace('\'', '')).groups()
+				# log_utils.log('content =  %s' % str(content), __name__, log_utils.LOGDEBUG)
+				# season = str(int(content[0]))
+				# episode = str(int(content[1]))
+				# meta.update({'season': season, 'episode': episode})
+				# return player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta, select='1')
 		except Exception as e:
 			control.hide()
 			log_utils.log('Error debridPackDialog %s' % str(e), __name__, log_utils.LOGNOTICE)
@@ -1935,6 +1973,39 @@ class Sources:
 		except:
 			log_utils.error()
 			pass
+
+
+	# @timeIt
+	def ad_cache_chk_list(self, torrent_List, d):
+		if len(torrent_List) == 0:
+			return
+		try:
+			hashList = [i['hash'] for i in torrent_List]
+			cached = alldebrid.AllDebrid().check_cache(hashList)
+			if not cached:
+				return None
+			cached = cached['magnets']
+			count = 0
+			for i in torrent_List:
+				if 'error' in cached[count]:
+					# log_utils.log('AD error = %s for source: %s' % (str(cached[count]['error']), str(i)), log_utils.LOGDEBUG)
+					continue
+				if cached[count]['instant'] is False:
+					if 'package' in i:
+						i.update({'source': 'uncached (pack) torrent'})
+					else:
+						i.update({'source': 'uncached torrent'})
+				else:
+					if 'package' in i:
+						i.update({'source': 'cached (pack) torrent'})
+					else:
+						i.update({'source': 'cached torrent'})
+				count += 1
+			return torrent_List
+		except:
+			log_utils.error()
+			pass
+
 
 
 	def clr_item_providers(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered):

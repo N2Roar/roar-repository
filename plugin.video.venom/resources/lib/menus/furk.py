@@ -99,8 +99,7 @@ class Furk:
 		dbcur.close()
 
 		if delete_option:
-			navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
-
+			navigator.Navigator().addDirectoryItem(32605, 'cache_clearSearch', 'tools.png', 'DefaultAddonProgram.png')
 		navigator.Navigator().endDirectory()
 
 

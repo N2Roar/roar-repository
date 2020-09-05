@@ -10,12 +10,9 @@ import xbmcaddon
 import xbmcgui
 
 try:
-	from urllib.request import urlopen
-	from urllib.request import Request
+	from urllib.request import urlopen, Request
 except ImportError:
-	from urllib2 import urlopen
-	from urllib2 import Request
-
+	from urllib2 import urlopen, Request
 
 ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
 HOMEPATH = xbmc.translatePath('special://home/')
@@ -45,7 +42,6 @@ def open_news_url(url):
 	response = urlopen(req)
 	link = response.read()
 	response.close()
-	print(link)
 	return link
 
 

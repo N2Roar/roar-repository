@@ -122,11 +122,44 @@ def getEpisodeOverlay(indicators, imdb, tvdb, season, episode):
 		return '6'
 
 
+# def getShowCount(indicators, imdb, tvdb, limit=False):
+	# log_utils.log('indicators = %s' % indicators, __name__, log_utils.LOGDEBUG)
+	# if not imdb.startswith('tt'):
+		# return None
+	# try:
+		# if traktIndicators:
+			# result = trakt.showCount(imdb)
+			# if limit and result:
+				# result['unwatched'] = min(99, result['unwatched'])
+			# return result
+		# else:
+			# for indicator in indicators:
+				# if indicator[0] == tvdb:
+					# total = indicator[1]
+					# watched = len(indicator[2])
+					# unwatched = total - watched
+					# if limit:
+						# unwatched = min(99, unwatched)
+					# return {'total': total, 'watched': watched, 'unwatched': unwatched}
+	# except:
+		# log_utils.error()
+		# return None
+
+
 def getShowCount(indicators, imdb, tvdb, limit=False):
+	# log_utils.log('indicators = %s' % indicators, __name__, log_utils.LOGDEBUG)
 	if not imdb.startswith('tt'):
 		return None
 	try:
 		if traktIndicators:
+			for indicator in indicators:
+				if indicator[0] == tvdb:
+					total = indicator[1]
+					watched = len(indicator[2])
+					unwatched = total - watched
+					if limit:
+						unwatched = min(99, unwatched)
+					return {'total': total, 'watched': watched, 'unwatched': unwatched}
 			result = trakt.showCount(imdb)
 			if limit and result:
 				result['unwatched'] = min(99, result['unwatched'])
@@ -137,7 +170,6 @@ def getShowCount(indicators, imdb, tvdb, limit=False):
 					total = indicator[1]
 					watched = len(indicator[2])
 					unwatched = total - watched
-
 					if limit:
 						unwatched = min(99, unwatched)
 					return {'total': total, 'watched': watched, 'unwatched': unwatched}

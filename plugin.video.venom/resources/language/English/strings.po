@@ -2708,7 +2708,7 @@ msgstr ""
 
 
 msgctxt "#35308"
-msgid "Unfinished"
+msgid "Finish Watching"
 msgstr ""
 
 
@@ -3233,65 +3233,104 @@ msgstr ""
 
 
 
+msgctxt "#40000"
+msgid ""
+msgstr ""
+
+msgctxt "#40001"
+msgid ""
+msgstr ""
+
+msgctxt "#40002"
+msgid ""
+msgstr ""
+
+msgctxt "#40003"
+msgid ""
+msgstr ""
+
+msgctxt "#40004"
+msgid ""
+msgstr ""
+
+msgctxt "#40005"
+msgid ""
+msgstr ""
+
+msgctxt "#40006"
+msgid ""
+msgstr ""
+
+msgctxt "#40007"
+msgid "[B]Restart Transfer?: %s[/B]"
+msgstr ""
+
+msgctxt "#40008"
+msgid "[B]Restart Transfer[/B]"
+msgstr ""
+
+msgctxt "#40009"
+msgid "Revoke Authorization Success"
+msgstr ""
 
 msgctxt "#40010"
-msgid ""
+msgid "All Debrid succesfuly authorized"
 msgstr ""
 
 msgctxt "#40011"
-msgid ""
+msgid "Downloading %s GB @ %s mbps from %s peers, %s %% completed"
 msgstr ""
 
 msgctxt "#40012"
-msgid ""
+msgid "%s seeders"
 msgstr ""
 
 msgctxt "#40013"
-msgid ""
+msgid "Converting MAGNET..."
 msgstr ""
 
 msgctxt "#40014"
-msgid ""
+msgid "Progress Dialog Cancelled"
 msgstr ""
 
 msgctxt "#40015"
-msgid ""
+msgid "Uploading at %s MB/s, %s%% of %s GB completed"
 msgstr ""
 
 msgctxt "#40016"
-msgid ""
+msgid "Downloading at %s MB/s from %s peers, %s%% of %sGB completed"
 msgstr ""
 
 msgctxt "#40017"
-msgid ""
+msgid "Saving Torrent to the %s Cloud"
 msgstr ""
 
 msgctxt "#40018"
-msgid ""
+msgid "Venom: Cloud Transfer"
 msgstr ""
 
 msgctxt "#40019"
-msgid ""
+msgid "Authentication with Real-Debrid has failed, please try again"
 msgstr ""
 
 msgctxt "#40020"
-msgid ""
+msgid "Authentication with Premiumize.me has failed, please try again"
 msgstr ""
 
 msgctxt "#40021"
-msgid ""
+msgid "Authentication with All-Debrid has failed, please try again"
 msgstr ""
 
 msgctxt "#40022"
-msgid ""
+msgid "   File Name Format"
 msgstr ""
 
 msgctxt "#40023"
-msgid ""
+msgid "Title (year) or Title S01E01"
 msgstr ""
 
 msgctxt "#40024"
-msgid ""
+msgid "torrent file name"
 msgstr ""
 
 msgctxt "#40025"
@@ -3407,7 +3446,7 @@ msgid "Preminumize.me succesfuly authorized"
 msgstr ""
 
 msgctxt "#40053"
-msgid "Authentication with Real-Debrid has failed, please try again"
+msgid "All Debrid Torrent Settings"
 msgstr ""
 
 msgctxt "#40054"
@@ -3431,7 +3470,7 @@ msgid "Real-Debrid"
 msgstr ""
 
 msgctxt "#40059"
-msgid "All-Debrid"
+msgid "All Debrid"
 msgstr ""
 
 msgctxt "#40060"

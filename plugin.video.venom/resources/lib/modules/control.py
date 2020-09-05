@@ -11,6 +11,7 @@ import re
 import string
 from sys import argv
 import time
+import json
 
 try:
 	from urllib import urlencode
@@ -22,9 +23,10 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
-from xml.etree import ElementTree
+import xml.etree.ElementTree as ET
 
-integer = 1000
+def getKodiVersion():
+	return int(xbmc.getInfoLabel("System.BuildVersion")[:2])
 
 addon = xbmcaddon.Addon
 AddonID = xbmcaddon.Addon().getAddonInfo('id')
@@ -33,17 +35,11 @@ addonName = addonInfo('name')
 addonVersion = addonInfo('version')
 
 getLangString = xbmcaddon.Addon().getLocalizedString
-setting = xbmcaddon.Addon().getSetting
-setSetting = xbmcaddon.Addon().setSetting
-
+# setting = xbmcaddon.Addon().getSetting
+# setSetting = xbmcaddon.Addon().setSetting
 item = xbmcgui.ListItem
 listControl = xbmcgui.ControlList
 labelControl = xbmcgui.ControlLabel
-XBFONT_LEFT = 0x00000000
-XBFONT_RIGHT = 0x00000001
-XBFONT_CENTER_X = 0x00000002
-XBFONT_CENTER_Y = 0x00000004
-XBFONT_TRUNCATED = 0x00000008
 window = xbmcgui.Window(10000)
 homeWindow = xbmcgui.Window(10000)
 
@@ -64,6 +60,7 @@ resolve = xbmcplugin.setResolvedUrl
 condVisibility = xbmc.getCondVisibility
 execute = xbmc.executebuiltin
 infoLabel = xbmc.getInfoLabel
+legalFilename = xbmc.makeLegalFilename if getKodiVersion() < 19 else xbmcvfs.makeLegalFilename
 keyboard = xbmc.Keyboard
 monitor = xbmc.Monitor()
 skin = xbmc.getSkinDir()
@@ -81,7 +78,20 @@ except:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path')
 
 joinPath = os.path.join
-existsPath = os.path.exists
+# existsPath = os.path.exists
+isfilePath = os.path.isfile
+# makeDirs = os.makedirs
+
+deleteDir = xbmcvfs.rmdir
+deleteFile = xbmcvfs.delete
+existsPath = xbmcvfs.exists
+listDir = xbmcvfs.listdir
+makeFile = xbmcvfs.mkdir
+makeDirs = xbmcvfs.mkdirs
+openFile = xbmcvfs.File
+transPath = xbmc.translatePath
+
+
 
 menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
 SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
@@ -100,18 +110,40 @@ searchFile = os.path.join(dataPath, 'search.db')
 libcacheFile = os.path.join(dataPath, 'library.db')
 cacheFile = os.path.join(dataPath, 'cache.db')  # Used by trakt.py
 # traktSyncFile = os.path.join(dataPath, 'traktSync.db') # Used by trakt.py
-
-openFile = xbmcvfs.File
-makeFile = xbmcvfs.mkdir
-deleteFile = xbmcvfs.delete
-listDir = xbmcvfs.listdir
-deleteDir = xbmcvfs.rmdir
-transPath = xbmc.translatePath
-existsPath = xbmcvfs.exists
-
-key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
-iv = "p2s5v8y/B?E(H+Mb"
 trailer = 'plugin://plugin.video.youtube/play/?video_id=%s'
+
+
+def setting(id, fallback=None):
+	try: settings_dict = json.loads(window.getProperty('venom_settings'))
+	except: settings_dict = make_settings_dict()
+	# xbmc.log('settings_dict = %s' % settings_dict, 2)
+	value = settings_dict.get(id, '')
+	if fallback is None: return value
+	if value == '': return fallback
+	return value
+
+
+def setSetting(id, value):
+	from xbmcaddon import Addon
+	Addon().setSetting(id, value)
+
+
+def make_settings_dict():
+	kodi_version = getKodiVersion()
+	profile_dir = xbmc.translatePath('special://userdata/addon_data/plugin.video.venom')
+	settings_xml = os.path.join(profile_dir, 'settings.xml')
+	root = ET.parse(settings_xml).getroot()
+	settings_dict = {}
+	for item in root:
+		dict_item = {}
+		setting_id = item.get('id')
+		if kodi_version >= 18: setting_value = item.text
+		else: setting_value = item.get('value')
+		if setting_value is None: setting_value = ''
+		dict_item = {setting_id: setting_value}
+		settings_dict.update(dict_item)
+	window.setProperty('venom_settings', json.dumps(settings_dict))
+	return settings_dict
 
 
 def lang(language_id):
@@ -159,10 +191,6 @@ def sleep(time):  # Modified `sleep`(in milli secs) command that honors a user e
 def getCurrentViewId():
 	win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
 	return str(win.getFocusId())
-
-
-def getKodiVersion():
-	return int(xbmc.getInfoLabel("System.BuildVersion")[:2])
 
 
 def check_version_numbers(current, new):
@@ -230,9 +258,9 @@ def appearance():
 	return appearance
 
 
-def artwork():
-	if condVisibility('System.HasAddon(script.venom.artwork)'):
-		execute('RunPlugin(plugin://script.venom.artwork)')
+# def artwork():
+	# if condVisibility('System.HasAddon(script.venom.artwork)'):
+		# execute('RunPlugin(plugin://script.venom.artwork)')
 
 
 def addonIcon():
@@ -285,14 +313,14 @@ def addonNext():
 	return 'DefaultVideo.png'
 
 
-def metaFile():
-	# if condVisibility('System.HasAddon(script.venom.metadata)'):
-		# return os.path.join(xbmcaddon.Addon('script.venom.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
-	return os.path.join(dataPath, 'metadata.db')
+# def metaFile():
+	# # if condVisibility('System.HasAddon(script.venom.metadata)'):
+		# # return os.path.join(xbmcaddon.Addon('script.venom.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
+	# return os.path.join(dataPath, 'metadata.db')
 
 
 def metadataClean(metadata):
-	if metadata is None:
+	if not metadata:
 		return metadata
 	allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink',
 					'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast',
@@ -354,10 +382,8 @@ def context(items=None, labels=None):
 	if items:
 		labels = [i[0] for i in items]
 		choice = xbmcgui.Dialog().contextmenu(labels)
-		if choice >= 0:
-			return items[choice][1]()
-		else:
-			return False
+		if choice >= 0: return items[choice][1]()
+		else: return False
 	else:
 		return xbmcgui.Dialog().contextmenu(labels)
 
@@ -505,10 +531,9 @@ def getSettingDefault(id):
 
 
 def getColor(n):
-	colorChart = ['blue', 'red', 'yellow', 'deeppink', 'cyan', 'lawngreen', 'gold', 'magenta', 'yellowgreen', 'skyblue', 
-						'lime', 'limegreen', 'deepskyblue', 'white', 'whitesmoke', 'nocolor']
-	if not n:
-		n = '8'
+	colorChart = ['blue', 'red', 'yellow', 'deeppink', 'cyan', 'lawngreen', 'gold', 'magenta', 'yellowgreen',
+						'skyblue', 'lime', 'limegreen', 'deepskyblue', 'white', 'whitesmoke', 'nocolor']
+	if not n: n = '8'
 	color = colorChart[int(n)]
 	return color
 
@@ -596,7 +621,7 @@ def add_source(source_name, source_path, source_content, source_thumbnail, type=
 
 
 def _add_source_xml(xml_file, name, path, thumbnail, type='video'):
-	tree = ElementTree.parse(xml_file)
+	tree = ET.parse(xml_file)
 	root = tree.getroot()
 	sources = root.find(type)
 	existing_source = None
@@ -629,12 +654,17 @@ def _add_source_xml(xml_file, name, path, thumbnail, type='video'):
 			source.find('path').text = path
 			source.find('name').text = name
 	else:
-		new_source = ElementTree.SubElement(sources, 'source')
-		new_name = ElementTree.SubElement(new_source, 'name')
+		# new_source = ElementTree.SubElement(sources, 'source')
+		new_source = ET.SubElement(sources, 'source')
+		# new_name = ElementTree.SubElement(new_source, 'name')
+		new_name = ET.SubElement(new_source, 'name')
 		new_name.text = name
-		new_path = ElementTree.SubElement(new_source, 'path')
-		new_thumbnail = ElementTree.SubElement(new_source, 'thumbnail')
-		new_allowsharing = ElementTree.SubElement(new_source, 'allowsharing')
+		# new_path = ElementTree.SubElement(new_source, 'path')
+		new_path = ET.SubElement(new_source, 'path')
+		# new_thumbnail = ElementTree.SubElement(new_source, 'thumbnail')
+		new_thumbnail = ET.SubElement(new_source, 'thumbnail')
+		# new_allowsharing = ElementTree.SubElement(new_source, 'allowsharing')
+		new_allowsharing = ET.SubElement(new_source, 'allowsharing')
 		new_path.attrib['pathversion'] = '1'
 		new_thumbnail.attrib['pathversion'] = '1'
 		new_path.text = path
@@ -662,7 +692,7 @@ def _indent_xml(elem, level=0):
 
 
 def _get_source_attr(xml_file, name, attr, type='video'):
-	tree = ElementTree.parse(xml_file)
+	tree = ET.parse(xml_file)
 	root = tree.getroot()
 	sources = root.find(type)
 	for source in sources.findall('source'):
@@ -727,7 +757,6 @@ def clean_settings():
 				else: removed_settings.append(item)
 		content += '\n</settings>'
 		return content
-
 	kodi_version = getKodiVersion()
 	for addon_id in ('plugin.video.venom', 'script.module.openscrapers'):
 		try:
@@ -739,13 +768,13 @@ def clean_settings():
 			addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
 			profile_dir = xbmc.translatePath(addon.getAddonInfo('profile'))
 			active_settings_xml = os.path.join(addon_dir, 'resources', 'settings.xml')
-			root = ElementTree.parse(active_settings_xml).getroot()
+			root = ET.parse(active_settings_xml).getroot()
 			for item in root.findall('./category/setting'):
 				setting_id = item.get('id')
 				if setting_id:
 					active_settings.append(setting_id)
 			settings_xml = os.path.join(profile_dir, 'settings.xml')
-			root = ElementTree.parse(settings_xml).getroot()
+			root = ET.parse(settings_xml).getroot()
 			for item in root:
 				dict_item = {}
 				setting_id = item.get('id')
@@ -776,14 +805,12 @@ def set_reuselanguageinvoker():
 		notification(title='default', message='This feature is only supported in kodi 18 and beyond', icon='default', sound=(setting('notification.sound') == 'true'))
 		return
 	try:
-		addon_id = 'plugin.video.venom'
-		addon = xbmcaddon.Addon(id=addon_id)
+		addon = xbmcaddon.Addon(id='plugin.video.venom')
 		addon_name = addon.getAddonInfo('name')
 		addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
 		addon_xml = os.path.join(addon_dir, 'addon.xml')
-		tree = ElementTree.parse(addon_xml)
+		tree = ET.parse(addon_xml)
 		root = tree.getroot()
-
 		for item in root.iter('reuselanguageinvoker'):
 			curr_value = str(item.text)
 		if curr_value:
@@ -793,10 +820,8 @@ def set_reuselanguageinvoker():
 			new_value = 'true' if curr_value == 'false' else 'false'
 			item.text = new_value
 			hash_start = gen_file_hash(addon_xml)
-			# xbmc.log('hash_start = %s' % str(hash_start), 2)
 			tree.write(addon_xml)
 			hash_end = gen_file_hash(addon_xml)
-			# xbmc.log('hash_end = %s' % str(hash_end), 2)
 			if hash_start != hash_end:
 				okDialog(title='default', message='New value = %s: Successfully changed. You must restart kodi for change to take effect.' % new_value)
 			else:

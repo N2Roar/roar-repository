@@ -4,9 +4,13 @@
 	Venom Add-on
 '''
 
-import sys
+
+import json
 import re
-import requests, json, xbmcgui
+import requests
+import sys
+import xbmcgui
+
 try:
 	from urllib import quote_plus
 except:
@@ -190,7 +194,7 @@ class documentary:
 
 		cm = []
 		if queue:
-			cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+			cm.append((queueMenu, 'RunPlugin(%s?action=playlist_QueueItem)' % sysaddon))
 		if context:
 			cm.append((control.lang(context[0]), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 

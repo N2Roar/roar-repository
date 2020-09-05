@@ -6,7 +6,7 @@
 
 import re
 import requests
-from sys import argv
+import sys
 
 try:
 	from urllib import quote_plus, urlencode, unquote
@@ -23,23 +23,22 @@ except:
 	token = ''
 	pass
 
-FormatDateTime = '%y%d%m%I%M%f'
 CLIENT_ID = '522962560' # used to auth
 BaseUrl = 'https://www.premiumize.me/api'
-folder_list = '%s/folder/list' % BaseUrl
-folder_rename = '%s/folder/rename' % BaseUrl
-folder_delete = '%s/folder/delete' % BaseUrl
-item_details = '%s/item/details' % BaseUrl
-item_delete = '%s/item/delete' % BaseUrl
-item_rename = '%s/item/rename' % BaseUrl
-transfer_create = '%s/transfer/create' % BaseUrl
-transfer_directdl = '%s/transfer/directdl' % BaseUrl
-transfer_list = '%s/transfer/list' % BaseUrl
-transfer_clear_finished = '%s/transfer/clearfinished' % BaseUrl
-transfer_delete = '%s/transfer/delete' % BaseUrl
-account_info = '%s/account/info' % BaseUrl
-cache_check = '%s/cache/check' % BaseUrl
-list_services_path = '%s/services/list' % BaseUrl
+folder_list_url = '%s/folder/list' % BaseUrl
+folder_rename_url = '%s/folder/rename' % BaseUrl
+folder_delete_url = '%s/folder/delete' % BaseUrl
+item_details_url = '%s/item/details' % BaseUrl
+item_delete_url = '%s/item/delete' % BaseUrl
+item_rename_url = '%s/item/rename' % BaseUrl
+transfer_create_url = '%s/transfer/create' % BaseUrl
+transfer_directdl_url = '%s/transfer/directdl' % BaseUrl
+transfer_list_url = '%s/transfer/list' % BaseUrl
+transfer_clearfinished_url = '%s/transfer/clearfinished' % BaseUrl
+transfer_delete_url = '%s/transfer/delete' % BaseUrl
+account_info_url = '%s/account/info' % BaseUrl
+cache_check_url = '%s/cache/check' % BaseUrl
+list_services_path_url = '%s/services/list' % BaseUrl
 pm_icon = control.joinPath(control.artPath(), 'premiumize.png')
 addonFanart = control.addonFanart()
 
@@ -54,6 +53,7 @@ class Premiumize:
 	def _get(self, url):
 		try:
 			response = requests.get(url, headers=self.headers, timeout=15).json()
+			# log_utils.log('response = %s' % response, __name__, log_utils.LOGDEBUG)
 			if 'status' in response:
 				if response.get('status') == 'success':
 					return response
@@ -62,12 +62,14 @@ class Premiumize:
 		except:
 			log_utils.error()
 			pass
-		return None
+		# return None
+		return response
 
 
 	def _post(self, url, data={}):
 		try:
 			response = requests.post(url, data, headers=self.headers, timeout=15).json()
+			# log_utils.log('response = %s' % response, __name__, log_utils.LOGDEBUG)
 			if 'status' in response:
 				if response.get('status') == 'success':
 					return response
@@ -76,7 +78,8 @@ class Premiumize:
 		except:
 			log_utils.error()
 			pass
-		return None
+		# return None
+		return response
 
 
 	def auth(self):
@@ -91,7 +94,6 @@ class Premiumize:
 								line1=control.lang(32513) % token['verification_uri'],
 								line2=control.lang(32514) % token['user_code'])
 		progressDialog.update(0)
-
 		while poll_again and not token_ttl <= 0 and not progressDialog.iscanceled():
 			poll_again, success = self.poll_token(token['device_code'])
 			progress_percent = 100 - int((float((expiry - token_ttl) / expiry) * 100))
@@ -108,17 +110,22 @@ class Premiumize:
 		token = requests.post('https://www.premiumize.me/token', data=data, timeout=15).json()
 		if 'error' in token:
 			if token['error'] == "access_denied":
+				control.okDialog(title='default', message=control.lang(40020))
 				return False, False
 			return True, False
 		control.addon('script.module.resolveurl').setSetting('PremiumizeMeResolver_token', token['access_token'])
-		self.headers = {'User-Agent': 'Venom for Kodi', 'Authorization': 'Bearer %s' % token['access_token']}
 		control.addon('script.module.resolveurl').setSetting('PremiumizeMeResolver_auth', 'true')
+		self.headers = {'User-Agent': 'Venom for Kodi', 'Authorization': 'Bearer %s' % token['access_token']}
 		return False, True
+
+
+	def add_headers_to_url(self, url):
+		return url + '|' + urlencode(self.headers)
 
 
 	def get_acount_info(self):
 		try:
-			accountInfo = self._get(account_info)
+			accountInfo = self._get(account_info_url)
 			return accountInfo
 		except:
 			log_utils.error()
@@ -131,14 +138,14 @@ class Premiumize:
 		import math
 		try:
 			accountInfo = self.get_acount_info()
-			expires = datetime.strptime(str(accountInfo['premium_until']), FormatDateTime)
+			expires = datetime.fromtimestamp(accountInfo['premium_until'])
 			days_remaining = (expires - datetime.today()).days
-			expires = expires.strftime('%Y-%m-%d')
+			expires = expires.strftime("%A, %B %d, %Y")
 			points_used = int(math.floor(float(accountInfo['space_used']) / 1073741824.0))
 			space_used = float(int(accountInfo['space_used']))/1073741824
 			percentage_used = str(round(float(accountInfo['limit_used']) * 100.0, 1))
 			items = []
-			items += [control.lang(40040) %  accountInfo['customer_id']]
+			items += [control.lang(40040) % accountInfo['customer_id']]
 			items += [control.lang(40041) % expires]
 			items += [control.lang(40042) % days_remaining]
 			items += [control.lang(40043) % points_used]
@@ -151,34 +158,9 @@ class Premiumize:
 		return
 
 
-	def get_media_url(self, host, media_id, cached_only=False):
-		torrent = False
-		cached = self.check_cache_item(media_id)
-		media_id_lc = media_id.lower()
-		if cached:
-			log_utils.log('Premiumize.me: %s is readily available to stream' % media_id, __name__, log_utils.LOGDEBUG)
-			if media_id_lc.endswith('.torrent') or media_id_lc.startswith('magnet:'):
-				torrent = True
-		elif media_id_lc.endswith('.torrent') or media_id_lc.startswith('magnet:'):
-			if control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') or cached_only:
-				raise Exception('Premiumize.me: Cached torrents only allowed to be initiated')
-			torrent = True
-			log_utils.log('Premiumize.me: initiating transfer to cloud for %s' % media_id, __name__, log_utils.LOGDEBUG)
-			self.create_transfer(media_id)
-		link = self.__direct_dl(media_id, torrent=torrent)
-		if link:
-			log_utils.log('Premiumize.me: Resolved to %s' % link, __name__, log_utils.LOGDEBUG)
-			return link + self.append_headers(self.headers)
-		raise ResolverError('Link Not Found')
-
-
-	def append_headers(self, headers):
-		return '|%s' % '&'.join(['%s=%s' % (key, quote_plus(headers[key])) for key in headers])
-
-
 	def get_all_hosters(self):
 		try:
-			response = self._get(list_services_path)
+			response = self._get(list_services_path_url)
 			if not response:
 				return None
 			aliases = response.get('aliases', {})
@@ -235,7 +217,7 @@ class Premiumize:
 			extras_filtering_list = episode_extras_filter()
 
 			data = {'src': media_id}
-			response = self._post(transfer_directdl, data)
+			response = self._post(transfer_directdl_url, data)
 			if not 'status' in response or response['status'] != 'success':
 				return None
 
@@ -273,7 +255,7 @@ class Premiumize:
 			end_results = []
 			extensions = supported_video_extensions()
 			data = {'src': magnet_url}
-			result = self._post(transfer_directdl, data=data)
+			result = self._post(transfer_directdl_url, data=data)
 			if not 'status' in result or result['status'] != 'success':
 				return None
 			for item in result.get('content'):
@@ -289,15 +271,74 @@ class Premiumize:
 			return None
 
 
-	def add_headers_to_url(self, url):
-		return url + '|' + urlencode(self.headers)
+	def add_uncached_torrent(self, magnet_url, pack=False):
+		def _transfer_info(transfer_id):
+			info = self.list_transfer()
+			if 'status' in info and info['status'] == 'success':
+				for item in info['transfers']:
+					if item['id'] == transfer_id:
+						return item
+			return {}
+		def _return_failed(message=control.lang(33586)):
+			try:
+				control.progressDialog.close()
+			except:
+				pass
+			control.hide()
+			control.sleep(500)
+			control.okDialog(title=control.lang(40018), message=message)
+			return False
+		control.busy()
+		extensions = supported_video_extensions()
+		transfer_id = self.create_transfer(magnet_url)
+		if not transfer_id:
+			control.hide()
+			return
+		if not transfer_id['status'] == 'success':
+			return _return_failed()
+		transfer_id = transfer_id['id']
+		transfer_info = _transfer_info(transfer_id)
+		if not transfer_info:
+			return _return_failed()
+		if pack:
+			# self.clear_cache()
+			control.hide()
+			control.okDialog(title='default', message=control.lang(40017) % control.lang(40057))
+			return True
+		interval = 5
+		line1 = '%s...' % (control.lang(40017) % control.lang(40057))
+		line2 = transfer_info['name']
+		line3 = transfer_info['message']
+		control.progressDialog.create(control.lang(40018), line1, line2, line3)
+		while not transfer_info['status'] == 'seeding':
+			control.sleep(1000 * interval)
+			transfer_info = _transfer_info(transfer_id)
+			line3 = transfer_info['message']
+			control.progressDialog.update(int(float(transfer_info['progress']) * 100), line3=line3)
+			if control.monitor.abortRequested():
+				return sys.exit()
+			try:
+				if control.progressDialog.iscanceled():
+					return _return_failed(control.lang(40014))
+			except:
+				pass
+			if transfer_info.get('status') == 'stalled':
+				return _return_failed()
+		control.sleep(1000 * interval)
+		try:
+			control.progressDialog.close()
+		except:
+			log_utils.error()
+			pass
+		control.hide()
+		return True
 
 
 	def check_cache_item(self, media_id):
 		try:
 			media_id = media_id.encode('ascii', errors='ignore').decode('ascii', errors='ignore')
 			media_id = media_id.replace(' ', '')
-			url = '%s?items[]=%s' % (cache_check, media_id)
+			url = '%s?items[]=%s' % (cache_check_url, media_id)
 			result = requests.get(url, headers=self.headers).json()
 			if 'status' in result:
 				if result.get('status') == 'success':
@@ -315,7 +356,7 @@ class Premiumize:
 	def check_cache_list(self, hashList):
 		try:
 			postData = {'items[]': hashList}
-			response = requests.post(cache_check, data=postData, headers=self.headers, timeout=10).json()
+			response = requests.post(cache_check_url, data=postData, headers=self.headers, timeout=10).json()
 			if 'status' in response:
 				if response.get('status') == 'success':
 					response = response.get('response', False)
@@ -328,64 +369,20 @@ class Premiumize:
 
 
 	def list_transfer(self):
+		return self._get(transfer_list_url)
+
+
+	def create_transfer(self, src,  folder_id=0):
 		try:
-			response = self._get(transfer_list)
-			if not response:
-				return None
-			if response.get('status') == 'success':
-				return response.get('transfers')
+			data = {'src': src, 'folder_id': folder_id}
+			return self._post(transfer_create_url, data)
 		except:
 			log_utils.error()
-			pass
-		return None
-
-
-	def id_transfer_status(self, transfer_id):
-		try:
-			response = self.list_transfer()
-			if not response:
-				return None
-			for item in response:
-				if item.get('id') == transfer_id:
-					return item
-		except:
-			log_utils.error()
-			pass
-		return None
-
-
-	def create_transfer(self, media_id, folder_id=0):
-		try:
-			data = {'src': media_id, 'folder_id': folder_id}
-			response = self._post(transfer_create, data=data)
-			if response:
-				if response.get('status') == 'success':
-					control.notification(title='default', message='Transfer successfully started to the Premiumize.me cloud', icon='default')
-					percent_list = [25, 50, 75]
-					while True:
-						control.sleep(10*1000*60) # 10min
-						item = self.id_transfer_status(response.get('id'))
-						if item.get('status') ==  'running':
-							for i in percent_list:
-								if item.get('progress') * 100 >= i:
-									percent_list.remove(i)
-									control.notification(title='default', message='PM stransfer = ' + str(item.get('progress') * 100) + '% complete', icon='default')
-						if item.get('status') ==  'seeding':
-							control.notification(title='default', message='PM stransfer complete', icon='default')
-							break
-				# self.clear_finished_transfers() # PM issue with doing this
-				return
-			else:
-				return
-		except:
-			log_utils.error()
-			pass
-		return
 
 
 	def clear_finished_transfers(self):
 		try:
-			response = self._post(transfer_clear_finished)
+			response = self._post(transfer_clearfinished_url)
 			if not response:
 				return
 			if 'status' in response:
@@ -400,13 +397,12 @@ class Premiumize:
 
 
 	def delete_transfer(self, media_id, folder_name=None):
-		# log_utils.log('media_id = %s' % str(media_id), __name__, log_utils.LOGDEBUG)
 		try:
 			yes = control.yesnoDialog(control.lang(40050) % folder_name, '', '')
 			if not yes:
 				return
 			data = {'id': media_id}
-			response = self._post(transfer_delete, data)
+			response = self._post(transfer_delete_url, data)
 			if not response:
 				return
 			if 'status' in response:
@@ -423,9 +419,9 @@ class Premiumize:
 	def my_files(self, folder_id=None):
 		try:
 			if folder_id:
-				url = folder_list + '?id=%s' % folder_id
+				url = folder_list_url + '?id=%s' % folder_id
 			else:
-				url = folder_list
+				url = folder_list_url
 			response = self._get(url)
 			if response:
 				return response.get('content')
@@ -437,12 +433,12 @@ class Premiumize:
 
 	def my_files_to_listItem(self, folder_id=None, folder_name=None):
 		try:
-			sysaddon = argv[0]
-			syshandle = int(argv[1])
+			sysaddon = sys.argv[0]
+			syshandle = int(sys.argv[1])
 			extensions = supported_video_extensions()
 			cloud_files = self.my_files(folder_id)
 			if not cloud_files:
-				control.notification(title='default', message='Empty Content', icon='default')
+				control.notification(title='default', message='Request Failure-Empty Content', icon='default')
 				return
 			cloud_files = [i for i in cloud_files if ('link' in i and i['link'].lower().endswith(tuple(extensions))) or i['type'] == 'folder']
 			cloud_files = sorted(cloud_files, key=lambda k: k['name'])
@@ -461,7 +457,7 @@ class Premiumize:
 					isFolder = True
 					size = 0
 					label = '%02d | [B]%s[/B] | [I]%s [/I]' % (count, folder_str, name)
-					url = '%s?action=pmMyFiles&id=%s&name=%s' % (sysaddon, item['id'], quote_plus(name))
+					url = '%s?action=pm_MyFiles&id=%s&name=%s' % (sysaddon, item['id'], quote_plus(name))
 				else:
 					isFolder = False
 					url_link = item['link']
@@ -473,9 +469,9 @@ class Premiumize:
 					url = '%s?action=playURL&url=%s' % (sysaddon, url_link)
 					cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&url=%s&caller=premiumize)' %
 								(sysaddon, quote_plus(name), quote_plus(pm_icon), url_link)))
-				cm.append((renameMenu % type.capitalize(), 'RunPlugin(%s?action=pmRename&type=%s&id=%s&name=%s)' %
+				cm.append((renameMenu % type.capitalize(), 'RunPlugin(%s?action=pm_Rename&type=%s&id=%s&name=%s)' %
 								(sysaddon, type, item['id'], quote_plus(name))))
-				cm.append((deleteMenu % type.capitalize(), 'RunPlugin(%s?action=pmDelete&type=%s&id=%s&name=%s)' %
+				cm.append((deleteMenu % type.capitalize(), 'RunPlugin(%s?action=pm_Delete&type=%s&id=%s&name=%s)' %
 								(sysaddon, type, item['id'], quote_plus(name))))
 
 				item = control.item(label=label)
@@ -494,7 +490,7 @@ class Premiumize:
 
 	def user_transfers(self):
 		try:
-			response = self._get(transfer_list)
+			response = self._get(transfer_list_url)
 			if response:
 				return response.get('transfers')
 		except:
@@ -505,12 +501,12 @@ class Premiumize:
 
 	def user_transfers_to_listItem(self):
 		try:
-			sysaddon = argv[0]
-			syshandle = int(argv[1])
+			sysaddon = sys.argv[0]
+			syshandle = int(sys.argv[1])
 			extensions = supported_video_extensions()
 			transfer_files = self.user_transfers()
 			if not transfer_files:
-				control.notification(title='default', message='Empty Content', icon='default')
+				control.notification(title='default', message='Request Failure-Empty Content', icon='default')
 				return
 		except:
 			log_utils.error()
@@ -536,20 +532,16 @@ class Premiumize:
 					isFolder = True if status == 'finished' else False
 					status_str = '[COLOR %s]%s[/COLOR]' % (control.getColor(control.setting('highlight.color')), status.capitalize())
 					label = '%02d | [B]%s[/B] - %s | [B]%s[/B] | [I]%s [/I]' % (count, status_str, str(progress) + '%', folder_str, name)
-					url = '%s?action=pmMyFiles&id=%s&name=%s' % (sysaddon, item['folder_id'], quote_plus(name))
+					url = '%s?action=pm_MyFiles&id=%s&name=%s' % (sysaddon, item['folder_id'], quote_plus(name))
 
-# Till PM addresses issue with item also being removed from public acess if item not accessed for 60 days this option is disabled.
-					# cm.append((clearFinishedMenu, 'RunPlugin(%s?action=pmClearFinishedTransfers)' % sysaddon))
-					if status != 'finished':
-						cm.append((deleteMenu % 'Transfer', 'RunPlugin(%s?action=pmDeleteTransfer&id=%s&name=%s)' %
-								(sysaddon, item['id'], quote_plus(name))))
+					# Till PM addresses issue with item also being removed from public acess if item not accessed for 60 days this option is disabled.
+					# cm.append((clearFinishedMenu, 'RunPlugin(%s?action=pm_ClearFinishedTransfers)' % sysaddon))
 				else:
 					isFolder = False
 					details = self.item_details(item['file_id'])
 					if not details:
-						control.notification(title='default', message='Empty Content', icon='default')
+						control.notification(title='default', message='Request Failure-Empty Content', icon='default')
 						return
-
 					url_link = details['link']
 					if url_link.startswith('/'):
 						url_link = 'https' + url_link
@@ -560,6 +552,8 @@ class Premiumize:
 					cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&url=%s&caller=premiumize)' %
 								(sysaddon, quote_plus(name), quote_plus(pm_icon), url_link)))
 
+				cm.append((deleteMenu % 'Transfer', 'RunPlugin(%s?action=pm_DeleteTransfer&id=%s&name=%s)' %
+							(sysaddon, item['id'], quote_plus(name))))
 				item = control.item(label=label)
 				item.addContextMenuItems(cm)
 				item.setArt({'icon': pm_icon, 'poster': pm_icon, 'thumb': pm_icon, 'fanart': addonFanart, 'banner': pm_icon})
@@ -574,11 +568,10 @@ class Premiumize:
 		control.directory(syshandle, cacheToDisc=True)
 
 
-
 	def item_details(self, item_id):
 		try:
 			data = {'id': item_id}
-			itemDetails = self._post(item_details, data)
+			itemDetails = self._post(item_details_url, data)
 			return itemDetails
 		except:
 			log_utils.error()
@@ -589,13 +582,13 @@ class Premiumize:
 	def rename(self, type, folder_id=None, folder_name=None):
 		try:
 			if type == 'folder':
-				url = folder_rename
+				url = folder_rename_url
 				t = control.lang(40049) % type
 			else:
 				yes = control.yesnoDialog(control.lang(40049) % folder_name + ': [B](YOU MUST ENTER MATCHING FILE EXT.)[/B]', '', '')
 				if not yes:
 					return
-				url = item_rename
+				url = item_rename_url
 				t = control.lang(40049) % type + ': [B](YOU MUST ENTER MATCHING FILE EXT.)[/B]'
 			k = control.keyboard('', t)
 			k.doModal()
@@ -617,9 +610,9 @@ class Premiumize:
 	def delete(self, type, folder_id=None, folder_name=None):
 		try:
 			if type == 'folder':
-				url = folder_delete
+				url = folder_delete_url
 			else:
-				url = item_delete
+				url = item_delete_url
 			yes = control.yesnoDialog(control.lang(40050) % folder_name, '', '')
 			if not yes:
 				return

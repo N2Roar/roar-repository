@@ -7,7 +7,6 @@
 import re
 import requests
 import threading
-from time import sleep
 
 from resources.lib.modules import control
 from resources.lib.modules import cache
@@ -43,11 +42,12 @@ def get_request(url):
 		# API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME (removed 12-6-20)
 		throttleTime = response.headers['Retry-After']
 		control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='default')
-		sleep(int(throttleTime) + 1)
+		# sleep(int(throttleTime) + 1)
+		control.sleep((int(throttleTime) + 1) * 1000)
 		return get_request(url)
 	else:
-		log_utils.log('Get request failed to TMDB URL: %s' % url, __name__, log_utils.LOGDEBUG)
-		log_utils.log('TMDB Response: %s' % response.text, __name__, log_utils.LOGDEBUG)
+		log_utils.log('Get request failed to TMDB URL: %s\n                       msg : TMDB Response: %s' %
+			(url, response.text), __name__, log_utils.LOGDEBUG)
 		return None
 
 
@@ -108,7 +108,6 @@ class Movies:
 		self.lang = control.apiLanguage()['trakt']
 		self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,videos' % ('%s', API_key, self.lang)
 		# self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,videos,alternative_titles' % ('%s', API_key, self.lang)
-
 ###                                                                             other "append_to_response" options                             external_ids,alternative_titles,images
 		self.tmdb_art_link = base_link + '/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
 		self.tmdb_external_ids = base_link + '/3/movie/%s/external_ids?api_key=%s' % ('%s', API_key)
@@ -123,11 +122,9 @@ class Movies:
 
 		list = []
 		sortList = []
-
 		try:
 			page = int(result['page'])
 			total = int(result['total_pages'])
-
 			if page >= total:
 				raise Exception()
 			if 'page=' not in url:
@@ -137,15 +134,11 @@ class Movies:
 			next = ''
 
 		for item in items:
-			try:
-				title = item.get('title').encode('utf-8')
-			except:
-				title = item.get('title')
+			try: title = item.get('title').encode('utf-8')
+			except: title = item.get('title')
 
-			try: 
-				originaltitle = item.get('original_title').encode('utf-8')
-			except:
-				originaltitle = title
+			try: originaltitle = item.get('original_title').encode('utf-8')
+			except: originaltitle = title
 
 			year = str(item.get('release_date')[:4])
 
@@ -172,15 +165,14 @@ class Movies:
 
 			values = {'next': next, 'title': title, 'originaltitle': originaltitle, 'year': year, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart,
 							'premiered': premiered, 'rating': rating, 'votes': votes, 'plot': plot, 'tagline': tagline, 'metacache': False}
-
 			self.list.append(values)
 
 		def items_list(i):
 			if i['metacache']:
 				return
-
 			try:
-				next, title, originaltitle, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = i['next'], i['title'], i['originaltitle'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
+				next, title, originaltitle, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = \
+					i['next'], i['title'], i['originaltitle'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
 
 				url = self.tmdb_info_link % tmdb
 				item =  get_request(url)
@@ -189,10 +181,8 @@ class Movies:
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
-				# try:
-					# studio = item.get('production_companies', None)[0]['name']
-				# except:
-					# studio = '0'
+				# try: studio = item.get('production_companies', None)[0]['name']
+				# except: studio = '0'
 
 				genre = []
 				for x in item['genres']:
@@ -244,7 +234,6 @@ class Movies:
 							'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
 							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
 							'landscape': fanart, 'mediatype': 'movie', 'trailer': trailer, 'metacache': False, 'next': next}
-
 				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': API_key, 'item': values}
 
 				if disable_fanarttv != 'true':
@@ -296,7 +285,6 @@ class Movies:
 			return
 
 		list = []
-
 		try:
 			page = int(result['page'])
 			total = int(result['total_pages'])
@@ -313,15 +301,11 @@ class Movies:
 			if media_type == 'tv':
 				continue
 
-			try:
-				title = item.get('title').encode('utf-8')
-			except:
-				title = item.get('title')
+			try: title = item.get('title').encode('utf-8')
+			except: title = item.get('title')
 
-			try: 
-				originaltitle = item.get('original_title').encode('utf-8')
-			except:
-				originaltitle = title
+			try: originaltitle = item.get('original_title').encode('utf-8')
+			except: originaltitle = title
 
 			year = str(item.get('release_date')[:4])
 
@@ -360,10 +344,8 @@ class Movies:
 				if imdb == '' or imdb is None or imdb == 'None':
 					imdb = '0'
 
-				# try:
-					# studio = item.get('production_companies', None)[0]['name']
-				# except:
-					# studio = '0'
+				# try: studio = item.get('production_companies', None)[0]['name']
+				# except: studio = '0'
 
 				genre = []
 				for x in item['genres']:
@@ -468,7 +450,6 @@ class Movies:
 	def get_art(self, tmdb):
 		if API_key == '' or (tmdb == '0' or tmdb == 'None' or tmdb is None):
 			return None
-
 		art3 = get_request(self.tmdb_art_link % tmdb)
 		if not art3:
 			return None
@@ -530,7 +511,6 @@ class TVshows:
 
 		list = []
 		sortList = []
-
 		try:
 			page = int(result['page'])
 			total = int(result['total_pages'])
@@ -543,10 +523,8 @@ class TVshows:
 			next = ''
 
 		for item in items:
-			try:
-				title = item.get('name').encode('utf-8')
-			except:
-				title = item.get('name')
+			try: title = item.get('name').encode('utf-8')
+			except: title = item.get('name')
 
 			year = str(item.get('first_air_date')[:4])
 
@@ -578,7 +556,8 @@ class TVshows:
 
 		def items_list(i):
 			try:
-				next, title, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = i['next'], i['title'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
+				next, title, year, tmdb, poster, fanart, premiered, rating, votes, plot, tagline = \
+					i['next'], i['title'], i['year'], i['tmdb'], i['poster'], i['fanart'], i['premiered'], i['rating'], i['votes'], i['plot'], i['tagline']
 
 				url = self.tmdb_info_link % tmdb
 				item = get_request(url)
@@ -596,27 +575,23 @@ class TVshows:
 					genre.append(x.get('name'))
 				if genre == []: genre = 'NA'
 
-				duration = str(item.get('episode_run_time', '0')[0])
+				try: duration = str(item.get('episode_run_time', '0')[0])
+				except: duration = '0'
+				# log_utils.log('duration = %s' % str(duration), __name__, log_utils.LOGDEBUG)
 
 				try:
 					mpaa = [x['rating'] for x in item['content_ratings']['results'] if x['iso_3166_1'] == 'US'][0]
 				except: 
-					try:
-						mpaa = item['content_ratings'][0]['rating']
-					except:
-						mpaa = 'NR'
+					try: mpaa = item['content_ratings'][0]['rating']
+					except: mpaa = 'NR'
 
 				status = item.get('status', '0')
 
-				try:
-					studio = item.get('networks', None)[0]['name']
-				except:
-					studio = '0'
+				try: studio = item.get('networks', None)[0]['name']
+				except: studio = '0'
 
-				try:
-					total_seasons = int(item.get('number_of_seasons', ''))
-				except:
-					total_seasons = 0
+				try: total_seasons = int(item.get('number_of_seasons', ''))
+				except: total_seasons = 0
 
 				credits = item['credits']
 				director = writer = '0'
@@ -690,7 +665,6 @@ class TVshows:
 
 		list = []
 		sortList = []
-
 		try:
 			page = int(result['page'])
 			total = int(result['total_pages'])
@@ -707,10 +681,8 @@ class TVshows:
 			if media_type == 'movie':
 				continue
 
-			try:
-				title = item.get('name').encode('utf-8')
-			except:
-				title = item.get('name')
+			try: title = item.get('name').encode('utf-8')
+			except: title = item.get('name')
 
 			year = str(item.get('first_air_date')[:4])
 
@@ -770,10 +742,8 @@ class TVshows:
 
 				status = item.get('status', '0')
 
-				try:
-					studio = item.get('networks', None)[0]['name']
-				except:
-					studio = '0'
+				try: studio = item.get('networks', None)[0]['name']
+				except: studio = '0'
 
 				credits = item['credits']
 				director = writer = '0'
@@ -844,7 +814,6 @@ class TVshows:
 	def get_art(self, tmdb):
 		if API_key == '' or (tmdb == '0' or tmdb == 'None' or tmdb is None):
 			return None
-
 		art3 = get_request(self.tmdb_art_link % tmdb)
 		if not art3:
 			return None
@@ -889,21 +858,17 @@ class Auth:
 			if control.setting('tmdb.username') == '' or control.setting('tmdb.password') == '':
 				control.notification(title='default', message='TMDb Account info missing', icon='ERROR')
 				raise Exception()
-
 			url = self.auth_base_link + '/token/new?api_key=%s' % API_key
 			result = requests.get(url).json()
 			token = result.get('request_token').encode('utf-8')
-
 			url2 = self.auth_base_link + '/token/validate_with_login?api_key=%s' % API_key
 			post2 = {"username": "%s" % control.setting('tmdb.username'),
 							"password": "%s" % control.setting('tmdb.password'),
 							"request_token": "%s" % token}
 			result2 = requests.post(url2, data=post2).json()
-
 			url3 = self.auth_base_link + '/session/new?api_key=%s' % API_key
 			post3 = {"request_token": "%s" % token}
 			result3 = requests.post(url3, data=post3).json()
-
 			if result3.get('success') is True:
 				session_id = result3.get('session_id')
 			if control.yesnoDialog(msg, '', ''):
@@ -919,12 +884,9 @@ class Auth:
 		try:
 			if control.setting('tmdb.session_id') == '':
 				raise Exception()
-
 			url = self.auth_base_link + '/session?api_key=%s' % API_key
 			post = {"session_id": "%s" % control.setting('tmdb.session_id')}
-
 			result = requests.delete(url, data=post).json()
-
 			if result.get('success') is True:
 				control.setSetting('tmdb.session_id', '')
 				control.notification(title='default', message='TMDb session_id successfully deleted', icon='default')
