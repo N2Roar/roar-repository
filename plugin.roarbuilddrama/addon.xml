@@ -2,18 +2,20 @@
 <addon
   id="plugin.roarbuilddrama"
   name="ROAR Build Drama"
-  version="0.0.4"
+  version="0.0.5"
   provider-name="N2Roar">
 	<requires>
 		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
 		<import addon="plugin.video.icdrama"/>
+		<!-- 3rd Party Drama Addon (repository.lime) -->
+		<import addon="plugin.video.dramacool"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Drama Addons</summary>
-        <description lang="en">Icdrama[CR]</description>
+        <description lang="en">Icdrama[CR]DramaCool[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>

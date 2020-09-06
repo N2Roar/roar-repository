@@ -215,18 +215,20 @@
 <addon
   id="plugin.roarbuilddrama"
   name="ROAR Build Drama"
-  version="0.0.4"
+  version="0.0.5"
   provider-name="N2Roar">
 	<requires>
 		<!-- 3rd Party Drama Addon (repository.aznhusband-kodi-repo) -->
 		<import addon="plugin.video.icdrama"/>
+		<!-- 3rd Party Drama Addon (repository.lime) -->
+		<import addon="plugin.video.dramacool"/>
 	</requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Drama Addons</summary>
-        <description lang="en">Icdrama[CR]</description>
+        <description lang="en">Icdrama[CR]DramaCool[CR]</description>
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
@@ -256,6 +258,19 @@
         <disclaimer lang="en">Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation. Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.</disclaimer>
         <language>en</language>
         <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="plugin.video.dramacool" name="DramaCool" version="1.7.4" provider-name="groggyegg">
+    <requires>
+        <import addon="script.module.beautifulsoup4" version="4.6.2"/>
+        <import addon="script.module.resolveurl" version="5.0.38"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.rerouting" version="0.1.2"/>
+        <import addon="xbmc.python" version="2.26.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>video</provides>
     </extension>
 </addon>
 
@@ -596,6 +611,14 @@ Add-on by doko.
     </extension>
 </addon>
 
+<addon id="repository.lime" name="Lime Add-ons" version="1.0.0" provider-name="groggyegg">
+    <extension point="xbmc.addon.repository" name="Lime Add-ons">
+        <info compressed="false">https://raw.githubusercontent.com/groggyegg/lime/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/groggyegg/lime/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/groggyegg/lime/master</datadir>
+    </extension>
+</addon>
+
 <addon id="repository.openscrapers" name="OpenScrapers Repository" version="1.0" provider-name="A4K">
 	<extension point="xbmc.addon.repository" name="OpenScrapers Repository">
 		<dir>
@@ -781,6 +804,19 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
         <platform>all</platform>
         <license>GNU GENERAL PUBLIC LICENSE Version 2.1, February 1999</license>
         <source>https://github.com/phil65/script.module.autocompletion</source>
+    </extension>
+</addon>
+
+<addon id="script.module.rerouting" name="rerouting" version="0.1.2" provider-name="fredrik-sy">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+    </requires>
+    <extension point="xbmc.python.module" library="lib"/>
+    <extension point="xbmc.addon.metadata">
+        <language>en</language>
+        <platform>all</platform>
+        <license>MIT License</license>
+        <source>https://github.com/fredrik-sy/script.module.rerouting</source>
     </extension>
 </addon>
 
