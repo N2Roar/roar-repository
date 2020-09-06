@@ -4,7 +4,7 @@
 	Venom Add-on
 """
 
-import datetime
+from datetime import datetime
 import glob
 import os
 import re
@@ -41,7 +41,7 @@ item = xbmcgui.ListItem
 listControl = xbmcgui.ControlList
 labelControl = xbmcgui.ControlLabel
 window = xbmcgui.Window(10000)
-homeWindow = xbmcgui.Window(10000)
+# homeWindow = xbmcgui.Window(10000)
 
 windowDialog = xbmcgui.WindowDialog()
 dialog = xbmcgui.Dialog()
@@ -78,9 +78,7 @@ except:
 	addonPath = xbmcaddon.Addon().getAddonInfo('path')
 
 joinPath = os.path.join
-# existsPath = os.path.exists
 isfilePath = os.path.isfile
-# makeDirs = os.makedirs
 
 deleteDir = xbmcvfs.rmdir
 deleteFile = xbmcvfs.delete
@@ -90,8 +88,6 @@ makeFile = xbmcvfs.mkdir
 makeDirs = xbmcvfs.mkdirs
 openFile = xbmcvfs.File
 transPath = xbmc.translatePath
-
-
 
 menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
 SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
@@ -238,10 +234,8 @@ def addonName():
 
 
 def addonPath(addon):
-	try:
-		addonID = xbmcaddon.Addon(addon)
-	except:
-		addonID = None
+	try: addonID = xbmcaddon.Addon(addon)
+	except: addonID = None
 	if addonID is None:
 		return ''
 	else:
@@ -477,13 +471,10 @@ def apiLanguage(ret_name=None):
 	if not name:
 		name = 'AUTO'
 	if name[-1].isupper():
-		try:
-			name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
+		try: name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
 		except: pass
-	try:
-		name = langDict[name]
-	except:
-		name = 'en'
+	try: name = langDict[name]
+	except: name = 'en'
 	lang = {'trakt': name} if name in trakt else {'trakt': 'en'}
 	lang['tvdb'] = name if name in tvdb else 'en'
 	lang['youtube'] = name if name in youtube else 'en'
@@ -570,14 +561,14 @@ def datetime_workaround(string_date, format="%Y-%m-%d", date_only=True):
 			return None
 		try:
 			if date_only:
-				res = datetime.datetime.strptime(string_date, format).date()
+				res = datetime.strptime(string_date, format).date()
 			else:
-				res = datetime.datetime.strptime(string_date, format)
+				res = datetime.strptime(string_date, format)
 		except TypeError:
 			if date_only:
-				res = datetime.datetime(*(time.strptime(string_date, format)[0:6])).date()
+				res = datetime(*(time.strptime(string_date, format)[0:6])).date()
 			else:
-				res = datetime.datetime(*(time.strptime(string_date, format)[0:6]))
+				res = datetime(*(time.strptime(string_date, format)[0:6]))
 		return res
 	except:
 		import traceback
@@ -654,16 +645,11 @@ def _add_source_xml(xml_file, name, path, thumbnail, type='video'):
 			source.find('path').text = path
 			source.find('name').text = name
 	else:
-		# new_source = ElementTree.SubElement(sources, 'source')
 		new_source = ET.SubElement(sources, 'source')
-		# new_name = ElementTree.SubElement(new_source, 'name')
 		new_name = ET.SubElement(new_source, 'name')
 		new_name.text = name
-		# new_path = ElementTree.SubElement(new_source, 'path')
 		new_path = ET.SubElement(new_source, 'path')
-		# new_thumbnail = ElementTree.SubElement(new_source, 'thumbnail')
 		new_thumbnail = ET.SubElement(new_source, 'thumbnail')
-		# new_allowsharing = ElementTree.SubElement(new_source, 'allowsharing')
 		new_allowsharing = ET.SubElement(new_source, 'allowsharing')
 		new_path.attrib['pathversion'] = '1'
 		new_thumbnail.attrib['pathversion'] = '1'

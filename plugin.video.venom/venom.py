@@ -6,7 +6,6 @@
 
 from sys import argv
 import xbmcaddon
-import xbmcgui
 
 try:
 	from urlparse import parse_qsl
@@ -39,12 +38,10 @@ source = params.get('source')
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 
-# consider moving this into menus with playactions 
-homeWindow = xbmcgui.Window(10000)
 playAction = xbmcaddon.Addon('plugin.video.venom').getSetting('hosts.mode')
 autoPlay = 'true' if playAction == '2' else ''
-homeWindow.setProperty('plugin.video.venom.autoPlay', autoPlay)
-############
+control.window.setProperty('plugin.video.venom.autoPlay', autoPlay)
+
 
 if action is None:
 	from resources.lib.menus import navigator
@@ -679,9 +676,12 @@ elif action == 'cachesyncTVShows':
 #---Play
 ####################################################
 elif action == 'play':
+	# control.player. playselected(1)
+	# control.player.playnext()
 	# control.player2().play(control.playlist)
 	# xbmc.executebuiltin('RunPlugin(plugin://plugin.video.venom/?action=playAll)')
 	# xbmc.executebuiltin('PlayMedia(plugin://plugin.video.venom/?action=playAll)')
+
 	from resources.lib.modules import sources
 	rescrape = params.get('rescrape')
 	select = params.get('select')

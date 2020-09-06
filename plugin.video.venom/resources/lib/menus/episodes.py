@@ -31,7 +31,6 @@ from resources.lib.modules import workers
 from resources.lib.extensions import tools
 from resources.lib.indexers import tvdb_v1
 
-
 disable_fanarttv = control.setting('disable.fanarttv')
 
 

@@ -84,7 +84,7 @@ class Sources:
 			retval = prof.runcall(func, *args, **kwargs)
 			s = StringIO()
 			# sortby = 'cumulative'
- 			sortby = 'tottime'
+			sortby = 'tottime'
 			ps = pstats.Stats(prof, stream=s).sort_stats(sortby)
 			ps.print_stats()
 			with open(log_file, 'a') as perf_file:
@@ -158,7 +158,6 @@ class Sources:
 				select = select
 
 			title = tvshowtitle if tvshowtitle is not None else title
-
 			if len(items) > 0:
 				if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
 					control.window.clearProperty(self.itemProperty)
@@ -175,16 +174,13 @@ class Sources:
 				self.url = url
 				return self.errorForSources()
 
-			try:
-				meta = json.loads(unquote(meta.replace('%22', '\\"')))
-			except:
-				pass
+			try: meta = json.loads(unquote(meta.replace('%22', '\\"')))
+			except: pass
 
 			from resources.lib.modules import player
 			control.sleep(200) # added 5/14
 			control.hide()
 			player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta, select)
-
 		except:
 			log_utils.error()
 			pass
@@ -235,7 +231,6 @@ class Sources:
 		downloadMenu = control.lang(32403)
 
 		multiline = control.setting('sourcelist.multiline')
-
 		for i in range(len(items)):
 			try:
 				if multiline == 'true':
@@ -262,14 +257,14 @@ class Sources:
 					cm.append(('Browse Debrid Pack', 'RunPlugin(%s?action=showDebridPack&caller=%s&name=%s&url=%s&source=%s)' %
 									(sysaddon, quote_plus(items[i]['debrid']), quote_plus(items[i]['name']), quote_plus(items[i]['url']), quote_plus(items[i]['hash']))))
 
-				if not isCached:
-					try: seeders = int(items[i]['seeders'])
-					except: seeders = 0
-					# if seeders > 0:
+				if not isCached and items[i]['debrid']:
 					d = self.debrid_abv(items[i]['debrid'])
-					if d == 'PM' or d == 'RD' or d == 'AD':
+					if d in ('PM', 'RD', 'AD'):
+						try: seeders = int(items[i]['seeders'])
+						except: seeders = 0
+						# # if seeders > 0:
 						cm.append(('Cache to %s Cloud (seeders=%s)' % (d, seeders), 'RunPlugin(%s?action=cacheTorrent&caller=%s&type=%s&url=%s)' %
-												(sysaddon, d, type, quote_plus(items[i]['url']))))
+											(sysaddon, d, type, quote_plus(items[i]['url']))))
 
 				if control.setting('enable.resquality.icons') == 'true':
 					quality = items[i]['quality']
@@ -294,7 +289,6 @@ class Sources:
 			except:
 				log_utils.error()
 				pass
-
 		control.content(syshandle, 'files')
 		control.directory(syshandle, cacheToDisc=True)
 
@@ -308,14 +302,10 @@ class Sources:
 
 			season = meta['season'] if 'season' in meta else None
 			episode = meta['episode'] if 'episode' in meta else None
-
 			imdb = meta['imdb'] if 'imdb' in meta else None
 			tvdb = meta['tvdb'] if 'tvdb' in meta else None
 
-			next = []
-			prev = []
-			total = []
-
+			next = [] ; prev = [] ; total = []
 			for i in range(1, 1000):
 				try:
 					u = control.infoLabel('ListItem(%s).FolderPath' % str(i))
@@ -327,7 +317,6 @@ class Sources:
 					next.append(u)
 				except:
 					break
-
 			for i in range(-1000, 0)[::-1]:
 				try:
 					u = control.infoLabel('ListItem(%s).FolderPath' % str(i))
@@ -340,29 +329,24 @@ class Sources:
 				except:
 					break
 
+			# tot_items = len(items)
 			items = json.loads(source)
+			items = [i for i in items + next + prev][:40]
+			tot_items = len(items)
 
-			# items = [i for i in items + next + prev][:40]
-			items = [i for i in items + next + prev][:1000]
-
-			header = control.addonInfo('name')
-			header2 = header.upper()
-
+			header = control.addonInfo('name') + ': Resolving...'
 			progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
 			progressDialog.create(header, '')
-			progressDialog.update(0)
 
 			block = None
-
 			for i in range(len(items)):
 				try:
 					try:
-						if progressDialog.iscanceled():
-							break
-						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
-						# progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
+						if progressDialog.iscanceled(): break
+						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
 					except:
-						progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+						progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
+						pass
 
 					if items[i]['source'] == block:
 						raise Exception()
@@ -372,7 +356,7 @@ class Sources:
 
 					if items[i].get('source') in self.hostcapDict:
 						offset = 60 * 2
-					elif items[i].get('source') == 'torrent':
+					elif 'torrent' in items[i].get('source'):
 						offset = float('inf')
 					else:
 						offset = 0
@@ -388,17 +372,11 @@ class Sources:
 							pass
 
 						k = control.condVisibility('Window.IsActive(virtualkeyboard)')
-						if k:
-							m += '1'
-							m = m[-1]
-						if (not w.is_alive() or x > 30 + offset) and not k:
-							break
+						if k: m += '1' ; m = m[-1]
+						if (not w.is_alive() or x > 30 + offset) and not k: break
 						k = control.condVisibility('Window.IsActive(yesnoDialog)')
-						if k:
-							m += '1'
-							m = m[-1]
-						if (not w.is_alive() or x > 30 + offset) and not k:
-							break
+						if k: m += '1' ; m = m[-1]
+						if (not w.is_alive() or x > 30 + offset) and not k: break
 						time.sleep(0.5)
 
 					for x in range(30):
@@ -410,22 +388,18 @@ class Sources:
 						except:
 							pass
 
-						if m == '':
-							break
-						if not w.is_alive():
-							break
+						if m == '': break
+						if not w.is_alive(): break
 						time.sleep(0.5)
 
 					if w.is_alive():
 						block = items[i]['source']
 
-					if self.url is None:
+					if not self.url:
 						raise Exception()
 
-					try:
-						progressDialog.close()
-					except:
-						pass
+					try: progressDialog.close()
+					except: pass
 
 					control.sleep(200)
 					control.execute('Dialog.Close(virtualkeyboard)')
@@ -440,11 +414,9 @@ class Sources:
 				except:
 					log_utils.error()
 					pass
-
-			try:
-				progressDialog.close()
-			except:
-				pass
+			try: progressDialog.close()
+			except: pass
+			del progressDialog
 
 			self.errorForSources()
 		except:
@@ -534,10 +506,8 @@ class Sources:
 		string6 = control.lang(32606) % pdpc
 		string7 = control.lang(32607) % pdfc
 
-		try:
-			timeout = int(control.setting('scrapers.timeout.1'))
-		except:
-			pass
+		try: timeout = int(control.setting('scrapers.timeout.1'))
+		except: pass
 
 		quality = control.setting('hosts.quality')
 		if quality == '':
@@ -603,7 +573,6 @@ class Sources:
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
 					else:
 						source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and e['debridonly'] is False])
-
 					total = source_4k + source_1080 + source_720 + source_sd
 
 				source_4k_label = total_format % ('red', source_4k) if source_4k == 0 else total_format % (pdfc, source_4k)
@@ -629,7 +598,6 @@ class Sources:
 								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
 							else:
 								d_source_sd = len([e for e in self.sources if e['quality'] in ['SD', 'SCR', 'CAM'] and d.valid_url(e['url'], e['source'])])
-
 							d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
 					d_4k_label = total_format % ('red', d_source_4k) if d_source_4k == 0 else total_format % (pdpc, d_source_4k)
@@ -694,8 +662,8 @@ class Sources:
 								line3 = string3 % (', '.join(info))
 							else:
 								break
-							percent = int(100 * float(i) / (2 * timeout) + 0.5)
 
+							percent = int(100 * float(i) / (2 * timeout) + 0.5)
 							if progressDialog != control.progressDialogBG:
 								progressDialog.update(max(1, percent), line1, line2, line3)
 							else:
@@ -726,7 +694,6 @@ class Sources:
 								break
 
 							percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-
 							if progressDialog != control.progressDialogBG:
 								progressDialog.update(max(1, percent), line1, line2, line3)
 							else:
@@ -748,11 +715,8 @@ class Sources:
 				log_utils.error()
 				pass
 
-		try:
-			progressDialog.close()
-		except:
-			pass
-		# log_utils.log('self.sources = %s' % self.sources, __name__, log_utils.LOGDEBUG)
+		try: progressDialog.close()
+		except: pass
 		if len(self.sources) > 0:
 			self.sourcesFilter()
 		return self.sources
@@ -1198,10 +1162,10 @@ class Sources:
 
 		if control.setting('torrent.group.sort') == '1':
 			filter = []
-			filter += [i for i in self.sources if 'torrent' in i['source']]  #torrents first
+			filter += [i for i in self.sources if 'torrent' in i['source']]	 #torrents first
 			if control.setting('torrent.size.sort') == 'true':
 				filter.sort(key=lambda k: k.get('size', 0), reverse=True)
-			filter += [i for i in self.sources if 'torrent' not in i['source'] and i['debridonly'] is True]  #prem. next
+			filter += [i for i in self.sources if 'torrent' not in i['source'] and i['debridonly'] is True]	 #prem. next
 			filter += [i for i in self.sources if 'torrent' not in i['source'] and i['debridonly'] is False]  #free hosters fucking last
 			self.sources = filter
 
@@ -1264,14 +1228,12 @@ class Sources:
 			s = s.rsplit('.', 1)[0]
 			l = self.sources[i]['language']
 
-			try:
-				f = (' / '.join(['%s ' % info.strip() for info in self.sources[i]['info'].split('|')]))
-			except:
-				f = ''
+			try: f = (' / '.join(['%s ' % info.strip() for info in self.sources[i]['info'].split('|')]))
+			except: f = ''
 
-			try:
+			if 'debrid' in self.sources[i]:
 				d = self.debrid_abv(self.sources[i]['debrid'])
-			except:
+			else:
 				d = self.sources[i]['debrid'] = ''
 
 			prem_color = 'nocolor'
@@ -1282,13 +1244,13 @@ class Sources:
 					prem_color = prem_identify
 
 			if d != '':
-				label = '[COLOR %s]%02d  |  [B]%s[/B]  |  %s  |  %s  |  [B]%s[/B][/COLOR]' % (prem_color, int(i + 1), q, d, p, s)
+				label = '[COLOR %s]%02d	 |	[B]%s[/B]  |  %s  |	 %s	 |	[B]%s[/B][/COLOR]' % (prem_color, int(i + 1), q, d, p, s)
 			else:
-				label = '%02d  |  %s  |  %s  |  %s' % (int(i + 1), q, p, s)
+				label = '%02d  |  %s  |	 %s	 |	%s' % (int(i + 1), q, p, s)
 
 			# if multi is True and l != 'en':
 			if l != 'en':
-				label += '[COLOR %s]  |  [B]%s[/B][/COLOR]' % (prem_color, l.upper())
+				label += '[COLOR %s]  |	 [B]%s[/B][/COLOR]' % (prem_color, l.upper())
 
 			multiline_label = label
 			mLabel = label
@@ -1296,14 +1258,14 @@ class Sources:
 
 			if t != '':
 				if f != '' and f != '0 ' and f != ' ':
-					multiline_label += '\n       [COLOR %s][I]%s / %s[/I][/COLOR]' % (sec_identify, f, t)
+					multiline_label += '\n		 [COLOR %s][I]%s / %s[/I][/COLOR]' % (sec_identify, f, t)
 					label += '[COLOR %s] / %s / %s[/COLOR]' % (prem_color, f, t)
 				else:
-					multiline_label += '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, t)
+					multiline_label += '\n		 [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, t)
 					label += '[COLOR %s] / %s[/COLOR]' % (prem_color, t)
 			else:
 				if f != '' and f != '0 ' and f != ' ':
-					multiline_label += '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, f)
+					multiline_label += '\n		 [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, f)
 					label += '[COLOR %s] / %s[/COLOR]' % (prem_color, f)
 
 			if sec_identify2 == 'magnet title':
@@ -1314,7 +1276,7 @@ class Sources:
 						size = f.split(' /', 1)[0]
 						l1 += '[COLOR %s]  |  %s[/COLOR]' % (prem_color, size)
 						l1l = len(l1)-58
-						l2 = '\n       [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, link_title)
+						l2 = '\n	   [COLOR %s][I]%s[/I][/COLOR]' % (sec_identify, link_title)
 						l2l = len(l2)-27
 						if l2l > l1l:
 							adjust = l2l - l1l
@@ -1424,10 +1386,8 @@ class Sources:
 	def sourcesDialog(self, items):
 		try:
 			multiline = control.setting('sourcelist.multiline') == 'true'
-			if multiline:
-				labels = [i['multiline_label'] for i in items]
-			else:
-				labels = [i['label'] for i in items]
+			if multiline: labels = [i['multiline_label'] for i in items]
+			else: labels = [i['label'] for i in items]
 
 			select = control.selectDialog(labels)
 			if select == -1:
@@ -1438,37 +1398,31 @@ class Sources:
 			prev = [y for x, y in enumerate(items) if x < select][::-1]
 
 			items = [items[select]]
-
 			# items = [i for i in items + next + prev][:40]
 			items = [i for i in items + next + prev][:tot_items]
 
-			header = control.addonInfo('name')
-			header2 = header.upper()
+			header = control.addonInfo('name') + ': Resolving...'
 
 			progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
 			progressDialog.create(header, '')
-			progressDialog.update(0)
 
 			block = None
-
 			for i in range(len(items)):
 				try:
 					if items[i]['source'] == block:
 						raise Exception()
-
 					w = workers.Thread(self.sourcesResolve, items[i])
 					w.start()
-
 					try:
-						if progressDialog.iscanceled():
-							break
-						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+						if progressDialog.iscanceled(): break
+						progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
 					except:
-						progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+						progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
+						pass
 
 					if items[i].get('source') in self.hostcapDict:
 						offset = 60 * 2
-					elif items[i].get('source') == 'torrent':
+					elif 'torrent' in items[i].get('source'):
 						offset = float('inf')
 					else:
 						offset = 0
@@ -1486,18 +1440,11 @@ class Sources:
 							pass
 
 						k = control.condVisibility('Window.IsActive(virtualkeyboard)')
-						if k:
-							m += '1'
-							m = m[-1]
-						if (not w.is_alive() or x > 30 + offset) and not k:
-							break
-
+						if k: m += '1' ; m = m[-1]
+						if (not w.is_alive() or x > 30 + offset) and not k: break
 						k = control.condVisibility('Window.IsActive(yesnoDialog)')
-						if k:
-							m += '1'
-							m = m[-1]
-						if (not w.is_alive() or x > 30 + offset) and not k:
-							break
+						if k: m += '1' ; m = m[-1]
+						if (not w.is_alive() or x > 30 + offset) and not k: break
 						time.sleep(0.5)
 
 					for x in range(30):
@@ -1512,42 +1459,33 @@ class Sources:
 							log_utils.error()
 							pass
 
-						if m == '':
-							break
-
-						if not w.is_alive():
-							break
+						if m == '': break
+						if not w.is_alive(): break
 						time.sleep(0.5)
 
 					if w.is_alive():
 						block = items[i]['source']
-
 					if not self.url:
 						raise Exception()
-
 					self.selectedSource = items[i]['label']
 
-					try:
-						progressDialog.close()
-					except:
-						pass
+					try: progressDialog.close()
+					except: pass
 
 					control.execute('Dialog.Close(virtualkeyboard)')
 					control.execute('Dialog.Close(yesnoDialog)')
 					return self.url
 				except:
+					log_utils.error()
 					pass
 
-			try:
-				progressDialog.close()
-			except:
-				pass
+			try: progressDialog.close()
+			except: pass
+			del progressDialog
 
 		except Exception as e:
-			try:
-				progressDialog.close()
-			except:
-				pass
+			try: progressDialog.close()
+			except: pass
 			log_utils.log('Error %s' % str(e), __name__, log_utils.LOGNOTICE)
 
 
@@ -1564,9 +1502,7 @@ class Sources:
 			items = [i for i in items if not i['quality'] in ['4K', '1080p', '720p', 'HD']]
 
 		u = None
-
-		header = control.addonInfo('name')
-		header2 = header.upper()
+		header = control.addonInfo('name') + ': Resolving...'
 
 		try:
 			control.sleep(1000)
@@ -1575,34 +1511,29 @@ class Sources:
 			else:
 				progressDialog = control.progressDialogBG
 			progressDialog.create(header, '')
-			progressDialog.update(0)
 		except:
 			pass
 
 		for i in range(len(items)):
 			try:
-				if progressDialog.iscanceled():
-					break
-				progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+				if progressDialog.iscanceled(): break
+				progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
 			except:
-				progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+				progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
 				pass
 
 			try:
 				if control.monitor.abortRequested():
 					return sys.exit()
-
 				url = self.sourcesResolve(items[i])
-				if not u:
-					u = url
-				if url:
-					break
+				if not u: u = url
+				if url: break
 			except:
 				pass
-		try:
-			progressDialog.close()
-		except:
-			pass
+		try: progressDialog.close()
+		except: pass
+		del progressDialog
+
 		return u
 
 
@@ -1618,17 +1549,15 @@ class Sources:
 				return
 			debrid_files = None
 			control.busy()
-			try:
-				debrid_files = debrid_function().display_magnet_pack(magnet_url, info_hash)
-			except:
-				pass
+
+			try: debrid_files = debrid_function().display_magnet_pack(magnet_url, info_hash)
+			except: pass
 
 			if not debrid_files:
 				control.hide()
 				return control.notification(message='Error with Debrid Pack')
 
 			debrid_files = sorted(debrid_files, key=lambda k: k['filename'].lower())
-
 			display_list = ['%02d | [B]%.2f GB[/B] | [I]%s[/I]' % \
 							(count, i['size'],
 							i['filename'].upper()) for count, i in enumerate(debrid_files, 1)]
@@ -1641,7 +1570,7 @@ class Sources:
 			control.busy()
 			chosen_result = debrid_files[chosen]
 
-			if provider  == 'Real-Debrid':
+			if provider	 == 'Real-Debrid':
 				self.url = debrid_function().unrestrict_link(chosen_result['link'])
 			elif provider == 'Premiumize.me':
 				self.url = debrid_function().add_headers_to_url(chosen_result['link'])
@@ -1655,10 +1584,8 @@ class Sources:
 
 			if 'tvshowtitle' in meta:
 				year = meta['tvshowyear'] if 'tvshowyear' in meta else year
-
 			season = meta['season'] if 'season' in meta else None
 			episode = meta['episode'] if 'episode' in meta else None
-
 			imdb = meta['imdb'] if 'imdb' in meta else None
 			tvdb = meta['tvdb'] if 'tvdb' in meta else None
 
@@ -1669,13 +1596,6 @@ class Sources:
 				return player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta, select='1')
 			else:
 				return player.Player().play(self.url)
-				# # log_utils.log('self.url =  %s' % self.url, __name__, log_utils.LOGDEBUG)
-				# content = re.search(r'(?:|\.| - |-|.-.|\s)(?:S|s|\s|\.)(\d{1,2})(?!\d)(?:|\.| - |-|.-.|x|\s)(?:E|e|\s|.)([0-2]{1}[0-9]{1})(?!\w)', self.url.replace('\'', '')).groups()
-				# log_utils.log('content =  %s' % str(content), __name__, log_utils.LOGDEBUG)
-				# season = str(int(content[0]))
-				# episode = str(int(content[1]))
-				# meta.update({'season': season, 'episode': episode})
-				# return player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta, select='1')
 		except Exception as e:
 			control.hide()
 			log_utils.log('Error debridPackDialog %s' % str(e), __name__, log_utils.LOGNOTICE)
@@ -1988,7 +1908,6 @@ class Sources:
 			count = 0
 			for i in torrent_List:
 				if 'error' in cached[count]:
-					# log_utils.log('AD error = %s for source: %s' % (str(cached[count]['error']), str(i)), log_utils.LOGDEBUG)
 					continue
 				if cached[count]['instant'] is False:
 					if 'package' in i:
@@ -2005,7 +1924,6 @@ class Sources:
 		except:
 			log_utils.error()
 			pass
-
 
 
 	def clr_item_providers(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered):
@@ -2127,6 +2045,6 @@ class Sources:
 			d = d_dict[debrid]
 		except:
 			log_utils.error()
-			d = self.sources[i]['debrid'] = ''
+			d = ''
 			pass
 		return d

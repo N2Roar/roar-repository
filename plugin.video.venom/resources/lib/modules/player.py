@@ -382,7 +382,6 @@ class Player(xbmc.Player):
 						# # Prescrape
 						# from resources.lib.modules import sources
 						# psources = sources.Sources().preScrape(title=next_info['next_episode']['title'], year=next_info['next_episode']['year'], imdb=next_info['next_episode']['tvshowimdb'], tvdb=next_info['next_episode']['tvshowid'], season=next_info['next_episode']['season'], episode=next_info['next_episode']['episode'], tvshowtitle=next_info['next_episode']['showtitle'], premiered=next_info['next_episode']['firstaired'])
-
 				except:
 					log_utils.error()
 					pass

@@ -965,10 +965,8 @@ class libepisodes:
 					pass
 
 			for s in season:
-				try:
-					episode.append([control.joinPath(s, i) for i in control.listDir(s)[1] if i.endswith('.strm')][-1])
-				except:
-					pass
+				try: episode.append([control.joinPath(s, i) for i in control.listDir(s)[1] if i.endswith('.strm')][-1])
+				except: pass
 
 			for file in episode:
 				try:
@@ -982,15 +980,11 @@ class libepisodes:
 
 					params = dict(parse_qsl(read.replace('?','')))
 
-					try:
-						tvshowtitle = params['tvshowtitle']
-					except:
-						tvshowtitle = None
+					try: tvshowtitle = params['tvshowtitle']
+					except: tvshowtitle = None
 
-					try:
-						tvshowtitle = params['show']
-					except:
-						pass
+					try: tvshowtitle = params['show']
+					except: pass
 
 					if tvshowtitle is None or tvshowtitle == '':
 						continue

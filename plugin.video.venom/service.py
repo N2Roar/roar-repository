@@ -94,7 +94,7 @@ class AddonCheckUpdate:
 			if not repo_xml.status_code == 200:
 				log_utils.log('Could not connect to repo XML, status: %s' % repo_xml.status_code, log_utils.LOGNOTICE)
 				return
-			repo_version = re.findall(r'<addon id=\"plugin.video.venom\" version=\"(\d*.\d*.\d*)\"', repo_xml.text)[0]
+			repo_version = re.findall(r'<addon id=\"plugin.video.venom\".+version=\"(\d*.\d*.\d*)\"', repo_xml.text)[0]
 			local_version = control.getVenomVersion()
 			if control.check_version_numbers(local_version, repo_version):
 				while control.condVisibility('Library.IsScanningVideo'):
@@ -163,7 +163,7 @@ if int(control.setting('schedTraktTime')) > 0:
 	schedTrakt.start()
 	xbmc.log('[ plugin.video.venom ] Trakt Scheduled Library sync complete', xbmc.LOGNOTICE)
 
-xbmc.log('[ plugin.video.venom ] starting settings monitor service', xbmc.LOGNOTICE)
+
 settings_monitor = SettingsMonitor()
 settings_monitor.waitForAbort()
 xbmc.log('[ plugin.video.venom ] service stopped', xbmc.LOGNOTICE)
